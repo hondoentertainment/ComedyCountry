@@ -1,0 +1,220 @@
+// Punchline Atlas - Database Schema
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// Core Entities
+// =============================================================================
+
+model Venue {
+  id          String   @id @default(cuid())
+  name        String
+  address     String?
+  city        String
+  state       String
+  latitude    Float?
+  longitude   Float?
+  capacity    Int?
+  website     String?
+  type        VenueType @default(CLUB)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  events      Event[]
+  photos      VenuePhoto[]
+  socialLinks VenueSocialLink[]
+  followers   VenueFollow[]
+
+  @@index([state, city])
+  @@index([type])
+}
+
+model VenuePhoto {
+  id        String   @id @default(cuid())
+  venueId   String
+  url       String
+  caption   String?
+  sortOrder Int      @default(0)
+  venue     Venue   @relation(fields: [venueId], references: [id], onDelete: Cascade)
+}
+
+model VenueSocialLink {
+  id        String   @id @default(cuid())
+  venueId   String
+  platform  String   // instagram, twitter, facebook, youtube
+  url       String
+  venue     Venue   @relation(fields: [venueId], references: [id], onDelete: Cascade)
+}
+
+enum VenueType {
+  CLUB
+  THEATER
+  BAR
+  FESTIVAL
+  OPEN_MIC
+}
+
+model Comedian {
+  id              String    @id @default(cuid())
+  name            String
+  slug            String    @unique
+  headshotUrl     String?
+  bio             String?
+  yearsActiveFrom Int?
+  yearsActiveTo   Int?      // null = still active
+  representation  String?   // agency/manager
+  touringStatus   TouringStatus @default(UNKNOWN)
+  website         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  events          EventComedian[]
+  genres          ComedianGenre[]
+  socialLinks     ComedianSocialLink[]
+  podcastLinks    ComedianPodcastLink[]
+  specialReleases ComedianSpecial[]
+  youtubeChannel  YouTubeChannel?
+  followers       ComedianFollow[]
+}
+
+enum TouringStatus {
+  TOURING
+  REGIONAL
+  LOCAL
+  RETIRED
+  UNKNOWN
+}
+
+model ComedianGenre {
+  id         String   @id @default(cuid())
+  comedianId String
+  genre      String   // dark, observational, absurdist, storyteller, etc.
+  comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+}
+
+model ComedianSocialLink {
+  id         String   @id @default(cuid())
+  comedianId String
+  platform   String
+  url        String
+  comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+}
+
+model ComedianPodcastLink {
+  id         String   @id @default(cuid())
+  comedianId String
+  podcastName String
+  episodeUrl  String?
+  comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+}
+
+model ComedianSpecial {
+  id         String   @id @default(cuid())
+  comedianId String
+  title      String
+  platform   String?  // netflix, hbo, youtube
+  releaseYear Int?
+  url        String?
+  comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+}
+
+model YouTubeChannel {
+  id             String   @id @default(cuid())
+  comedianId     String   @unique
+  channelId      String   @unique  // YouTube channel ID
+  channelUrl     String
+  subscriberCount Int?
+  videoCount     Int?
+  lastSyncedAt   DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  comedian       Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  venueId     String
+  date        DateTime
+  showtime    String?  // "8:00 PM", "7:30 PM & 10:00 PM"
+  ticketUrl   String?
+  priceMin    Decimal? @db.Decimal(10, 2)
+  priceMax    Decimal? @db.Decimal(10, 2)
+  showType    ShowType @default(HEADLINE)
+  title       String?  // Custom event title if different from comedian names
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  venue       Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  comedians   EventComedian[]
+
+  @@index([venueId])
+  @@index([date])
+}
+
+enum ShowType {
+  HEADLINE
+  FEATURE
+  OPEN_MIC
+  FESTIVAL
+  PODCAST_LIVE
+}
+
+model EventComedian {
+  id         String   @id @default(cuid())
+  eventId    String
+  comedianId String
+  role       String   @default("headline") // headline, feature, host
+
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+}
+
+// =============================================================================
+// User & Follow System (Phase 3 - prepared)
+// =============================================================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  followsComedians ComedianFollow[]
+  followsVenues    VenueFollow[]
+}
+
+model ComedianFollow {
+  id         String   @id @default(cuid())
+  userId     String
+  comedianId String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comedianId])
+}
+
+model VenueFollow {
+  id        String   @id @default(cuid())
+  userId    String
+  venueId   String
+  createdAt DateTime @default(now())
+
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venue   Venue @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, venueId])
+}
