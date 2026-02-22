@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { listEvents } from "@/lib/events";
 import { getEventRatingStatsBatch } from "@/lib/event-reviews";
 import { getVenueStates } from "@/lib/venues";
@@ -17,6 +18,15 @@ type PageProps = {
 
 export const dynamic = "force-dynamic";
 
+function StarRating({ rating, count }: { rating: number | null; count: number }) {
+  if (count === 0) return <span className="text-zinc-500 text-xs">No reviews</span>;
+  return (
+    <span className="rating-badge">
+      ★ {rating?.toFixed(1) ?? "—"} <span className="text-zinc-400">({count})</span>
+    </span>
+  );
+}
+
 export default async function SchedulePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const { from, city, state, page } = params;
@@ -30,7 +40,6 @@ export default async function SchedulePage({ searchParams }: PageProps) {
   let events: Awaited<ReturnType<typeof listEvents>>["events"] = [];
   let total = 0;
   let states: { state: string }[] = [];
-
   let ratingStats = new Map<string, { count: number; avgRating: number | null }>();
 
   try {
@@ -63,161 +72,163 @@ export default async function SchedulePage({ searchParams }: PageProps) {
     });
 
   const formatShortDate = (d: Date) =>
-    new Date(d).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
+    new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <h1 className="text-3xl font-bold text-brand-gold mb-2">Schedule</h1>
-        <p className="text-zinc-400 mb-8">
-          National comedy calendar. Shows from{" "}
-          {formatShortDate(fromDate)} for the next 30 days.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-1">Schedule</h1>
+            <p className="text-zinc-400 text-sm">
+              {total} show{total !== 1 ? "s" : ""} from {formatShortDate(fromDate)} for the next 30 days
+            </p>
+          </div>
+        </div>
 
+        {/* Yelp-style filter bar */}
         <form
           method="get"
-          className="flex flex-wrap gap-4 mb-8 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800"
+          className="flex flex-wrap gap-3 mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80"
         >
           <div>
-            <label htmlFor="from" className="sr-only">
-              From date
-            </label>
+            <label htmlFor="from" className="sr-only">From date</label>
             <input
               id="from"
               name="from"
               type="date"
               defaultValue={from ?? fromDate.toISOString().slice(0, 10)}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
             />
           </div>
           <div>
-            <label htmlFor="city" className="sr-only">
-              City
-            </label>
+            <label htmlFor="city" className="sr-only">City</label>
             <input
               id="city"
               name="city"
               type="text"
               placeholder="City"
               defaultValue={city}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
             />
           </div>
           <div>
-            <label htmlFor="state" className="sr-only">
-              State
-            </label>
+            <label htmlFor="state" className="sr-only">State</label>
             <select
               id="state"
               name="state"
               defaultValue={state ?? ""}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
             >
               <option value="">All states</option>
               {states.map((s) => (
-                <option key={s.state} value={s.state}>
-                  {s.state}
-                </option>
+                <option key={s.state} value={s.state}>{s.state}</option>
               ))}
             </select>
           </div>
           <button
             type="submit"
-            className="px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
           >
             Filter
           </button>
         </form>
 
-        <p className="text-zinc-500 text-sm mb-4">
-          {total} show{total !== 1 ? "s" : ""} found
-        </p>
-
-        <ul className="space-y-4">
+        {/* Yelp-style event cards with rating prominence */}
+        <div className="space-y-4">
           {events.map((event) => {
             const stats = ratingStats.get(event.id);
+            const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
+            const img = event.comedians[0]?.comedian?.headshotUrl;
             return (
-            <li
-              key={event.id}
-              className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800"
-            >
-              <div className="flex flex-wrap justify-between items-start gap-4">
-                <div className="min-w-0">
-                  <Link
-                    href={`/events/${event.id}`}
-                    className="font-medium text-white hover:text-brand-gold block"
-                  >
-                    {event.title ??
-                      event.comedians.map((ec) => ec.comedian.name).join(", ")}
-                  </Link>
-                  <Link
-                    href={`/events/${event.id}`}
-                    className="text-xs text-zinc-500 hover:text-brand-gold block mt-0.5"
-                  >
-                    {stats && stats.count > 0 ? (
-                      <>★ {stats.avgRating?.toFixed(1)} ({stats.count} reviews)</>
-                    ) : (
-                      "Rate this show"
+              <Link
+                key={event.id}
+                href={`/events/${event.id}`}
+                className="card-interactive flex flex-col sm:flex-row gap-4 p-0 overflow-hidden group"
+              >
+                {/* Spotify-style imagery */}
+                <div className="sm:w-40 sm:min-w-[160px] aspect-video sm:aspect-square bg-brand-charcoal relative overflow-hidden shrink-0">
+                  {img ? (
+                    <Image
+                      src={img}
+                      alt={title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, 160px"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-4xl text-zinc-600">
+                      🎤
+                    </div>
+                  )}
+                  <div className="absolute top-2 left-2">
+                    <StarRating
+                      rating={stats?.avgRating ?? null}
+                      count={stats?.count ?? 0}
+                    />
+                  </div>
+                </div>
+
+                {/* Yelp-style dense info */}
+                <div className="flex-1 min-w-0 p-4 sm:p-0 sm:py-4 sm:pr-4 flex flex-col sm:justify-center">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <h2 className="font-semibold text-white text-lg">{title}</h2>
+                      <Link
+                        href={`/venues/${event.venue.id}`}
+                        className="text-brand-gold hover:underline text-sm"
+                      >
+                        {event.venue.name} — {event.venue.city}, {event.venue.state}
+                      </Link>
+                    </div>
+                    {event.ticketUrl && (
+                      <a
+                        href={event.ticketUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1.5 rounded-lg bg-brand-gold text-brand-dark text-sm font-semibold hover:bg-brand-gold/90 shrink-0"
+                      >
+                        Get tickets
+                      </a>
                     )}
-                  </Link>
-                  <Link
-                    href={`/venues/${event.venue.id}`}
-                    className="text-brand-gold hover:underline text-sm"
-                  >
-                    {event.venue.name} — {event.venue.city}, {event.venue.state}
-                  </Link>
-                  <p className="text-zinc-400 text-sm mt-1">
+                  </div>
+                  <p className="text-zinc-400 text-sm mt-2">
                     {formatDate(event.date)}
                     {event.showtime && ` • ${event.showtime}`}
                     {formatEventPrice(event.priceMin, event.priceMax) && (
                       <> • {formatEventPrice(event.priceMin, event.priceMax)}</>
                     )}
                   </p>
-                  <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-300">
-                    {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
-                  </span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <span className="text-xs px-2 py-0.5 rounded bg-zinc-700/80 text-zinc-300">
+                      {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
+                    </span>
+                    {event.comedians.slice(0, 3).map((ec) => (
+                      <Link
+                        key={ec.id}
+                        href={`/comedians/${ec.comedian.slug}`}
+                        className="text-xs text-zinc-500 hover:text-brand-gold"
+                      >
+                        {ec.comedian.name}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  {event.comedians.slice(0, 3).map((ec) => (
-                    <Link
-                      key={ec.id}
-                      href={`/comedians/${ec.comedian.slug}`}
-                      className="text-sm text-zinc-400 hover:text-brand-gold"
-                    >
-                      {ec.comedian.name}
-                    </Link>
-                  ))}
-                  {event.ticketUrl && (
-                    <a
-                      href={event.ticketUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-md bg-brand-gold text-brand-dark text-sm font-medium hover:bg-brand-gold/90 ml-2"
-                    >
-                      Tickets
-                    </a>
-                  )}
-                </div>
-              </div>
-            </li>
-          );
+              </Link>
+            );
           })}
-        </ul>
+        </div>
 
         {events.length === 0 && (
-          <div className="py-16 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400 text-lg font-medium mb-2">
-              No shows found
-            </p>
+          <div className="py-20 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
+            <p className="text-zinc-400 text-lg font-medium mb-2">No shows found</p>
             <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
               Try a different date range, city, or state. New shows are added regularly.
             </p>
             <Link
               href="/schedule"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
             >
               Clear filters
             </Link>

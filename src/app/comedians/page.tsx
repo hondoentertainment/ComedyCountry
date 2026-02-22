@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { listComedians } from "@/lib/comedians";
 import { TOURING_STATUS_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { Pagination } from "@/components/Pagination";
@@ -51,128 +52,120 @@ export default async function ComediansPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <h1 className="text-3xl font-bold text-brand-gold mb-2">Comedians</h1>
-        <p className="text-zinc-400 mb-8">
-          Explore comedian profiles, touring schedules, and YouTube content.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-1">Comedians</h1>
+            <p className="text-zinc-400 text-sm">
+              {total} comedian{total !== 1 ? "s" : ""} — explore profiles and tour dates
+            </p>
+          </div>
+        </div>
 
+        {/* Yelp-style filter bar */}
         <form
           method="get"
-          className="flex flex-wrap gap-4 mb-8 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800"
+          className="flex flex-wrap gap-3 mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80"
         >
-          <div>
-            <label htmlFor="search" className="sr-only">
-              Search
-            </label>
+          <div className="flex-1 min-w-[200px]">
+            <label htmlFor="search" className="sr-only">Search</label>
             <input
               id="search"
               name="search"
               type="search"
               placeholder="Search comedians..."
               defaultValue={search}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:border-transparent"
             />
           </div>
           <div>
-            <label htmlFor="status" className="sr-only">
-              Touring status
-            </label>
+            <label htmlFor="status" className="sr-only">Touring status</label>
             <select
               id="status"
               name="status"
               defaultValue={status ?? ""}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
             >
               <option value="">All statuses</option>
               {Object.entries(TOURING_STATUS_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
+                <option key={value} value={value}>{label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label htmlFor="genre" className="sr-only">
-              Genre
-            </label>
+            <label htmlFor="genre" className="sr-only">Genre</label>
             <input
               id="genre"
               name="genre"
               type="text"
-              placeholder="Genre (e.g. dark, observational)"
+              placeholder="Genre"
               defaultValue={genre}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 w-40"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
           >
             Filter
           </button>
         </form>
 
-        <p className="text-zinc-500 text-sm mb-4">
-          {total} comedian{total !== 1 ? "s" : ""} found
-        </p>
-
-        <ul className="divide-y divide-zinc-800">
+        {/* Spotify-style card grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {comedians.map((comedian) => (
-            <li key={comedian.id}>
-              <Link
-                href={`/comedians/${comedian.slug}`}
-                className="flex gap-4 py-4 hover:bg-zinc-800/30 -mx-4 px-4 rounded-lg transition-colors"
-              >
+            <Link
+              key={comedian.id}
+              href={`/comedians/${comedian.slug}`}
+              className="card-interactive overflow-hidden group block"
+            >
+              <div className="aspect-square bg-brand-charcoal relative overflow-hidden">
                 {comedian.headshotUrl ? (
-                  <img
+                  <Image
                     src={comedian.headshotUrl}
                     alt={comedian.name}
-                    className="w-16 h-16 rounded-full object-cover shrink-0"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                    unoptimized
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-zinc-700 shrink-0 flex items-center justify-center text-2xl text-zinc-500">
+                  <div className="w-full h-full flex items-center justify-center text-5xl text-zinc-500 bg-gradient-to-br from-zinc-800 to-zinc-900">
                     {comedian.name.charAt(0)}
                   </div>
                 )}
-                <div className="min-w-0 flex-1">
-                  <h2 className="text-lg font-semibold text-white">
-                    {comedian.name}
-                  </h2>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    <span className="inline-block text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-300">
-                      {TOURING_STATUS_LABELS[comedian.touringStatus] ??
-                        comedian.touringStatus}
-                    </span>
-                    {comedian.genres.slice(0, 3).map((g) => (
-                      <span
-                        key={g.id}
-                        className="text-xs text-zinc-500 capitalize"
-                      >
-                        {g.genre}
-                      </span>
-                    ))}
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-2 left-2 right-2">
+                  <span className="inline-block px-2 py-0.5 rounded-md bg-black/50 text-zinc-300 text-xs">
+                    {comedian._count.events} show{comedian._count.events !== 1 ? "s" : ""}
+                  </span>
                 </div>
-                <span className="text-zinc-500 text-sm shrink-0">
-                  {comedian._count.events} show
-                  {comedian._count.events !== 1 ? "s" : ""}
-                </span>
-              </Link>
-            </li>
+              </div>
+              <div className="p-3">
+                <h2 className="font-semibold text-white truncate">{comedian.name}</h2>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-zinc-700/80 text-zinc-300">
+                    {TOURING_STATUS_LABELS[comedian.touringStatus] ?? comedian.touringStatus}
+                  </span>
+                  {comedian.genres.slice(0, 2).map((g) => (
+                    <span key={g.id} className="text-xs text-zinc-500 truncate capitalize max-w-[80px]">
+                      {g.genre}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Link>
           ))}
-        </ul>
+        </div>
 
         {comedians.length === 0 && (
-          <div className="py-16 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400 text-lg font-medium mb-2">
-              No comedians found
-            </p>
+          <div className="py-20 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
+            <p className="text-zinc-400 text-lg font-medium mb-2">No comedians found</p>
             <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
               Try a different search term, touring status, or genre.
             </p>
             <Link
               href="/comedians"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
             >
               Browse all comedians
             </Link>

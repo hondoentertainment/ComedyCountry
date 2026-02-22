@@ -4129,12 +4129,6 @@
       "name": "Matt Lockwood",
       "slug": "matt-lockwood",
       "source": "api"
-    },
-    {
-      "name": "Comedian Dashboard",
-      "slug": "comedian-dashboard",
-      "profileUrl": "https://jestercomedyapp.com/comedianLogin.html",
-      "source": "dom"
     }
   ],
   "scrapedAt": "2026-02-21T23:51:05.301Z"

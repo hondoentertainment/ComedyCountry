@@ -39,6 +39,7 @@ export async function listVenues(params: ListVenuesParams = {}) {
       orderBy: [{ state: "asc" }, { city: "asc" }, { name: "asc" }],
       include: {
         _count: { select: { events: true } },
+        photos: { orderBy: { sortOrder: "asc" }, take: 1 },
       },
     }),
     prisma.venue.count({ where }),

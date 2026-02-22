@@ -1,26 +1,61 @@
 import type { NextAuthOptions } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+
+const providers: NextAuthOptions["providers"] = [
+  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? [
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        }),
+      ]
+    : []),
+  CredentialsProvider({
+    id: "credentials",
+    name: "Username & password",
+    credentials: {
+      username: { label: "Username", type: "text" },
+      password: { label: "Password", type: "password" },
+    },
+    async authorize(credentials) {
+      if (!credentials?.username || !credentials?.password) return null;
+      const user = await prisma.user.findUnique({
+        where: { username: credentials.username },
+      });
+      if (!user?.passwordHash) return null;
+      const ok = await compare(credentials.password, user.passwordHash);
+      if (!ok) return null;
+      return {
+        id: user.id,
+        name: user.name ?? user.username ?? undefined,
+        email: user.email ?? undefined,
+        image: user.image ?? undefined,
+      };
+    },
+  }),
+];
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  providers: [
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID ?? "",
-      clientSecret: process.env.GITHUB_SECRET ?? "",
-    }),
-  ],
+  providers,
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
+      if (user) token.id = user.id;
+      return token;
+    },
+    async session({ session, token }) {
       if (session.user) {
-        (session.user as { id?: string }).id = user.id;
+        (session.user as { id?: string }).id = token.id as string;
       }
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: "database", maxAge: 30 * 24 * 60 * 60 },
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   pages: {
     signIn: "/auth/signin",
   },

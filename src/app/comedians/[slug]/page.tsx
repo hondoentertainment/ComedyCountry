@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { getComedian } from "@/lib/comedians";
@@ -7,6 +8,7 @@ import { getUserBadgeForComedian } from "@/lib/badges";
 import { TOURING_STATUS_LABELS, SHOW_TYPE_LABELS } from "@/lib/constants";
 import { formatEventPrice } from "@/lib/format";
 import { FollowButton } from "@/components/FollowButton";
+import { ComedianPageTabs } from "@/components/ComedianPageTabs";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -34,8 +36,9 @@ export default async function ComedianPage({ params }: PageProps) {
 
   let isFollowing = false;
   let userBadge: Awaited<ReturnType<typeof getUserBadgeForComedian>> = null;
+  let userTierRating: string | null = null;
   if (session?.user?.id) {
-    const [follow, badge] = await Promise.all([
+    const [follow, badge, tierRating] = await Promise.all([
       prisma.comedianFollow.findUnique({
         where: {
           userId_comedianId: {
@@ -45,9 +48,18 @@ export default async function ComedianPage({ params }: PageProps) {
         },
       }),
       getUserBadgeForComedian(session.user.id, comedian.id),
+      prisma.comedianTierRating.findUnique({
+        where: {
+          userId_comedianId: {
+            userId: session.user.id,
+            comedianId: comedian.id,
+          },
+        },
+      }),
     ]);
     isFollowing = !!follow;
     userBadge = badge;
+    userTierRating = tierRating?.tier ?? null;
   }
 
   const formatDate = (d: Date) =>
@@ -74,10 +86,13 @@ export default async function ComedianPage({ params }: PageProps) {
 
         <header className="flex gap-6 mb-8">
           {comedian.headshotUrl ? (
-            <img
+            <Image
               src={comedian.headshotUrl}
               alt={comedian.name}
+              width={128}
+              height={128}
               className="w-32 h-32 rounded-lg object-cover shrink-0"
+              unoptimized
             />
           ) : (
             <div className="w-32 h-32 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-4xl text-zinc-500">
@@ -168,6 +183,14 @@ export default async function ComedianPage({ params }: PageProps) {
           </div>
         </header>
 
+        <ComedianPageTabs
+          comedianId={comedian.id}
+          comedianName={comedian.name}
+          comedianSlug={comedian.slug}
+          userTierRating={userTierRating}
+          isSignedIn={!!session?.user}
+          infoContent={
+            <>
         {comedian.podcastLinks.length > 0 && (
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">Podcasts</h2>
@@ -296,6 +319,9 @@ export default async function ComedianPage({ params }: PageProps) {
             </div>
           )}
         </section>
+            </>
+          }
+        />
       </div>
     </main>
   );

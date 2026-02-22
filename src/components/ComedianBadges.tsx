@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { ComedianBadge } from "@/lib/badges";
 
 type ComedianBadgesProps = {
@@ -60,10 +61,13 @@ export function ComedianBadges({ badges, compact = false }: ComedianBadgesProps)
             className="flex gap-4 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
           >
             {b.headshotUrl ? (
-              <img
+              <Image
                 src={b.headshotUrl}
                 alt={b.comedianName}
+                width={64}
+                height={64}
                 className="w-16 h-16 rounded-lg object-cover shrink-0"
+                unoptimized
               />
             ) : (
               <div className="w-16 h-16 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">

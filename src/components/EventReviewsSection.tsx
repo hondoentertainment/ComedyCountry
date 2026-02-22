@@ -31,7 +31,7 @@ export function EventReviewsSection({
         <h2 className="text-lg font-semibold text-white mb-4">
           Rate this show
         </h2>
-        <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
+        <div className="p-4 rounded-card bg-brand-surface border border-zinc-800/80">
           {isSignedIn ? (
             <EventRatingForm
               eventId={eventId}

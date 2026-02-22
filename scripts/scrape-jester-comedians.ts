@@ -11,6 +11,7 @@ import * as path from "path";
 
 const JESTER_URL = "https://jestercomedyapp.com/searchAllComedians.html";
 const OUTPUT_PATH = path.join(process.cwd(), "data", "jester-comedians.json");
+const EXCLUDED_SLUGS = new Set(["comedian-dashboard", "search-all"]);
 
 type JesterComedian = {
   name: string;
@@ -55,7 +56,7 @@ async function scrapeComedians(): Promise<JesterComedian[]> {
   });
 
   console.log("Loading page...");
-  await page.goto(JESTER_URL, { waitUntil: "networkidle", timeout: 30000 });
+  await page.goto(JESTER_URL, { waitUntil: "domcontentloaded", timeout: 60000 });
 
   // Wait for content to render
   await page.waitForTimeout(2000);
@@ -100,16 +101,15 @@ async function scrapeComedians(): Promise<JesterComedian[]> {
 
   for (const c of domComedians) {
     const slug = slugify(c.name);
-    if (!seenSlugs.has(slug)) {
-      seenSlugs.add(slug);
-      comedians.push({
-        name: c.name,
-        slug,
-        profileUrl: c.url,
-        headshotUrl: c.img,
-        source: "dom",
-      });
-    }
+    if (EXCLUDED_SLUGS.has(slug) || seenSlugs.has(slug)) continue;
+    seenSlugs.add(slug);
+    comedians.push({
+      name: c.name,
+      slug,
+      profileUrl: c.url,
+      headshotUrl: c.img,
+      source: "dom",
+    });
   }
 
   // If we found few via DOM, try scrolling to load more (infinite scroll)
@@ -136,17 +136,16 @@ async function scrapeComedians(): Promise<JesterComedian[]> {
       let added = 0;
       for (const c of more) {
         const slug = slugify(c.name);
-        if (!seenSlugs.has(slug)) {
-          seenSlugs.add(slug);
-          comedians.push({
-            name: c.name,
-            slug,
-            profileUrl: c.url,
-            headshotUrl: c.img,
-            source: "dom",
-          });
-          added++;
-        }
+        if (EXCLUDED_SLUGS.has(slug) || seenSlugs.has(slug)) continue;
+        seenSlugs.add(slug);
+        comedians.push({
+          name: c.name,
+          slug,
+          profileUrl: c.url,
+          headshotUrl: c.img,
+          source: "dom",
+        });
+        added++;
       }
       if (added === 0) break;
     }
@@ -175,7 +174,7 @@ function extractFromApiResponse(
     if (!name) continue;
     const slug =
       (item.slug as string) || slugify(name);
-    if (seenSlugs.has(slug)) continue;
+    if (EXCLUDED_SLUGS.has(slug) || seenSlugs.has(slug)) continue;
     seenSlugs.add(slug);
     comedians.push({
       name,

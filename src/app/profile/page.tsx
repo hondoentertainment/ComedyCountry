@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -70,10 +71,13 @@ export default async function ProfilePage() {
 
         <header className="flex gap-6 mb-8">
           {user.image ? (
-            <img
+            <Image
               src={user.image}
               alt={displayName}
+              width={96}
+              height={96}
               className="w-24 h-24 rounded-full object-cover shrink-0"
+              unoptimized
             />
           ) : (
             <div className="w-24 h-24 rounded-full bg-zinc-700 shrink-0 flex items-center justify-center text-3xl text-zinc-500">
@@ -131,10 +135,13 @@ export default async function ProfilePage() {
                       className="flex gap-4 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
                     >
                       {c.headshotUrl ? (
-                        <img
+                        <Image
                           src={c.headshotUrl}
                           alt={c.name}
+                          width={64}
+                          height={64}
                           className="w-16 h-16 rounded-lg object-cover shrink-0"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-16 h-16 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">

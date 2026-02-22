@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { getVenue } from "@/lib/venues";
@@ -136,10 +137,13 @@ export default async function VenuePage({ params }: PageProps) {
                   rel="noopener noreferrer"
                   className="block aspect-video rounded-lg overflow-hidden bg-zinc-800"
                 >
-                  <img
+                  <Image
                     src={photo.url}
                     alt={photo.caption ?? venue.name}
+                    width={400}
+                    height={225}
                     className="w-full h-full object-cover"
+                    unoptimized
                   />
                 </a>
               ))}

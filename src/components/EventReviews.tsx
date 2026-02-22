@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 type Review = {
@@ -111,10 +112,13 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
           >
             <div className="flex items-start gap-3">
               {r.user.image ? (
-                <img
+                <Image
                   src={r.user.image}
                   alt=""
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded-full shrink-0"
+                  unoptimized
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full shrink-0 bg-zinc-700 flex items-center justify-center text-xs text-zinc-400">

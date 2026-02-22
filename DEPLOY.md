@@ -1,52 +1,57 @@
-# Deploy to Vercel
+# Deployment Guide
 
-## Prerequisites
+Punchline Atlas is a Next.js app that needs a **Node.js host** (not static hosting like GitHub Pages). Recommended: **Vercel** + **PostgreSQL** (Neon, Supabase, or Railway).
 
-- GitHub account
-- Vercel account (free at [vercel.com](https://vercel.com))
-- Hosted PostgreSQL database (Neon, Supabase, Railway, etc.)
-
-## Steps
-
-### 1. Push to GitHub
+## 1. Push your code to GitHub
 
 ```bash
-# Create repo on github.com, then:
-git remote add origin https://github.com/YOUR_USERNAME/punchline-atlas.git
-git branch -M main
-git push -u origin main
+git add -A
+git commit -m "Ready for deployment"
+git push origin main
 ```
 
-### 2. Import in Vercel
+## 2. Set up a production database
 
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. **Import** your GitHub repo
-3. Vercel auto-detects Next.js — no config needed
+You need a hosted PostgreSQL database:
 
-### 3. Set environment variables
+- [Neon](https://neon.tech) (free tier)
+- [Supabase](https://supabase.com) (free tier)
+- [Railway](https://railway.app)
+- [Vercel Postgres](https://vercel.com/storage/postgres)
 
-In Vercel → Project → **Settings** → **Environment Variables**, add:
+Get a connection string like:
+```
+postgresql://user:pass@host:5432/punchline_atlas?sslmode=require
+```
+
+Then run migrations:
+```bash
+DATABASE_URL="your-prod-url" npx prisma db push
+DATABASE_URL="your-prod-url" npm run db:seed
+```
+
+## 3. Deploy to Vercel
+
+1. Go to [vercel.com](https://vercel.com) and sign in with GitHub.
+2. **Add New Project** → Import `hondoentertainment/ComedyCountry`.
+3. Add **Environment Variables** (Project → Settings → Environment Variables):
 
 | Variable | Required | Notes |
 |----------|----------|-------|
-| `DATABASE_URL` | Yes | PostgreSQL connection string from Neon/Supabase/Railway |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Yes | For map page |
-| `YOUTUBE_API_KEY` | No | For comedian channel sync (optional) |
-| `BULK_IMPORT_API_KEY` | No | Protects `/api/import` when set |
-| `YOUTUBE_SYNC_API_KEY` | No | Protects `/api/youtube/sync` when set |
+| `DATABASE_URL` | ✅ | Production Postgres URL |
+| `NEXTAUTH_SECRET` | ✅ | Generate with `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | ✅ | Your Vercel URL, e.g. `https://your-app.vercel.app` |
+| `GOOGLE_CLIENT_ID` | Optional | For Google sign-in |
+| `GOOGLE_CLIENT_SECRET` | Optional | For Google sign-in |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Optional | For map page |
 
-### 4. Run migrations
+4. **Deploy**. Vercel builds and deploys on every push to `main`.
 
-After first deploy, run schema and seed once:
+## 4. After first deploy
 
-```bash
-# Locally, point DATABASE_URL to your hosted Postgres
-npm run db:push
-npm run db:seed
-```
-
-Or use a one-off script/CI job. Vercel does not run migrations automatically.
+1. Update `NEXTAUTH_URL` to your live URL.
+2. In Google Cloud Console (if using Google OAuth), add `https://your-app.vercel.app/api/auth/callback/google` to authorized redirect URIs.
 
 ---
 
-**Production branch:** Pushes to `main` deploy to production. Other branches get preview URLs.
+**Existing CI**: `.github/workflows/test.yml` runs E2E tests on push/PR. Deployments are handled by Vercel’s GitHub integration.

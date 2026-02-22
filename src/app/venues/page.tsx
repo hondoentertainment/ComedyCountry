@@ -1,9 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { listVenues, getVenueStates } from "@/lib/venues";
-import { VENUE_TYPE_LABELS } from "@/lib/constants";
+import { VENUE_TYPE_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { Pagination } from "@/components/Pagination";
-
-import { PAGE_SIZE } from "@/lib/constants";
 
 export const metadata = {
   title: "Venues | Punchline Atlas",
@@ -48,130 +47,140 @@ export default async function VenuesPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <h1 className="text-3xl font-bold text-brand-gold mb-2">Venues</h1>
-        <p className="text-zinc-400 mb-8">
-          Browse comedy venues nationwide. Filter by state, city, or type.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-1">Venues</h1>
+            <p className="text-zinc-400 text-sm">
+              {total} venue{total !== 1 ? "s" : ""} — clubs, theaters, and comedy spots
+            </p>
+          </div>
+        </div>
 
+        {/* Yelp-style filter bar */}
         <form
           method="get"
-          className="flex flex-wrap gap-4 mb-8 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800"
+          className="flex flex-wrap gap-3 mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80"
         >
-          <div>
-            <label htmlFor="search" className="sr-only">
-              Search
-            </label>
+          <div className="flex-1 min-w-[200px]">
+            <label htmlFor="search" className="sr-only">Search</label>
             <input
               id="search"
               name="search"
               type="search"
               placeholder="Search venues..."
               defaultValue={search}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:border-transparent"
             />
           </div>
           <div>
-            <label htmlFor="state" className="sr-only">
-              State
-            </label>
+            <label htmlFor="state" className="sr-only">State</label>
             <select
               id="state"
               name="state"
               defaultValue={state ?? ""}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
             >
               <option value="">All states</option>
               {states.map((s) => (
-                <option key={s.state} value={s.state}>
-                  {s.state}
-                </option>
+                <option key={s.state} value={s.state}>{s.state}</option>
               ))}
             </select>
           </div>
           <div>
-            <label htmlFor="city" className="sr-only">
-              City
-            </label>
+            <label htmlFor="city" className="sr-only">City</label>
             <input
               id="city"
               name="city"
               type="text"
               placeholder="City"
               defaultValue={city}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 w-36"
             />
           </div>
           <div>
-            <label htmlFor="type" className="sr-only">
-              Type
-            </label>
+            <label htmlFor="type" className="sr-only">Type</label>
             <select
               id="type"
               name="type"
               defaultValue={type ?? ""}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
             >
               <option value="">All types</option>
               {Object.entries(VENUE_TYPE_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
+                <option key={value} value={value}>{label}</option>
               ))}
             </select>
           </div>
           <button
             type="submit"
-            className="px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
           >
             Filter
           </button>
         </form>
 
-        <p className="text-zinc-500 text-sm mb-4">
-          {total} venue{total !== 1 ? "s" : ""} found
-        </p>
-
-        <ul className="divide-y divide-zinc-800">
-          {venues.map((venue) => (
-            <li key={venue.id}>
+        {/* Yelp photo-forward card grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {venues.map((venue) => {
+            const photo = venue.photos?.[0];
+            return (
               <Link
+                key={venue.id}
                 href={`/venues/${venue.id}`}
-                className="block py-4 hover:bg-zinc-800/30 -mx-4 px-4 rounded-lg transition-colors"
+                className="card-interactive overflow-hidden group block"
               >
-                <div className="flex justify-between items-start gap-4">
-                  <div>
-                    <h2 className="text-lg font-semibold text-white">
-                      {venue.name}
-                    </h2>
-                    <p className="text-zinc-400 text-sm">
-                      {venue.city}, {venue.state}
-                      {venue.capacity && ` • ${venue.capacity} capacity`}
-                    </p>
-                    <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-300">
+                <div className="aspect-[16/10] bg-brand-charcoal relative overflow-hidden">
+                  {photo ? (
+                    <Image
+                      src={photo.url}
+                      alt={photo.caption ?? venue.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-5xl text-zinc-600 bg-gradient-to-br from-zinc-800 to-zinc-900">
+                      🏛️
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  <div className="absolute top-2 left-2">
+                    <span className="inline-block px-2 py-0.5 rounded-md bg-black/50 text-zinc-300 text-xs">
                       {VENUE_TYPE_LABELS[venue.type] ?? venue.type}
                     </span>
                   </div>
-                  <span className="text-zinc-500 text-sm shrink-0">
-                    {venue._count.events} upcoming show
-                    {venue._count.events !== 1 ? "s" : ""}
-                  </span>
+                  <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+                    <span className="inline-block px-2 py-0.5 rounded-md bg-black/50 text-zinc-300 text-xs">
+                      {venue._count.events} upcoming show{venue._count.events !== 1 ? "s" : ""}
+                    </span>
+                    {venue.capacity && (
+                      <span className="text-xs text-zinc-400">
+                        {venue.capacity} cap
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h2 className="font-semibold text-white">{venue.name}</h2>
+                  <p className="text-zinc-400 text-sm mt-0.5">
+                    {venue.city}, {venue.state}
+                  </p>
                 </div>
               </Link>
-            </li>
-          ))}
-        </ul>
+            );
+          })}
+        </div>
 
         {venues.length === 0 && (
-          <div className="py-16 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400 text-lg font-medium mb-2">
-              No venues found
-            </p>
+          <div className="py-20 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
+            <p className="text-zinc-400 text-lg font-medium mb-2">No venues found</p>
             <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
               Try adjusting your search, state, city, or venue type.
             </p>
             <Link
               href="/venues"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
             >
               Browse all venues
             </Link>

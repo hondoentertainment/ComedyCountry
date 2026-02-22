@@ -85,6 +85,7 @@ model Comedian {
   specialReleases ComedianSpecial[]
   youtubeChannel  YouTubeChannel?
   followers       ComedianFollow[]
+  tierRatings     ComedianTierRating[]
 }
 
 enum TouringStatus {
@@ -208,6 +209,8 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  username      String?   @unique // For credential sign-in
+  passwordHash  String?   // For credential sign-in (bcrypt)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -216,6 +219,7 @@ model User {
   followsComedians ComedianFollow[]
   followsVenues     VenueFollow[]
   eventReviews      EventReview[]
+  comedianTierRatings ComedianTierRating[]
 }
 
 model Account {
@@ -261,6 +265,21 @@ model ComedianFollow {
   comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
 
   @@unique([userId, comedianId])
+}
+
+model ComedianTierRating {
+  id         String   @id @default(cuid())
+  userId     String
+  comedianId String
+  tier       String   // S, A, B, C, D, F
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comedianId])
+  @@index([comedianId])
 }
 
 model VenueFollow {

@@ -4,10 +4,25 @@
 
 :root {
   --brand-gold: #D4AF37;
-  --brand-dark: #1a1a1a;
-  --brand-charcoal: #2d2d2d;
+  --brand-dark: #0d0d0d;
+  --brand-charcoal: #1a1a1a;
+  --brand-surface: #121212;
 }
 
 body {
   @apply bg-brand-dark text-white antialiased;
+}
+
+/* Yelp + Spotify hybrid: card hover lift */
+@layer components {
+  .card-interactive {
+    @apply rounded-card bg-brand-surface border border-zinc-800/80 transition-all duration-150;
+    @apply hover:scale-[1.02] hover:border-zinc-600/50 hover:shadow-card-hover;
+  }
+  .card-interactive:active {
+    @apply scale-[0.99];
+  }
+  .rating-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/40 text-brand-gold text-sm font-medium;
+  }
 }

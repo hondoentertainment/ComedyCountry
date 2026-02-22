@@ -8,9 +8,16 @@ export const metadata = {
   description: "Sign in to follow comedians and venues.",
 };
 
-export default async function SignInPage() {
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string; registered?: string }>;
+}) {
   const session = await getServerSession(authOptions);
   if (session) redirect("/");
+
+  const { callbackUrl, registered } = await searchParams;
+  const providerIds = authOptions.providers.map((p) => p.id);
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4">
@@ -19,7 +26,15 @@ export default async function SignInPage() {
         <p className="text-zinc-400 mb-8">
           Sign in to follow comedians and venues, and get personalized updates.
         </p>
-        <SignInButtons />
+        {registered === "1" && (
+          <div className="rounded-lg bg-emerald-500/20 text-emerald-400 px-4 py-2 text-sm mb-6">
+            Account created. Sign in below.
+          </div>
+        )}
+        <SignInButtons
+          providerIds={providerIds}
+          callbackUrl={typeof callbackUrl === "string" ? callbackUrl : "/"}
+        />
       </div>
     </main>
   );

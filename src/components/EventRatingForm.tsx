@@ -55,6 +55,7 @@ export function EventRatingForm({
   const [comment, setComment] = useState(initialReview?.comment ?? "");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const displayRating = hoverRating || rating;
 
@@ -64,6 +65,7 @@ export function EventRatingForm({
 
     setLoading(true);
     setSuccess(false);
+    setError(null);
     try {
       const res = await fetch(`/api/events/${eventId}/reviews`, {
         method: "POST",
@@ -87,7 +89,7 @@ export function EventRatingForm({
       setSuccess(true);
       onSuccess?.();
     } catch (err) {
-      console.error(err);
+      setError(err instanceof Error ? err.message : "Failed to save review. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -108,7 +110,10 @@ export function EventRatingForm({
               key={v}
               value={v}
               filled={v <= displayRating}
-              onSelect={() => setRating(v)}
+              onSelect={() => {
+                setRating(v);
+                setError(null);
+              }}
               onHover={() => setHoverRating(v)}
             />
           ))}
@@ -122,13 +127,22 @@ export function EventRatingForm({
         <textarea
           id="comment"
           value={comment}
-          onChange={(e) => setComment(e.target.value)}
+          onChange={(e) => {
+            setComment(e.target.value);
+            setError(null);
+          }}
           placeholder="Share your experience..."
           rows={3}
           maxLength={2000}
           className="w-full px-3 py-2 rounded-md bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 resize-y"
         />
       </div>
+
+      {error && (
+        <p className="text-sm text-red-400" role="alert">
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"

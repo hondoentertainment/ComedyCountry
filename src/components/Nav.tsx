@@ -18,51 +18,51 @@ export function Nav() {
   const { data: session, status } = useSession();
 
   return (
-    <nav className="border-b border-zinc-800 bg-brand-dark/95 backdrop-blur supports-[backdrop-filter]:bg-brand-dark/80 sticky top-0 z-50">
+    <nav className="border-b border-zinc-800/80 bg-brand-dark/98 backdrop-blur-md sticky top-0 z-50">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-14 items-center justify-between">
           <Link
             href="/"
-            className="text-xl font-bold text-brand-gold hover:text-brand-gold/90 transition-colors"
+            className="text-lg font-bold text-white hover:text-brand-gold transition-colors duration-150"
           >
             Punchline Atlas
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-2">
-            <ul className="flex gap-1 sm:gap-2">
+          {/* Desktop nav — Spotify-style minimal */}
+          <div className="hidden md:flex items-center gap-1">
+            <ul className="flex gap-0.5">
               {navItems.map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}
-                    className="block px-3 py-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-sm font-medium transition-colors"
+                    className="block px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                   >
                     {label}
                   </Link>
                 </li>
               ))}
             </ul>
-            <div className="ml-4 pl-4 border-l border-zinc-700 flex items-center gap-1">
+            <div className="ml-2 pl-2 border-l border-zinc-700/80 flex items-center gap-1">
               {status === "loading" ? (
                 <span className="text-zinc-500 text-sm">…</span>
               ) : session ? (
                 <>
                   <Link
                     href="/profile"
-                    className="px-3 py-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-sm font-medium transition-colors"
+                    className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
                   >
                     Profile
                   </Link>
                   <Link
                     href="/settings"
-                    className="px-3 py-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-sm font-medium transition-colors"
+                    className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
                   >
                     Settings
                   </Link>
                   <button
                     type="button"
                     onClick={() => signOut({ callbackUrl: "/" })}
-                    className="px-3 py-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/50 text-sm font-medium transition-colors"
+                    className="px-4 py-2 rounded-lg text-zinc-500 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
                   >
                     Sign out
                   </button>
@@ -70,7 +70,7 @@ export function Nav() {
               ) : (
                 <Link
                   href="/auth/signin"
-                  className="block px-3 py-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-sm font-medium transition-colors"
+                  className="block px-4 py-2 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-sm font-semibold transition-all duration-150"
                 >
                   Sign in
                 </Link>
@@ -82,7 +82,7 @@ export function Nav() {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-colors"
+            className="md:hidden p-2.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
@@ -113,33 +113,33 @@ export function Nav() {
 
         {/* Mobile nav */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-zinc-800 py-4">
-            <ul className="flex flex-col gap-1">
+          <div className="md:hidden border-t border-zinc-800/80 py-4 bg-brand-surface/95">
+            <ul className="flex flex-col gap-0.5">
               {navItems.map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-base font-medium transition-colors"
+                    className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
                   >
                     {label}
                   </Link>
                 </li>
               ))}
-              <li className="border-t border-zinc-800 mt-2 pt-2 space-y-1">
+              <li className="border-t border-zinc-800 mt-2 pt-2 space-y-0.5">
                 {session ? (
                   <>
                     <Link
                       href="/profile"
                       onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-3 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-base font-medium transition-colors"
+                      className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
                     >
                       Profile
                     </Link>
                     <Link
                       href="/settings"
                       onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-3 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-base font-medium transition-colors"
+                      className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
                     >
                       Settings
                     </Link>
@@ -149,7 +149,7 @@ export function Nav() {
                         setMobileOpen(false);
                         signOut({ callbackUrl: "/" });
                       }}
-                      className="block w-full text-left px-4 py-3 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-base font-medium transition-colors"
+                      className="block w-full text-left px-4 py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
                     >
                       Sign out
                     </button>
@@ -158,7 +158,7 @@ export function Nav() {
                   <Link
                     href="/auth/signin"
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/50 text-base font-medium transition-colors"
+                    className="block px-4 py-3 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-base font-semibold transition-colors"
                   >
                     Sign in
                   </Link>

@@ -1,0 +1,33 @@
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { authOptions } from "@/lib/auth";
+import { SignUpForm } from "./SignUpForm";
+
+export const metadata = {
+  title: "Create account | Punchline Atlas",
+  description: "Create an account to follow comedians and venues.",
+};
+
+export default async function SignUpPage() {
+  const session = await getServerSession(authOptions);
+  if (session) redirect("/");
+
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-center px-4">
+      <div className="text-center max-w-md w-full">
+        <h1 className="text-2xl font-bold text-white mb-2">Create account</h1>
+        <p className="text-zinc-400 mb-8">
+          Sign up with a username and password to follow comedians and venues.
+        </p>
+        <SignUpForm />
+        <p className="text-zinc-500 text-sm mt-6">
+          Already have an account?{" "}
+          <Link href="/auth/signin" className="text-amber-500 hover:underline">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </main>
+  );
+}

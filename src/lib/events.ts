@@ -66,3 +66,44 @@ export async function getEventById(id: string) {
     },
   });
 }
+
+/** Events from comedians or venues the user follows — for "For You" personalized feed */
+export async function getEventsForUser(userId: string, take = 10) {
+  const follows = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      followsComedians: { select: { comedianId: true } },
+      followsVenues: { select: { venueId: true } },
+    },
+  });
+  if (!follows) return { events: [], total: 0 };
+
+  const comedianIds = follows.followsComedians.map((f) => f.comedianId);
+  const venueIds = follows.followsVenues.map((f) => f.venueId);
+  if (comedianIds.length === 0 && venueIds.length === 0) return { events: [], total: 0 };
+
+  const where: Prisma.EventWhereInput = {
+    date: { gte: new Date() },
+    OR: [
+      ...(comedianIds.length > 0
+        ? [{ comedians: { some: { comedianId: { in: comedianIds } } } }]
+        : []),
+      ...(venueIds.length > 0 ? [{ venueId: { in: venueIds } }] : []),
+    ],
+  };
+
+  const [events, total] = await Promise.all([
+    prisma.event.findMany({
+      where,
+      take,
+      orderBy: { date: "asc" },
+      include: {
+        venue: true,
+        comedians: { include: { comedian: true } },
+      },
+    }),
+    prisma.event.count({ where }),
+  ]);
+
+  return { events, total };
+}

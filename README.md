@@ -2,6 +2,15 @@
 
 The nationwide comedy intelligence platform — discover venues, track comedian tours, and never miss a show.
 
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [PRD](docs/PRD.md) | Product Requirements Document |
+| [Implementation Plan](docs/IMPLEMENTATION-PLAN.md) | Phases, tasks, timeline |
+| [Technical Architecture](docs/TECHNICAL-ARCHITECTURE.md) | System design, tech stack |
+| [Use Cases](docs/USE-CASES.md) | Top use cases with flows |
+
 ## Tech Stack
 
 - **Framework:** Next.js 14 (App Router)
@@ -81,6 +90,7 @@ prisma/
 | `npm run db:seed` | Run seed script           |
 | `npm run db:sync-youtube` | Sync YouTube channel stats (requires YOUTUBE_API_KEY) |
 | `npm run db:import -- <file>` | Bulk import venues and events from JSON file |
+| `npm run db:prod:setup` | Push schema + seed (for production init) |
 
 ## Deployment (Vercel)
 
@@ -94,12 +104,13 @@ Use one of:
 
 ### 2. Initialize the database (one-time)
 
-With `DATABASE_URL` set locally to your production Postgres:
+With `DATABASE_URL` in `.env` pointing to your production Postgres:
 
 ```bash
-npm run db:push
-npm run db:seed
+npm run db:prod:setup
 ```
+
+Or run separately: `npm run db:push` then `npm run db:seed`.
 
 ### 3. Connect to Vercel
 
@@ -114,6 +125,8 @@ npm run db:seed
 | `NEXTAUTH_SECRET` | Yes | Random string, e.g. `openssl rand -base64 32` |
 | `GITHUB_ID` | Yes | GitHub OAuth App Client ID |
 | `GITHUB_SECRET` | Yes | GitHub OAuth App Client Secret |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth (enables "Continue with Google") |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | For venue maps |
 | `YOUTUBE_API_KEY` | No | For comedian channel sync |
 | `BULK_IMPORT_API_KEY` | No | Protects POST /api/import |

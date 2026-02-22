@@ -29,11 +29,16 @@ async function main() {
   }
 
   const prisma = new PrismaClient();
+  const EXCLUDED_SLUGS = new Set(["comedian-dashboard", "search-all"]);
   let created = 0;
   let skipped = 0;
   let errors = 0;
 
   for (const c of data.comedians) {
+    if (EXCLUDED_SLUGS.has(c.slug?.toLowerCase() ?? "")) {
+      skipped++;
+      continue;
+    }
     if (!c.name || !c.slug) {
       console.warn("Skipping entry with missing name or slug:", c);
       skipped++;

@@ -7,7 +7,7 @@ export function Footer() {
   const { openPreferences } = useCookieConsent();
 
   return (
-    <footer className="mt-auto border-t border-zinc-800 bg-brand-charcoal/50">
+    <footer className="mt-auto border-t border-zinc-800/80 bg-brand-surface/80">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <p className="text-sm text-zinc-500">

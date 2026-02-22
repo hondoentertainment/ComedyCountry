@@ -17,9 +17,11 @@ export function FollowButton({
 }: FollowButtonProps) {
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleClick = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch(`/api/follow/${type}/${id}`, {
         method: "POST",
@@ -38,24 +40,31 @@ export function FollowButton({
       const data = (await res.json()) as { following: boolean };
       setFollowing(data.following);
     } catch (err) {
-      console.error(err);
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={loading}
-      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-        following
-          ? "bg-brand-gold text-brand-dark hover:bg-brand-gold/90"
-          : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white"
-      } ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
-    >
-      {loading ? "…" : following ? "Following" : "Follow"}
-    </button>
+    <span className="inline-flex flex-col items-start gap-1">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={loading}
+        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+          following
+            ? "bg-brand-gold text-brand-dark hover:bg-brand-gold/90"
+            : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white"
+        } ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+      >
+        {loading ? "…" : following ? "Following" : "Follow"}
+      </button>
+      {error && (
+        <span className="text-xs text-red-400" role="alert">
+          {error}
+        </span>
+      )}
+    </span>
   );
 }
