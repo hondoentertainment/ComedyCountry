@@ -81,3 +81,46 @@ prisma/
 | `npm run db:seed` | Run seed script           |
 | `npm run db:sync-youtube` | Sync YouTube channel stats (requires YOUTUBE_API_KEY) |
 | `npm run db:import -- <file>` | Bulk import venues and events from JSON file |
+
+## Deployment (Vercel)
+
+### 1. Provision PostgreSQL
+
+Use one of:
+
+- **[Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)** (Storage tab → Create Database)
+- **[Neon](https://neon.tech)** – free tier, copy the connection string
+- **[Supabase](https://supabase.com)** – free tier, use the Postgres URL from Project Settings
+
+### 2. Initialize the database (one-time)
+
+With `DATABASE_URL` set locally to your production Postgres:
+
+```bash
+npm run db:push
+npm run db:seed
+```
+
+### 3. Connect to Vercel
+
+1. Push your code to GitHub (init git if needed: `git init && git add . && git commit -m "Initial commit"`)
+2. Go to [vercel.com](https://vercel.com) → **Add New** → **Project** → Import your repo
+3. Add **Environment Variables** (Project → Settings → Environment Variables):
+
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `DATABASE_URL` | Yes | Postgres connection string |
+| `NEXTAUTH_URL` | Yes | `https://your-app.vercel.app` (update after first deploy) |
+| `NEXTAUTH_SECRET` | Yes | Random string, e.g. `openssl rand -base64 32` |
+| `GITHUB_ID` | Yes | GitHub OAuth App Client ID |
+| `GITHUB_SECRET` | Yes | GitHub OAuth App Client Secret |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | No | For venue maps |
+| `YOUTUBE_API_KEY` | No | For comedian channel sync |
+| `BULK_IMPORT_API_KEY` | No | Protects POST /api/import |
+| `YOUTUBE_SYNC_API_KEY` | No | Protects POST /api/youtube/sync |
+
+4. Deploy. Vercel will build and deploy on every push to the default branch.
+
+### 4. Update NEXTAUTH_URL
+
+After the first deploy, set `NEXTAUTH_URL` to your live URL (e.g. `https://punchline-atlas.vercel.app`) and redeploy if needed.

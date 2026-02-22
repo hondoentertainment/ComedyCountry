@@ -21,3 +21,5 @@ export const TOURING_STATUS_LABELS: Record<string, string> = {
   RETIRED: "Retired",
   UNKNOWN: "Unknown",
 };
+
+export const PAGE_SIZE = 20;

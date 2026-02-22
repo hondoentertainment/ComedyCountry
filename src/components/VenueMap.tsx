@@ -8,6 +8,7 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
+import { useCookieConsent } from "@/components/CookieConsent";
 
 type VenueWithCoords = {
   id: string;
@@ -30,12 +31,43 @@ const mapContainerStyle = {
 
 const defaultCenter = { lat: 39.8283, lng: -98.5795 }; // USA center
 
-export function VenueMap({ venues }: VenueMapProps) {
+/** Placeholder shown when user has not consented to non-essential cookies (Google Maps). */
+function MapConsentPlaceholder({ venueCount }: { venueCount: number }) {
+  const { openPreferences } = useCookieConsent();
+  return (
+    <div className="aspect-video rounded-lg bg-zinc-800 border border-zinc-700 flex flex-col items-center justify-center text-zinc-400 p-8 text-center">
+      <p className="mb-2">The map uses Google Maps, which may set cookies.</p>
+      <p className="text-sm mb-4">
+        Accept cookies in the banner below or via{" "}
+        <button
+          type="button"
+          onClick={openPreferences}
+          className="text-brand-gold hover:underline font-medium"
+        >
+          Cookie preferences
+        </button>{" "}
+        in the footer to view the map.
+      </p>
+      <p className="text-sm text-zinc-500">
+        {venueCount} venue{venueCount !== 1 ? "s" : ""} with coordinates available.
+      </p>
+      <Link
+        href="/privacy"
+        className="text-sm text-brand-gold hover:underline mt-2"
+      >
+        Privacy Policy
+      </Link>
+    </div>
+  );
+}
+
+function VenueMapInner({ venues }: VenueMapProps) {
   const [selectedVenueId, setSelectedVenueId] = useState<string | null>(null);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey ?? "",
+    preventGoogleFontsLoading: true,
   });
 
   const validVenues = useMemo(
@@ -179,4 +211,21 @@ export function VenueMap({ venues }: VenueMapProps) {
       </GoogleMap>
     </div>
   );
+}
+
+export function VenueMap({ venues }: VenueMapProps) {
+  const { hasConsented } = useCookieConsent();
+  const validVenues = useMemo(
+    () =>
+      venues.filter(
+        (v) => v.latitude != null && v.longitude != null
+      ) as (VenueWithCoords & { latitude: number; longitude: number })[],
+    [venues]
+  );
+
+  if (!hasConsented) {
+    return <MapConsentPlaceholder venueCount={validVenues.length} />;
+  }
+
+  return <VenueMapInner venues={venues} />;
 }

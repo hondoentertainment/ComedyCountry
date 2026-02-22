@@ -1,15 +1,46 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
 import { getVenue } from "@/lib/venues";
+import { authOptions } from "@/lib/auth";
 import { VENUE_TYPE_LABELS, SHOW_TYPE_LABELS } from "@/lib/constants";
+import { formatEventPrice } from "@/lib/format";
+import { FollowButton } from "@/components/FollowButton";
+import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ id: string }> };
 
-export default async function VenuePage({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   const venue = await getVenue(id);
+  if (!venue) return { title: "Venue | Punchline Atlas" };
+  return {
+    title: `${venue.name} — ${venue.city}, ${venue.state} | Punchline Atlas`,
+    description: `Comedy venue ${venue.name} in ${venue.city}, ${venue.state}. Upcoming shows, capacity, and more.`,
+  };
+}
+
+export default async function VenuePage({ params }: PageProps) {
+  const { id } = await params;
+  const [venue, session] = await Promise.all([
+    getVenue(id),
+    getServerSession(authOptions),
+  ]);
 
   if (!venue) notFound();
+
+  let isFollowing = false;
+  if (session?.user?.id) {
+    const follow = await prisma.venueFollow.findUnique({
+      where: {
+        userId_venueId: {
+          userId: session.user.id,
+          venueId: venue.id,
+        },
+      },
+    });
+    isFollowing = !!follow;
+  }
 
   const formatDate = (d: Date) =>
     new Date(d).toLocaleDateString("en-US", {
@@ -30,7 +61,14 @@ export default async function VenuePage({ params }: PageProps) {
         </Link>
 
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">{venue.name}</h1>
+          <div className="flex flex-wrap items-center gap-3 mb-2">
+            <h1 className="text-3xl font-bold text-white">{venue.name}</h1>
+            <FollowButton
+              type="venue"
+              id={venue.id}
+              initialFollowing={isFollowing}
+            />
+          </div>
           <p className="text-zinc-400">
             {venue.address && (
               <>
@@ -122,13 +160,19 @@ export default async function VenuePage({ params }: PageProps) {
                 >
                   <div className="flex flex-wrap justify-between items-start gap-2">
                     <div>
-                      <p className="font-medium text-white">
+                      <Link
+                        href={`/events/${event.id}`}
+                        className="font-medium text-white hover:text-brand-gold"
+                      >
                         {event.title ??
                           event.comedians.map((ec) => ec.comedian.name).join(", ")}
-                      </p>
+                      </Link>
                       <p className="text-zinc-400 text-sm">
                         {formatDate(event.date)}
                         {event.showtime && ` • ${event.showtime}`}
+                        {formatEventPrice(event.priceMin, event.priceMax) && (
+                          <> • {formatEventPrice(event.priceMin, event.priceMax)}</>
+                        )}
                       </p>
                       <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-300">
                         {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
@@ -149,7 +193,12 @@ export default async function VenuePage({ params }: PageProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-zinc-500">No upcoming shows at the moment.</p>
+            <div className="py-12 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
+              <p className="text-zinc-400 font-medium mb-1">No upcoming shows</p>
+              <p className="text-zinc-500 text-sm">
+                Check back later or <Link href="/schedule" className="text-brand-gold hover:underline">browse the schedule</Link> for other venues.
+              </p>
+            </div>
           )}
         </section>
       </div>

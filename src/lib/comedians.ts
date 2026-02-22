@@ -46,6 +46,7 @@ export async function getComedian(slug: string) {
     include: {
       genres: true,
       socialLinks: true,
+      podcastLinks: true,
       specialReleases: { orderBy: { releaseYear: "desc" } },
       youtubeChannel: true,
       events: {

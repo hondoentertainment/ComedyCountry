@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listVenues } from "@/lib/venues";
 import { listEvents } from "@/lib/events";
+import { formatEventPrice } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -94,7 +95,7 @@ export default async function HomePage() {
               {events.map((e) => (
                 <li key={e.id}>
                   <Link
-                    href={`/schedule?from=${e.date.toISOString().slice(0, 10)}`}
+                    href={`/events/${e.id}`}
                     className="text-brand-gold hover:underline"
                   >
                     {e.comedians.map((ec) => ec.comedian.name).join(", ")}
@@ -105,6 +106,9 @@ export default async function HomePage() {
                       month: "short",
                       day: "numeric",
                     })}
+                    {formatEventPrice(e.priceMin, e.priceMax) && (
+                      <> • {formatEventPrice(e.priceMin, e.priceMax)}</>
+                    )}
                   </span>
                 </li>
               ))}

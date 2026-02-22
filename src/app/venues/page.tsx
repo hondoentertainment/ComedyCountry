@@ -1,16 +1,26 @@
 import Link from "next/link";
 import { listVenues, getVenueStates } from "@/lib/venues";
 import { VENUE_TYPE_LABELS } from "@/lib/constants";
+import { Pagination } from "@/components/Pagination";
+
+import { PAGE_SIZE } from "@/lib/constants";
+
+export const metadata = {
+  title: "Venues | Punchline Atlas",
+  description: "Browse comedy venues nationwide. Filter by state, city, or venue type.",
+};
 
 type PageProps = {
-  searchParams: Promise<{ state?: string; city?: string; type?: string; search?: string }>;
+  searchParams: Promise<{ state?: string; city?: string; type?: string; search?: string; page?: string }>;
 };
 
 export const dynamic = "force-dynamic";
 
 export default async function VenuesPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const { state, city, type, search } = params;
+  const { state, city, type, search, page } = params;
+  const currentPage = Math.max(1, parseInt(page ?? "1", 10) || 1);
+  const skip = (currentPage - 1) * PAGE_SIZE;
 
   let venues: Awaited<ReturnType<typeof listVenues>>["venues"] = [];
   let total = 0;
@@ -23,6 +33,8 @@ export default async function VenuesPage({ searchParams }: PageProps) {
         city: city || undefined,
         type: type as "CLUB" | "THEATER" | "BAR" | "FESTIVAL" | "OPEN_MIC" | undefined,
         search: search || undefined,
+        take: PAGE_SIZE,
+        skip,
       }),
       getVenueStates(),
     ]);
@@ -150,14 +162,28 @@ export default async function VenuesPage({ searchParams }: PageProps) {
         </ul>
 
         {venues.length === 0 && (
-          <p className="text-zinc-500 py-12 text-center">
-            No venues found. Try adjusting your filters or{" "}
-            <Link href="/venues" className="text-brand-gold hover:underline">
-              browse venues
+          <div className="py-16 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
+            <p className="text-zinc-400 text-lg font-medium mb-2">
+              No venues found
+            </p>
+            <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
+              Try adjusting your search, state, city, or venue type.
+            </p>
+            <Link
+              href="/venues"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+            >
+              Browse all venues
             </Link>
-            .
-          </p>
+          </div>
         )}
+
+        <Pagination
+          total={total}
+          currentPage={currentPage}
+          basePath="/venues"
+          searchParams={{ state, city, type, search }}
+        />
       </div>
     </main>
   );

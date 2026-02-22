@@ -1,15 +1,54 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
 import { getComedian } from "@/lib/comedians";
+import { authOptions } from "@/lib/auth";
+import { getUserBadgeForComedian } from "@/lib/badges";
 import { TOURING_STATUS_LABELS, SHOW_TYPE_LABELS } from "@/lib/constants";
+import { formatEventPrice } from "@/lib/format";
+import { FollowButton } from "@/components/FollowButton";
+import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export default async function ComedianPage({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const comedian = await getComedian(slug);
+  if (!comedian) return { title: "Comedian | Punchline Atlas" };
+  return {
+    title: `${comedian.name} | Punchline Atlas`,
+    description: comedian.bio
+      ? `${comedian.bio.slice(0, 155)}${comedian.bio.length > 155 ? "…" : ""}`
+      : `Comedian profile and upcoming shows for ${comedian.name}.`,
+  };
+}
+
+export default async function ComedianPage({ params }: PageProps) {
+  const { slug } = await params;
+  const [comedian, session] = await Promise.all([
+    getComedian(slug),
+    getServerSession(authOptions),
+  ]);
 
   if (!comedian) notFound();
+
+  let isFollowing = false;
+  let userBadge: Awaited<ReturnType<typeof getUserBadgeForComedian>> = null;
+  if (session?.user?.id) {
+    const [follow, badge] = await Promise.all([
+      prisma.comedianFollow.findUnique({
+        where: {
+          userId_comedianId: {
+            userId: session.user.id,
+            comedianId: comedian.id,
+          },
+        },
+      }),
+      getUserBadgeForComedian(session.user.id, comedian.id),
+    ]);
+    isFollowing = !!follow;
+    userBadge = badge;
+  }
 
   const formatDate = (d: Date) =>
     new Date(d).toLocaleDateString("en-US", {
@@ -46,9 +85,16 @@ export default async function ComedianPage({ params }: PageProps) {
             </div>
           )}
           <div className="min-w-0">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              {comedian.name}
-            </h1>
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold text-white">
+                {comedian.name}
+              </h1>
+              <FollowButton
+                type="comedian"
+                id={comedian.id}
+                initialFollowing={isFollowing}
+              />
+            </div>
             <div className="flex flex-wrap gap-2 mb-2">
               <span className="inline-block text-xs px-2 py-1 rounded bg-zinc-700 text-zinc-300">
                 {TOURING_STATUS_LABELS[comedian.touringStatus] ??
@@ -59,6 +105,24 @@ export default async function ComedianPage({ params }: PageProps) {
                   Active {comedian.yearsActiveFrom}
                   {comedian.yearsActiveTo ? `–${comedian.yearsActiveTo}` : "+"}
                 </span>
+              )}
+              {userBadge && (
+                <div className="flex flex-wrap gap-2 items-center">
+                  <span
+                    className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-brand-gold/20 text-brand-gold border-brand-gold/40"
+                    title="Seen once"
+                  >
+                    ★ First time
+                  </span>
+                  {userBadge.multiRound && (
+                    <span
+                      className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-amber-600/20 text-amber-400 border-amber-500/40"
+                      title="Seen in multiple shows"
+                    >
+                      ★★ Multiple rounds ({userBadge.roundCount})
+                    </span>
+                  )}
+                </div>
               )}
             </div>
             {comedian.bio && (
@@ -103,6 +167,29 @@ export default async function ComedianPage({ params }: PageProps) {
             </div>
           </div>
         </header>
+
+        {comedian.podcastLinks.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4">Podcasts</h2>
+            <ul className="space-y-2">
+              {comedian.podcastLinks.map((link) => (
+                <li key={link.id} className="flex items-center gap-2">
+                  <span className="text-white">{link.podcastName}</span>
+                  {link.episodeUrl ? (
+                    <a
+                      href={link.episodeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-brand-gold hover:underline text-sm"
+                    >
+                      Listen →
+                    </a>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {comedian.genres.length > 0 && (
           <section className="mb-8">
@@ -169,15 +256,18 @@ export default async function ComedianPage({ params }: PageProps) {
                   <div className="flex flex-wrap justify-between items-start gap-2">
                     <div>
                       <Link
-                        href={`/venues/${event.venue.id}`}
+                        href={`/events/${event.id}`}
                         className="font-medium text-white hover:text-brand-gold"
                       >
-                        {event.venue.name}
+                        {event.title ?? `${comedian.name} at ${event.venue.name}`}
                       </Link>
                       <p className="text-zinc-400 text-sm">
                         {event.venue.city}, {event.venue.state} •{" "}
                         {formatDate(event.date)}
                         {event.showtime && ` • ${event.showtime}`}
+                        {formatEventPrice(event.priceMin, event.priceMax) && (
+                          <> • {formatEventPrice(event.priceMin, event.priceMax)}</>
+                        )}
                       </p>
                       <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-300">
                         {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
@@ -198,7 +288,12 @@ export default async function ComedianPage({ params }: PageProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-zinc-500">No upcoming shows at the moment.</p>
+            <div className="py-12 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
+              <p className="text-zinc-400 font-medium mb-1">No upcoming shows</p>
+              <p className="text-zinc-500 text-sm">
+                Check back later or <Link href="/schedule" className="text-brand-gold hover:underline">browse the schedule</Link> for other comedians.
+              </p>
+            </div>
           )}
         </section>
       </div>

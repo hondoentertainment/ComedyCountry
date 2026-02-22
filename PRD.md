@@ -194,6 +194,7 @@ src/
 - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` — Google Maps JavaScript API key
 - `YOUTUBE_API_KEY` — YouTube Data API v3 key (for channel stats sync)
 - `BULK_IMPORT_API_KEY` — Optional; when set, POST /api/import requires this key in Authorization or X-API-Key header
+- `YOUTUBE_SYNC_API_KEY` — Optional; when set, POST /api/youtube/sync requires this key in Authorization or X-API-Key header
 
 ### Scripts
 

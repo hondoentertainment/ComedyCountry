@@ -54,3 +54,15 @@ export async function listEvents(params: ListEventsParams = {}) {
 
   return { events, total };
 }
+
+export async function getEventById(id: string) {
+  return prisma.event.findUnique({
+    where: { id },
+    include: {
+      venue: true,
+      comedians: {
+        include: { comedian: true },
+      },
+    },
+  });
+}

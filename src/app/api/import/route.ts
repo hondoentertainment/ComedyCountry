@@ -12,6 +12,15 @@ import { runBulkImport, type ImportPayload } from "@/lib/import";
  */
 export async function POST(request: Request) {
   const apiKey = process.env.BULK_IMPORT_API_KEY;
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (isProduction && !apiKey) {
+    return NextResponse.json(
+      { error: "BULK_IMPORT_API_KEY required in production" },
+      { status: 503 }
+    );
+  }
+
   if (apiKey) {
     const authHeader = request.headers.get("authorization");
     const xApiKey = request.headers.get("x-api-key");

@@ -1,12 +1,19 @@
 import Link from "next/link";
 import { listComedians } from "@/lib/comedians";
-import { TOURING_STATUS_LABELS } from "@/lib/constants";
+import { TOURING_STATUS_LABELS, PAGE_SIZE } from "@/lib/constants";
+import { Pagination } from "@/components/Pagination";
+
+export const metadata = {
+  title: "Comedians | Punchline Atlas",
+  description: "Explore comedian profiles, touring schedules, and YouTube content.",
+};
 
 type PageProps = {
   searchParams: Promise<{
     status?: string;
     genre?: string;
     search?: string;
+    page?: string;
   }>;
 };
 
@@ -14,7 +21,9 @@ export const dynamic = "force-dynamic";
 
 export default async function ComediansPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const { status, genre, search } = params;
+  const { status, genre, search, page } = params;
+  const currentPage = Math.max(1, parseInt(page ?? "1", 10) || 1);
+  const skip = (currentPage - 1) * PAGE_SIZE;
 
   let comedians: Awaited<ReturnType<typeof listComedians>>["comedians"] = [];
   let total = 0;
@@ -30,6 +39,8 @@ export default async function ComediansPage({ searchParams }: PageProps) {
         | undefined,
       genre: genre || undefined,
       search: search || undefined,
+      take: PAGE_SIZE,
+      skip,
     });
     comedians = result.comedians;
     total = result.total;
@@ -152,10 +163,28 @@ export default async function ComediansPage({ searchParams }: PageProps) {
         </ul>
 
         {comedians.length === 0 && (
-          <p className="text-zinc-500 py-12 text-center">
-            No comedians found. Try adjusting your filters.
-          </p>
+          <div className="py-16 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
+            <p className="text-zinc-400 text-lg font-medium mb-2">
+              No comedians found
+            </p>
+            <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
+              Try a different search term, touring status, or genre.
+            </p>
+            <Link
+              href="/comedians"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 transition-colors"
+            >
+              Browse all comedians
+            </Link>
+          </div>
         )}
+
+        <Pagination
+          total={total}
+          currentPage={currentPage}
+          basePath="/comedians"
+          searchParams={{ status, genre, search }}
+        />
       </div>
     </main>
   );

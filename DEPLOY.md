@@ -33,6 +33,7 @@ In Vercel → Project → **Settings** → **Environment Variables**, add:
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Yes | For map page |
 | `YOUTUBE_API_KEY` | No | For comedian channel sync (optional) |
 | `BULK_IMPORT_API_KEY` | No | Protects `/api/import` when set |
+| `YOUTUBE_SYNC_API_KEY` | No | Protects `/api/youtube/sync` when set |
 
 ### 4. Run migrations
 

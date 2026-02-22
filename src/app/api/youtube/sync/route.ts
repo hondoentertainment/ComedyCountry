@@ -6,8 +6,32 @@ import { fetchChannelStats } from "@/lib/youtube";
  * POST /api/youtube/sync
  * Syncs subscriberCount and videoCount for all YouTube channels.
  * Requires YOUTUBE_API_KEY in environment.
+ *
+ * Security: Set YOUTUBE_SYNC_API_KEY to require "Authorization: Bearer <key>"
+ * or "X-API-Key: <key>" header. If unset, endpoint is unprotected (dev only).
  */
-export async function POST() {
+export async function POST(request: Request) {
+  const apiKey = process.env.YOUTUBE_SYNC_API_KEY;
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (isProduction && !apiKey) {
+    return NextResponse.json(
+      { error: "YOUTUBE_SYNC_API_KEY required in production" },
+      { status: 503 }
+    );
+  }
+
+  if (apiKey) {
+    const authHeader = request.headers.get("authorization");
+    const xApiKey = request.headers.get("x-api-key");
+    const provided = authHeader?.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : xApiKey;
+    if (provided !== apiKey) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   if (!process.env.YOUTUBE_API_KEY) {
     return NextResponse.json(
       { error: "YOUTUBE_API_KEY not configured" },
