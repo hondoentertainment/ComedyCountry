@@ -3,10 +3,8 @@ import { test, expect } from "@playwright/test";
 test.describe("Home Page", () => {
   test("loads and displays hero", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Punchline Atlas", level: 1 })).toBeVisible();
-    await expect(
-      page.getByText(/The nationwide comedy intelligence platform/i)
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Find comedy|Anywhere/i, level: 1 })).toBeVisible();
+    await expect(page.getByText(/Discover venues|track comedian tours/i)).toBeVisible();
   });
 
   test("hero links navigate to main sections", async ({ page }) => {
@@ -15,10 +13,10 @@ test.describe("Home Page", () => {
     await expect(page).toHaveURL("/venues");
   });
 
-  test("has Recent Venues section", async ({ page }) => {
+  test("has Explore venues section", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Recent Venues" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "View all venues →" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Explore venues" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "View all venues" })).toBeVisible();
   });
 
   test("has Upcoming Shows section", async ({ page }) => {
@@ -29,17 +27,17 @@ test.describe("Home Page", () => {
 
   test("View all venues link works", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: "View all venues →" }).click();
+    await page.getByRole("link", { name: "View all venues" }).first().click();
     await expect(page).toHaveURL("/venues");
   });
 
   test("View full schedule link works", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: "View full schedule →" }).click();
+    await page.getByRole("link", { name: "View full schedule" }).click();
     await expect(page).toHaveURL("/schedule");
   });
 
-  test("venue link in Recent Venues navigates to venue detail", async ({ page }) => {
+  test("venue link in Explore venues navigates to venue detail", async ({ page }) => {
     await page.goto("/");
     const venueLink = page.locator('a[href^="/venues/"]').first();
     const count = await venueLink.count();

@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "./prisma";
 import type { VenueType, Prisma } from "@prisma/client";
 
@@ -69,7 +70,7 @@ export async function getVenue(id: string) {
   });
 }
 
-export async function getVenueStates() {
+async function getVenueStatesUncached() {
   return prisma.venue.findMany({
     select: { state: true },
     distinct: ["state"],
@@ -77,12 +78,22 @@ export async function getVenueStates() {
   });
 }
 
-export async function listVenuesWithCoordinates() {
+export async function getVenueStates() {
+  return unstable_cache(
+    getVenueStatesUncached,
+    ["venue-states"],
+    { revalidate: 300 }
+  )();
+}
+
+export async function listVenuesWithCoordinates(options?: { take?: number }) {
+  const take = options?.take ?? 500;
   return prisma.venue.findMany({
     where: {
       latitude: { not: null },
       longitude: { not: null },
     },
     orderBy: [{ state: "asc" }, { city: "asc" }, { name: "asc" }],
+    take,
   });
 }

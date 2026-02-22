@@ -67,7 +67,6 @@ export function ComedianBadges({ badges, compact = false }: ComedianBadgesProps)
                 width={64}
                 height={64}
                 className="w-16 h-16 rounded-lg object-cover shrink-0"
-                unoptimized
               />
             ) : (
               <div className="w-16 h-16 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">

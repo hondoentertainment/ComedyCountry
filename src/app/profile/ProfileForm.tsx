@@ -11,11 +11,13 @@ export function ProfileForm({ userId, initialName }: ProfileFormProps) {
   const [name, setName] = useState(initialName);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setSaved(false);
+    setError(null);
     try {
       const res = await fetch("/api/user/profile", {
         method: "PATCH",
@@ -26,7 +28,7 @@ export function ProfileForm({ userId, initialName }: ProfileFormProps) {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
-      // Error handling
+      setError("Failed to save. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -37,6 +39,11 @@ export function ProfileForm({ userId, initialName }: ProfileFormProps) {
       <label htmlFor="profileName" className="block text-sm font-medium text-zinc-400">
         Profile name
       </label>
+      {error && (
+        <p className="text-sm text-red-400" role="alert">
+          {error}
+        </p>
+      )}
       <div className="flex gap-2">
         <input
           id="profileName"

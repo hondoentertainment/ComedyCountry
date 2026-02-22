@@ -1,7 +1,19 @@
+import dynamic from "next/dynamic";
 import { listVenuesWithCoordinates } from "@/lib/venues";
-import { VenueMap } from "@/components/VenueMap";
 
-export const dynamic = "force-dynamic";
+const VenueMap = dynamic(
+  () => import("@/components/VenueMap").then((m) => ({ default: m.VenueMap })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="aspect-video rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-500">
+        Loading map…
+      </div>
+    ),
+  }
+);
+
+export const revalidate = 60;
 
 export default async function MapPage() {
   let venues: Awaited<ReturnType<typeof listVenuesWithCoordinates>> = [];

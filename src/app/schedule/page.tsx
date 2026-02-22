@@ -16,7 +16,7 @@ type PageProps = {
   searchParams: Promise<{ from?: string; city?: string; state?: string; page?: string }>;
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 function StarRating({ rating, count }: { rating: number | null; count: number }) {
   if (count === 0) return <span className="text-zinc-500 text-xs">No reviews</span>;
@@ -155,7 +155,6 @@ export default async function SchedulePage({ searchParams }: PageProps) {
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       sizes="(max-width: 640px) 100vw, 160px"
-                      unoptimized
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl text-zinc-600">

@@ -18,7 +18,7 @@ type PageProps = {
   }>;
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ComediansPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -126,7 +126,6 @@ export default async function ComediansPage({ searchParams }: PageProps) {
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                    unoptimized
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-5xl text-zinc-500 bg-gradient-to-br from-zinc-800 to-zinc-900">

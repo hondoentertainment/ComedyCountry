@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { SignInButtons } from "./SignInButtons";
 
@@ -35,6 +36,17 @@ export default async function SignInPage({
           providerIds={providerIds}
           callbackUrl={typeof callbackUrl === "string" ? callbackUrl : "/"}
         />
+        <p className="text-zinc-500 text-xs mt-6">
+          By signing in, you agree to our{" "}
+          <Link href="/terms" className="text-amber-500 hover:underline">
+            Terms and Conditions
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-amber-500 hover:underline">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </div>
     </main>
   );

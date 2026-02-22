@@ -20,14 +20,17 @@ export function FollowButton({
   const [error, setError] = useState<string | null>(null);
 
   const handleClick = async () => {
-    setLoading(true);
     setError(null);
+    const previousFollowing = following;
+    setFollowing((prev) => !prev);
+    setLoading(true);
     try {
       const res = await fetch(`/api/follow/${type}/${id}`, {
         method: "POST",
       });
 
       if (res.status === 401) {
+        setFollowing(previousFollowing);
         window.location.href = signInUrl;
         return;
       }
@@ -40,6 +43,7 @@ export function FollowButton({
       const data = (await res.json()) as { following: boolean };
       setFollowing(data.following);
     } catch (err) {
+      setFollowing(previousFollowing);
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -52,7 +56,9 @@ export function FollowButton({
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+        aria-busy={loading}
+        aria-label={following ? "Following (click to unfollow)" : "Follow"}
+        className={`px-4 py-2.5 rounded-md text-sm font-medium transition-colors min-h-[44px] ${
           following
             ? "bg-brand-gold text-brand-dark hover:bg-brand-gold/90"
             : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white"

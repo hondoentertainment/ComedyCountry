@@ -2,16 +2,22 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function SignUpForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!agreeToTerms) {
+      setError("You must agree to the Terms and Conditions and Privacy Policy.");
+      return;
+    }
     setError("");
     setLoading(true);
     try {
@@ -76,6 +82,26 @@ export function SignUpForm() {
           className="w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           placeholder="At least 8 characters"
         />
+      </div>
+      <div className="flex items-start gap-3">
+        <input
+          id="agreeToTerms"
+          type="checkbox"
+          checked={agreeToTerms}
+          onChange={(e) => setAgreeToTerms(e.target.checked)}
+          className="mt-1 h-4 w-4 rounded border-zinc-600 bg-zinc-800 text-amber-600 focus:ring-amber-500 focus:ring-offset-0"
+        />
+        <label htmlFor="agreeToTerms" className="text-sm text-zinc-400">
+          I agree to the{" "}
+          <Link href="/terms" className="text-amber-500 hover:underline">
+            Terms and Conditions
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-amber-500 hover:underline">
+            Privacy Policy
+          </Link>
+          .
+        </label>
       </div>
       <button
         type="submit"

@@ -21,7 +21,7 @@ export default function TermsPage() {
         Terms and Conditions
       </h1>
       <p className="text-zinc-400 text-sm mb-10">
-        Last updated: February 21, 2025
+        Last updated: February 22, 2025
       </p>
 
       <div className="prose prose-invert prose-zinc max-w-none space-y-8 text-zinc-300">
@@ -31,8 +31,11 @@ export default function TermsPage() {
           </h2>
           <p>
             By accessing or using Punchline Atlas (&quot;the Service&quot;), you agree to
-            be bound by these Terms and Conditions. If you do not agree, do not
-            use the Service.
+            be bound by these Terms and Conditions and our{" "}
+            <Link href="/privacy" className="text-brand-gold hover:underline">
+              Privacy Policy
+            </Link>
+            . If you do not agree, do not use the Service.
           </p>
         </section>
 
@@ -83,6 +86,19 @@ export default function TermsPage() {
             content and third-party data), and software, is owned by Punchline
             Atlas. You may not copy, modify, or distribute our content without
             permission.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-2">
+            5a. User-Generated Content
+          </h2>
+          <p>
+            You retain ownership of content you create (reviews, comments, ratings).
+            By submitting such content, you grant Punchline Atlas a worldwide,
+            non-exclusive, royalty-free license to use, display, and store it in
+            connection with the Service. You represent that your content does not
+            infringe others&apos; rights and complies with these terms.
           </p>
         </section>
 

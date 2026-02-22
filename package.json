@@ -17,6 +17,8 @@
     "db:import": "tsx scripts/bulk-import.ts",
     "scrape:jester": "tsx scripts/scrape-jester-comedians.ts",
     "db:import-jester": "tsx scripts/import-jester-comedians.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
@@ -34,20 +36,27 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10",
     "dotenv": "^17.3.1",
     "eslint": "^8",
     "eslint-config-next": "^14.2.0",
+    "jsdom": "^28.1.0",
     "playwright": "^1.58.2",
     "postcss": "^8",
     "prisma": "^5.14.0",
     "tailwindcss": "^3.4.0",
     "tsx": "^4.7.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   }
 }

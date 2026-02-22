@@ -92,7 +92,6 @@ export default async function ComedianPage({ params }: PageProps) {
               width={128}
               height={128}
               className="w-32 h-32 rounded-lg object-cover shrink-0"
-              unoptimized
             />
           ) : (
             <div className="w-32 h-32 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-4xl text-zinc-500">

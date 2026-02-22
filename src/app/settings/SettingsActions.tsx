@@ -7,9 +7,14 @@ export function SettingsActions() {
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportSuccess, setExportSuccess] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleExport = async () => {
     setExporting(true);
+    setExportError(null);
+    setExportSuccess(false);
     try {
       const res = await fetch("/api/user/export");
       if (!res.ok) throw new Error("Export failed");
@@ -23,8 +28,10 @@ export function SettingsActions() {
       a.download = `punchline-atlas-data-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
+      setExportSuccess(true);
+      setTimeout(() => setExportSuccess(false), 4000);
     } catch {
-      alert("Failed to export data. Please try again.");
+      setExportError("Failed to export data. Please try again.");
     } finally {
       setExporting(false);
     }
@@ -33,6 +40,7 @@ export function SettingsActions() {
   const handleDelete = async () => {
     if (deleteConfirm !== "DELETE") return;
     setDeleting(true);
+    setDeleteError(null);
     try {
       const res = await fetch("/api/user/delete", { method: "DELETE" });
       if (!res.ok) {
@@ -42,7 +50,7 @@ export function SettingsActions() {
       await signOut({ callbackUrl: "/" });
       window.location.href = "/";
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete account.");
+      setDeleteError(err instanceof Error ? err.message : "Failed to delete account.");
     } finally {
       setDeleting(false);
     }
@@ -59,9 +67,19 @@ export function SettingsActions() {
           <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
             <h3 className="font-medium text-white mb-1">Export all data</h3>
             <p className="text-sm text-zinc-400 mb-3">
-              Download a copy of your profile, followed comedians, and saved
-              venues in JSON format.
+              Download a copy of your profile, followed comedians, saved venues,
+              event reviews, and comedian tier ratings in JSON format (GDPR data portability).
             </p>
+            {exportError && (
+              <p className="text-sm text-red-400 mb-3" role="alert">
+                {exportError}
+              </p>
+            )}
+            {exportSuccess && (
+              <p className="text-sm text-emerald-400 mb-3" role="status">
+                Data exported successfully.
+              </p>
+            )}
             <button
               type="button"
               onClick={handleExport}
@@ -78,6 +96,11 @@ export function SettingsActions() {
               Permanently delete your account and all associated data. This
               cannot be undone.
             </p>
+            {deleteError && (
+              <p className="text-sm text-red-400 mb-3" role="alert">
+                {deleteError}
+              </p>
+            )}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
               <div className="flex-1">
                 <label htmlFor="deleteConfirm" className="block text-sm text-zinc-400 mb-1">

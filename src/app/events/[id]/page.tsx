@@ -8,6 +8,7 @@ import { getUserReview, getEventRatingStats } from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
 import { EventReviewsSection } from "@/components/EventReviewsSection";
+import { EventStructuredData } from "@/components/StructuredData";
 
 export const dynamic = "force-dynamic";
 
@@ -51,9 +52,11 @@ export default async function EventPage({ params }: PageProps) {
 
   const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
   const img = event.comedians[0]?.comedian?.headshotUrl;
+  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
     <main className="min-h-screen">
+      <EventStructuredData event={event} baseUrl={siteUrl} />
       {/* Spotify-style hero with Yelp rating prominence */}
       <div className="relative h-48 sm:h-64 md:h-72 bg-brand-charcoal">
         {img ? (
@@ -64,7 +67,6 @@ export default async function EventPage({ params }: PageProps) {
             className="object-cover"
             priority
             sizes="100vw"
-            unoptimized
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-6xl text-zinc-600">

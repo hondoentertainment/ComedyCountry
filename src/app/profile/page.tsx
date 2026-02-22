@@ -77,7 +77,6 @@ export default async function ProfilePage() {
               width={96}
               height={96}
               className="w-24 h-24 rounded-full object-cover shrink-0"
-              unoptimized
             />
           ) : (
             <div className="w-24 h-24 rounded-full bg-zinc-700 shrink-0 flex items-center justify-center text-3xl text-zinc-500">
@@ -141,7 +140,6 @@ export default async function ProfilePage() {
                           width={64}
                           height={64}
                           className="w-16 h-16 rounded-lg object-cover shrink-0"
-                          unoptimized
                         />
                       ) : (
                         <div className="w-16 h-16 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">

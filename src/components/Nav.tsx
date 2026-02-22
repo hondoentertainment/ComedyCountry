@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { SearchBar } from "./SearchBar";
+import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 
 const navItems = [
@@ -13,9 +15,25 @@ const navItems = [
   { href: "/following", label: "Following" },
 ];
 
+function isActive(href: string, pathname: string) {
+  if (href === "/") return pathname === "/";
+  return pathname.startsWith(href);
+}
+
 export function Nav() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    if (mobileOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [mobileOpen]);
 
   return (
     <nav className="border-b border-zinc-800/80 bg-brand-dark/98 backdrop-blur-md sticky top-0 z-50">
@@ -23,18 +41,23 @@ export function Nav() {
         <div className="flex h-14 items-center justify-between">
           <Link
             href="/"
-            className="text-lg font-bold text-white hover:text-brand-gold transition-colors duration-150"
+            className="text-lg font-bold text-white hover:text-brand-gold transition-colors duration-150 shrink-0"
           >
             Punchline Atlas
           </Link>
 
+          <div className="hidden md:block flex-1 max-w-xs mx-4">
+            <SearchBar />
+          </div>
+
           {/* Desktop nav — Spotify-style minimal */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-1 shrink-0">
             <ul className="flex gap-0.5">
               {navItems.map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}
+                    aria-current={isActive(href, pathname) ? "page" : undefined}
                     className="block px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                   >
                     {label}
@@ -119,6 +142,7 @@ export function Nav() {
                 <li key={href}>
                   <Link
                     href={href}
+                    aria-current={isActive(href, pathname) ? "page" : undefined}
                     onClick={() => setMobileOpen(false)}
                     className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
                   >

@@ -118,7 +118,6 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
                   width={32}
                   height={32}
                   className="w-8 h-8 rounded-full shrink-0"
-                  unoptimized
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full shrink-0 bg-zinc-700 flex items-center justify-center text-xs text-zinc-400">
