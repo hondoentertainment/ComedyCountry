@@ -75,6 +75,21 @@ describe("comedians", () => {
       );
     });
 
+    it("filters by genre with exact match when provided", async () => {
+      mockPrisma.comedian.findMany.mockResolvedValue([]);
+      mockPrisma.comedian.count.mockResolvedValue(0);
+
+      await listComedians({ genre: "observational" });
+
+      expect(mockPrisma.comedian.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            genres: { some: { genre: { equals: "observational", mode: "insensitive" } } },
+          }),
+        })
+      );
+    });
+
     it("respects take and skip", async () => {
       mockPrisma.comedian.findMany.mockResolvedValue([]);
       mockPrisma.comedian.count.mockResolvedValue(50);

@@ -7,6 +7,16 @@ export const dynamic = "force-dynamic";
 function HomeSectionsFallback() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+      {/* Made for you skeleton — shown while session and for-you data load */}
+      <div className="mb-14">
+        <div className="h-8 w-40 bg-zinc-800 rounded animate-pulse mb-4" />
+        <div className="h-4 w-56 bg-zinc-800 rounded animate-pulse mb-6" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="aspect-[4/3] rounded-lg bg-zinc-800 animate-pulse" />
+          ))}
+        </div>
+      </div>
       <div className="mb-14">
         <div className="h-8 w-48 bg-zinc-800 rounded animate-pulse mb-4" />
         <div className="h-4 w-64 bg-zinc-800 rounded animate-pulse mb-6" />
@@ -42,8 +52,14 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-2">
             <Link
-              href="/schedule"
+              href="/search"
               className="px-4 py-2.5 rounded-full bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
+            >
+              Search shows & venues
+            </Link>
+            <Link
+              href="/schedule"
+              className="px-4 py-2.5 rounded-full bg-brand-surface border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-brand-surface-elevated font-medium transition-colors"
             >
               Browse schedule
             </Link>

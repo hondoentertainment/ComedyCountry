@@ -39,14 +39,32 @@ export async function listVenues(params: ListVenuesParams = {}) {
       skip,
       orderBy: [{ state: "asc" }, { city: "asc" }, { name: "asc" }],
       include: {
-        _count: { select: { events: true } },
         photos: { orderBy: { sortOrder: "asc" }, take: 1 },
       },
     }),
     prisma.venue.count({ where }),
   ]);
 
-  return { venues, total };
+  if (venues.length === 0) return { venues: [], total };
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  const upcomingCounts = await prisma.event.groupBy({
+    by: ["venueId"],
+    where: {
+      venueId: { in: venues.map((v) => v.id) },
+      date: { gte: today },
+    },
+    _count: { id: true },
+  });
+  const countByVenue = Object.fromEntries(upcomingCounts.map((r) => [r.venueId, r._count.id]));
+
+  const venuesWithCounts = venues.map((v) => ({
+    ...v,
+    upcomingEventCount: countByVenue[v.id] ?? 0,
+  }));
+
+  return { venues: venuesWithCounts, total };
 }
 
 export async function getVenue(id: string) {

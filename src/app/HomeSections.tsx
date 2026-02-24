@@ -157,8 +157,9 @@ export async function HomeSections() {
           </div>
         ) : (
           <div className="py-16 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400">No upcoming shows yet.</p>
-            <Link href="/schedule" className="inline-block mt-3 text-brand-gold hover:underline font-medium">
+            <p className="text-zinc-400 mb-1">No upcoming shows in our database yet.</p>
+            <p className="text-zinc-500 text-sm mb-3">We&apos;re adding shows every day—check back soon!</p>
+            <Link href="/schedule" className="inline-block text-brand-gold hover:underline font-medium">
               View schedule →
             </Link>
           </div>
@@ -200,7 +201,7 @@ export async function HomeSections() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2">
                       <span className="inline-block px-2 py-0.5 rounded bg-black/50 text-zinc-300 text-xs">
-                        {v._count.events} upcoming show{v._count.events !== 1 ? "s" : ""}
+                        {(v.upcomingEventCount ?? 0)} upcoming show{(v.upcomingEventCount ?? 0) !== 1 ? "s" : ""}
                       </span>
                     </div>
                   </div>
@@ -216,8 +217,9 @@ export async function HomeSections() {
           </div>
         ) : (
           <div className="py-16 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400">No venues yet.</p>
-            <Link href="/venues" className="inline-block mt-3 text-brand-gold hover:underline font-medium">
+            <p className="text-zinc-400 mb-1">No venues in our database yet.</p>
+            <p className="text-zinc-500 text-sm mb-3">We&apos;re growing our catalog—come back soon.</p>
+            <Link href="/venues" className="inline-block text-brand-gold hover:underline font-medium">
               Browse venues →
             </Link>
           </div>

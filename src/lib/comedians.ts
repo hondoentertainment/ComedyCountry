@@ -1,6 +1,15 @@
 import { prisma } from "./prisma";
 import type { TouringStatus, Prisma } from "@prisma/client";
 
+export async function listDistinctGenres(): Promise<string[]> {
+  const rows = await prisma.comedianGenre.findMany({
+    select: { genre: true },
+    distinct: ["genre"],
+    orderBy: { genre: "asc" },
+  });
+  return rows.map((r) => r.genre);
+}
+
 type ListComediansParams = {
   touringStatus?: TouringStatus;
   genre?: string;
@@ -16,7 +25,7 @@ export async function listComedians(params: ListComediansParams = {}) {
 
   if (touringStatus) where.touringStatus = touringStatus;
   if (genre)
-    where.genres = { some: { genre: { contains: genre, mode: "insensitive" } } };
+    where.genres = { some: { genre: { equals: genre, mode: "insensitive" } } };
   if (search)
     where.OR = [
       { name: { contains: search, mode: "insensitive" } },

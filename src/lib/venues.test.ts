@@ -13,6 +13,9 @@ vi.mock("./prisma", () => ({
       findUnique: vi.fn(),
       count: vi.fn(),
     },
+    event: {
+      groupBy: vi.fn(),
+    },
   },
 }));
 
@@ -28,6 +31,9 @@ const mockPrisma = prisma as {
     findUnique: ReturnType<typeof vi.fn>;
     count: ReturnType<typeof vi.fn>;
   };
+  event: {
+    groupBy: ReturnType<typeof vi.fn>;
+  };
 };
 
 describe("venues", () => {
@@ -40,10 +46,13 @@ describe("venues", () => {
       const mockVenues = [{ id: "v1", name: "Comedy Club", state: "CA" }];
       mockPrisma.venue.findMany.mockResolvedValue(mockVenues);
       mockPrisma.venue.count.mockResolvedValue(1);
+      mockPrisma.event.groupBy.mockResolvedValue([]);
 
       const result = await listVenues();
 
-      expect(result).toEqual({ venues: mockVenues, total: 1 });
+      expect(result.venues).toHaveLength(1);
+      expect(result.venues[0]).toMatchObject({ id: "v1", name: "Comedy Club", state: "CA", upcomingEventCount: 0 });
+      expect(result.total).toBe(1);
       expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {},
@@ -51,6 +60,31 @@ describe("venues", () => {
           skip: 0,
         })
       );
+    });
+
+    it("returns early without groupBy when no venues", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+      mockPrisma.venue.count.mockResolvedValue(0);
+
+      const result = await listVenues();
+
+      expect(result).toEqual({ venues: [], total: 0 });
+      expect(mockPrisma.event.groupBy).not.toHaveBeenCalled();
+    });
+
+    it("merges upcomingEventCount from groupBy", async () => {
+      const mockVenues = [{ id: "v1", name: "Club A", state: "CA" }, { id: "v2", name: "Club B", state: "NY" }];
+      mockPrisma.venue.findMany.mockResolvedValue(mockVenues);
+      mockPrisma.venue.count.mockResolvedValue(2);
+      mockPrisma.event.groupBy.mockResolvedValue([
+        { venueId: "v1", _count: { id: 5 } },
+        { venueId: "v2", _count: { id: 2 } },
+      ]);
+
+      const result = await listVenues();
+
+      expect(result.venues[0]).toMatchObject({ id: "v1", upcomingEventCount: 5 });
+      expect(result.venues[1]).toMatchObject({ id: "v2", upcomingEventCount: 2 });
     });
 
     it("filters by state when provided", async () => {

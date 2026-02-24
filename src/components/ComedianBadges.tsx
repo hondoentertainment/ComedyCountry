@@ -63,7 +63,7 @@ export function ComedianBadges({ badges, compact = false }: ComedianBadgesProps)
             {b.headshotUrl ? (
               <Image
                 src={b.headshotUrl}
-                alt={b.comedianName}
+                alt={`Headshot of ${b.comedianName}`}
                 width={64}
                 height={64}
                 className="w-16 h-16 rounded-lg object-cover shrink-0"

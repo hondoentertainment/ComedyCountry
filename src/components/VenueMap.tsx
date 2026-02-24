@@ -138,6 +138,30 @@ function VenueMapInner({ venues }: VenueMapProps) {
 
   const selectedVenue = validVenues.find((v) => v.id === selectedVenueId);
 
+  if (validVenues.length === 0) {
+    return (
+      <div className="rounded-lg overflow-hidden border border-zinc-700">
+        <div className="aspect-video rounded-lg bg-zinc-800 border border-zinc-700 flex flex-col items-center justify-center text-zinc-400 p-8 text-center min-h-[320px]">
+          <p className="font-medium text-zinc-300 mb-2">No venues with coordinates</p>
+          <p className="text-sm mb-4">
+            There are no venues with location data to display on the map.
+          </p>
+          <p className="text-sm text-zinc-500 max-w-md">
+            Venue coordinates can be added in the admin to show venues here. Try
+            clearing any filters above, or browse the{" "}
+            <Link
+              href="/venues"
+              className="text-brand-gold hover:underline font-medium"
+            >
+              Venues
+            </Link>{" "}
+            list for venues that may not yet have map data.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-lg overflow-hidden border border-zinc-700">
       <GoogleMap

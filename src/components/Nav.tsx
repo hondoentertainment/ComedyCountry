@@ -50,6 +50,27 @@ export function Nav() {
             <SearchBar />
           </div>
 
+          {/* Mobile search icon — navigates to /search */}
+          <Link
+            href="/search"
+            className="md:hidden p-2.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+            aria-label="Search"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </Link>
+
           {/* Desktop nav — Spotify-style minimal */}
           <div className="hidden md:flex items-center gap-1 shrink-0">
             <ul className="flex gap-0.5">
@@ -101,7 +122,7 @@ export function Nav() {
             </div>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button — shown with search icon */}
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -137,6 +158,9 @@ export function Nav() {
         {/* Mobile nav */}
         {mobileOpen && (
           <div className="md:hidden border-t border-zinc-800/80 py-4 bg-brand-surface/95">
+            <div className="px-4 pb-3">
+              <SearchBar />
+            </div>
             <ul className="flex flex-col gap-0.5">
               {navItems.map(({ href, label }) => (
                 <li key={href}>

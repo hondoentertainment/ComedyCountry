@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { listComedians } from "@/lib/comedians";
+import { listComedians, listDistinctGenres } from "@/lib/comedians";
 import { TOURING_STATUS_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { Pagination } from "@/components/Pagination";
 
@@ -28,6 +28,7 @@ export default async function ComediansPage({ searchParams }: PageProps) {
 
   let comedians: Awaited<ReturnType<typeof listComedians>>["comedians"] = [];
   let total = 0;
+  let genres: string[] = [];
 
   try {
     const result = await listComedians({
@@ -45,6 +46,7 @@ export default async function ComediansPage({ searchParams }: PageProps) {
     });
     comedians = result.comedians;
     total = result.total;
+    genres = await listDistinctGenres();
   } catch {
     // DB not configured
   }
@@ -93,14 +95,19 @@ export default async function ComediansPage({ searchParams }: PageProps) {
           </div>
           <div>
             <label htmlFor="genre" className="sr-only">Genre</label>
-            <input
+            <select
               id="genre"
               name="genre"
-              type="text"
-              placeholder="Genre"
-              defaultValue={genre}
-              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 w-40"
-            />
+              defaultValue={genre ?? ""}
+              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50 min-w-[140px]"
+            >
+              <option value="">All genres</option>
+              {genres.map((g) => (
+                <option key={g} value={g}>
+                  {g.charAt(0).toUpperCase() + g.slice(1)}
+                </option>
+              ))}
+            </select>
           </div>
           <button
             type="submit"
@@ -122,7 +129,7 @@ export default async function ComediansPage({ searchParams }: PageProps) {
                 {comedian.headshotUrl ? (
                   <Image
                     src={comedian.headshotUrl}
-                    alt={comedian.name}
+                    alt={`Headshot of ${comedian.name}`}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"

@@ -1,8 +1,11 @@
 import dynamic from "next/dynamic";
 import { listVenuesWithCoordinates } from "@/lib/venues";
 
-const VenueMap = dynamic(
-  () => import("@/components/VenueMap").then((m) => ({ default: m.VenueMap })),
+const MapPageContent = dynamic(
+  () =>
+    import("@/components/MapPageContent").then((m) => ({
+      default: m.MapPageContent,
+    })),
   {
     ssr: false,
     loading: () => (
@@ -41,7 +44,7 @@ export default async function MapPage() {
         <p className="text-zinc-400 mb-8">
           Browse comedy venues across the country. Click a marker for details.
         </p>
-        <VenueMap venues={venuesForMap} />
+        <MapPageContent venues={venuesForMap} />
       </div>
     </main>
   );

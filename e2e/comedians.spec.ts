@@ -13,7 +13,7 @@ test.describe("Comedians Page", () => {
     await page.goto("/comedians");
     await expect(page.getByPlaceholder("Search comedians...")).toBeVisible();
     await expect(page.getByRole("combobox", { name: /touring status/i })).toBeVisible();
-    await expect(page.getByPlaceholder(/Genre/i)).toBeVisible();
+    await expect(page.getByRole("combobox", { name: /genre/i })).toBeVisible();
     await expect(page.getByRole("button", { name: "Filter" })).toBeVisible();
   });
 

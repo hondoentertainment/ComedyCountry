@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { ComedianTierRatingForm } from "./ComedianTierRatingForm";
 
 type TabId = "info" | "rate";
@@ -23,6 +23,38 @@ export function ComedianPageTabs({
   infoContent,
 }: ComedianPageTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>("info");
+  const infoRef = useRef<HTMLButtonElement>(null);
+  const rateRef = useRef<HTMLButtonElement>(null);
+
+  const tabRefs = { info: infoRef, rate: rateRef };
+
+  const focusTab = useCallback((tab: TabId) => {
+    tabRefs[tab].current?.focus();
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent, currentTab: TabId) => {
+      let nextTab: TabId | null = null;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        nextTab = currentTab === "info" ? "rate" : "info";
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        nextTab = currentTab === "rate" ? "info" : "rate";
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        nextTab = "info";
+      } else if (e.key === "End") {
+        e.preventDefault();
+        nextTab = "rate";
+      }
+      if (nextTab) {
+        setActiveTab(nextTab);
+        focusTab(nextTab);
+      }
+    },
+    [focusTab]
+  );
 
   return (
     <div>
@@ -32,11 +64,15 @@ export function ComedianPageTabs({
         className="flex gap-1 border-b border-zinc-800 mb-6"
       >
         <button
+          ref={infoRef}
+          type="button"
           role="tab"
           aria-selected={activeTab === "info"}
           aria-controls="comedian-info-panel"
           id="tab-info"
+          tabIndex={activeTab === "info" ? 0 : -1}
           onClick={() => setActiveTab("info")}
+          onKeyDown={(e) => handleKeyDown(e, "info")}
           className={`px-4 py-3 text-sm font-medium transition-colors -mb-px border-b-2 ${
             activeTab === "info"
               ? "text-brand-gold border-brand-gold"
@@ -46,11 +82,15 @@ export function ComedianPageTabs({
           Info
         </button>
         <button
+          ref={rateRef}
+          type="button"
           role="tab"
           aria-selected={activeTab === "rate"}
           aria-controls="comedian-rate-panel"
           id="tab-rate"
+          tabIndex={activeTab === "rate" ? 0 : -1}
           onClick={() => setActiveTab("rate")}
+          onKeyDown={(e) => handleKeyDown(e, "rate")}
           className={`px-4 py-3 text-sm font-medium transition-colors -mb-px border-b-2 ${
             activeTab === "rate"
               ? "text-brand-gold border-brand-gold"
@@ -66,6 +106,7 @@ export function ComedianPageTabs({
         id="comedian-info-panel"
         aria-labelledby="tab-info"
         hidden={activeTab !== "info"}
+        tabIndex={activeTab === "info" ? 0 : -1}
         className={activeTab !== "info" ? "sr-only" : ""}
       >
         {infoContent}
@@ -76,6 +117,7 @@ export function ComedianPageTabs({
         id="comedian-rate-panel"
         aria-labelledby="tab-rate"
         hidden={activeTab !== "rate"}
+        tabIndex={activeTab === "rate" ? 0 : -1}
         className={activeTab !== "rate" ? "sr-only" : ""}
       >
         <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">

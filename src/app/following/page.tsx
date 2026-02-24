@@ -18,6 +18,7 @@ export default async function FollowingPage() {
   const [comedianFollows, venueFollows] = await Promise.all([
     prisma.comedianFollow.findMany({
       where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
       include: {
         comedian: {
           select: {
@@ -31,6 +32,7 @@ export default async function FollowingPage() {
     }),
     prisma.venueFollow.findMany({
       where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
       include: {
         venue: {
           select: {
@@ -72,7 +74,7 @@ export default async function FollowingPage() {
                       {f.comedian.headshotUrl ? (
                         <Image
                           src={f.comedian.headshotUrl}
-                          alt=""
+                          alt={`Headshot of ${f.comedian.name}`}
                           width={64}
                           height={64}
                           className="w-16 h-16 rounded-lg object-cover shrink-0"
@@ -122,7 +124,7 @@ export default async function FollowingPage() {
                       {f.venue.photos[0] ? (
                         <Image
                           src={f.venue.photos[0].url}
-                          alt=""
+                          alt={`Photo of ${f.venue.name}`}
                           width={64}
                           height={64}
                           className="w-16 h-16 rounded-lg object-cover shrink-0"

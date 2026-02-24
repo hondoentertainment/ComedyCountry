@@ -73,7 +73,7 @@ export default async function ProfilePage() {
           {user.image ? (
             <Image
               src={user.image}
-              alt={displayName}
+              alt={`Profile photo of ${displayName}`}
               width={96}
               height={96}
               className="w-24 h-24 rounded-full object-cover shrink-0"
@@ -136,7 +136,7 @@ export default async function ProfilePage() {
                       {c.headshotUrl ? (
                         <Image
                           src={c.headshotUrl}
-                          alt={c.name}
+                          alt={`Headshot of ${c.name}`}
                           width={64}
                           height={64}
                           className="w-16 h-16 rounded-lg object-cover shrink-0"

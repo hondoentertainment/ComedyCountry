@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { getVenue } from "@/lib/venues";
@@ -7,6 +6,8 @@ import { authOptions } from "@/lib/auth";
 import { VENUE_TYPE_LABELS, SHOW_TYPE_LABELS } from "@/lib/constants";
 import { formatEventPrice } from "@/lib/format";
 import { FollowButton } from "@/components/FollowButton";
+import { ImageGalleryLightbox } from "@/components/ImageGalleryLightbox";
+import { VenueMap } from "@/components/VenueMap";
 import { VenueStructuredData } from "@/components/StructuredData";
 import { prisma } from "@/lib/prisma";
 
@@ -95,6 +96,25 @@ export default async function VenuePage({ params }: PageProps) {
           </div>
         </header>
 
+        {venue.latitude != null && venue.longitude != null && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4">Location</h2>
+            <VenueMap
+              venues={[
+                {
+                  id: venue.id,
+                  name: venue.name,
+                  address: venue.address,
+                  city: venue.city,
+                  state: venue.state,
+                  latitude: venue.latitude,
+                  longitude: venue.longitude,
+                },
+              ]}
+            />
+          </section>
+        )}
+
         <section className="mb-8">
           {venue.website && (
             <a
@@ -132,25 +152,14 @@ export default async function VenuePage({ params }: PageProps) {
         {venue.photos.length > 0 && (
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">Photos</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {venue.photos.map((photo) => (
-                <a
-                  key={photo.id}
-                  href={photo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block aspect-video rounded-lg overflow-hidden bg-zinc-800"
-                >
-                  <Image
-                    src={photo.url}
-                    alt={photo.caption ?? venue.name}
-                    width={400}
-                    height={225}
-                    className="w-full h-full object-cover"
-                  />
-                </a>
-              ))}
-            </div>
+            <ImageGalleryLightbox
+              photos={venue.photos.map((p) => ({
+                id: p.id,
+                url: p.url,
+                caption: p.caption,
+              }))}
+              venueName={venue.name}
+            />
           </section>
         )}
 

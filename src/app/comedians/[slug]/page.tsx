@@ -88,7 +88,7 @@ export default async function ComedianPage({ params }: PageProps) {
           {comedian.headshotUrl ? (
             <Image
               src={comedian.headshotUrl}
-              alt={comedian.name}
+              alt={`Headshot of ${comedian.name}`}
               width={128}
               height={128}
               className="w-32 h-32 rounded-lg object-cover shrink-0"

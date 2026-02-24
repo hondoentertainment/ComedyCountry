@@ -114,7 +114,7 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
               {r.user.image ? (
                 <Image
                   src={r.user.image}
-                  alt=""
+                  alt={`Profile photo of ${displayName(r)}`}
                   width={32}
                   height={32}
                   className="w-8 h-8 rounded-full shrink-0"

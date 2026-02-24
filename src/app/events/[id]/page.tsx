@@ -8,6 +8,7 @@ import { getUserReview, getEventRatingStats } from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
 import { EventReviewsSection } from "@/components/EventReviewsSection";
+import { EventShareButtons } from "@/components/EventShareButtons";
 import { EventStructuredData } from "@/components/StructuredData";
 
 export const dynamic = "force-dynamic";
@@ -113,6 +114,13 @@ export default async function EventPage({ params }: PageProps) {
           <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded bg-zinc-700/80 text-zinc-300">
             {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
           </span>
+          <div className="mt-4">
+            <EventShareButtons
+              title={title}
+              url={`${siteUrl}/events/${id}`}
+              venueName={event.venue.name}
+            />
+          </div>
           <div className="flex flex-wrap gap-2 mt-4">
             {event.comedians.map((ec) => (
               <Link

@@ -151,7 +151,7 @@ export default async function VenuesPage({ searchParams }: PageProps) {
                   </div>
                   <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
                     <span className="inline-block px-2 py-0.5 rounded-md bg-black/50 text-zinc-300 text-xs">
-                      {venue._count.events} upcoming show{venue._count.events !== 1 ? "s" : ""}
+                      {(venue.upcomingEventCount ?? 0)} upcoming show{(venue.upcomingEventCount ?? 0) !== 1 ? "s" : ""}
                     </span>
                     {venue.capacity && (
                       <span className="text-xs text-zinc-400">
