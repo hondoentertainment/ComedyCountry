@@ -33,22 +33,33 @@ const mapContainerStyle = {
 const defaultCenter = { lat: 39.8283, lng: -98.5795 }; // USA center
 
 /** Placeholder shown when user has not consented to non-essential cookies (Google Maps). */
-function MapConsentPlaceholder({ venueCount }: { venueCount: number }) {
+function MapConsentPlaceholder({
+  venueCount,
+  consentRejected,
+}: {
+  venueCount: number;
+  consentRejected: boolean;
+}) {
   const { openPreferences } = useCookieConsent();
   return (
-    <div className="aspect-video rounded-lg bg-zinc-800 border border-zinc-700 flex flex-col items-center justify-center text-zinc-400 p-8 text-center">
-      <p className="mb-2">The map uses Google Maps, which may set cookies.</p>
-      <p className="text-sm mb-4">
-        Accept cookies in the banner below or via{" "}
-        <button
-          type="button"
-          onClick={openPreferences}
-          className="text-brand-gold hover:underline font-medium"
-        >
-          Cookie preferences
-        </button>{" "}
-        in the footer to view the map.
+    <div className="aspect-video rounded-lg bg-zinc-800 border border-zinc-700 flex flex-col items-center justify-center text-zinc-400 p-8 text-center min-h-[320px]">
+      <p className="mb-2 text-zinc-300 font-medium">
+        {consentRejected
+          ? "You chose essential-only cookies."
+          : "The map uses Google Maps, which may set cookies."}
       </p>
+      <p className="text-sm mb-4">
+        {consentRejected
+          ? "To view the interactive map of comedy venues, accept cookies below."
+          : "Accept cookies in the banner below or use Cookie preferences in the footer to view the map."}
+      </p>
+      <button
+        type="button"
+        onClick={openPreferences}
+        className="px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors mb-4"
+      >
+        {consentRejected ? "Accept cookies to view map" : "Update cookie preference"}
+      </button>
       <p className="text-sm text-zinc-500">
         {venueCount} venue{venueCount !== 1 ? "s" : ""} with coordinates available.
       </p>
@@ -239,7 +250,7 @@ function VenueMapInner({ venues }: VenueMapProps) {
 }
 
 export function VenueMap({ venues }: VenueMapProps) {
-  const { hasConsented } = useCookieConsent();
+  const { hasConsented, consent } = useCookieConsent();
   const validVenues = useMemo(
     () =>
       venues.filter(
@@ -249,7 +260,12 @@ export function VenueMap({ venues }: VenueMapProps) {
   );
 
   if (!hasConsented) {
-    return <MapConsentPlaceholder venueCount={validVenues.length} />;
+    return (
+      <MapConsentPlaceholder
+        venueCount={validVenues.length}
+        consentRejected={consent === "rejected"}
+      />
+    );
   }
 
   return <VenueMapInner venues={venues} />;

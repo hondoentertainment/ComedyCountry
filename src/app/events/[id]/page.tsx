@@ -18,9 +18,27 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const event = await getEventById(id);
   if (!event) return { title: "Event | Punchline Atlas" };
   const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
+  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+  const description = `Rate and review ${title} at ${event.venue.name}`;
+  const img = event.comedians[0]?.comedian?.headshotUrl;
+  const images = img
+    ? [{ url: img, width: 1200, height: 630, alt: title }]
+    : undefined;
   return {
     title: `${title} | Punchline Atlas`,
-    description: `Rate and review ${title} at ${event.venue.name}`,
+    description,
+    openGraph: {
+      title: `${title} | Punchline Atlas`,
+      description,
+      url: `${siteUrl}/events/${id}`,
+      images,
+    },
+    twitter: {
+      card: img ? "summary_large_image" : "summary",
+      title: `${title} | Punchline Atlas`,
+      description,
+      images: img ? [img] : undefined,
+    },
   };
 }
 

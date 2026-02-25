@@ -11,7 +11,7 @@ export default function Error({
 }) {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4">
-      <div className="text-center max-w-md">
+      <div className="text-center max-w-md" role="alert">
         <h1 className="text-2xl font-bold text-white mb-2">Something went wrong</h1>
         <p className="text-zinc-400 mb-8">
           An unexpected error occurred. Please try again.

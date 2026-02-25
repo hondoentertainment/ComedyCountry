@@ -25,7 +25,7 @@ vi.mock("next/cache", () => ({
 
 import { prisma } from "./prisma";
 
-const mockPrisma = prisma as {
+const mockPrisma = prisma as unknown as {
   venue: {
     findMany: ReturnType<typeof vi.fn>;
     findUnique: ReturnType<typeof vi.fn>;

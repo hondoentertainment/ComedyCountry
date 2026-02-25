@@ -8,7 +8,11 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("next-auth/react", () => ({
-  useSession: vi.fn(() => ({ data: null, status: "unauthenticated" })),
+  useSession: vi.fn(() => ({
+    data: null,
+    status: "unauthenticated",
+    update: vi.fn(),
+  })),
   signOut: vi.fn(),
 }));
 
@@ -25,7 +29,8 @@ describe("Nav", () => {
     vi.mocked(useSession).mockReturnValue({
       data: null,
       status: "unauthenticated",
-    });
+      update: vi.fn(),
+    } as ReturnType<typeof useSession>);
     vi.clearAllMocks();
   });
 
@@ -54,9 +59,13 @@ describe("Nav", () => {
 
   it("renders Profile and Sign out when authenticated", () => {
     vi.mocked(useSession).mockReturnValue({
-      data: { user: { name: "Test", email: "test@example.com" } },
+      data: {
+        user: { id: "test-id", name: "Test", email: "test@example.com" },
+        expires: "",
+      },
       status: "authenticated",
-    });
+      update: vi.fn(),
+    } as ReturnType<typeof useSession>);
 
     render(<Nav />);
     expect(screen.getByRole("link", { name: "Profile" })).toBeInTheDocument();

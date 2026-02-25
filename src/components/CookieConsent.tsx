@@ -5,9 +5,11 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import Link from "next/link";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 const CONSENT_KEY = "punchline-atlas-cookie-consent";
 type ConsentStatus = "accepted" | "rejected" | null;
@@ -87,6 +89,8 @@ export function CookieConsentProvider({
 export function CookieBanner() {
   const { consent, accept, reject } = useCookieConsent();
   const [mounted, setMounted] = useState(false);
+  const acceptButtonRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useFocusTrap(mounted && consent === null, acceptButtonRef);
 
   useEffect(() => {
     setMounted(true);
@@ -96,7 +100,9 @@ export function CookieBanner() {
 
   return (
     <div
+      ref={containerRef}
       role="dialog"
+      aria-modal="true"
       aria-label="Cookie consent"
       className="fixed bottom-0 left-0 right-0 z-[100] border-t border-zinc-700 bg-brand-dark/98 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/98 p-4 sm:p-6 shadow-lg"
     >
@@ -115,18 +121,19 @@ export function CookieBanner() {
         </div>
         <div className="flex flex-wrap gap-2 shrink-0">
           <button
+            ref={acceptButtonRef}
             type="button"
-            onClick={reject}
-            className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white border border-zinc-600 rounded-md hover:bg-zinc-800/50 transition-colors"
+            onClick={accept}
+            className="px-4 py-2 text-sm font-medium text-brand-dark bg-brand-gold hover:bg-brand-gold/90 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark"
           >
-            Essential only
+            Accept all
           </button>
           <button
             type="button"
-            onClick={accept}
-            className="px-4 py-2 text-sm font-medium text-brand-dark bg-brand-gold hover:bg-brand-gold/90 rounded-md transition-colors"
+            onClick={reject}
+            className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white border border-zinc-600 rounded-md hover:bg-zinc-800/50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark"
           >
-            Accept all
+            Essential only
           </button>
         </div>
       </div>

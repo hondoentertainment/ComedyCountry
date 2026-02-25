@@ -16,7 +16,7 @@ vi.mock("bcryptjs", () => ({
 
 import { prisma } from "@/lib/prisma";
 
-const mockPrisma = prisma as {
+const mockPrisma = prisma as unknown as {
   user: {
     findUnique: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;

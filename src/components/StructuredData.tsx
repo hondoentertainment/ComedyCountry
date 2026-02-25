@@ -42,6 +42,46 @@ export function EventStructuredData({ event, baseUrl }: EventStructuredDataProps
   );
 }
 
+type ComedianStructuredDataProps = {
+  comedian: {
+    id: string;
+    name: string;
+    slug: string;
+    bio: string | null;
+    headshotUrl: string | null;
+    website: string | null;
+    socialLinks: Array<{ platform: string; url: string }>;
+  };
+  baseUrl: string;
+};
+
+export function ComedianStructuredData({
+  comedian,
+  baseUrl,
+}: ComedianStructuredDataProps) {
+  const url = `${baseUrl}/comedians/${comedian.slug}`;
+  const sameAs = [
+    ...(comedian.website ? [comedian.website] : []),
+    ...comedian.socialLinks.map((l) => l.url),
+  ];
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: comedian.name,
+    jobTitle: "Comedian",
+    url,
+    description: comedian.bio ?? `Comedian profile and upcoming shows for ${comedian.name}.`,
+    ...(comedian.headshotUrl && { image: comedian.headshotUrl }),
+    ...(sameAs.length > 0 && { sameAs }),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 type VenueStructuredDataProps = {
   venue: {
     id: string;

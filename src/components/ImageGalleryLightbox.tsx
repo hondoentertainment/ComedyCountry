@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 type Photo = { id: string; url: string; caption: string | null };
 
@@ -12,6 +13,20 @@ type ImageGalleryLightboxProps = {
 
 export function ImageGalleryLightbox({ photos, venueName }: ImageGalleryLightboxProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useFocusTrap(openIndex !== null, closeButtonRef);
+
+  const close = useCallback(() => {
+    const trigger = triggerRef.current;
+    setOpenIndex(null);
+    queueMicrotask(() => trigger?.focus());
+  }, []);
+
+  const open = useCallback((index: number) => {
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    setOpenIndex(index);
+  }, []);
 
   const goPrev = useCallback(() => {
     if (openIndex === null) return;
@@ -26,13 +41,13 @@ export function ImageGalleryLightbox({ photos, venueName }: ImageGalleryLightbox
   useEffect(() => {
     if (openIndex === null) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpenIndex(null);
+      if (e.key === "Escape") close();
       if (e.key === "ArrowLeft") goPrev();
       if (e.key === "ArrowRight") goNext();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [openIndex, goPrev, goNext]);
+  }, [openIndex, goPrev, goNext, close]);
 
   useEffect(() => {
     if (openIndex !== null) {
@@ -52,7 +67,7 @@ export function ImageGalleryLightbox({ photos, venueName }: ImageGalleryLightbox
           <button
             key={photo.id}
             type="button"
-            onClick={() => setOpenIndex(index)}
+            onClick={() => open(index)}
             className="block aspect-video rounded-lg overflow-hidden bg-zinc-800 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark"
             aria-label={`View photo ${index + 1} of ${photos.length}`}
           >
@@ -69,19 +84,21 @@ export function ImageGalleryLightbox({ photos, venueName }: ImageGalleryLightbox
 
       {openIndex !== null && (
         <div
+          ref={containerRef}
           role="dialog"
           aria-modal="true"
           aria-label="Image gallery"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
-          onClick={() => setOpenIndex(null)}
+          onClick={close}
         >
           <div
             className="relative max-w-[95vw] max-h-[95vh] w-full h-full flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <button
+              ref={closeButtonRef}
               type="button"
-              onClick={() => setOpenIndex(null)}
+              onClick={close}
               className="absolute top-4 right-4 z-10 p-2 rounded-full bg-zinc-800/80 text-white hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-brand-gold"
               aria-label="Close gallery"
             >

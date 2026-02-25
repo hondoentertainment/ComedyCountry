@@ -11,7 +11,7 @@ vi.mock("./prisma", () => ({
 
 import { prisma } from "./prisma";
 
-const mockPrisma = prisma as {
+const mockPrisma = prisma as unknown as {
   eventReview: {
     findMany: ReturnType<typeof vi.fn>;
   };

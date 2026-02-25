@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { useToast } from "@/components/Toast";
 
 export function SettingsActions() {
+  const { toast } = useToast();
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -29,6 +31,7 @@ export function SettingsActions() {
       a.click();
       URL.revokeObjectURL(url);
       setExportSuccess(true);
+      toast("Your data has been exported.");
       setTimeout(() => setExportSuccess(false), 4000);
     } catch {
       setExportError("Failed to export data. Please try again.");

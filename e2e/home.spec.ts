@@ -44,7 +44,7 @@ test.describe("Home Page", () => {
     if (count > 0) {
       const href = await venueLink.getAttribute("href");
       await venueLink.click();
-      await expect(page).toHaveURL(new RegExp(`^${href.replace("/", "\\/")}`));
+      await expect(page).toHaveURL(new RegExp(`^${(href ?? "").replace("/", "\\/")}`));
     }
   });
 });

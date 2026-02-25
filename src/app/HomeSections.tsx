@@ -46,12 +46,14 @@ export async function HomeSections() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-      {session?.user && forYouEvents.length > 0 && (
+      {session?.user && (
         <section className="mb-14">
           <h2 className="text-2xl font-bold text-white mb-6">Made for you</h2>
           <p className="text-zinc-400 text-sm mb-6 max-w-md">
             Shows from comedians and venues you follow.
           </p>
+          {forYouEvents.length > 0 ? (
+          <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {forYouEvents.map((e) => {
               const stats = ratingStats.get(e.id);
@@ -106,6 +108,29 @@ export async function HomeSections() {
           >
             View all following →
           </Link>
+          </>
+          ) : (
+            <div className="py-12 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
+              <p className="text-zinc-400 font-medium mb-2">No personalized events yet</p>
+              <p className="text-zinc-500 text-sm mb-4 max-w-md mx-auto">
+                Follow comedians and venues to see shows tailored to you here.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/comedians"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
+                >
+                  Browse comedians
+                </Link>
+                <Link
+                  href="/venues"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-zinc-600 text-zinc-300 font-medium hover:border-zinc-500 hover:bg-zinc-800/50 transition-colors"
+                >
+                  Browse venues
+                </Link>
+              </div>
+            </div>
+          )}
         </section>
       )}
 

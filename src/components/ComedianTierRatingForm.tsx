@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast } from "./Toast";
 
 const TIERS = ["S", "A", "B", "C", "D", "F"] as const;
 
@@ -31,6 +32,7 @@ export function ComedianTierRatingForm({
   onSuccess,
 }: ComedianTierRatingFormProps) {
   const [tier, setTier] = useState<string | null>(initialTier ?? null);
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +64,7 @@ export function ComedianTierRatingForm({
 
       setTier(selectedTier);
       setSuccess(true);
+      toast(`Rated ${comedianName} as ${selectedTier} tier.`);
       onSuccess?.();
     } catch (err) {
       setError(
@@ -93,6 +96,7 @@ export function ComedianTierRatingForm({
 
       setTier(null);
       setSuccess(true);
+      toast("Rating cleared.");
       onSuccess?.();
     } catch (err) {
       setError(

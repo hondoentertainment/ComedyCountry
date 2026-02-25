@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { EventStructuredData, VenueStructuredData } from "./StructuredData";
+import {
+  EventStructuredData,
+  VenueStructuredData,
+  ComedianStructuredData,
+} from "./StructuredData";
 
 describe("EventStructuredData", () => {
   it("renders JSON-LD script with event data", () => {
@@ -54,5 +58,35 @@ describe("VenueStructuredData", () => {
     expect(json.name).toBe("Laugh Factory");
     expect(json.url).toBe("https://example.com/venues/venue-1");
     expect(json.maximumAttendeeCapacity).toBe(300);
+  });
+});
+
+describe("ComedianStructuredData", () => {
+  it("renders JSON-LD script with Person schema", () => {
+    const comedian = {
+      id: "c1",
+      name: "Dave Chappelle",
+      slug: "dave-chappelle",
+      bio: "American stand-up comedian and actor.",
+      headshotUrl: "https://example.com/chappelle.jpg",
+      website: "https://davechappelle.com",
+      socialLinks: [
+        { platform: "instagram", url: "https://instagram.com/davechappelle" },
+      ],
+    };
+
+    const { container } = render(
+      <ComedianStructuredData comedian={comedian} baseUrl="https://example.com" />
+    );
+    const script = container.querySelector('script[type="application/ld+json"]');
+    expect(script).toBeInTheDocument();
+    const json = JSON.parse(script!.textContent!);
+    expect(json["@type"]).toBe("Person");
+    expect(json.name).toBe("Dave Chappelle");
+    expect(json.jobTitle).toBe("Comedian");
+    expect(json.url).toBe("https://example.com/comedians/dave-chappelle");
+    expect(json.image).toBe("https://example.com/chappelle.jpg");
+    expect(json.sameAs).toContain("https://davechappelle.com");
+    expect(json.sameAs).toContain("https://instagram.com/davechappelle");
   });
 });

@@ -19,7 +19,7 @@ vi.mock("@/lib/prisma", () => ({
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 
-const mockPrisma = prisma as {
+const mockPrisma = prisma as unknown as {
   comedian: { findUnique: ReturnType<typeof vi.fn> };
   comedianFollow: {
     findUnique: ReturnType<typeof vi.fn>;

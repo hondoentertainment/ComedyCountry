@@ -83,7 +83,7 @@ describe("EventRatingForm", () => {
       body: JSON.stringify({ rating: 5, comment: "Amazing!" }),
     });
     expect(onSuccess).toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: "Saved" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Saved/i })).toBeInTheDocument();
   });
 
   it("shows error on API failure", async () => {

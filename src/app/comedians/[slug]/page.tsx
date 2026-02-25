@@ -9,6 +9,7 @@ import { TOURING_STATUS_LABELS, SHOW_TYPE_LABELS } from "@/lib/constants";
 import { formatEventPrice } from "@/lib/format";
 import { FollowButton } from "@/components/FollowButton";
 import { ComedianPageTabs } from "@/components/ComedianPageTabs";
+import { ComedianStructuredData } from "@/components/StructuredData";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -17,11 +18,28 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const comedian = await getComedian(slug);
   if (!comedian) return { title: "Comedian | Punchline Atlas" };
+  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+  const description = comedian.bio
+    ? `${comedian.bio.slice(0, 155)}${comedian.bio.length > 155 ? "…" : ""}`
+    : `Comedian profile and upcoming shows for ${comedian.name}.`;
+  const images = comedian.headshotUrl
+    ? [{ url: comedian.headshotUrl, width: 400, height: 400, alt: `${comedian.name} headshot` }]
+    : undefined;
   return {
     title: `${comedian.name} | Punchline Atlas`,
-    description: comedian.bio
-      ? `${comedian.bio.slice(0, 155)}${comedian.bio.length > 155 ? "…" : ""}`
-      : `Comedian profile and upcoming shows for ${comedian.name}.`,
+    description,
+    openGraph: {
+      title: `${comedian.name} | Punchline Atlas`,
+      description,
+      url: `${siteUrl}/comedians/${slug}`,
+      images,
+    },
+    twitter: {
+      card: images ? "summary_large_image" : "summary",
+      title: `${comedian.name} | Punchline Atlas`,
+      description,
+      images: comedian.headshotUrl ? [comedian.headshotUrl] : undefined,
+    },
   };
 }
 
@@ -74,8 +92,25 @@ export default async function ComedianPage({ params }: PageProps) {
     .map((ec) => ec.event)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
+  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+
   return (
     <main className="min-h-screen">
+      <ComedianStructuredData
+        comedian={{
+          id: comedian.id,
+          name: comedian.name,
+          slug: comedian.slug,
+          bio: comedian.bio,
+          headshotUrl: comedian.headshotUrl,
+          website: comedian.website,
+          socialLinks: comedian.socialLinks.map((l) => ({
+            platform: l.platform,
+            url: l.url,
+          })),
+        }}
+        baseUrl={siteUrl}
+      />
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link
           href="/comedians"

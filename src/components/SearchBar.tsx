@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -78,14 +78,18 @@ export function SearchBar() {
   const isEmpty = results && !hasResults && query.length >= 2 && !loading;
 
   // Flat list of options for arrow-key navigation (comedians, venues, events, "view all")
-  const options: Option[] = hasResults
-    ? [
-        ...results!.comedians.map((c) => ({ href: `/comedians/${c.slug}` })),
-        ...results!.venues.map((v) => ({ href: `/venues/${v.id}` })),
-        ...results!.events.map((e) => ({ href: `/events/${e.id}` })),
-        { href: `/search?q=${encodeURIComponent(query)}` },
-      ]
-    : [];
+  const options: Option[] = useMemo(
+    () =>
+      hasResults
+        ? [
+            ...results!.comedians.map((c) => ({ href: `/comedians/${c.slug}` })),
+            ...results!.venues.map((v) => ({ href: `/venues/${v.id}` })),
+            ...results!.events.map((e) => ({ href: `/events/${e.id}` })),
+            { href: `/search?q=${encodeURIComponent(query)}` },
+          ]
+        : [],
+    [hasResults, results, query]
+  );
   const optionCount = options.length;
 
   // Reset active index when options change

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "./Toast";
 
 type FollowButtonProps = {
   type: "comedian" | "venue";
@@ -16,6 +17,7 @@ export function FollowButton({
   signInUrl = "/auth/signin",
 }: FollowButtonProps) {
   const [following, setFollowing] = useState(initialFollowing);
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +44,7 @@ export function FollowButton({
 
       const data = (await res.json()) as { following: boolean };
       setFollowing(data.following);
+      toast(data.following ? `Following ${type}!` : `Unfollowed ${type}.`);
     } catch (err) {
       setFollowing(previousFollowing);
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");

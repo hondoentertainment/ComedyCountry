@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "./Toast";
 
 type UserReview = {
   id: string;
@@ -51,6 +52,7 @@ export function EventRatingForm({
   onSuccess,
 }: EventRatingFormProps) {
   const [rating, setRating] = useState(initialReview?.rating ?? 0);
+  const { toast } = useToast();
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState(initialReview?.comment ?? "");
   const [loading, setLoading] = useState(false);
@@ -87,6 +89,7 @@ export function EventRatingForm({
       }
 
       setSuccess(true);
+      toast("Review saved! Thanks for sharing.");
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save review. Please try again.");
@@ -147,9 +150,13 @@ export function EventRatingForm({
       <button
         type="submit"
         disabled={loading || (rating < 1 && !comment.trim())}
-        className="px-4 py-2 rounded-md bg-brand-gold text-brand-dark font-medium hover:bg-brand-gold/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 min-h-[44px] ${
+          success
+            ? "bg-emerald-600/80 text-white"
+            : "bg-brand-gold text-brand-dark hover:bg-brand-gold/90 disabled:opacity-50 disabled:cursor-not-allowed"
+        }`}
       >
-        {loading ? "Saving…" : success ? "Saved" : "Submit review"}
+        {loading ? "Saving…" : success ? "✓ Saved" : "Submit review"}
       </button>
     </form>
   );

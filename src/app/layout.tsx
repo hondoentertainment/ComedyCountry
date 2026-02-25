@@ -3,6 +3,7 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { SessionProvider } from "@/components/SessionProvider";
 import { CookieConsentProvider, CookieBanner } from "@/components/CookieConsent";
+import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
 const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
@@ -25,12 +26,21 @@ export const metadata: Metadata = {
     title: "Punchline Atlas | Comedy Venues & Comedian Tours",
     description:
       "The nationwide comedy intelligence platform — discover venues, track comedian tours, and never miss a show.",
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Punchline Atlas — Comedy Venues & Comedian Tours",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Punchline Atlas | Comedy Venues & Comedian Tours",
     description:
       "The nationwide comedy intelligence platform — discover venues, track comedian tours, and never miss a show.",
+    images: ["/og-default.png"],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: siteUrl },
@@ -51,6 +61,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <SessionProvider>
+        <ToastProvider>
         <CookieConsentProvider>
           <Nav />
           <main id="main" className="flex-1" tabIndex={-1}>
@@ -59,6 +70,7 @@ export default function RootLayout({
           <Footer />
           <CookieBanner />
         </CookieConsentProvider>
+        </ToastProvider>
         </SessionProvider>
       </body>
     </html>

@@ -26,10 +26,8 @@ export function ComedianPageTabs({
   const infoRef = useRef<HTMLButtonElement>(null);
   const rateRef = useRef<HTMLButtonElement>(null);
 
-  const tabRefs = { info: infoRef, rate: rateRef };
-
   const focusTab = useCallback((tab: TabId) => {
-    tabRefs[tab].current?.focus();
+    (tab === "info" ? infoRef : rateRef).current?.focus();
   }, []);
 
   const handleKeyDown = useCallback(

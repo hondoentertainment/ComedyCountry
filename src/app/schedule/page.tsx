@@ -6,6 +6,7 @@ import { getVenueStates } from "@/lib/venues";
 import { SHOW_TYPE_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { formatEventPrice } from "@/lib/format";
 import { Pagination } from "@/components/Pagination";
+import { ClearScheduleFiltersLink } from "./ClearScheduleFiltersLink";
 
 export const metadata = {
   title: "Schedule | Punchline Atlas",
@@ -225,12 +226,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
             <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
               Try a different date range, city, or state. New shows are added regularly.
             </p>
-            <Link
-              href="/schedule"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
-            >
-              Clear filters
-            </Link>
+            <ClearScheduleFiltersLink />
           </div>
         )}
 

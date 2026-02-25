@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { SearchBar } from "./SearchBar";
 import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 const navItems = [
   { href: "/", label: "Discover" },
@@ -24,6 +25,7 @@ export function Nav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session, status } = useSession();
+  const mobileMenuRef = useFocusTrap(mobileOpen);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -157,7 +159,10 @@ export function Nav() {
 
         {/* Mobile nav */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-zinc-800/80 py-4 bg-brand-surface/95">
+          <div
+            ref={mobileMenuRef}
+            className="md:hidden border-t border-zinc-800/80 py-4 bg-brand-surface/95"
+          >
             <div className="px-4 pb-3">
               <SearchBar />
             </div>
