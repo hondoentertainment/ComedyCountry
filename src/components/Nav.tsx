@@ -13,9 +13,18 @@ const navItems = [
   { href: "/venues", label: "Venues" },
   { href: "/comedians", label: "Comedians" },
   { href: "/schedule", label: "Schedule" },
-  { href: "/map", label: "Map" },
   { href: "/trending", label: "Trending" },
+  { href: "/specials", label: "Specials" },
+  { href: "/lists", label: "Lists" },
+];
+
+const moreItems = [
+  { href: "/map", label: "Map" },
   { href: "/following", label: "Following" },
+  { href: "/open-mics", label: "Open Mics" },
+  { href: "/festivals", label: "Festivals" },
+  { href: "/compare", label: "Compare" },
+  { href: "/wrapped", label: "Wrapped" },
 ];
 
 function isActive(href: string, pathname: string) {
@@ -89,6 +98,25 @@ export function Nav() {
                   </Link>
                 </li>
               ))}
+              <li className="relative group">
+                <button
+                  type="button"
+                  className="block px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
+                >
+                  More
+                </button>
+                <div className="absolute right-0 top-full mt-1 w-48 py-2 bg-brand-surface border border-zinc-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                  {moreItems.map(({ href, label }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      className="block px-4 py-2 text-zinc-400 hover:text-white hover:bg-white/5 text-sm"
+                    >
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              </li>
             </ul>
             <div className="ml-2 pl-2 border-l border-zinc-700/80 flex items-center gap-1">
               {status === "loading" ? (
@@ -178,7 +206,7 @@ export function Nav() {
               <SearchBar />
             </div>
             <ul className="flex flex-col gap-0.5">
-              {navItems.map(({ href, label }) => (
+              {[...navItems, ...moreItems].map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}
