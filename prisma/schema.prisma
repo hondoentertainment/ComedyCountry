@@ -221,6 +221,8 @@ model User {
   followsVenues     VenueFollow[]
   eventReviews      EventReview[]
   comedianTierRatings ComedianTierRating[]
+  notifications     Notification[]
+  notificationPreference NotificationPreference?
 }
 
 model Account {
@@ -293,4 +295,35 @@ model VenueFollow {
   venue   Venue @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
   @@unique([userId, venueId])
+}
+
+// =============================================================================
+// Notifications & Feed (Phase 6)
+// =============================================================================
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // new_event, event_update, event_reminder
+  title     String
+  message   String
+  eventId   String?
+  venueId   String?
+  comedianId String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+}
+
+model NotificationPreference {
+  id            String  @id @default(cuid())
+  userId        String  @unique
+  inApp         Boolean @default(true)
+  emailDigest   String  @default("off") // off, daily, weekly
+
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

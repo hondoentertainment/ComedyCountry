@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { generateEventNotifications } from "@/lib/notifications";
 
 export async function GET(request: Request) {
   const auth = await requireAdmin();
@@ -79,6 +80,9 @@ export async function POST(request: Request) {
       comedians: { include: { comedian: true } },
     },
   });
+
+  // Generate notifications for followers (fire-and-forget)
+  generateEventNotifications(event).catch(() => {});
 
   return NextResponse.json(event, { status: 201 });
 }

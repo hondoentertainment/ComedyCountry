@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { SettingsActions } from "./SettingsActions";
+import { NotificationPreferences } from "@/components/NotificationPreferences";
 
 export const metadata = {
   title: "Settings | Punchline Atlas",
@@ -55,6 +56,13 @@ export default async function SettingsPage() {
                 </Link>
               </li>
             </ul>
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-4">
+              Notifications
+            </h2>
+            <NotificationPreferences />
           </div>
 
           <SettingsActions />

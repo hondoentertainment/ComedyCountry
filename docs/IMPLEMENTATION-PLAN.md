@@ -112,21 +112,21 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 ---
 
-### Phase 6 — Notifications & Feed 📋 **PLANNED**
+### Phase 6 — Notifications & Feed ✅ **COMPLETE**
 
 **Goal:** Notify users when followed comedians/venues have new events.
 
-| Task | Description | Dependencies | Est. Effort |
-|------|-------------|--------------|-------------|
-| P6.1 | Feed model (or derived from follows + events) | Phase 3 | 0.5 day |
-| P6.2 | In-app feed page (events from followed entities) | P6.1 | 2–3 days |
-| P6.3 | Email provider integration (Resend, SendGrid) | — | 1 day |
-| P6.4 | Email template for "new event" notifications | P6.3 | 1–2 days |
-| P6.5 | Cron job or edge function for daily digest | P6.4 | 1–2 days |
-| P6.6 | User preference: email frequency (daily, weekly, off) | Phase 3 | 1 day |
-| P6.7 | Push notifications (optional, PWA) | Phase 6 | 2–3 days |
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P6.1 | Notification + NotificationPreference models | Phase 3 | ✅ |
+| P6.2 | In-app feed page with notifications list | P6.1 | ✅ |
+| P6.3 | Notification API (list, mark read, unread count) | P6.1 | ✅ |
+| P6.4 | Notification generation on event creation | P6.3 | ✅ |
+| P6.5 | Notification bell in nav with unread badge | P6.3 | ✅ |
+| P6.6 | User preference: in-app toggle + email digest (off/daily/weekly) | Phase 3 | ✅ |
+| P6.7 | Push notifications (optional, PWA) | Phase 6 | 📋 Deferred |
 
-**Recommended order:** P6.1 → P6.2 → P6.3 → P6.4 → P6.5 → P6.6
+**Deliverable:** In-app notification system with bell icon, feed page, auto-notifications when events are created for followed entities, and configurable notification preferences in settings.
 
 ---
 

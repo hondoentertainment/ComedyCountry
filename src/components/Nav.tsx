@@ -6,6 +6,7 @@ import { SearchBar } from "./SearchBar";
 import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { NotificationBell } from "./NotificationBell";
 
 const navItems = [
   { href: "/", label: "Discover" },
@@ -14,6 +15,7 @@ const navItems = [
   { href: "/schedule", label: "Schedule" },
   { href: "/map", label: "Map" },
   { href: "/following", label: "Following" },
+  { href: "/feed", label: "Feed" },
 ];
 
 function isActive(href: string, pathname: string) {
@@ -93,6 +95,7 @@ export function Nav() {
                 <span className="text-zinc-500 text-sm">…</span>
               ) : session ? (
                 <>
+                  <NotificationBell />
                   {(session.user as { role?: string }).role === "admin" && (
                     <Link
                       href="/admin"
