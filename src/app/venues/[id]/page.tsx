@@ -9,6 +9,7 @@ import { FollowButton } from "@/components/FollowButton";
 import { ImageGalleryLightbox } from "@/components/ImageGalleryLightbox";
 import { VenueMap } from "@/components/VenueMap";
 import { VenueStructuredData } from "@/components/StructuredData";
+import { VenueReviews } from "@/components/VenueReviews";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ id: string }> };
@@ -217,6 +218,8 @@ export default async function VenuePage({ params }: PageProps) {
             </div>
           )}
         </section>
+
+        <VenueReviews venueId={venue.id} />
       </div>
     </main>
   );

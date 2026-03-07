@@ -11,6 +11,7 @@ import { FollowButton } from "@/components/FollowButton";
 import { ComedianPageTabs } from "@/components/ComedianPageTabs";
 import { ComedianStructuredData } from "@/components/StructuredData";
 import { SimilarComedians } from "@/components/SimilarComedians";
+import { SpecialRating } from "@/components/SpecialRating";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -273,7 +274,7 @@ export default async function ComedianPage({ params }: PageProps) {
             </h2>
             <ul className="space-y-2">
               {comedian.specialReleases.map((special) => (
-                <li key={special.id} className="flex gap-2 items-center">
+                <li key={special.id} className="flex flex-wrap gap-2 items-center">
                   <span className="text-white font-medium">{special.title}</span>
                   {special.releaseYear && (
                     <span className="text-zinc-500 text-sm">
@@ -295,6 +296,7 @@ export default async function ComedianPage({ params }: PageProps) {
                       Watch
                     </a>
                   )}
+                  <SpecialRating specialId={special.id} />
                 </li>
               ))}
             </ul>
