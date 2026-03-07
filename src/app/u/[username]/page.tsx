@@ -52,6 +52,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
           followsVenues: true,
           comedianTierRatings: true,
           eventAttendances: true,
+          comedyLists: { where: { isPublic: true } },
         },
       },
     },
@@ -60,7 +61,31 @@ export default async function PublicProfilePage({ params }: PageProps) {
   if (!user) notFound();
 
   const displayName = user.profileName ?? user.name ?? username;
-  const badges = await getUserComedianBadges(user.id);
+  const [badges, recentReviews, publicLists] = await Promise.all([
+    getUserComedianBadges(user.id),
+    prisma.eventReview.findMany({
+      where: { userId: user.id },
+      include: {
+        event: {
+          select: {
+            id: true,
+            title: true,
+            date: true,
+            venue: { select: { name: true } },
+            comedians: { include: { comedian: { select: { name: true } } } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    prisma.comedyList.findMany({
+      where: { userId: user.id, isPublic: true },
+      include: { _count: { select: { items: true, saves: true } } },
+      orderBy: { updatedAt: "desc" },
+      take: 6,
+    }),
+  ]);
   const joinDate = new Date(user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   return (
@@ -103,6 +128,57 @@ export default async function PublicProfilePage({ params }: PageProps) {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">Badges</h2>
             <ComedianBadges badges={badges} />
+          </section>
+        )}
+
+        {/* Recent Reviews */}
+        {recentReviews.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4">Recent Reviews</h2>
+            <div className="space-y-2">
+              {recentReviews.map((review) => {
+                const title = review.event.title ?? review.event.comedians.map((ec) => ec.comedian.name).join(", ");
+                return (
+                  <Link
+                    key={review.id}
+                    href={`/events/${review.event.id}`}
+                    className="flex items-center justify-between p-4 rounded-lg bg-brand-surface border border-zinc-800 hover:border-zinc-700 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-white font-medium truncate">{title}</p>
+                      <p className="text-zinc-500 text-xs">{review.event.venue.name}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 ml-3">
+                      <span className="text-brand-gold text-sm font-medium">
+                        {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Public Lists */}
+        {publicLists.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4">Public Lists</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {publicLists.map((list) => (
+                <Link
+                  key={list.id}
+                  href={`/lists/${list.id}`}
+                  className="p-4 rounded-lg bg-brand-surface border border-zinc-800 hover:border-zinc-700 transition-colors"
+                >
+                  <p className="text-white font-medium">{list.title}</p>
+                  {list.description && <p className="text-zinc-500 text-xs mt-1 line-clamp-2">{list.description}</p>}
+                  <p className="text-zinc-600 text-xs mt-2">
+                    {list._count.items} items · {list._count.saves} saves
+                  </p>
+                </Link>
+              ))}
+            </div>
           </section>
         )}
 

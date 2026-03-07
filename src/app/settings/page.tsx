@@ -2,8 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { SettingsActions } from "./SettingsActions";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
+import { SubscriptionManager } from "@/components/SubscriptionManager";
 
 export const metadata = {
   title: "Settings | Punchline Atlas",
@@ -14,6 +16,16 @@ export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     redirect("/auth/signin?callbackUrl=/settings");
+  }
+
+  let subscription: { plan: string; status: string; currentPeriodEnd: Date; cancelAtPeriodEnd: boolean } | null = null;
+  try {
+    subscription = await prisma.subscription.findUnique({
+      where: { userId: session.user.id },
+      select: { plan: true, status: true, currentPeriodEnd: true, cancelAtPeriodEnd: true },
+    });
+  } catch {
+    // Schema not migrated yet
   }
 
   return (
@@ -32,6 +44,18 @@ export default async function SettingsPage() {
         </p>
 
         <section className="space-y-8">
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-4">
+              Subscription
+            </h2>
+            <SubscriptionManager
+              currentPlan={subscription?.plan ?? null}
+              status={subscription?.status ?? null}
+              periodEnd={subscription?.currentPeriodEnd?.toISOString() ?? null}
+              cancelAtPeriodEnd={subscription?.cancelAtPeriodEnd ?? false}
+            />
+          </div>
+
           <div>
             <h2 className="text-lg font-semibold text-white mb-4">
               Legal & Policies

@@ -1,0 +1,51 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+export function ClaimActions({ claimId }: { claimId: string }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  async function handleAction(action: "approve" | "reject") {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/claims", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ claimId, action }),
+      });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to update claim");
+      }
+    } catch {
+      alert("Network error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex gap-2 shrink-0">
+      <button
+        type="button"
+        onClick={() => handleAction("approve")}
+        disabled={loading}
+        className="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 text-sm font-medium transition-colors disabled:opacity-50"
+      >
+        Approve
+      </button>
+      <button
+        type="button"
+        onClick={() => handleAction("reject")}
+        disabled={loading}
+        className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 text-sm font-medium transition-colors disabled:opacity-50"
+      >
+        Reject
+      </button>
+    </div>
+  );
+}

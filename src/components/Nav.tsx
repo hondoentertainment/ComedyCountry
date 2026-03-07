@@ -25,6 +25,7 @@ const moreItems = [
   { href: "/festivals", label: "Festivals" },
   { href: "/compare", label: "Compare" },
   { href: "/wrapped", label: "Wrapped" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 function isActive(href: string, pathname: string) {

@@ -12,6 +12,7 @@ import { EventShareButtons } from "@/components/EventShareButtons";
 import { EventStructuredData } from "@/components/StructuredData";
 import { AttendanceButtons } from "@/components/AttendanceButtons";
 import { CalendarExport } from "@/components/CalendarExport";
+import { TicketButton } from "@/components/TicketButton";
 
 export const dynamic = "force-dynamic";
 
@@ -162,14 +163,13 @@ export default async function EventPage({ params }: PageProps) {
               </Link>
             ))}
             {event.ticketUrl && (
-              <a
-                href={event.ticketUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <TicketButton
+                eventId={id}
+                ticketUrl={event.ticketUrl}
                 className="px-4 py-2 rounded-lg bg-brand-gold text-brand-dark text-sm font-semibold hover:bg-brand-gold/90 ml-2"
               >
                 Get tickets
-              </a>
+              </TicketButton>
             )}
           </div>
         </div>
