@@ -39,6 +39,18 @@
       "touringStatus": "UNKNOWN"
     },
     {
+      "name": "Amanda Cerny",
+      "slug": "amanda-cerny",
+      "source": "seed-research",
+      "instagram": "amandacerny",
+      "igFollowers": 24000000,
+      "genres": [
+        "observational",
+        "viral"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Matt Rife",
       "slug": "matt-rife",
       "source": "api",
@@ -91,6 +103,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Terry Crews",
+      "slug": "terry-crews",
+      "source": "seed-research",
+      "instagram": "terrycrews",
+      "igFollowers": 14000000,
+      "genres": [
+        "observational",
+        "physical"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Adam Sandler",
       "slug": "adam-sandler",
       "source": "api",
@@ -138,6 +162,45 @@
         "observational",
         "stoner",
         "storytelling"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Jack Black",
+      "slug": "jack-black",
+      "source": "seed-research",
+      "instagram": "jackblack",
+      "igFollowers": 10000000,
+      "genres": [
+        "musical",
+        "character",
+        "physical"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Lilly Singh",
+      "slug": "lilly-singh",
+      "source": "seed-research",
+      "instagram": "lilly",
+      "igFollowers": 10000000,
+      "genres": [
+        "observational",
+        "cultural",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Will Ferrell",
+      "slug": "will-ferrell",
+      "source": "seed-research",
+      "instagram": "willferrell",
+      "igFollowers": 10000000,
+      "genres": [
+        "character",
+        "absurdist",
+        "physical"
       ],
       "touringStatus": "UNKNOWN"
     },
@@ -194,6 +257,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Blake Griffin",
+      "slug": "blake-griffin",
+      "source": "seed-research",
+      "instagram": "blakegriffin",
+      "igFollowers": 8000000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Marlon Wayans",
       "slug": "marlon-wayans",
       "source": "api",
@@ -233,6 +308,31 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Anthony Anderson",
+      "slug": "anthony-anderson",
+      "source": "seed-research",
+      "instagram": "anthonyanderson",
+      "igFollowers": 6000000,
+      "genres": [
+        "observational",
+        "physical"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Aubrey Plaza",
+      "slug": "aubrey-plaza",
+      "source": "seed-research",
+      "instagram": "plazadeaubrey",
+      "igFollowers": 6000000,
+      "genres": [
+        "deadpan",
+        "dark",
+        "character"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "B. Simone",
       "slug": "b-simone",
       "source": "seed-research",
@@ -257,6 +357,42 @@
         "storytelling"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jess Hilarious",
+      "slug": "jess-hilarious",
+      "source": "seed-research",
+      "instagram": "jaborealess_hilarious",
+      "igFollowers": 6000000,
+      "genres": [
+        "character",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Mindy Kaling",
+      "slug": "mindy-kaling",
+      "source": "seed-research",
+      "instagram": "mindykaling",
+      "igFollowers": 6000000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Simu Liu",
+      "slug": "simu-liu",
+      "source": "seed-research",
+      "instagram": "simuliu",
+      "igFollowers": 6000000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "UNKNOWN"
     },
     {
       "name": "Tiffany Haddish",
@@ -285,6 +421,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Charlamagne tha God",
+      "slug": "charlamagne-tha-god",
+      "source": "seed-research",
+      "instagram": "cthagod",
+      "igFollowers": 5000000,
+      "genres": [
+        "observational",
+        "cultural",
+        "political"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Cody Ko",
       "slug": "cody-ko",
       "source": "seed-research",
@@ -296,6 +445,18 @@
         "absurdist"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Dan Levy",
+      "slug": "dan-levy",
+      "source": "seed-research",
+      "instagram": "instadanlevy",
+      "igFollowers": 5000000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "UNKNOWN"
     },
     {
       "name": "Gabriel Iglesias",
@@ -325,6 +486,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Pretty Vee",
+      "slug": "pretty-vee",
+      "source": "seed-research",
+      "instagram": "prettyvee",
+      "igFollowers": 5000000,
+      "genres": [
+        "character",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Rickey Thompson",
       "slug": "rickey-thompson",
       "source": "seed-research",
@@ -336,6 +509,18 @@
         "observational"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Steve Carell",
+      "slug": "steve-carell",
+      "source": "seed-research",
+      "instagram": "stevecarell",
+      "igFollowers": 5000000,
+      "genres": [
+        "character",
+        "deadpan"
+      ],
+      "touringStatus": "UNKNOWN"
     },
     {
       "name": "Zakir Khan",
@@ -401,6 +586,32 @@
         "character"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Amy Poehler",
+      "slug": "amy-poehler",
+      "source": "seed-research",
+      "instagram": "amypoehler",
+      "igFollowers": 4000000,
+      "genres": [
+        "character",
+        "improvisation",
+        "political"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Tina Fey",
+      "slug": "tina-fey",
+      "source": "seed-research",
+      "instagram": "tinafey",
+      "igFollowers": 4000000,
+      "genres": [
+        "observational",
+        "political",
+        "sketch"
+      ],
+      "touringStatus": "UNKNOWN"
     },
     {
       "name": "Jo Koy",
@@ -591,6 +802,30 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Ayo Edebiri",
+      "slug": "ayo-edebiri",
+      "source": "seed-research",
+      "instagram": "ayoedebiri",
+      "igFollowers": 3000000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Bob Menery",
+      "slug": "bob-menery",
+      "source": "seed-research",
+      "instagram": "bobmenery",
+      "igFollowers": 3000000,
+      "genres": [
+        "observational",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "DeRay Davis",
       "slug": "deray-davis",
       "source": "seed-research",
@@ -630,6 +865,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Michael McIntyre",
+      "slug": "michael-mcintyre",
+      "source": "seed-research",
+      "instagram": "mcaborealintyremic",
+      "igFollowers": 3000000,
+      "genres": [
+        "observational",
+        "physical"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Nikki Glaser",
       "slug": "nikki-glaser",
       "source": "api",
@@ -656,6 +903,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Quinta Brunson",
+      "slug": "quinta-brunson",
+      "source": "seed-research",
+      "instagram": "quintab",
+      "igFollowers": 3000000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Shane Gillis",
       "slug": "shane-gillis",
       "source": "api",
@@ -679,6 +938,31 @@
         "observational",
         "storytelling",
         "deadpan"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Bill Hader",
+      "slug": "bill-hader",
+      "source": "seed-research",
+      "instagram": "billhader",
+      "igFollowers": 2500000,
+      "genres": [
+        "character",
+        "impressionist",
+        "sketch"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Bobby Bones",
+      "slug": "bobby-bones",
+      "source": "seed-research",
+      "instagram": "mrbobbybones",
+      "igFollowers": 2500000,
+      "genres": [
+        "observational",
+        "storytelling"
       ],
       "touringStatus": "TOURING"
     },
@@ -761,6 +1045,44 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Andy Samberg",
+      "slug": "andy-samberg",
+      "source": "seed-research",
+      "instagram": "theandysamberg",
+      "igFollowers": 2000000,
+      "genres": [
+        "absurdist",
+        "musical",
+        "character"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Busy Philipps",
+      "slug": "busy-philipps",
+      "source": "seed-research",
+      "instagram": "busyphilipps",
+      "igFollowers": 2000000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Chelsea Peretti",
+      "slug": "chelsea-peretti",
+      "source": "seed-research",
+      "instagram": "chelseaperetti",
+      "igFollowers": 2000000,
+      "genres": [
+        "deadpan",
+        "observational",
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "George Lopez",
       "slug": "george-lopez",
       "source": "api",
@@ -774,6 +1096,31 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "James Murray",
+      "slug": "james-murray",
+      "source": "seed-research",
+      "instagram": "jamessmurray",
+      "igFollowers": 2000000,
+      "genres": [
+        "observational",
+        "improvisation"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Kristen Wiig",
+      "slug": "kristen-wiig",
+      "source": "seed-research",
+      "instagram": "kristenwiig",
+      "igFollowers": 2000000,
+      "genres": [
+        "character",
+        "absurdist",
+        "physical"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Matteo Lane",
       "slug": "matteo-lane",
       "source": "api",
@@ -783,6 +1130,30 @@
         "observational",
         "musical",
         "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Nicole Arbour",
+      "slug": "nicole-arbour",
+      "source": "seed-research",
+      "instagram": "nicolearbour",
+      "igFollowers": 2000000,
+      "genres": [
+        "observational",
+        "viral"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Tisha Campbell",
+      "slug": "tisha-campbell",
+      "source": "seed-research",
+      "instagram": "taborealishacampbell",
+      "igFollowers": 2000000,
+      "genres": [
+        "observational",
+        "cultural"
       ],
       "touringStatus": "TOURING"
     },
@@ -835,6 +1206,18 @@
         "dark",
         "one-liner",
         "absurdist"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "DL Hughley",
+      "slug": "dl-hughley",
+      "source": "seed-research",
+      "instagram": "realdlhughley",
+      "igFollowers": 1800000,
+      "genres": [
+        "political",
+        "observational"
       ],
       "touringStatus": "TOURING"
     },
@@ -931,6 +1314,18 @@
       "touringStatus": "UNKNOWN"
     },
     {
+      "name": "Brian Quinn",
+      "slug": "brian-quinn",
+      "source": "seed-research",
+      "instagram": "bqquinn",
+      "igFollowers": 1500000,
+      "genres": [
+        "observational",
+        "improvisation"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Craig Robinson",
       "slug": "craig-robinson",
       "source": "seed-research",
@@ -940,6 +1335,70 @@
         "musical",
         "character",
         "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Desus Nice",
+      "slug": "desus-nice",
+      "source": "seed-research",
+      "instagram": "desusnice",
+      "igFollowers": 1500000,
+      "genres": [
+        "observational",
+        "cultural",
+        "political"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Jay Pharoah",
+      "slug": "jay-pharoah",
+      "source": "seed-research",
+      "instagram": "jaypharoah",
+      "igFollowers": 1500000,
+      "genres": [
+        "impressionist",
+        "character",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Joe Lycett",
+      "slug": "joe-lycett",
+      "source": "seed-research",
+      "instagram": "joelycett",
+      "igFollowers": 1500000,
+      "genres": [
+        "absurdist",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "JP Sears",
+      "slug": "jp-sears",
+      "source": "seed-research",
+      "instagram": "awakenwithjp",
+      "igFollowers": 1500000,
+      "genres": [
+        "satire",
+        "observational",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Loni Love",
+      "slug": "loni-love",
+      "source": "seed-research",
+      "instagram": "comiclonilove",
+      "igFollowers": 1500000,
+      "genres": [
+        "observational",
+        "cultural",
+        "storytelling"
       ],
       "touringStatus": "TOURING"
     },
@@ -970,6 +1429,32 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Nathan Fielder",
+      "slug": "nathan-fielder",
+      "source": "seed-research",
+      "instagram": "nathanfielder",
+      "igFollowers": 1500000,
+      "genres": [
+        "character",
+        "absurdist",
+        "deadpan"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Noel Fielding",
+      "slug": "noel-fielding",
+      "source": "seed-research",
+      "instagram": "noelfielding11",
+      "igFollowers": 1500000,
+      "genres": [
+        "absurdist",
+        "character",
+        "surreal"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Ralph Barbosa",
       "slug": "ralph-barbosa",
       "source": "api",
@@ -979,6 +1464,19 @@
         "observational",
         "deadpan",
         "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Zack Fox",
+      "slug": "zack-fox",
+      "source": "seed-research",
+      "instagram": "zackfox",
+      "igFollowers": 1500000,
+      "genres": [
+        "absurdist",
+        "cultural",
+        "observational"
       ],
       "touringStatus": "TOURING"
     },
@@ -1009,6 +1507,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Abbi Jacobson",
+      "slug": "abbi-jacobson",
+      "source": "seed-research",
+      "instagram": "abbijacobson",
+      "igFollowers": 1200000,
+      "genres": [
+        "observational",
+        "character"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Aidy Bryant",
       "slug": "aidy-bryant",
       "source": "seed-research",
@@ -1020,6 +1530,18 @@
         "observational"
       ],
       "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Ben Schwartz",
+      "slug": "ben-schwartz",
+      "source": "seed-research",
+      "instagram": "rejectedjokes",
+      "igFollowers": 1200000,
+      "genres": [
+        "improvisation",
+        "character"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Bobby Lee",
@@ -1088,6 +1610,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Wayne Brady",
+      "slug": "wayne-brady",
+      "source": "seed-research",
+      "instagram": "waynebrady",
+      "igFollowers": 1200000,
+      "genres": [
+        "improvisation",
+        "musical",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Leanne Morgan",
       "slug": "leanne-morgan",
       "source": "api",
@@ -1110,6 +1645,30 @@
         "observational",
         "storytelling",
         "self-deprecating"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Chloe Fineman",
+      "slug": "chloe-fineman",
+      "source": "seed-research",
+      "instagram": "chloefineman",
+      "igFollowers": 1000000,
+      "genres": [
+        "impressionist",
+        "character"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Damon Wayans Jr.",
+      "slug": "damon-wayans-jr",
+      "source": "seed-research",
+      "instagram": "waaborealyansjr",
+      "igFollowers": 1000000,
+      "genres": [
+        "observational",
+        "character"
       ],
       "touringStatus": "TOURING"
     },
@@ -1137,6 +1696,18 @@
         "storytelling"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Rachel Sennott",
+      "slug": "rachel-sennott",
+      "source": "seed-research",
+      "instagram": "rachelsennott",
+      "igFollowers": 1000000,
+      "genres": [
+        "observational",
+        "self-deprecating"
+      ],
+      "touringStatus": "UNKNOWN"
     },
     {
       "name": "Zarna Garg",
@@ -1218,6 +1789,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Corey Holcomb",
+      "slug": "corey-holcomb",
+      "source": "seed-research",
+      "instagram": "coreyholcomb",
+      "igFollowers": 800000,
+      "genres": [
+        "dark",
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Jeff Foxworthy",
       "slug": "jeff-foxworthy",
       "source": "api",
@@ -1270,6 +1854,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Ziwe",
+      "slug": "ziwe",
+      "source": "seed-research",
+      "instagram": "ziwe",
+      "igFollowers": 800000,
+      "genres": [
+        "political",
+        "character",
+        "satire"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Jim Jefferies",
       "slug": "jim-jefferies",
       "source": "api",
@@ -1279,6 +1876,19 @@
         "dark",
         "storytelling",
         "political"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Bill Bellamy",
+      "slug": "bill-bellamy",
+      "source": "seed-research",
+      "instagram": "billbellamy",
+      "igFollowers": 700000,
+      "genres": [
+        "observational",
+        "cultural",
+        "storytelling"
       ],
       "touringStatus": "TOURING"
     },
@@ -1348,6 +1958,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "The Kid Mero",
+      "slug": "the-kid-mero",
+      "source": "seed-research",
+      "instagram": "thekidmero",
+      "igFollowers": 700000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Brian Simpson",
       "slug": "brian-simpson",
       "source": "api",
@@ -1370,6 +1992,32 @@
         "storytelling",
         "observational",
         "clean"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Heather McDonald",
+      "slug": "heather-mcdonald",
+      "source": "seed-research",
+      "instagram": "heaborealathermcdonald",
+      "igFollowers": 600000,
+      "genres": [
+        "observational",
+        "storytelling",
+        "celebrity"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jaboukie Young-White",
+      "slug": "jaboukie-young-white",
+      "source": "seed-research",
+      "instagram": "jaboukie",
+      "igFollowers": 600000,
+      "genres": [
+        "observational",
+        "cultural",
+        "absurdist"
       ],
       "touringStatus": "TOURING"
     },
@@ -1413,6 +2061,32 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Sheryl Underwood",
+      "slug": "sheryl-underwood",
+      "source": "seed-research",
+      "instagram": "sherylunderwood",
+      "igFollowers": 600000,
+      "genres": [
+        "observational",
+        "cultural",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Tim Hawkins",
+      "slug": "tim-hawkins",
+      "source": "seed-research",
+      "instagram": "timhawkinscomic",
+      "igFollowers": 600000,
+      "genres": [
+        "clean",
+        "musical",
+        "parody"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Weird Al Yankovic",
       "slug": "weird-al-yankovic",
       "source": "seed-research",
@@ -1452,6 +2126,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Aries Spears",
+      "slug": "aries-spears",
+      "source": "seed-research",
+      "instagram": "ariesspears",
+      "igFollowers": 500000,
+      "genres": [
+        "impressionist",
+        "character",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Becky Robinson",
       "slug": "becky-robinson",
       "source": "seed-research",
@@ -1463,6 +2150,18 @@
         "observational"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Caleb Pressley",
+      "slug": "caleb-pressley",
+      "source": "seed-research",
+      "instagram": "calebpressley",
+      "igFollowers": 500000,
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Dan Soder",
@@ -1504,6 +2203,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Kevin Sullivan",
+      "slug": "kevin-sullivan",
+      "source": "seed-research",
+      "instagram": "kevinsullivancomedy",
+      "igFollowers": 500000,
+      "genres": [
+        "observational",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Lavell Crawford",
       "slug": "lavell-crawford",
       "source": "api",
@@ -1517,6 +2228,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Meg Stalter",
+      "slug": "meg-stalter",
+      "source": "seed-research",
+      "instagram": "megaborealnstalter",
+      "igFollowers": 500000,
+      "genres": [
+        "character",
+        "absurdist"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Ron White",
       "slug": "ron-white",
       "source": "api",
@@ -1526,6 +2249,31 @@
         "storytelling",
         "blue-collar",
         "drinking"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Thomas Middleditch",
+      "slug": "thomas-middleditch",
+      "source": "seed-research",
+      "instagram": "tombini",
+      "igFollowers": 500000,
+      "genres": [
+        "improvisation",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Tommy Davidson",
+      "slug": "tommy-davidson",
+      "source": "seed-research",
+      "instagram": "realtommydavidson",
+      "igFollowers": 500000,
+      "genres": [
+        "impressionist",
+        "character",
+        "physical"
       ],
       "touringStatus": "TOURING"
     },
@@ -1556,6 +2304,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Affion Crockett",
+      "slug": "affion-crockett",
+      "source": "seed-research",
+      "instagram": "affioncrockett",
+      "igFollowers": 400000,
+      "genres": [
+        "impressionist",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Atsuko Okatsuka",
       "slug": "atsuko-okatsuka",
       "source": "api",
@@ -1567,6 +2327,31 @@
         "cultural"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Dave Coulier",
+      "slug": "dave-coulier",
+      "source": "seed-research",
+      "instagram": "davecoulier",
+      "igFollowers": 400000,
+      "genres": [
+        "impressionist",
+        "character",
+        "clean"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Grace Kuhlenschmidt",
+      "slug": "grace-kuhlenschmidt",
+      "source": "seed-research",
+      "instagram": "gracekuhlenschmidt",
+      "igFollowers": 400000,
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Jessica Kirson",
@@ -1608,6 +2393,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Michael Jr.",
+      "slug": "michael-jr",
+      "source": "seed-research",
+      "instagram": "michaeljrcomedy",
+      "igFollowers": 400000,
+      "genres": [
+        "clean",
+        "observational",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Ms. Pat",
       "slug": "ms-pat",
       "source": "api",
@@ -1629,6 +2427,19 @@
       "genres": [
         "observational",
         "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Terry Fator",
+      "slug": "terry-fator",
+      "source": "seed-research",
+      "instagram": "terryfator",
+      "igFollowers": 400000,
+      "genres": [
+        "ventriloquism",
+        "musical",
+        "impressionist"
       ],
       "touringStatus": "TOURING"
     },
@@ -1801,6 +2612,30 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Heidi Gardner",
+      "slug": "heidi-gardner",
+      "source": "seed-research",
+      "instagram": "haborealeidigardner",
+      "igFollowers": 300000,
+      "genres": [
+        "character",
+        "sketch"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "James Austin Johnson",
+      "slug": "james-austin-johnson",
+      "source": "seed-research",
+      "instagram": "jamesaustinjohnson",
+      "igFollowers": 300000,
+      "genres": [
+        "impressionist",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Kevin Bridges",
       "slug": "kevin-bridges",
       "source": "seed-research",
@@ -1809,6 +2644,31 @@
       "genres": [
         "observational",
         "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Mikey Day",
+      "slug": "mikey-day",
+      "source": "seed-research",
+      "instagram": "miaborealkeyday",
+      "igFollowers": 300000,
+      "genres": [
+        "character",
+        "sketch"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
+      "name": "Steve Hofstetter",
+      "slug": "steve-hofstetter",
+      "source": "seed-research",
+      "instagram": "stevehofstetter",
+      "igFollowers": 300000,
+      "genres": [
+        "crowd-work",
+        "observational",
+        "political"
       ],
       "touringStatus": "TOURING"
     },
@@ -1878,6 +2738,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Brad Garrett",
+      "slug": "brad-garrett",
+      "source": "seed-research",
+      "instagram": "bradgarrett",
+      "igFollowers": 200000,
+      "genres": [
+        "deadpan",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Brad Williams",
       "slug": "brad-williams",
       "source": "api",
@@ -1901,6 +2773,71 @@
         "absurdist"
       ],
       "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Cam Patterson",
+      "slug": "cam-patterson",
+      "source": "seed-research",
+      "instagram": "camaborealpatterson",
+      "igFollowers": 200000,
+      "genres": [
+        "observational",
+        "clean",
+        "southern"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Chonda Pierce",
+      "slug": "chonda-pierce",
+      "source": "seed-research",
+      "instagram": "chondapierce",
+      "igFollowers": 200000,
+      "genres": [
+        "clean",
+        "southern",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "David Alan Grier",
+      "slug": "david-alan-grier",
+      "source": "seed-research",
+      "instagram": "davidalangrier",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "impressionist",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Desi Lydic",
+      "slug": "desi-lydic",
+      "source": "seed-research",
+      "instagram": "desilydic",
+      "igFollowers": 200000,
+      "genres": [
+        "political",
+        "observational",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Doug Benson",
+      "slug": "doug-benson",
+      "source": "seed-research",
+      "instagram": "dougbenson",
+      "igFollowers": 200000,
+      "genres": [
+        "stoner",
+        "observational",
+        "wordplay"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Doug Stanhope",
@@ -1942,6 +2879,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Ego Nwodim",
+      "slug": "ego-nwodim",
+      "source": "seed-research",
+      "instagram": "egonwodim",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "observational"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Gina Brillon",
       "slug": "gina-brillon",
       "source": "seed-research",
@@ -1950,6 +2899,42 @@
       "genres": [
         "storytelling",
         "cultural",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jade Catta-Preta",
+      "slug": "jade-catta-preta-2",
+      "source": "seed-research",
+      "instagram": "jadecattapreta",
+      "igFollowers": 200000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "James Veitch",
+      "slug": "james-veitch",
+      "source": "seed-research",
+      "instagram": "jamesveitch",
+      "igFollowers": 200000,
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jamie Kennedy",
+      "slug": "jamie-kennedy",
+      "source": "seed-research",
+      "instagram": "jamiekennedy",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
         "observational"
       ],
       "touringStatus": "TOURING"
@@ -1968,6 +2953,57 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Jermaine Fowler",
+      "slug": "jermaine-fowler",
+      "source": "seed-research",
+      "instagram": "jermainefowler",
+      "igFollowers": 200000,
+      "genres": [
+        "observational",
+        "cultural",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "John Early",
+      "slug": "john-early",
+      "source": "seed-research",
+      "instagram": "baborealdjohnearly",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "absurdist",
+        "LGBTQ"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jon Reep",
+      "slug": "jon-reep",
+      "source": "seed-research",
+      "instagram": "jonreep",
+      "igFollowers": 200000,
+      "genres": [
+        "observational",
+        "southern",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jordan Klepper",
+      "slug": "jordan-klepper",
+      "source": "seed-research",
+      "instagram": "jordanklepper",
+      "igFollowers": 200000,
+      "genres": [
+        "political",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Julio Torres",
       "slug": "julio-torres",
       "source": "seed-research",
@@ -1977,6 +3013,18 @@
         "absurdist",
         "character",
         "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Kate Berlant",
+      "slug": "kate-berlant",
+      "source": "seed-research",
+      "instagram": "kateberlant",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "absurdist"
       ],
       "touringStatus": "TOURING"
     },
@@ -1994,6 +3042,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Lauren Lapkus",
+      "slug": "lauren-lapkus",
+      "source": "seed-research",
+      "instagram": "laurenlapkus",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "improvisation"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Maria Bamford",
       "slug": "maria-bamford",
       "source": "api",
@@ -2003,6 +3063,18 @@
         "character",
         "absurdist",
         "confessional"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Michael Longfellow",
+      "slug": "michael-longfellow",
+      "source": "seed-research",
+      "instagram": "michaellongfellow",
+      "igFollowers": 200000,
+      "genres": [
+        "observational",
+        "deadpan"
       ],
       "touringStatus": "TOURING"
     },
@@ -2033,6 +3105,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Patti Harrison",
+      "slug": "patti-harrison",
+      "source": "seed-research",
+      "instagram": "pataborealtiharrison",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "absurdist",
+        "LGBTQ"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Rachid Badouri",
       "slug": "rachid-badouri",
       "source": "seed-research",
@@ -2042,6 +3127,29 @@
         "physical",
         "cultural",
         "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Redban",
+      "slug": "redban",
+      "source": "seed-research",
+      "instagram": "redban",
+      "igFollowers": 200000,
+      "genres": [
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Rip Micheals",
+      "slug": "rip-micheals",
+      "source": "seed-research",
+      "instagram": "ripmicheals",
+      "igFollowers": 200000,
+      "genres": [
+        "observational",
+        "cultural"
       ],
       "touringStatus": "TOURING"
     },
@@ -2068,6 +3176,32 @@
         "observational",
         "political",
         "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Sarah Squirm",
+      "slug": "sarah-squirm",
+      "source": "seed-research",
+      "instagram": "sarahsquirm",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "absurdist",
+        "dark"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Tim Heidecker",
+      "slug": "tim-heidecker",
+      "source": "seed-research",
+      "instagram": "timheidecker",
+      "igFollowers": 200000,
+      "genres": [
+        "character",
+        "absurdist",
+        "anti-comedy"
       ],
       "touringStatus": "TOURING"
     },
@@ -2173,6 +3307,31 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Alyssa Limperis",
+      "slug": "alyssa-limperis",
+      "source": "seed-research",
+      "instagram": "alyssalimperis",
+      "igFollowers": 100000,
+      "genres": [
+        "character",
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Bret Ernst",
+      "slug": "bret-ernst",
+      "source": "seed-research",
+      "instagram": "breternst",
+      "igFollowers": 100000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Brian Posehn",
       "slug": "brian-posehn",
       "source": "seed-research",
@@ -2184,6 +3343,31 @@
         "observational"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Bridget Everett",
+      "slug": "bridget-everett",
+      "source": "seed-research",
+      "instagram": "bridgeteverett",
+      "igFollowers": 100000,
+      "genres": [
+        "physical",
+        "musical",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Cipha Sounds",
+      "slug": "cipha-sounds",
+      "source": "seed-research",
+      "instagram": "ciphasounds",
+      "igFollowers": 100000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Finesse Mitchell",
@@ -2198,6 +3382,43 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Hari Kondabolu",
+      "slug": "hari-kondabolu",
+      "source": "seed-research",
+      "instagram": "harikondabolu",
+      "igFollowers": 100000,
+      "genres": [
+        "political",
+        "cultural",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jen Kirkman",
+      "slug": "jen-kirkman",
+      "source": "seed-research",
+      "instagram": "jenkirkman",
+      "igFollowers": 100000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Kareem Rahma",
+      "slug": "kareem-rahma",
+      "source": "seed-research",
+      "instagram": "kareemrahma",
+      "igFollowers": 100000,
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Mary Beth Barone",
       "slug": "mary-beth-barone",
       "source": "seed-research",
@@ -2207,6 +3428,19 @@
         "observational",
         "self-deprecating",
         "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Molly Kearney",
+      "slug": "molly-kearney",
+      "source": "seed-research",
+      "instagram": "mollykearney",
+      "igFollowers": 100000,
+      "genres": [
+        "observational",
+        "LGBTQ",
+        "character"
       ],
       "touringStatus": "TOURING"
     },
@@ -2233,6 +3467,19 @@
         "impressionist",
         "physical",
         "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Pat McGann",
+      "slug": "pat-mcgann",
+      "source": "seed-research",
+      "instagram": "patmcganncomedy",
+      "igFollowers": 100000,
+      "genres": [
+        "observational",
+        "clean",
+        "storytelling"
       ],
       "touringStatus": "TOURING"
     },
@@ -2275,6 +3522,18 @@
       "touringStatus": "REGIONAL"
     },
     {
+      "name": "Taylor Ortega",
+      "slug": "taylor-ortega",
+      "source": "seed-research",
+      "instagram": "taylorortega",
+      "igFollowers": 100000,
+      "genres": [
+        "character",
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Troy Bond",
       "slug": "troy-bond",
       "source": "seed-research",
@@ -2285,6 +3544,19 @@
         "crowd-work"
       ],
       "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Josh Gondelman",
+      "slug": "josh-gondelman",
+      "source": "seed-research",
+      "instagram": "joshgondelman",
+      "igFollowers": 80000,
+      "genres": [
+        "observational",
+        "clean",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Judah Friedlander",
@@ -2351,6 +3623,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Anthony Atamanuik",
+      "slug": "anthony-atamanuik",
+      "source": "seed-research",
+      "instagram": "atamanuik",
+      "igFollowers": 50000,
+      "genres": [
+        "character",
+        "impressionist",
+        "political"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Chris Turner",
       "slug": "chris-turner",
       "source": "seed-research",
@@ -2360,6 +3645,55 @@
         "improvisation",
         "musical",
         "absurdist"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Clayton English",
+      "slug": "clayton-english",
+      "source": "seed-research",
+      "instagram": "claytonenglish",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "storytelling",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Danielle Perez",
+      "slug": "danielle-perez",
+      "source": "seed-research",
+      "instagram": "danielleperez",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "self-deprecating"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Ian Karmel",
+      "slug": "ian-karmel",
+      "source": "seed-research",
+      "instagram": "iankarmel",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jamie Lee",
+      "slug": "jamie-lee",
+      "source": "seed-research",
+      "instagram": "jamieleeisnice",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "storytelling"
       ],
       "touringStatus": "TOURING"
     },
@@ -2388,6 +3722,18 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Kathy Madigan",
+      "slug": "kathy-madigan",
+      "source": "seed-research",
+      "instagram": "kathymadigan",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "KC Shornima",
       "slug": "kc-shornima",
       "source": "seed-research",
@@ -2401,6 +3747,43 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Megan Gailey",
+      "slug": "megan-gailey",
+      "source": "seed-research",
+      "instagram": "megangailey",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Mike Yard",
+      "slug": "mike-yard",
+      "source": "seed-research",
+      "instagram": "mikeyard",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "cultural",
+        "political"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Mohanad Elshieky",
+      "slug": "mohanad-elshieky",
+      "source": "seed-research",
+      "instagram": "mohanadelshieky",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Nico Carney",
       "slug": "nico-carney",
       "source": "seed-research",
@@ -2409,6 +3792,31 @@
       "genres": [
         "observational",
         "storytelling",
+        "LGBTQ"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Open Mike Eagle",
+      "slug": "open-mike-eagle",
+      "source": "seed-research",
+      "instagram": "openmikeeagle",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "cultural",
+        "nerd"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Rhea Butcher",
+      "slug": "rhea-butcher",
+      "source": "seed-research",
+      "instagram": "rheabutcher",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
         "LGBTQ"
       ],
       "touringStatus": "TOURING"
@@ -2440,6 +3848,19 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Sindhu Vee",
+      "slug": "sindhu-vee",
+      "source": "seed-research",
+      "instagram": "sindhuvstand",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "cultural",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Tacarra Williams",
       "slug": "tacarra-williams",
       "source": "seed-research",
@@ -2448,6 +3869,31 @@
       "genres": [
         "observational",
         "storytelling",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Vanessa Gonzalez",
+      "slug": "vanessa-gonzalez",
+      "source": "seed-research",
+      "instagram": "vanessagonzalez",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Wyatt Cenac",
+      "slug": "wyatt-cenac",
+      "source": "seed-research",
+      "instagram": "wyattcenac",
+      "igFollowers": 50000,
+      "genres": [
+        "observational",
+        "political",
         "cultural"
       ],
       "touringStatus": "TOURING"
@@ -2463,6 +3909,42 @@
         "one-liner"
       ],
       "touringStatus": "TOURING"
+    },
+    {
+      "name": "Abby Govindan",
+      "slug": "abby-govindan",
+      "source": "seed-research",
+      "instagram": "abbygovind",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Alison Leiby",
+      "slug": "alison-leiby",
+      "source": "seed-research",
+      "instagram": "alisonleiby",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "political"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Andy Daly",
+      "slug": "andy-daly",
+      "source": "seed-research",
+      "instagram": "andydalyplease",
+      "igFollowers": 30000,
+      "genres": [
+        "character",
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Aurie Styla",
@@ -2489,6 +3971,55 @@
       "touringStatus": "REGIONAL"
     },
     {
+      "name": "Desiree Burch",
+      "slug": "desiree-burch",
+      "source": "seed-research",
+      "instagram": "desireeburch",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "cultural",
+        "political"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Emily Heller",
+      "slug": "emily-heller",
+      "source": "seed-research",
+      "instagram": "emilyheller",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "deadpan"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Emma Willmann",
+      "slug": "emma-willmann",
+      "source": "seed-research",
+      "instagram": "emmawillmann",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "LGBTQ"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Esther Ku",
+      "slug": "esther-ku",
+      "source": "seed-research",
+      "instagram": "estherku",
+      "igFollowers": 30000,
+      "genres": [
+        "dark",
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Ismael Loutfi",
       "slug": "ismael-loutfi",
       "source": "seed-research",
@@ -2500,6 +4031,19 @@
         "storytelling"
       ],
       "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Joe Machi",
+      "slug": "joe-machi",
+      "source": "seed-research",
+      "instagram": "joemachi",
+      "igFollowers": 30000,
+      "genres": [
+        "deadpan",
+        "one-liner",
+        "absurdist"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "John Heffron",
@@ -2576,6 +4120,69 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Mary Mack",
+      "slug": "mary-mack",
+      "source": "seed-research",
+      "instagram": "marymackcomedy",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "clean",
+        "absurdist"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Matt Fulchiron",
+      "slug": "matt-fulchiron",
+      "source": "seed-research",
+      "instagram": "mattfulchiron",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Mia Jackson",
+      "slug": "mia-jackson",
+      "source": "seed-research",
+      "instagram": "miajacksoncomedy",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "cultural",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Michael Palascak",
+      "slug": "michael-palascak",
+      "source": "seed-research",
+      "instagram": "palascak",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "clean"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Naomi Ekperigin",
+      "slug": "naomi-ekperigin",
+      "source": "seed-research",
+      "instagram": "naomiekperigin",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "cultural",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Nore Davis",
       "slug": "nore-davis",
       "source": "seed-research",
@@ -2589,6 +4196,30 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Rocky Dale Davis",
+      "slug": "rocky-dale-davis",
+      "source": "seed-research",
+      "instagram": "rockydavis",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "southern"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Rod Man",
+      "slug": "rod-man",
+      "source": "seed-research",
+      "instagram": "rodmancomedy",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Sam Morrison",
       "slug": "sam-morrison",
       "source": "seed-research",
@@ -2597,6 +4228,43 @@
       "genres": [
         "observational",
         "LGBTQ"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Sarah Tiana",
+      "slug": "sarah-tiana",
+      "source": "seed-research",
+      "instagram": "sarahtiana",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Solomon Georgio",
+      "slug": "solomon-georgio",
+      "source": "seed-research",
+      "instagram": "solomongeorgio",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "cultural",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Subhah Agarwal",
+      "slug": "subhah-agarwal",
+      "source": "seed-research",
+      "instagram": "subhah",
+      "igFollowers": 30000,
+      "genres": [
+        "observational",
+        "cultural"
       ],
       "touringStatus": "REGIONAL"
     },
@@ -2651,6 +4319,18 @@
       "touringStatus": "REGIONAL"
     },
     {
+      "name": "Caleb Synan",
+      "slug": "caleb-synan",
+      "source": "seed-research",
+      "instagram": "calebsynan",
+      "igFollowers": 20000,
+      "genres": [
+        "observational",
+        "southern"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Dan Naturman",
       "slug": "dan-naturman",
       "source": "seed-research",
@@ -2671,6 +4351,19 @@
       "genres": [
         "deadpan",
         "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Emmy Blotnick",
+      "slug": "emmy-blotnick",
+      "source": "seed-research",
+      "instagram": "emmyblotnick",
+      "igFollowers": 20000,
+      "genres": [
+        "observational",
+        "one-liner",
+        "deadpan"
       ],
       "touringStatus": "REGIONAL"
     },
@@ -2711,6 +4404,19 @@
       "touringStatus": "REGIONAL"
     },
     {
+      "name": "Kevin Iso",
+      "slug": "kevin-iso",
+      "source": "seed-research",
+      "instagram": "keviniso",
+      "igFollowers": 20000,
+      "genres": [
+        "observational",
+        "cultural",
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Marcella Arguello",
       "slug": "marcella-arguello",
       "source": "seed-research",
@@ -2722,6 +4428,18 @@
         "dark"
       ],
       "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Marina Franklin",
+      "slug": "marina-franklin",
+      "source": "seed-research",
+      "instagram": "marinafranklin",
+      "igFollowers": 20000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Orion Levine",
@@ -2747,6 +4465,18 @@
       "touringStatus": "LOCAL"
     },
     {
+      "name": "Sierra Katow",
+      "slug": "sierra-katow",
+      "source": "seed-research",
+      "instagram": "sierrakatow",
+      "igFollowers": 20000,
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Karina Reyes",
       "slug": "karina-reyes",
       "source": "seed-research",
@@ -2767,6 +4497,15 @@
       "genres": [
         "observational",
         "absurdist"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Aarik Nesby",
+      "slug": "aarik-nesby",
+      "source": "seed-research",
+      "genres": [
+        "observational"
       ],
       "touringStatus": "LOCAL"
     },
@@ -2830,9 +4569,29 @@
       "source": "api"
     },
     {
+      "name": "Adam Pasi",
+      "slug": "adam-pasi",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Adam Ray",
       "slug": "adam-ray",
       "source": "api"
+    },
+    {
+      "name": "Adele Givens",
+      "slug": "adele-givens",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Adrienne Iapalucci",
@@ -2860,6 +4619,15 @@
       "source": "api"
     },
     {
+      "name": "Aidan McCluskey",
+      "slug": "aidan-mccluskey",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Aisha Tyler",
       "slug": "aisha-tyler",
       "source": "api"
@@ -2880,6 +4648,15 @@
       "source": "api"
     },
     {
+      "name": "Alex Falcone",
+      "slug": "alex-falcone",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Alex Kumin",
       "slug": "alex-kumin",
       "source": "api"
@@ -2888,6 +4665,25 @@
       "name": "Alex Libutti",
       "slug": "alex-libutti",
       "source": "api"
+    },
+    {
+      "name": "Alex Pearlman",
+      "slug": "alex-pearlman",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Alex Reymundo",
+      "slug": "alex-reymundo",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Alex Schultz",
@@ -2910,9 +4706,47 @@
       "source": "api"
     },
     {
+      "name": "Alfred Konuwa",
+      "slug": "alfred-konuwa",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Alfred Robles",
+      "slug": "alfred-robles",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Ali Kolbert",
+      "slug": "ali-kolbert",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Ali Macofsky",
       "slug": "ali-macofsky",
       "source": "api"
+    },
+    {
+      "name": "Alice Wetterlund",
+      "slug": "alice-wetterlund",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Alistair Ogden",
@@ -2939,9 +4773,27 @@
       "source": "api"
     },
     {
+      "name": "Alyssa Wolff",
+      "slug": "alyssa-wolff",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Amanda Seales",
       "slug": "amanda-seales",
       "source": "api"
+    },
+    {
+      "name": "Amanda Serrano",
+      "slug": "amanda-serrano",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Amber Aury",
@@ -2959,11 +4811,29 @@
       "source": "api"
     },
     {
+      "name": "Anastasia Jacques",
+      "slug": "anastasia-jacques",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Andres Parada",
       "slug": "andres-parada",
       "source": "seed-research",
       "genres": [
         "character"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Andrew Collin",
+      "slug": "andrew-collin",
+      "source": "seed-research",
+      "genres": [
+        "observational"
       ],
       "touringStatus": "LOCAL"
     },
@@ -2976,6 +4846,25 @@
       "name": "Andrew Dismukes",
       "slug": "andrew-dismukes",
       "source": "api"
+    },
+    {
+      "name": "Andrew Fiori",
+      "slug": "andrew-fiori",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Andrew Orvedahl",
+      "slug": "andrew-orvedahl",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Andrew Schiavone",
@@ -3053,6 +4942,15 @@
       "name": "Anthony DeVito",
       "slug": "anthony-devito",
       "source": "api"
+    },
+    {
+      "name": "Anthony Fuentes",
+      "slug": "anthony-fuentes",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Aparna Nancherla",
@@ -3136,6 +5034,16 @@
       "touringStatus": "LOCAL"
     },
     {
+      "name": "B. Cole",
+      "slug": "b-cole",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Barbara Carlyle",
       "slug": "barbara-carlyle",
       "source": "api"
@@ -3166,9 +5074,40 @@
       "source": "api"
     },
     {
+      "name": "Ben Kronberg",
+      "slug": "ben-kronberg",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "one-liner"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Ben Roy",
+      "slug": "ben-roy",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "rant",
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Bernie Mac",
       "slug": "bernie-mac",
       "source": "api"
+    },
+    {
+      "name": "Beth Dover",
+      "slug": "beth-dover",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Beth Stelling",
@@ -3176,9 +5115,28 @@
       "source": "api"
     },
     {
+      "name": "Big Irish Jay",
+      "slug": "big-irish-jay",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "storytelling"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Bill Cosby",
       "slug": "bill-cosby",
       "source": "api"
+    },
+    {
+      "name": "Bill Dawes",
+      "slug": "bill-dawes",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Bill Engvall",
@@ -3226,6 +5184,16 @@
       "source": "api"
     },
     {
+      "name": "Blaine Capatch",
+      "slug": "blaine-capatch",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Blair Socci",
       "slug": "blair-socci",
       "source": "api"
@@ -3234,6 +5202,16 @@
       "name": "Bo Johnson",
       "slug": "bo-johnson",
       "source": "api"
+    },
+    {
+      "name": "Bob Kelly",
+      "slug": "bob-kelly",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Bob Marley",
@@ -3251,6 +5229,16 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Bob Newhart",
+      "slug": "bob-newhart",
+      "source": "seed-research",
+      "genres": [
+        "deadpan",
+        "observational"
+      ],
+      "touringStatus": "RETIRED"
+    },
+    {
       "name": "Bob Saget",
       "slug": "bob-saget",
       "source": "api"
@@ -3261,9 +5249,29 @@
       "source": "api"
     },
     {
+      "name": "Bob Stromberg",
+      "slug": "bob-stromberg",
+      "source": "seed-research",
+      "genres": [
+        "clean",
+        "physical"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Bob the Drag Queen",
       "slug": "bob-the-drag-queen",
       "source": "api"
+    },
+    {
+      "name": "Bobby Collins",
+      "slug": "bobby-collins",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Bobby Slayton",
@@ -3273,6 +5281,17 @@
         "dark",
         "roast",
         "one-liner"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Bobcat Goldthwait",
+      "slug": "bobcat-goldthwait",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "absurdist",
+        "dark"
       ],
       "touringStatus": "REGIONAL"
     },
@@ -3292,6 +5311,16 @@
       "source": "api"
     },
     {
+      "name": "Brad Paisley",
+      "slug": "brad-paisley",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "clean"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Brad Wenzel",
       "slug": "brad-wenzel",
       "source": "api"
@@ -3300,6 +5329,15 @@
       "name": "Brandi Denise",
       "slug": "brandi-denise",
       "source": "api"
+    },
+    {
+      "name": "Brendan Eyre",
+      "slug": "brendan-eyre",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Brendan Sagalow",
@@ -3332,6 +5370,16 @@
       "source": "api"
     },
     {
+      "name": "Brett Hamil",
+      "slug": "brett-hamil",
+      "source": "seed-research",
+      "genres": [
+        "political",
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Brian Gaar",
       "slug": "brian-gaar",
       "source": "api"
@@ -3340,6 +5388,15 @@
       "name": "Brian Holtzman",
       "slug": "brian-holtzman",
       "source": "api"
+    },
+    {
+      "name": "Brian Monarch",
+      "slug": "brian-monarch",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Brian Moses",
@@ -3401,6 +5458,16 @@
       "source": "api"
     },
     {
+      "name": "Buddy Hackett",
+      "slug": "buddy-hackett",
+      "source": "seed-research",
+      "genres": [
+        "storytelling",
+        "character"
+      ],
+      "touringStatus": "RETIRED"
+    },
+    {
       "name": "Byron Bowers",
       "slug": "byron-bowers",
       "source": "api"
@@ -3426,9 +5493,29 @@
       "source": "api"
     },
     {
+      "name": "Capone",
+      "slug": "capone",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Cara Connors",
       "slug": "cara-connors",
       "source": "api"
+    },
+    {
+      "name": "Carl Tart",
+      "slug": "carl-tart",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "impressionist"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Carlos Mencia",
@@ -3462,6 +5549,15 @@
       "source": "api"
     },
     {
+      "name": "Casey Ley",
+      "slug": "casey-ley",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Casey Rocket",
       "slug": "casey-rocket",
       "source": "api"
@@ -3480,6 +5576,26 @@
       "name": "Chad Kroeger",
       "slug": "chad-kroeger",
       "source": "api"
+    },
+    {
+      "name": "Chad Kultgen",
+      "slug": "chad-kultgen",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Chanel Ali",
+      "slug": "chanel-ali",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Charlie Berens",
@@ -3521,9 +5637,28 @@
       "source": "api"
     },
     {
+      "name": "Chloe Radcliffe",
+      "slug": "chloe-radcliffe",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Chris Alan",
       "slug": "chris-alan",
       "source": "api"
+    },
+    {
+      "name": "Chris Cubas",
+      "slug": "chris-cubas",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "one-liner"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Chris D'elia",
@@ -3590,9 +5725,28 @@
       "source": "api"
     },
     {
+      "name": "Christian Finnegan",
+      "slug": "christian-finnegan",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "nerd"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Christina Mariani",
       "slug": "christina-mariani",
       "source": "api"
+    },
+    {
+      "name": "Christine Hurley",
+      "slug": "christine-hurley",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Christopher Titus",
@@ -3603,6 +5757,16 @@
       "name": "CJ Landry",
       "slug": "cj-landry",
       "source": "api"
+    },
+    {
+      "name": "Cleto Rodriguez",
+      "slug": "cleto-rodriguez",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Colin Jost",
@@ -3630,6 +5794,15 @@
       "source": "api"
     },
     {
+      "name": "Connor Hangsleben",
+      "slug": "connor-hangsleben",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Conor Janda",
       "slug": "conor-janda",
       "source": "seed-research",
@@ -3654,9 +5827,47 @@
       "source": "api"
     },
     {
+      "name": "Corinne Fisher",
+      "slug": "corinne-fisher",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Courtney Baka",
+      "slug": "courtney-baka",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Craig Ferguson",
       "slug": "craig-ferguson",
       "source": "api"
+    },
+    {
+      "name": "Craig Shoemaker",
+      "slug": "craig-shoemaker",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Cyrus Manesh",
+      "slug": "cyrus-manesh",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "improvisation"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Damien Power",
@@ -3667,6 +5878,15 @@
       "name": "Damon Wayans",
       "slug": "damon-wayans",
       "source": "api"
+    },
+    {
+      "name": "Dan Boulger",
+      "slug": "dan-boulger",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Dan Cummins",
@@ -3716,6 +5936,16 @@
       "source": "api"
     },
     {
+      "name": "Daniel Fernandes",
+      "slug": "daniel-fernandes",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "political"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Daniel Muggleton",
       "slug": "daniel-muggleton",
       "source": "api"
@@ -3736,6 +5966,16 @@
       "source": "api"
     },
     {
+      "name": "Danny Brown",
+      "slug": "danny-brown",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Danny Jolles",
       "slug": "danny-jolles",
       "source": "api"
@@ -3749,6 +5989,16 @@
       "name": "Daphnique Springs",
       "slug": "daphnique-springs",
       "source": "api"
+    },
+    {
+      "name": "Daren Streblow",
+      "slug": "daren-streblow",
+      "source": "seed-research",
+      "genres": [
+        "clean",
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Darius Bennett",
@@ -3785,6 +6035,16 @@
       "source": "api"
     },
     {
+      "name": "Dave Foley",
+      "slug": "dave-foley",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "absurdist"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Dave Landau",
       "slug": "dave-landau",
       "source": "api"
@@ -3813,6 +6073,15 @@
       "name": "Dave Smith",
       "slug": "dave-smith",
       "source": "api"
+    },
+    {
+      "name": "Dave Smith (comedian)",
+      "slug": "dave-smith-comedian",
+      "source": "seed-research",
+      "genres": [
+        "political"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Dave Temple",
@@ -3879,9 +6148,50 @@
       "touringStatus": "LOCAL"
     },
     {
+      "name": "Debra DiGiovanni",
+      "slug": "debra-digiovanni",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "self-deprecating"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Dedrick Flynn",
       "slug": "dedrick-flynn",
       "source": "api"
+    },
+    {
+      "name": "Denis Leary",
+      "slug": "denis-leary",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "rant",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Dennis Gaxiola",
+      "slug": "dennis-gaxiola",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Dennis Regan",
+      "slug": "dennis-regan",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "deadpan"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Deon Cole",
@@ -3909,9 +6219,29 @@
       "source": "api"
     },
     {
+      "name": "Desi Banks",
+      "slug": "desi-banks",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "sketch"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Devon Walker",
       "slug": "devon-walker",
       "source": "api"
+    },
+    {
+      "name": "Dhaya Lakshminarayanan",
+      "slug": "dhaya-lakshminarayanan",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Django Gold",
@@ -3947,6 +6277,16 @@
       "name": "Donnell Rawlings",
       "slug": "donnell-rawlings",
       "source": "api"
+    },
+    {
+      "name": "Donnie Chieng",
+      "slug": "donnie-chieng",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Dragos",
@@ -3989,6 +6329,16 @@
       "source": "api"
     },
     {
+      "name": "Druski",
+      "slug": "druski",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "sketch"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Duncan Trussell",
       "slug": "duncan-trussell",
       "source": "api"
@@ -4022,6 +6372,15 @@
       "touringStatus": "LOCAL"
     },
     {
+      "name": "Dylan Carlino",
+      "slug": "dylan-carlino",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Dylan Moran",
       "slug": "dylan-moran",
       "source": "api"
@@ -4052,6 +6411,16 @@
       "source": "api"
     },
     {
+      "name": "Eddie Ifft",
+      "slug": "eddie-ifft",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Eddie Izzard",
       "slug": "eddie-izzard",
       "source": "api"
@@ -4077,14 +6446,43 @@
       "source": "api"
     },
     {
+      "name": "Eliot Dunkin",
+      "slug": "eliot-dunkin",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Elle Orlando",
       "slug": "elle-orlando",
       "source": "api"
     },
     {
+      "name": "Ellis Rodriguez",
+      "slug": "ellis-rodriguez",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Emil Wakim",
       "slug": "emil-wakim",
       "source": "api"
+    },
+    {
+      "name": "Emmett Montgomery",
+      "slug": "emmett-montgomery",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "storytelling"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Ennis Esmer",
@@ -4119,6 +6517,26 @@
       "name": "Erik Griffin",
       "slug": "erik-griffin",
       "source": "api"
+    },
+    {
+      "name": "Erik Rivera",
+      "slug": "erik-rivera",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Erin Foley",
+      "slug": "erin-foley",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "LGBTQ"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Erin Jackson",
@@ -4186,9 +6604,39 @@
       "source": "api"
     },
     {
+      "name": "Flex Alexander",
+      "slug": "flex-alexander",
+      "source": "seed-research",
+      "genres": [
+        "physical",
+        "character"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Francesco De Carlo",
+      "slug": "francesco-de-carlo",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Francis Foster",
       "slug": "francis-foster",
       "source": "api"
+    },
+    {
+      "name": "Francisco Ramos",
+      "slug": "francisco-ramos",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Frank Caliendo",
@@ -4201,6 +6649,16 @@
       "source": "api"
     },
     {
+      "name": "Frankie Quinones",
+      "slug": "frankie-quinones",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Frankie Qui\u00f1ones",
       "slug": "frankie-qui-ones",
       "source": "api"
@@ -4209,6 +6667,16 @@
       "name": "Fred Armisen",
       "slug": "fred-armisen",
       "source": "api"
+    },
+    {
+      "name": "Futuristic",
+      "slug": "futuristic",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "musical"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Gad Elmaleh",
@@ -4231,6 +6699,15 @@
       "source": "api"
     },
     {
+      "name": "Gary Delaney",
+      "slug": "gary-delaney",
+      "source": "seed-research",
+      "genres": [
+        "one-liner"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Gary Owen",
       "slug": "gary-owen",
       "source": "api"
@@ -4244,6 +6721,25 @@
       "name": "Gavin Matts",
       "slug": "gavin-matts",
       "source": "api"
+    },
+    {
+      "name": "Genesis Gonzalez",
+      "slug": "genesis-gonzalez",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Geoff Chaser",
+      "slug": "geoff-chaser",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Geoffrey Asmus",
@@ -4310,6 +6806,15 @@
       "source": "api"
     },
     {
+      "name": "Grant Gordon",
+      "slug": "grant-gordon",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Gray West",
       "slug": "gray-west",
       "source": "api"
@@ -4340,6 +6845,16 @@
       "source": "api"
     },
     {
+      "name": "Griff Pippin",
+      "slug": "griff-pippin",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Gus Tate",
       "slug": "gus-tate",
       "source": "api"
@@ -4348,6 +6863,16 @@
       "name": "H. Foley",
       "slug": "h-foley",
       "source": "api"
+    },
+    {
+      "name": "Hampton Yount",
+      "slug": "hampton-yount",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "one-liner"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Hannah Berner",
@@ -4394,6 +6919,15 @@
       "source": "api"
     },
     {
+      "name": "Henny Youngman",
+      "slug": "henny-youngman",
+      "source": "seed-research",
+      "genres": [
+        "one-liner"
+      ],
+      "touringStatus": "RETIRED"
+    },
+    {
       "name": "Henry Cho",
       "slug": "henry-cho",
       "source": "api"
@@ -4402,6 +6936,16 @@
       "name": "Howard Hall",
       "slug": "howard-hall",
       "source": "api"
+    },
+    {
+      "name": "Hunter Hill",
+      "slug": "hunter-hill",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "southern"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Hyde Healy",
@@ -4444,6 +6988,15 @@
       "source": "api"
     },
     {
+      "name": "Isabella Giannulli",
+      "slug": "isabella-giannulli",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "ISMO",
       "slug": "ismo",
       "source": "api"
@@ -4472,6 +7025,15 @@
       "name": "J.P. McDade",
       "slug": "j-p-mcdade",
       "source": "api"
+    },
+    {
+      "name": "Jack Assadourian Jr",
+      "slug": "jack-assadourian-jr",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Jack Shaw",
@@ -4509,9 +7071,38 @@
       "source": "api"
     },
     {
+      "name": "Jak Knight",
+      "slug": "jak-knight",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "observational"
+      ],
+      "touringStatus": "RETIRED"
+    },
+    {
+      "name": "Jake Daniels",
+      "slug": "jake-daniels",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Jake Johannsen",
       "slug": "jake-johannsen",
       "source": "api"
+    },
+    {
+      "name": "Jake Weisman",
+      "slug": "jake-weisman",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Jamal Doman",
@@ -4558,6 +7149,16 @@
       "source": "api"
     },
     {
+      "name": "Jamie Lissow",
+      "slug": "jamie-lissow",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "deadpan"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Jamie Wolf",
       "slug": "jamie-wolf",
       "source": "api"
@@ -4576,6 +7177,27 @@
       "name": "Jarrett Campbell",
       "slug": "jarrett-campbell",
       "source": "api"
+    },
+    {
+      "name": "Jasmine Ellis",
+      "slug": "jasmine-ellis",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Jason Cheny",
+      "slug": "jason-cheny",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural",
+        "clean"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Jason Choi",
@@ -4633,14 +7255,74 @@
       "source": "api"
     },
     {
+      "name": "Jay Oakerson",
+      "slug": "jay-oakerson",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "crowd-work"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Jay Pharaoh",
       "slug": "jay-pharaoh",
       "source": "api"
     },
     {
+      "name": "Jaye McBride",
+      "slug": "jaye-mcbride",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "LGBTQ"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Jeff Allen",
+      "slug": "jeff-allen",
+      "source": "seed-research",
+      "genres": [
+        "clean",
+        "storytelling",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Jeff Bailey",
+      "slug": "jeff-bailey",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Jeff Caldwell",
+      "slug": "jeff-caldwell",
+      "source": "seed-research",
+      "genres": [
+        "clean",
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Jeff Dye",
       "slug": "jeff-dye",
       "source": "api"
+    },
+    {
+      "name": "Jeff Garcia",
+      "slug": "jeff-garcia",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Jeff Garlin",
@@ -4695,6 +7377,15 @@
       "name": "Jessica Levin",
       "slug": "jessica-levin",
       "source": "api"
+    },
+    {
+      "name": "Jessica Malamed",
+      "slug": "jessica-malamed",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Jessica Michelle Singleton",
@@ -4772,6 +7463,27 @@
       "source": "api"
     },
     {
+      "name": "JJ Williamson",
+      "slug": "jj-williamson",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Jo Brand",
+      "slug": "jo-brand",
+      "source": "seed-research",
+      "genres": [
+        "deadpan",
+        "dark",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Jo Firestone",
       "slug": "jo-firestone",
       "source": "api"
@@ -4784,6 +7496,17 @@
         "observational"
       ],
       "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Joan Rivers",
+      "slug": "joan-rivers",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "self-deprecating",
+        "roast"
+      ],
+      "touringStatus": "RETIRED"
     },
     {
       "name": "Joe Bartnick",
@@ -4811,6 +7534,16 @@
       "source": "api"
     },
     {
+      "name": "Joe Kwaczala",
+      "slug": "joe-kwaczala",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Joe Mande",
       "slug": "joe-mande",
       "source": "api"
@@ -4824,6 +7557,16 @@
       "name": "Joe Pera",
       "slug": "joe-pera",
       "source": "api"
+    },
+    {
+      "name": "Joe Torry",
+      "slug": "joe-torry",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Joe Zimmerman",
@@ -4841,14 +7584,44 @@
       "source": "api"
     },
     {
+      "name": "Joey Medina",
+      "slug": "joey-medina",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "John Crist",
       "slug": "john-crist",
       "source": "api"
     },
     {
+      "name": "John Felts",
+      "slug": "john-felts",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "John Fox",
       "slug": "john-fox",
       "source": "api"
+    },
+    {
+      "name": "John Hastings",
+      "slug": "john-hastings",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "John Moses",
@@ -4864,6 +7637,16 @@
       "name": "John Pinette",
       "slug": "john-pinette",
       "source": "api"
+    },
+    {
+      "name": "John Reynolds",
+      "slug": "john-reynolds",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Johnny Mocny",
@@ -4884,6 +7667,25 @@
       "name": "Jon Carden",
       "slug": "jon-carden",
       "source": "api"
+    },
+    {
+      "name": "Jon Mumma",
+      "slug": "jon-mumma",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Jon Richardson",
+      "slug": "jon-richardson",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "self-deprecating"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Jon Stewart",
@@ -4976,6 +7778,25 @@
       "source": "api"
     },
     {
+      "name": "Junior Stopka",
+      "slug": "junior-stopka",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Just Nesh",
+      "slug": "just-nesh",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Justin Foster",
       "slug": "justin-foster",
       "source": "api"
@@ -5009,6 +7830,26 @@
       "name": "Kanan Gill",
       "slug": "kanan-gill",
       "source": "api"
+    },
+    {
+      "name": "Karen Rontowski",
+      "slug": "karen-rontowski",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "clean"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Kaseem Bentley",
+      "slug": "kaseem-bentley",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Kate McKinnon",
@@ -5057,6 +7898,16 @@
       "source": "api"
     },
     {
+      "name": "Kelly MacFarland",
+      "slug": "kelly-macfarland",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "clean"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Kelly Ryan",
       "slug": "kelly-ryan",
       "source": "seed-research",
@@ -5081,14 +7932,53 @@
       "source": "api"
     },
     {
+      "name": "Kendra Cunningham",
+      "slug": "kendra-cunningham",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Kenji Saykosy",
+      "slug": "kenji-saykosy",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Kerri Louise",
       "slug": "kerri-louise",
       "source": "api"
     },
     {
+      "name": "Kerri Pomarolli",
+      "slug": "kerri-pomarolli",
+      "source": "seed-research",
+      "genres": [
+        "clean",
+        "storytelling"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Kerryn Feehan",
       "slug": "kerryn-feehan",
       "source": "api"
+    },
+    {
+      "name": "Kevin Bozeman",
+      "slug": "kevin-bozeman",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Kevin James Doyle",
@@ -5126,6 +8016,16 @@
       "source": "api"
     },
     {
+      "name": "Kira Soltanovich",
+      "slug": "kira-soltanovich",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "physical"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Kirk Fox",
       "slug": "kirk-fox",
       "source": "api"
@@ -5136,9 +8036,27 @@
       "source": "api"
     },
     {
+      "name": "Kristin Chirico",
+      "slug": "kristin-chirico",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Kristin Key",
       "slug": "kristin-key",
       "source": "api"
+    },
+    {
+      "name": "Krystyna Hutchinson",
+      "slug": "krystyna-hutchinson",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Kurt Metzger",
@@ -5171,6 +8089,16 @@
       "source": "api"
     },
     {
+      "name": "Larry David",
+      "slug": "larry-david",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "self-deprecating"
+      ],
+      "touringStatus": "UNKNOWN"
+    },
+    {
       "name": "Larry Dean",
       "slug": "larry-dean",
       "source": "api"
@@ -5191,6 +8119,16 @@
       "source": "api"
     },
     {
+      "name": "Leah Bonnema",
+      "slug": "leah-bonnema",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Leah Rudick",
       "slug": "leah-rudick",
       "source": "api"
@@ -5207,6 +8145,16 @@
       "touringStatus": "TOURING"
     },
     {
+      "name": "Legion of Skanks",
+      "slug": "legion-of-skanks",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "roast"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "LeMaire Lee",
       "slug": "lemaire-lee",
       "source": "api"
@@ -5215,6 +8163,16 @@
       "name": "Lenny Bruce",
       "slug": "lenny-bruce",
       "source": "api"
+    },
+    {
+      "name": "Lenny Clarke",
+      "slug": "lenny-clarke",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "Boston"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Lenny Marcus",
@@ -5271,6 +8229,17 @@
       "source": "api"
     },
     {
+      "name": "Lisa Lampanelli",
+      "slug": "lisa-lampanelli",
+      "source": "seed-research",
+      "genres": [
+        "roast",
+        "dark",
+        "observational"
+      ],
+      "touringStatus": "RETIRED"
+    },
+    {
       "name": "Lisa Wallen",
       "slug": "lisa-wallen",
       "source": "seed-research",
@@ -5300,14 +8269,41 @@
       "touringStatus": "LOCAL"
     },
     {
+      "name": "Liza Dye",
+      "slug": "liza-dye",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Liza Treyger",
       "slug": "liza-treyger",
       "source": "api"
     },
     {
+      "name": "LizaBanks Campagna",
+      "slug": "lizabanks-campagna",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Lizzy Hoo",
       "slug": "lizzy-hoo",
       "source": "api"
+    },
+    {
+      "name": "Lori Callahan",
+      "slug": "lori-callahan",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Louie Anderson",
@@ -5329,6 +8325,16 @@
       "name": "Louis Katz",
       "slug": "louis-katz",
       "source": "api"
+    },
+    {
+      "name": "Luis Gomez",
+      "slug": "luis-gomez",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "roast"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Luis J. Gomez",
@@ -5394,6 +8400,16 @@
       "source": "api"
     },
     {
+      "name": "Manny Maldonado",
+      "slug": "manny-maldonado",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Marcello Hernandez",
       "slug": "marcello-hernandez",
       "source": "api"
@@ -5409,9 +8425,29 @@
       "source": "api"
     },
     {
+      "name": "Marina Cockenberg",
+      "slug": "marina-cockenberg",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Marjolein Robertson",
       "slug": "marjolein-robertson",
       "source": "api"
+    },
+    {
+      "name": "Mark Curry",
+      "slug": "mark-curry",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "physical"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Mark Ellis",
@@ -5434,9 +8470,37 @@
       "source": "api"
     },
     {
+      "name": "Mark Viera",
+      "slug": "mark-viera",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Marlon Mitchell",
+      "slug": "marlon-mitchell",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Martin Lawrence",
       "slug": "martin-lawrence",
       "source": "api"
+    },
+    {
+      "name": "Martin Morrow",
+      "slug": "martin-morrow",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Martin Phillips",
@@ -5447,6 +8511,16 @@
       "name": "Martin Short",
       "slug": "martin-short",
       "source": "api"
+    },
+    {
+      "name": "Mary Holland",
+      "slug": "mary-holland",
+      "source": "seed-research",
+      "genres": [
+        "improvisation",
+        "character"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Mary Lynn Rajskub",
@@ -5462,6 +8536,16 @@
       "name": "Matt Braunger",
       "slug": "matt-braunger",
       "source": "api"
+    },
+    {
+      "name": "Matt D'Elia",
+      "slug": "matt-delia",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Matt Lockwood",
@@ -5499,6 +8583,15 @@
       "source": "api"
     },
     {
+      "name": "Mattie Slaughter",
+      "slug": "mattie-slaughter",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Matty Ryan",
       "slug": "matty-ryan",
       "source": "api"
@@ -5507,6 +8600,25 @@
       "name": "Max Amini",
       "slug": "max-amini",
       "source": "api"
+    },
+    {
+      "name": "Max Kessler",
+      "slug": "max-kessler",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Max Silvestri",
+      "slug": "max-silvestri",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Maxx Eddy",
@@ -5521,6 +8633,16 @@
       "name": "Maz Jobrani",
       "slug": "maz-jobrani",
       "source": "api"
+    },
+    {
+      "name": "Megan Stalter",
+      "slug": "megan-stalter",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "absurdist"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Mel Brooks",
@@ -5578,6 +8700,16 @@
       "source": "api"
     },
     {
+      "name": "Mike Black",
+      "slug": "mike-black",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Mike Britt",
       "slug": "mike-britt",
       "source": "api"
@@ -5586,6 +8718,16 @@
       "name": "Mike Cannon",
       "slug": "mike-cannon",
       "source": "api"
+    },
+    {
+      "name": "Mike DeStefano",
+      "slug": "mike-destefano",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "confessional"
+      ],
+      "touringStatus": "RETIRED"
     },
     {
       "name": "Mike Falzone",
@@ -5608,9 +8750,38 @@
       "source": "api"
     },
     {
+      "name": "Mike Green",
+      "slug": "mike-green",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Mike James",
       "slug": "mike-james",
       "source": "api"
+    },
+    {
+      "name": "Mike Lawrence",
+      "slug": "mike-lawrence",
+      "source": "seed-research",
+      "genres": [
+        "nerd",
+        "dark",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Mike Malone",
+      "slug": "mike-malone",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Mike Rainey",
@@ -5626,6 +8797,15 @@
       "name": "Mike Rice",
       "slug": "mike-rice",
       "source": "api"
+    },
+    {
+      "name": "Mike Toomey",
+      "slug": "mike-toomey",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Mike Vecchione",
@@ -5736,6 +8916,15 @@
       "source": "api"
     },
     {
+      "name": "Nariko Ott",
+      "slug": "nariko-ott",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Natalie Cuomo",
       "slug": "natalie-cuomo",
       "source": "api"
@@ -5756,6 +8945,26 @@
       "touringStatus": "REGIONAL"
     },
     {
+      "name": "Nate Fridson",
+      "slug": "nate-fridson",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "one-liner"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Nate Land",
+      "slug": "nate-land",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "clean"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Nate Marshall",
       "slug": "nate-marshall",
       "source": "api"
@@ -5771,9 +8980,28 @@
       "source": "api"
     },
     {
+      "name": "Nazareth",
+      "slug": "nazareth",
+      "source": "seed-research",
+      "genres": [
+        "clean",
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Neil Rubenstein",
       "slug": "neil-rubenstein",
       "source": "api"
+    },
+    {
+      "name": "Nick Cobb",
+      "slug": "nick-cobb",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Nick Di Paolo",
@@ -5821,6 +9049,25 @@
       "source": "api"
     },
     {
+      "name": "Nicolas Corda",
+      "slug": "nicolas-corda",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Nicole Parker",
+      "slug": "nicole-parker",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "impressionist"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Nimesh Patel",
       "slug": "nimesh-patel",
       "source": "api"
@@ -5829,6 +9076,16 @@
       "name": "Nish Kumar",
       "slug": "nish-kumar",
       "source": "api"
+    },
+    {
+      "name": "Noel Casler",
+      "slug": "noel-casler",
+      "source": "seed-research",
+      "genres": [
+        "political",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Noel Miller",
@@ -5889,6 +9146,15 @@
       "source": "api"
     },
     {
+      "name": "Pat Tomasulo",
+      "slug": "pat-tomasulo",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Patrice O'Neal",
       "slug": "patrice-o-neal",
       "source": "api"
@@ -5940,9 +9206,39 @@
       "source": "api"
     },
     {
+      "name": "Paul Zarillo",
+      "slug": "paul-zarillo",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Pauly Shore",
       "slug": "pauly-shore",
       "source": "api"
+    },
+    {
+      "name": "Penn & Teller",
+      "slug": "penn-teller",
+      "source": "seed-research",
+      "genres": [
+        "magic",
+        "comedy",
+        "absurdist"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
+      "name": "Pete Correale",
+      "slug": "pete-correale",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "storytelling"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Pete Helliar",
@@ -5964,6 +9260,16 @@
       "touringStatus": "LOCAL"
     },
     {
+      "name": "Petey DeAbreu",
+      "slug": "petey-deabreu",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Phil Hanley",
       "slug": "phil-hanley",
       "source": "api"
@@ -5977,6 +9283,16 @@
       "name": "Phoebe Robinson",
       "slug": "phoebe-robinson",
       "source": "api"
+    },
+    {
+      "name": "Phyllis Diller",
+      "slug": "phyllis-diller",
+      "source": "seed-research",
+      "genres": [
+        "one-liner",
+        "self-deprecating"
+      ],
+      "touringStatus": "RETIRED"
     },
     {
       "name": "Pierre Novellie",
@@ -6043,6 +9359,15 @@
       "source": "api"
     },
     {
+      "name": "Rahmein Mostafavi",
+      "slug": "rahmein-mostafavi",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Raj Belani",
       "slug": "raj-belani",
       "source": "api"
@@ -6077,9 +9402,29 @@
       "source": "api"
     },
     {
+      "name": "Red Grant",
+      "slug": "red-grant",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Red Ollero",
       "slug": "red-ollero",
       "source": "api"
+    },
+    {
+      "name": "Red Skelton",
+      "slug": "red-skelton",
+      "source": "seed-research",
+      "genres": [
+        "physical",
+        "character"
+      ],
+      "touringStatus": "RETIRED"
     },
     {
       "name": "Reggie Conquest",
@@ -6090,6 +9435,25 @@
       "name": "Reggie Watts",
       "slug": "reggie-watts",
       "source": "api"
+    },
+    {
+      "name": "Rell Battle",
+      "slug": "rell-battle",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Renee Hicks",
+      "slug": "renee-hicks",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Rhys James",
@@ -6122,6 +9486,16 @@
       "source": "api"
     },
     {
+      "name": "Rick Gutierrez",
+      "slug": "rick-gutierrez",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Rick Ingraham",
       "slug": "rick-ingraham",
       "source": "seed-research",
@@ -6142,6 +9516,16 @@
       "source": "api"
     },
     {
+      "name": "Rob Cantrell",
+      "slug": "rob-cantrell",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Rob Crews",
       "slug": "rob-crews",
       "source": "api"
@@ -6160,6 +9544,24 @@
       "name": "Robbie Bernstein",
       "slug": "robbie-bernstein",
       "source": "api"
+    },
+    {
+      "name": "Robbie Goodwin",
+      "slug": "robbie-goodwin",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Robert Glasper",
+      "slug": "robert-glasper",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "UNKNOWN"
     },
     {
       "name": "Robert Kelly",
@@ -6207,6 +9609,15 @@
       "source": "api"
     },
     {
+      "name": "Ron Taylor",
+      "slug": "ron-taylor",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Rose Matafeo",
       "slug": "rose-matafeo",
       "source": "api"
@@ -6237,6 +9648,16 @@
       "source": "api"
     },
     {
+      "name": "Rudy Moreno",
+      "slug": "rudy-moreno",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Russell Brand",
       "slug": "russell-brand",
       "source": "api"
@@ -6255,6 +9676,16 @@
       "name": "Ryan Davis",
       "slug": "ryan-davis",
       "source": "api"
+    },
+    {
+      "name": "Ryan Erwin",
+      "slug": "ryan-erwin",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "clean"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Ryan Foster",
@@ -6317,6 +9748,24 @@
       "source": "api"
     },
     {
+      "name": "Sally Mullins",
+      "slug": "sally-mullins",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Sam Adams",
+      "slug": "sam-adams",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Sam Biru",
       "slug": "sam-biru",
       "source": "seed-research",
@@ -6324,6 +9773,16 @@
         "observational"
       ],
       "touringStatus": "LOCAL"
+    },
+    {
+      "name": "Sam Campbell",
+      "slug": "sam-campbell",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "character"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Sam Clark",
@@ -6341,6 +9800,15 @@
       "source": "api"
     },
     {
+      "name": "Sam Lipsyte",
+      "slug": "sam-lipsyte",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Sam Miller",
       "slug": "sam-miller",
       "source": "api"
@@ -6349,6 +9817,16 @@
       "name": "Sam Richardson",
       "slug": "sam-richardson",
       "source": "api"
+    },
+    {
+      "name": "Sam See",
+      "slug": "sam-see",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Sam Tallent",
@@ -6366,14 +9844,44 @@
       "source": "api"
     },
     {
+      "name": "Samson Koletkar",
+      "slug": "samson-koletkar",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Santiago Angel",
       "slug": "santiago-angel",
       "source": "api"
     },
     {
+      "name": "Sara Pascoe",
+      "slug": "sara-pascoe",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "feminist"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Sara Weinshenk",
       "slug": "sara-weinshenk",
       "source": "api"
+    },
+    {
+      "name": "Sarah Keyworth",
+      "slug": "sarah-keyworth",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "LGBTQ"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Sarah Millican",
@@ -6406,6 +9914,16 @@
       "touringStatus": "LOCAL"
     },
     {
+      "name": "Schulz",
+      "slug": "schulz",
+      "source": "seed-research",
+      "genres": [
+        "crowd-work",
+        "observational"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Scott Chaplain",
       "slug": "scott-chaplain",
       "source": "api"
@@ -6426,6 +9944,15 @@
       "source": "api"
     },
     {
+      "name": "Sean McCarthy",
+      "slug": "sean-mccarthy",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Sean Patton",
       "slug": "sean-patton",
       "source": "api"
@@ -6441,6 +9968,16 @@
       "source": "api"
     },
     {
+      "name": "Sergio Mencia",
+      "slug": "sergio-mencia",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Seth Meyers",
       "slug": "seth-meyers",
       "source": "api"
@@ -6449,6 +9986,15 @@
       "name": "Shane Torres",
       "slug": "shane-torres",
       "source": "api"
+    },
+    {
+      "name": "Shannon Coffey",
+      "slug": "shannon-coffey",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Shannon Fiedler",
@@ -6461,6 +10007,26 @@
       "source": "api"
     },
     {
+      "name": "Shaun Jones",
+      "slug": "shaun-jones",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "Shaun Latham",
+      "slug": "shaun-latham",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Shaun Murphy",
       "slug": "shaun-murphy",
       "source": "api"
@@ -6469,6 +10035,16 @@
       "name": "Shawn Gardini",
       "slug": "shawn-gardini",
       "source": "api"
+    },
+    {
+      "name": "Shawn Wayans",
+      "slug": "shawn-wayans",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "character"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Shayne Smith",
@@ -6526,6 +10102,16 @@
       "source": "api"
     },
     {
+      "name": "Steve Brown",
+      "slug": "steve-brown",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Steve Byrne",
       "slug": "steve-byrne",
       "source": "api"
@@ -6553,6 +10139,16 @@
       "name": "Steve Simeone",
       "slug": "steve-simeone",
       "source": "api"
+    },
+    {
+      "name": "Steve Sweeney",
+      "slug": "steve-sweeney",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "Boston"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Steve Trevino",
@@ -6590,9 +10186,39 @@
       "source": "api"
     },
     {
+      "name": "T. Murph",
+      "slug": "t-murph",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
+      "name": "T. Rexx",
+      "slug": "t-rexx",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "T.J. Miller",
       "slug": "t-j-miller",
       "source": "api"
+    },
+    {
+      "name": "Taylor Mason",
+      "slug": "taylor-mason",
+      "source": "seed-research",
+      "genres": [
+        "clean",
+        "ventriloquism"
+      ],
+      "touringStatus": "REGIONAL"
     },
     {
       "name": "Taylor Williamson",
@@ -6600,14 +10226,45 @@
       "source": "api"
     },
     {
+      "name": "Thomas Dale",
+      "slug": "thomas-dale",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Tim Allen",
       "slug": "tim-allen",
       "source": "api"
     },
     {
+      "name": "Tim Baltz",
+      "slug": "tim-baltz",
+      "source": "seed-research",
+      "genres": [
+        "character",
+        "absurdist"
+      ],
+      "touringStatus": "REGIONAL"
+    },
+    {
       "name": "Tim Butterly",
       "slug": "tim-butterly",
       "source": "api"
+    },
+    {
+      "name": "Tim Key",
+      "slug": "tim-key",
+      "source": "seed-research",
+      "genres": [
+        "deadpan",
+        "absurdist",
+        "poetry"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Tim McLaughlin",
@@ -6629,6 +10286,17 @@
       "name": "Timmy No Brakes",
       "slug": "timmy-no-brakes",
       "source": "api"
+    },
+    {
+      "name": "TJ Miller",
+      "slug": "tj-miller",
+      "source": "seed-research",
+      "genres": [
+        "absurdist",
+        "character",
+        "improvisation"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Toby McMullen",
@@ -6718,6 +10386,15 @@
       "source": "api"
     },
     {
+      "name": "Tommy Savitt",
+      "slug": "tommy-savitt",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Tommy Tiernan",
       "slug": "tommy-tiernan",
       "source": "api"
@@ -6746,6 +10423,16 @@
       "name": "Tony Scar",
       "slug": "tony-scar",
       "source": "api"
+    },
+    {
+      "name": "Tony V",
+      "slug": "tony-v",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "Boston"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Tony Woods",
@@ -6783,6 +10470,15 @@
       "source": "api"
     },
     {
+      "name": "Trevin Kinard",
+      "slug": "trevin-kinard",
+      "source": "seed-research",
+      "genres": [
+        "observational"
+      ],
+      "touringStatus": "LOCAL"
+    },
+    {
       "name": "Trevor Wallace",
       "slug": "trevor-wallace",
       "source": "api"
@@ -6816,6 +10512,16 @@
       "name": "Tyler Fischer",
       "slug": "tyler-fischer",
       "source": "api"
+    },
+    {
+      "name": "Tyler Gunter",
+      "slug": "tyler-gunter",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "dark"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Tyler Perry",
@@ -6853,6 +10559,16 @@
       "source": "api"
     },
     {
+      "name": "Wendy Liebman",
+      "slug": "wendy-liebman",
+      "source": "seed-research",
+      "genres": [
+        "one-liner",
+        "deadpan"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Whindersson Nunes",
       "slug": "whindersson-nunes",
       "source": "api"
@@ -6866,6 +10582,17 @@
       "name": "Whoopi Goldberg",
       "slug": "whoopi-goldberg",
       "source": "api"
+    },
+    {
+      "name": "Wil Sylvince",
+      "slug": "wil-sylvince",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural",
+        "physical"
+      ],
+      "touringStatus": "TOURING"
     },
     {
       "name": "Will Foskey",
@@ -6883,6 +10610,17 @@
       "source": "api"
     },
     {
+      "name": "Willie Barcena",
+      "slug": "willie-barcena",
+      "source": "seed-research",
+      "genres": [
+        "dark",
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "TOURING"
+    },
+    {
       "name": "Willie Simon",
       "slug": "willie-simon",
       "source": "seed-research",
@@ -6895,6 +10633,16 @@
       "name": "Woody Allen",
       "slug": "woody-allen",
       "source": "api"
+    },
+    {
+      "name": "Xavier Bustamante",
+      "slug": "xavier-bustamante",
+      "source": "seed-research",
+      "genres": [
+        "observational",
+        "cultural"
+      ],
+      "touringStatus": "LOCAL"
     },
     {
       "name": "Yakov Smirnoff",

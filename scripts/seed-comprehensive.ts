@@ -98,7 +98,23 @@ async function seedComedians() {
     extendedComedians = JSON.parse(fs.readFileSync(extendedFile, "utf-8"));
   }
 
-  const allComedians = [...comedians, ...extendedComedians];
+  // Also load the expanded/enriched comedian data (from research agent)
+  const expandedFile = path.join(__dirname, "../data/comedians-seed-expanded.json");
+  let expandedComedians: ComedianData[] = [];
+  if (fs.existsSync(expandedFile)) {
+    const expandedData = JSON.parse(fs.readFileSync(expandedFile, "utf-8"));
+    const entries = expandedData.comedians || expandedData;
+    expandedComedians = (Array.isArray(entries) ? entries : []).map((c: Record<string, unknown>) => ({
+      name: c.name as string,
+      slug: (c.slug as string) || slugify(c.name as string),
+      bio: (c.bio as string) || undefined,
+      instagram: (c.instagram as string) || undefined,
+      touringStatus: (c.touringStatus as string) || "UNKNOWN",
+      genres: (c.genres as string[]) || [],
+    }));
+  }
+
+  const allComedians = [...comedians, ...extendedComedians, ...expandedComedians];
 
   // Deduplicate by slug
   const seen = new Set<string>();
