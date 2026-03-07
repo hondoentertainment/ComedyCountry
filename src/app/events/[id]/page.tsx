@@ -10,6 +10,8 @@ import { SHOW_TYPE_LABELS } from "@/lib/constants";
 import { EventReviewsSection } from "@/components/EventReviewsSection";
 import { EventShareButtons } from "@/components/EventShareButtons";
 import { EventStructuredData } from "@/components/StructuredData";
+import { AttendanceButtons } from "@/components/AttendanceButtons";
+import { CalendarExport } from "@/components/CalendarExport";
 
 export const dynamic = "force-dynamic";
 
@@ -132,12 +134,22 @@ export default async function EventPage({ params }: PageProps) {
           <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded bg-zinc-700/80 text-zinc-300">
             {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
           </span>
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <EventShareButtons
               title={title}
               url={`${siteUrl}/events/${id}`}
               venueName={event.venue.name}
             />
+            <CalendarExport
+              eventId={id}
+              title={title}
+              date={event.date.toISOString()}
+              venue={event.venue.name}
+              location={`${event.venue.name}, ${event.venue.city}, ${event.venue.state}`}
+            />
+          </div>
+          <div className="mt-4">
+            <AttendanceButtons eventId={id} />
           </div>
           <div className="flex flex-wrap gap-2 mt-4">
             {event.comedians.map((ec) => (

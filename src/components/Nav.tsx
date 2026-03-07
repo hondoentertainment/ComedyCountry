@@ -14,8 +14,8 @@ const navItems = [
   { href: "/comedians", label: "Comedians" },
   { href: "/schedule", label: "Schedule" },
   { href: "/map", label: "Map" },
+  { href: "/trending", label: "Trending" },
   { href: "/following", label: "Following" },
-  { href: "/feed", label: "Feed" },
 ];
 
 function isActive(href: string, pathname: string) {

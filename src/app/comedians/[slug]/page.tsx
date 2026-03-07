@@ -10,6 +10,7 @@ import { formatEventPrice } from "@/lib/format";
 import { FollowButton } from "@/components/FollowButton";
 import { ComedianPageTabs } from "@/components/ComedianPageTabs";
 import { ComedianStructuredData } from "@/components/StructuredData";
+import { SimilarComedians } from "@/components/SimilarComedians";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -357,6 +358,10 @@ export default async function ComedianPage({ params }: PageProps) {
             </>
           }
         />
+
+        <div className="mt-10">
+          <SimilarComedians comedianId={comedian.id} />
+        </div>
       </div>
     </main>
   );

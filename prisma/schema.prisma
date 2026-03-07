@@ -159,6 +159,7 @@ model Event {
   venue       Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
   comedians   EventComedian[]
   reviews     EventReview[]
+  attendees   EventAttendance[]
 
   @@index([venueId])
   @@index([date])
@@ -220,6 +221,7 @@ model User {
   followsComedians ComedianFollow[]
   followsVenues     VenueFollow[]
   eventReviews      EventReview[]
+  eventAttendances  EventAttendance[]
   comedianTierRatings ComedianTierRating[]
   notifications     Notification[]
   notificationPreference NotificationPreference?
@@ -326,4 +328,22 @@ model NotificationPreference {
   emailDigest   String  @default("off") // off, daily, weekly
 
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// =============================================================================
+// Event Attendance / RSVP (Songkick-style "I'm going")
+// =============================================================================
+
+model EventAttendance {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  status    String   @default("going") // going, interested
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([eventId])
 }
