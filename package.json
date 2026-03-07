@@ -17,6 +17,7 @@
     "db:import": "tsx scripts/bulk-import.ts",
     "scrape:jester": "tsx scripts/scrape-jester-comedians.ts",
     "db:import-jester": "tsx scripts/import-jester-comedians.ts",
+    "db:seed-all": "tsx scripts/seed-comprehensive.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "test:e2e": "playwright test",

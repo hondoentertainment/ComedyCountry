@@ -211,6 +211,7 @@ model User {
   image         String?
   username      String?   @unique // For credential sign-in
   passwordHash  String?   // For credential sign-in (bcrypt)
+  role          String    @default("user") // user | admin
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

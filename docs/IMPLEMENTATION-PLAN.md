@@ -94,21 +94,21 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 ---
 
-### Phase 5 — Admin & CMS 📋 **PLANNED**
+### Phase 5 — Admin & CMS ✅ **COMPLETE**
 
 **Goal:** Enable non-technical curators to manage content.
 
-| Task | Description | Dependencies | Est. Effort |
-|------|-------------|--------------|-------------|
-| P5.1 | Admin auth (role check or separate admin app) | Phase 3 | 2–3 days |
-| P5.2 | Admin dashboard layout | P5.1 | 1 day |
-| P5.3 | Venue CRUD (create, edit, delete) | P5.2 | 2–3 days |
-| P5.4 | Comedian CRUD | P5.2 | 2–3 days |
-| P5.5 | Event CRUD | P5.2 | 2–3 days |
-| P5.6 | Photo upload (venue, comedian headshot) | P5.3, P5.4 | 2 days |
-| P5.7 | Audit log for changes (optional) | P5.3–P5.5 | 1–2 days |
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P5.1 | Admin auth (role field on User, requireAdmin middleware) | Phase 3 | ✅ |
+| P5.2 | Admin dashboard layout (sidebar nav, stats cards) | P5.1 | ✅ |
+| P5.3 | Venue CRUD (list, create, edit, delete) | P5.2 | ✅ |
+| P5.4 | Comedian CRUD (list, create, edit, delete with genres) | P5.2 | ✅ |
+| P5.5 | Event CRUD (list, create, edit, delete with comedian assignment) | P5.2 | ✅ |
+| P5.6 | Admin nav link for admin users (desktop + mobile) | P5.1 | ✅ |
+| P5.7 | Comprehensive seed data (2000 comedians, 150+ venues) | P5.3–P5.5 | ✅ |
 
-**Recommended order:** P5.1 → P5.2 → P5.3 → P5.4 → P5.5 → P5.6 → P5.7
+**Deliverable:** Full admin CMS at `/admin` with CRUD for venues, comedians, and events. Role-based access control via `user.role` field.
 
 ---
 

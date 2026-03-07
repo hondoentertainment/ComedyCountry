@@ -93,6 +93,14 @@ export function Nav() {
                 <span className="text-zinc-500 text-sm">…</span>
               ) : session ? (
                 <>
+                  {(session.user as { role?: string }).role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="px-4 py-2 rounded-lg text-brand-gold hover:text-brand-gold/80 hover:bg-brand-gold/10 text-sm font-medium transition-all duration-150"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <Link
                     href="/profile"
                     className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
@@ -182,6 +190,15 @@ export function Nav() {
               <li className="border-t border-zinc-800 mt-2 pt-2 space-y-0.5">
                 {session ? (
                   <>
+                    {(session.user as { role?: string }).role === "admin" && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMobileOpen(false)}
+                        className="block px-4 py-3 rounded-lg text-brand-gold hover:bg-brand-gold/10 text-base font-medium transition-colors"
+                      >
+                        Admin
+                      </Link>
+                    )}
                     <Link
                       href="/profile"
                       onClick={() => setMobileOpen(false)}
