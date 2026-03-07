@@ -126,6 +126,7 @@ export default async function ComedianPage({ params }: PageProps) {
               alt={`Headshot of ${comedian.name}`}
               width={128}
               height={128}
+              priority
               className="w-32 h-32 rounded-lg object-cover shrink-0"
             />
           ) : (

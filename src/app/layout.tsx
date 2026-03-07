@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { SessionProvider } from "@/components/SessionProvider";
@@ -7,6 +7,12 @@ import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
 const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0d0d0d",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
