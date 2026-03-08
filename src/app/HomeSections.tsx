@@ -7,6 +7,7 @@ import { getEventRatingStatsBatch } from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
 import { authOptions } from "@/lib/auth";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
+import { PromotedContent } from "@/components/PromotedContent";
 
 function StarRating({ rating, count }: { rating: number | null; count: number }) {
   if (count === 0) return <span className="text-zinc-500 text-sm">No reviews yet</span>;
@@ -193,6 +194,9 @@ export async function HomeSections() {
           View full schedule →
         </Link>
       </section>
+
+      {/* Promoted Events */}
+      <PromotedContent type="EVENT_FEATURED" className="mb-6 space-y-3" />
 
       <section>
         <h2 className="text-2xl font-bold text-white mb-6">Explore venues</h2>
