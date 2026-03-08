@@ -21,15 +21,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   }
 
-  await prisma.analyticsEvent.create({
-    data: {
-      entityType,
-      entityId: entityId || null,
-      action,
-      userId: session?.user?.id || null,
-      metadata: metadata ? JSON.stringify(metadata) : null,
-    },
-  });
+  try {
+    await prisma.analyticsEvent.create({
+      data: {
+        entityType,
+        entityId: entityId || null,
+        action,
+        userId: session?.user?.id || null,
+        metadata: metadata ? JSON.stringify(metadata) : null,
+      },
+    });
+  } catch {
+    // Analytics table may not exist yet; silently skip
+  }
 
   return NextResponse.json({ tracked: true });
 }
