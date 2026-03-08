@@ -26,6 +26,8 @@ const moreItems = [
   { href: "/compare", label: "Compare" },
   { href: "/wrapped", label: "Wrapped" },
   { href: "/activity", label: "Activity" },
+  { href: "/for-you", label: "For You" },
+  { href: "/embed", label: "Embed" },
   { href: "/pricing", label: "Pricing" },
 ];
 

@@ -18,6 +18,7 @@
     "scrape:jester": "tsx scripts/scrape-jester-comedians.ts",
     "db:import-jester": "tsx scripts/import-jester-comedians.ts",
     "db:seed-all": "tsx scripts/seed-comprehensive.ts",
+    "db:seed-affiliates": "tsx scripts/seed-affiliates.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "test:e2e": "playwright test",
