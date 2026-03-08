@@ -16,13 +16,23 @@ export default async function ComedianDashboardPage() {
   if (!session?.user?.id) redirect("/auth/signin");
 
   // Check if user has a comedian claim approved
-  const claim = await prisma.comedianClaim.findFirst({
-    where: { userId: session.user.id, status: "APPROVED" },
-  }).catch(() => null);
+  let claim: Awaited<ReturnType<typeof prisma.comedianClaim.findFirst>> = null;
+  try {
+    claim = await prisma.comedianClaim.findFirst({
+      where: { userId: session.user.id, status: "APPROVED" },
+    });
+  } catch {
+    // ComedianClaim table may not exist yet (pre-migration)
+  }
 
-  const subscription = await prisma.subscription.findUnique({
-    where: { userId: session.user.id },
-  }).catch(() => null);
+  let subscription: Awaited<ReturnType<typeof prisma.subscription.findUnique>> = null;
+  try {
+    subscription = await prisma.subscription.findUnique({
+      where: { userId: session.user.id },
+    });
+  } catch {
+    // Subscription table may not exist yet (pre-migration)
+  }
 
   const isPro = subscription?.status === "ACTIVE" && (
     subscription.plan === "COMEDIAN_PRO" || subscription.plan === "COMEDIAN_PREMIUM"
@@ -104,34 +114,51 @@ export default async function ComedianDashboardPage() {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const [recentFollows, upcomingShows, tierBreakdown, recentAttendance] = await Promise.all([
-    prisma.comedianFollow.count({
-      where: { comedianId: comedian.id, createdAt: { gte: thirtyDaysAgo } },
-    }),
-    prisma.event.findMany({
-      where: {
-        date: { gte: new Date() },
-        comedians: { some: { comedianId: comedian.id } },
-      },
-      include: {
-        venue: { select: { name: true, city: true, state: true } },
-        _count: { select: { attendees: true } },
-      },
-      orderBy: { date: "asc" },
-      take: 10,
-    }),
-    prisma.comedianTierRating.groupBy({
-      by: ["tier"],
-      where: { comedianId: comedian.id },
-      _count: true,
-    }),
-    prisma.eventAttendance.count({
-      where: {
-        event: { comedians: { some: { comedianId: comedian.id } }, date: { gte: thirtyDaysAgo } },
-        status: "going",
-      },
-    }),
-  ]);
+  let recentFollows = 0;
+  let upcomingShows: Array<{
+    id: string; date: Date;
+    venue: { name: string; city: string; state: string };
+    _count: { attendees: number };
+  }> = [];
+  let tierBreakdown: Array<{ tier: string; _count: number }> = [];
+  let recentAttendance = 0;
+
+  try {
+    const results = await Promise.all([
+      prisma.comedianFollow.count({
+        where: { comedianId: comedian.id, createdAt: { gte: thirtyDaysAgo } },
+      }),
+      prisma.event.findMany({
+        where: {
+          date: { gte: new Date() },
+          comedians: { some: { comedianId: comedian.id } },
+        },
+        include: {
+          venue: { select: { name: true, city: true, state: true } },
+          _count: { select: { attendees: true } },
+        },
+        orderBy: { date: "asc" },
+        take: 10,
+      }),
+      prisma.comedianTierRating.groupBy({
+        by: ["tier"],
+        where: { comedianId: comedian.id },
+        _count: true,
+      }),
+      prisma.eventAttendance.count({
+        where: {
+          event: { comedians: { some: { comedianId: comedian.id } }, date: { gte: thirtyDaysAgo } },
+          status: "going",
+        },
+      }),
+    ]);
+    recentFollows = results[0];
+    upcomingShows = results[1];
+    tierBreakdown = results[2];
+    recentAttendance = results[3];
+  } catch {
+    // Analytics queries may fail; dashboard degrades gracefully
+  }
 
   const tierMap = Object.fromEntries(tierBreakdown.map((t) => [t.tier, t._count]));
 

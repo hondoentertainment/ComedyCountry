@@ -16,9 +16,15 @@ export default async function VenueDashboardPage() {
   if (!session?.user?.id) redirect("/auth/signin");
 
   // Check subscription
-  const subscription = await prisma.subscription.findUnique({
-    where: { userId: session.user.id },
-  }).catch(() => null);
+  let subscription: { status: string; plan: string } | null = null;
+  try {
+    subscription = await prisma.subscription.findUnique({
+      where: { userId: session.user.id },
+      select: { status: true, plan: true },
+    });
+  } catch {
+    // Subscription table may not exist yet (pre-migration)
+  }
 
   const isPro = subscription?.status === "ACTIVE" && (
     subscription.plan === "VENUE_PRO" || subscription.plan === "VENUE_PREMIUM"
@@ -79,31 +85,49 @@ export default async function VenueDashboardPage() {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const [topVenues, recentEvents, revenueMetrics] = await Promise.all([
-    prisma.venue.findMany({
-      include: {
-        _count: { select: { followers: true, events: true, reviews: true } },
-      },
-      orderBy: { followers: { _count: "desc" } },
-      take: 10,
-    }),
-    prisma.event.findMany({
-      where: { date: { gte: new Date() } },
-      include: {
-        venue: { select: { name: true, city: true, state: true } },
-        _count: { select: { attendees: true, reviews: true } },
-      },
-      orderBy: { date: "asc" },
-      take: 15,
-    }),
-    Promise.all([
-      prisma.ticketClick.count({ where: { createdAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
-      prisma.venueReview.count({ where: { createdAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
-      prisma.eventAttendance.count({ where: { createdAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
-    ]),
-  ]);
+  let topVenues: Array<{
+    id: string; name: string; city: string; state: string;
+    _count: { followers: number; events: number; reviews: number };
+  }> = [];
+  let recentEvents: Array<{
+    id: string; date: Date;
+    venue: { name: string; city: string; state: string };
+    _count: { attendees: number; reviews: number };
+  }> = [];
+  let ticketClicks30d = 0;
+  let venueReviews30d = 0;
+  let rsvps30d = 0;
 
-  const [ticketClicks30d, venueReviews30d, rsvps30d] = revenueMetrics;
+  try {
+    const [v, e, metrics] = await Promise.all([
+      prisma.venue.findMany({
+        include: {
+          _count: { select: { followers: true, events: true, reviews: true } },
+        },
+        orderBy: { followers: { _count: "desc" } },
+        take: 10,
+      }),
+      prisma.event.findMany({
+        where: { date: { gte: new Date() } },
+        include: {
+          venue: { select: { name: true, city: true, state: true } },
+          _count: { select: { attendees: true, reviews: true } },
+        },
+        orderBy: { date: "asc" },
+        take: 15,
+      }),
+      Promise.all([
+        prisma.ticketClick.count({ where: { createdAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
+        prisma.venueReview.count({ where: { createdAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
+        prisma.eventAttendance.count({ where: { createdAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
+      ]),
+    ]);
+    topVenues = v;
+    recentEvents = e;
+    [ticketClicks30d, venueReviews30d, rsvps30d] = metrics;
+  } catch {
+    // Dashboard degrades gracefully when queries fail
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
