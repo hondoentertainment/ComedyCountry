@@ -234,6 +234,10 @@ model User {
   createdGroups     ShowGroup[]       @relation("ShowGroupCreator")
   groupMemberships  ShowGroupMember[]
   subscription      Subscription?
+  pushSubscriptions PushSubscription[]
+  followedByUsers   UserFollow[]       @relation("UserFollowing")
+  followingUsers    UserFollow[]       @relation("UserFollowers")
+  activityEvents    ActivityFeedItem[] @relation("ActivityActor")
 }
 
 model Account {
@@ -656,4 +660,72 @@ model AnalyticsEvent {
   @@index([entityType, entityId, createdAt])
   @@index([action, createdAt])
   @@index([userId, createdAt])
+}
+
+// =============================================================================
+// Push Notifications (Web Push API)
+// =============================================================================
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String   // Public key
+  auth      String   // Auth secret
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// =============================================================================
+// Social Features (User-to-User Follows & Activity Feed)
+// =============================================================================
+
+model UserFollow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model ActivityFeedItem {
+  id         String   @id @default(cuid())
+  actorId    String
+  action     String   // rated_comedian, reviewed_event, followed_comedian, attended_event, created_list, rated_special
+  entityType String   // comedian, event, venue, list, special
+  entityId   String
+  metadata   String?  // JSON: tier, rating, list title, etc.
+  createdAt  DateTime @default(now())
+
+  actor      User     @relation("ActivityActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId, createdAt])
+  @@index([createdAt])
+}
+
+// =============================================================================
+// Image Uploads
+// =============================================================================
+
+model UploadedImage {
+  id          String   @id @default(cuid())
+  userId      String?
+  filename    String
+  path        String   // /uploads/abc123.jpg
+  mimeType    String
+  sizeBytes   Int
+  entityType  String?  // venue, comedian, user, event
+  entityId    String?
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, entityId])
 }

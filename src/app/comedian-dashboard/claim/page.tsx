@@ -24,6 +24,7 @@ export default function ClaimPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [mode, setMode] = useState<"manual" | "auto">("auto");
 
   useEffect(() => {
     if (search.length < 2) { setResults([]); return; }
@@ -143,43 +144,119 @@ export default function ClaimPage() {
           </div>
         )}
 
-        {/* Proof */}
-        <div>
-          <label htmlFor="proof-url" className="block text-sm font-medium text-zinc-300 mb-1">
-            Proof URL (social media profile, website, etc.)
-          </label>
-          <input
-            id="proof-url"
-            type="url"
-            value={proofUrl}
-            onChange={(e) => setProofUrl(e.target.value)}
-            placeholder="https://instagram.com/yourhandle"
-            className="w-full rounded-lg border border-zinc-700 bg-brand-surface px-4 py-2.5 text-white placeholder-zinc-500 focus:border-brand-gold focus:outline-none"
-          />
-        </div>
-        <div>
-          <label htmlFor="proof-note" className="block text-sm font-medium text-zinc-300 mb-1">
-            Additional notes (optional)
-          </label>
-          <textarea
-            id="proof-note"
-            value={proofNote}
-            onChange={(e) => setProofNote(e.target.value)}
-            placeholder="Any additional info to verify your identity..."
-            rows={3}
-            className="w-full rounded-lg border border-zinc-700 bg-brand-surface px-4 py-2.5 text-white placeholder-zinc-500 focus:border-brand-gold focus:outline-none resize-none"
-          />
-        </div>
+        {/* Verification Mode Toggle */}
+        {selected && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setMode("auto")}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === "auto" ? "bg-brand-gold/20 text-brand-gold border border-brand-gold/30" : "bg-brand-surface border border-zinc-700 text-zinc-400"}`}
+            >
+              Quick Verify (social link match)
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("manual")}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === "manual" ? "bg-brand-gold/20 text-brand-gold border border-brand-gold/30" : "bg-brand-surface border border-zinc-700 text-zinc-400"}`}
+            >
+              Manual Claim
+            </button>
+          </div>
+        )}
 
-        {error && <p className="text-red-400 text-sm">{error}</p>}
+        {selected && mode === "auto" && (
+          <div className="p-4 rounded-lg bg-brand-surface border border-zinc-800 space-y-3">
+            <p className="text-white text-sm font-medium">Quick Verification</p>
+            <p className="text-zinc-400 text-xs">
+              Link a social account that matches {selected.name}&apos;s known profiles for instant verification.
+            </p>
+            <div>
+              <label className="block text-sm text-zinc-300 mb-1">Your social profile URL</label>
+              <input
+                type="url"
+                value={proofUrl}
+                onChange={(e) => setProofUrl(e.target.value)}
+                placeholder="https://twitter.com/yourhandle"
+                className="w-full rounded-lg border border-zinc-700 bg-brand-charcoal/50 px-4 py-2.5 text-white placeholder-zinc-500 focus:border-brand-gold focus:outline-none"
+              />
+            </div>
+            <button
+              type="button"
+              disabled={!proofUrl || submitting}
+              onClick={async () => {
+                setSubmitting(true);
+                setError("");
+                try {
+                  const platform = proofUrl.includes("twitter") || proofUrl.includes("x.com") ? "twitter"
+                    : proofUrl.includes("instagram") ? "instagram"
+                    : proofUrl.includes("youtube") ? "youtube"
+                    : proofUrl.includes("tiktok") ? "tiktok"
+                    : proofUrl.includes("facebook") ? "facebook"
+                    : "other";
+                  const res = await fetch("/api/comedian-claim/verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      comedianId: selected.id,
+                      socialProof: { platform, profileUrl: proofUrl, handle: "" },
+                    }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error || "Verification failed");
+                  setSuccess(true);
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : "Something went wrong");
+                }
+                setSubmitting(false);
+              }}
+              className="w-full py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 disabled:opacity-50 transition-colors text-sm"
+            >
+              {submitting ? "Verifying..." : "Verify & Claim"}
+            </button>
+          </div>
+        )}
 
-        <button
-          type="submit"
-          disabled={!selected || submitting}
-          className="px-6 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 disabled:opacity-50 transition-colors"
-        >
-          {submitting ? "Submitting..." : "Submit Claim"}
-        </button>
+        {/* Manual Proof (original flow) */}
+        {(!selected || mode === "manual") && (
+          <>
+            <div>
+              <label htmlFor="proof-url" className="block text-sm font-medium text-zinc-300 mb-1">
+                Proof URL (social media profile, website, etc.)
+              </label>
+              <input
+                id="proof-url"
+                type="url"
+                value={proofUrl}
+                onChange={(e) => setProofUrl(e.target.value)}
+                placeholder="https://instagram.com/yourhandle"
+                className="w-full rounded-lg border border-zinc-700 bg-brand-surface px-4 py-2.5 text-white placeholder-zinc-500 focus:border-brand-gold focus:outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="proof-note" className="block text-sm font-medium text-zinc-300 mb-1">
+                Additional notes (optional)
+              </label>
+              <textarea
+                id="proof-note"
+                value={proofNote}
+                onChange={(e) => setProofNote(e.target.value)}
+                placeholder="Any additional info to verify your identity..."
+                rows={3}
+                className="w-full rounded-lg border border-zinc-700 bg-brand-surface px-4 py-2.5 text-white placeholder-zinc-500 focus:border-brand-gold focus:outline-none resize-none"
+              />
+            </div>
+
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+
+            <button
+              type="submit"
+              disabled={!selected || submitting}
+              className="px-6 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 disabled:opacity-50 transition-colors"
+            >
+              {submitting ? "Submitting..." : "Submit Claim"}
+            </button>
+          </>
+        )}
       </form>
     </div>
   );

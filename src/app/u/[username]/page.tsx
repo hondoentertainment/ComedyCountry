@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getUserComedianBadges } from "@/lib/badges";
 import { ComedianBadges } from "@/components/ComedianBadges";
+import { UserFollowButton } from "@/components/UserFollowButton";
 
 type PageProps = { params: Promise<{ username: string }> };
 
@@ -109,7 +110,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
           <div>
             <h1 className="text-2xl font-bold text-white">{displayName}</h1>
             <p className="text-zinc-500 text-sm">@{username} · Joined {joinDate}</p>
-            <div className="flex gap-4 mt-3 text-sm">
+            <div className="flex items-center gap-4 mt-3 text-sm">
               <span className="text-zinc-400">
                 <span className="text-white font-medium">{user._count.eventReviews}</span> reviews
               </span>
@@ -119,6 +120,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
               <span className="text-zinc-400">
                 <span className="text-white font-medium">{badges.length}</span> badges
               </span>
+              <UserFollowButton userId={user.id} />
             </div>
           </div>
         </header>
