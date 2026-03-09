@@ -729,3 +729,68 @@ model UploadedImage {
 
   @@index([entityType, entityId])
 }
+
+// =============================================================================
+// Venue Claims (parity with comedian claims)
+// =============================================================================
+
+model VenueClaim {
+  id          String      @id @default(cuid())
+  userId      String
+  venueId     String
+  status      ClaimStatus @default(PENDING)
+  proofUrl    String?
+  proofNote   String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime    @default(now())
+
+  @@unique([userId, venueId])
+  @@index([status])
+}
+
+// =============================================================================
+// Review Reactions (helpful / funny votes)
+// =============================================================================
+
+model ReviewReaction {
+  id            String   @id @default(cuid())
+  userId        String
+  reviewType    String   // event_review, venue_review
+  reviewId      String
+  reactionType  String   // helpful, funny
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, reviewType, reviewId])
+  @@index([reviewType, reviewId])
+}
+
+// =============================================================================
+// Event Waitlist (sold-out notification signup)
+// =============================================================================
+
+model EventWaitlist {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  notified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, eventId])
+  @@index([eventId, notified])
+}
+
+// =============================================================================
+// User Badges & Achievements
+// =============================================================================
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badge     String   // first_review, five_reviews, first_follow, ten_follows, etc.
+  metadata  String?  // JSON extra data
+  earnedAt  DateTime @default(now())
+
+  @@unique([userId, badge])
+  @@index([userId])
+}
