@@ -23,8 +23,12 @@ const moreItems = [
   { href: "/following", label: "Following" },
   { href: "/open-mics", label: "Open Mics" },
   { href: "/festivals", label: "Festivals" },
+  { href: "/podcasts", label: "Podcasts" },
   { href: "/compare", label: "Compare" },
   { href: "/wrapped", label: "Wrapped" },
+  { href: "/activity", label: "Activity" },
+  { href: "/for-you", label: "For You" },
+  { href: "/embed", label: "Embed" },
   { href: "/pricing", label: "Pricing" },
 ];
 

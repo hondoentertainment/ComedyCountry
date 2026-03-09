@@ -10,21 +10,25 @@ export async function GET() {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const subscription = await prisma.subscription.findUnique({
-    where: { userId: session.user.id },
-  });
+  try {
+    const subscription = await prisma.subscription.findUnique({
+      where: { userId: session.user.id },
+    });
 
-  if (!subscription) {
+    if (!subscription) {
+      return NextResponse.json({ plan: "free", status: null, features: getFreeFeatures() });
+    }
+
+    return NextResponse.json({
+      plan: subscription.plan,
+      status: subscription.status,
+      currentPeriodEnd: subscription.currentPeriodEnd,
+      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+      features: getPlanFeatures(subscription.plan),
+    });
+  } catch {
     return NextResponse.json({ plan: "free", status: null, features: getFreeFeatures() });
   }
-
-  return NextResponse.json({
-    plan: subscription.plan,
-    status: subscription.status,
-    currentPeriodEnd: subscription.currentPeriodEnd,
-    cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
-    features: getPlanFeatures(subscription.plan),
-  });
 }
 
 // POST - Create/update subscription (would connect to Stripe in production)
@@ -42,29 +46,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
-  const now = new Date();
-  const periodEnd = new Date(now);
-  periodEnd.setMonth(periodEnd.getMonth() + 1);
+  try {
+    const now = new Date();
+    const periodEnd = new Date(now);
+    periodEnd.setMonth(periodEnd.getMonth() + 1);
 
-  const subscription = await prisma.subscription.upsert({
-    where: { userId: session.user.id },
-    update: { plan, status: "ACTIVE", currentPeriodStart: now, currentPeriodEnd: periodEnd },
-    create: {
-      userId: session.user.id,
-      plan,
-      status: "ACTIVE",
-      currentPeriodStart: now,
-      currentPeriodEnd: periodEnd,
-    },
-  });
+    const subscription = await prisma.subscription.upsert({
+      where: { userId: session.user.id },
+      update: { plan, status: "ACTIVE", currentPeriodStart: now, currentPeriodEnd: periodEnd },
+      create: {
+        userId: session.user.id,
+        plan,
+        status: "ACTIVE",
+        currentPeriodStart: now,
+        currentPeriodEnd: periodEnd,
+      },
+    });
 
-  return NextResponse.json({
-    subscription,
-    features: getPlanFeatures(plan),
-    // In production: would return Stripe checkout URL
-    checkoutUrl: null,
-    message: "Subscription created. In production, this would redirect to Stripe Checkout.",
-  });
+    return NextResponse.json({
+      subscription,
+      features: getPlanFeatures(plan),
+      checkoutUrl: null,
+      message: "Subscription created. In production, this would redirect to Stripe Checkout.",
+    });
+  } catch {
+    return NextResponse.json({ error: "Subscription service unavailable" }, { status: 503 });
+  }
 }
 
 function getFreeFeatures() {

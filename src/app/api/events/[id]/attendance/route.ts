@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkAndAwardBadges } from "@/lib/badges.achievement";
 
 export async function GET(
   _request: Request,
@@ -67,6 +68,7 @@ export async function POST(
     update: { status },
     create: { userId: session.user.id, eventId: id, status },
   });
+  checkAndAwardBadges(session.user.id, "rsvp_event").catch(() => {});
 
   return NextResponse.json({ userStatus: status });
 }

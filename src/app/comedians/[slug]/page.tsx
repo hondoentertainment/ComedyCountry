@@ -24,9 +24,9 @@ export async function generateMetadata({ params }: PageProps) {
   const description = comedian.bio
     ? `${comedian.bio.slice(0, 155)}${comedian.bio.length > 155 ? "…" : ""}`
     : `Comedian profile and upcoming shows for ${comedian.name}.`;
-  const images = comedian.headshotUrl
-    ? [{ url: comedian.headshotUrl, width: 400, height: 400, alt: `${comedian.name} headshot` }]
-    : undefined;
+  const ogImageUrl = comedian.headshotUrl
+    || `${siteUrl}/api/og?title=${encodeURIComponent(comedian.name)}&subtitle=${encodeURIComponent(description.slice(0, 80))}&type=comedian`;
+  const images = [{ url: ogImageUrl, width: comedian.headshotUrl ? 400 : 1200, height: comedian.headshotUrl ? 400 : 630, alt: `${comedian.name}` }];
   return {
     title: `${comedian.name} | Punchline Atlas`,
     description,
@@ -37,10 +37,10 @@ export async function generateMetadata({ params }: PageProps) {
       images,
     },
     twitter: {
-      card: images ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: `${comedian.name} | Punchline Atlas`,
       description,
-      images: comedian.headshotUrl ? [comedian.headshotUrl] : undefined,
+      images: [ogImageUrl],
     },
   };
 }

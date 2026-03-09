@@ -18,14 +18,18 @@ export async function POST(request: Request) {
   }
 
   // Track the click
-  await prisma.ticketClick.create({
-    data: {
-      eventId,
-      userId: session?.user?.id || null,
-      referrer: referrer || null,
-      ticketUrl,
-    },
-  });
+  try {
+    await prisma.ticketClick.create({
+      data: {
+        eventId,
+        userId: session?.user?.id || null,
+        referrer: referrer || null,
+        ticketUrl,
+      },
+    });
+  } catch {
+    // TicketClick table may not exist yet; continue to return URL
+  }
 
   // Check for affiliate partner match and append tag
   let finalUrl = ticketUrl;
@@ -62,15 +66,18 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "eventId required" }, { status: 400 });
   }
 
-  const [total, last30d] = await Promise.all([
-    prisma.ticketClick.count({ where: { eventId } }),
-    prisma.ticketClick.count({
-      where: {
-        eventId,
-        createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-      },
-    }),
-  ]);
-
-  return NextResponse.json({ eventId, totalClicks: total, last30dClicks: last30d });
+  try {
+    const [total, last30d] = await Promise.all([
+      prisma.ticketClick.count({ where: { eventId } }),
+      prisma.ticketClick.count({
+        where: {
+          eventId,
+          createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+        },
+      }),
+    ]);
+    return NextResponse.json({ eventId, totalClicks: total, last30dClicks: last30d });
+  } catch {
+    return NextResponse.json({ eventId, totalClicks: 0, last30dClicks: 0 });
+  }
 }

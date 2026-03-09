@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { SettingsActions } from "./SettingsActions";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { SubscriptionManager } from "@/components/SubscriptionManager";
+import { PushNotificationToggle } from "@/components/PushNotificationToggle";
 
 export const metadata = {
   title: "Settings | Punchline Atlas",
@@ -87,6 +88,9 @@ export default async function SettingsPage() {
               Notifications
             </h2>
             <NotificationPreferences />
+            <div className="mt-4">
+              <PushNotificationToggle />
+            </div>
           </div>
 
           <SettingsActions />

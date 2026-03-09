@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
+import ReviewReactions from "./ReviewReactions";
+import ReportButton from "./ReportButton";
 
 type Review = {
   id: string;
@@ -137,6 +139,10 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
                     {r.comment}
                   </p>
                 )}
+                <div className="mt-3 flex items-center gap-3">
+                  <ReviewReactions reviewType="event_review" reviewId={r.id} />
+                  <ReportButton entityType="event_review" entityId={r.id} />
+                </div>
               </div>
             </div>
           </li>

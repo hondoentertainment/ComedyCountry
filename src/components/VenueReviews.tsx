@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import ReviewReactions from "./ReviewReactions";
+import ReportButton from "./ReportButton";
 
 interface Review {
   id: string;
@@ -143,6 +145,10 @@ export function VenueReviews({ venueId }: { venueId: string }) {
               <span className="text-zinc-600 text-xs ml-auto">{new Date(r.createdAt).toLocaleDateString()}</span>
             </div>
             {r.comment && <p className="text-zinc-400 text-sm">{r.comment}</p>}
+            <div className="mt-3 flex items-center gap-3">
+              <ReviewReactions reviewType="venue_review" reviewId={r.id} />
+              <ReportButton entityType="venue_review" entityId={r.id} />
+            </div>
           </div>
         ))}
       </div>
