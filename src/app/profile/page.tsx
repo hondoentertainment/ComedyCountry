@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getUserComedianBadges } from "@/lib/badges";
 import { ProfileForm } from "./ProfileForm";
 import { ComedianBadges } from "@/components/ComedianBadges";
+import UserBadges from "@/components/UserBadges";
 
 export const metadata = {
   title: "Profile | Punchline Atlas",
@@ -90,6 +91,11 @@ export default async function ProfilePage() {
             />
           </div>
         </header>
+
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-white mb-3">Achievement Badges</h2>
+          <UserBadges />
+        </div>
 
         <div className="flex gap-3 mb-8">
           <Link

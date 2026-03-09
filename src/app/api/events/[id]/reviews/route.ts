@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getEventReviews, getEventRatingStats } from "@/lib/event-reviews";
+import { checkAndAwardBadges } from "@/lib/badges.achievement";
 
 // GET: List reviews and rating stats for an event
 export async function GET(
@@ -103,6 +104,7 @@ export async function POST(
       },
     });
 
+    checkAndAwardBadges(session.user.id, "review_event").catch(() => {});
     return NextResponse.json(review);
   } catch {
     return NextResponse.json({ error: "Failed to save review" }, { status: 500 });

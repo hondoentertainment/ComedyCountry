@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getUserComedianBadges } from "@/lib/badges";
 import { ComedianBadges } from "@/components/ComedianBadges";
 import { UserFollowButton } from "@/components/UserFollowButton";
+import UserBadges from "@/components/UserBadges";
 
 type PageProps = { params: Promise<{ username: string }> };
 
@@ -124,6 +125,11 @@ export default async function PublicProfilePage({ params }: PageProps) {
             </div>
           </div>
         </header>
+
+        {/* Achievement Badges */}
+        <div className="mb-8">
+          <UserBadges userId={user.id} />
+        </div>
 
         {/* Badges */}
         {badges.length > 0 && (
