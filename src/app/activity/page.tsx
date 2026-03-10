@@ -57,7 +57,7 @@ export default function ActivityPage() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-2">Activity</h1>
         <p className="text-zinc-400 mb-8">See what people you follow are up to.</p>
@@ -135,7 +135,7 @@ export default function ActivityPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
 

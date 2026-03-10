@@ -19,7 +19,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const initialResults = term.length >= 2 ? await search(term, 10) : null;
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Suspense
           fallback={
@@ -37,6 +37,6 @@ export default async function SearchPage({ searchParams }: PageProps) {
           />
         </Suspense>
       </div>
-    </main>
+    </div>
   );
 }

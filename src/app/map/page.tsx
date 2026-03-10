@@ -38,7 +38,7 @@ export default async function MapPage() {
   }));
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-2">Map</h1>
         <p className="text-zinc-400 mb-8">
@@ -46,6 +46,6 @@ export default async function MapPage() {
         </p>
         <MapPageContent venues={venuesForMap} />
       </div>
-    </main>
+    </div>
   );
 }

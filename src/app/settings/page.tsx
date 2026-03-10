@@ -30,7 +30,7 @@ export default async function SettingsPage() {
   }
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <Link
           href="/profile"
@@ -96,6 +96,6 @@ export default async function SettingsPage() {
           <SettingsActions />
         </section>
       </div>
-    </main>
+    </div>
   );
 }

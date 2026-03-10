@@ -45,7 +45,7 @@ export default async function VenuesPage({ searchParams }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
@@ -193,6 +193,6 @@ export default async function VenuesPage({ searchParams }: PageProps) {
           searchParams={{ state, city, type, search }}
         />
       </div>
-    </main>
+    </div>
   );
 }

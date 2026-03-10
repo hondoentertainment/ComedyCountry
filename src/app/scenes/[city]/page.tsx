@@ -56,7 +56,7 @@ export default async function CityScenePage({ params }: PageProps) {
   upcomingShows.forEach((s) => s.comedians.forEach((ec) => comedianIds.add(ec.comedian.slug)));
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <Link href="/venues" className="text-sm text-zinc-400 hover:text-brand-gold mb-4 inline-block">
           ← All venues
@@ -171,6 +171,6 @@ export default async function CityScenePage({ params }: PageProps) {
           </section>
         )}
       </div>
-    </main>
+    </div>
   );
 }

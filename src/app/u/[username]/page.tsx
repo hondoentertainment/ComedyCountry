@@ -91,7 +91,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
   const joinDate = new Date(user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         {/* Profile Header */}
         <header className="flex items-center gap-6 mb-8 p-6 rounded-card bg-brand-surface border border-zinc-800">
@@ -249,6 +249,6 @@ export default async function PublicProfilePage({ params }: PageProps) {
           </section>
         )}
       </div>
-    </main>
+    </div>
   );
 }

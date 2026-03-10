@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function EmbedPage() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-3">Embed Widgets</h1>
         <p className="text-zinc-400 mb-8">
@@ -80,6 +80,6 @@ export default function EmbedPage() {
           </p>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

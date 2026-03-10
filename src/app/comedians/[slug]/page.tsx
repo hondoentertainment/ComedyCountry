@@ -97,7 +97,7 @@ export default async function ComedianPage({ params }: PageProps) {
   const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <ComedianStructuredData
         comedian={{
           id: comedian.id,
@@ -365,6 +365,6 @@ export default async function ComedianPage({ params }: PageProps) {
           <SimilarComedians comedianId={comedian.id} />
         </div>
       </div>
-    </main>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <Link
         href="/"
         className="text-sm text-zinc-400 hover:text-brand-gold transition-colors mb-6 inline-block"
@@ -182,6 +182,6 @@ export default function TermsPage() {
           ← Back to Discover
         </Link>
       </div>
-    </main>
+    </div>
   );
 }

@@ -78,7 +78,7 @@ export default async function EventPage({ params }: PageProps) {
   const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <EventStructuredData event={event} baseUrl={siteUrl} />
       {/* Spotify-style hero with Yelp rating prominence */}
       <div className="relative h-48 sm:h-64 md:h-72 bg-brand-charcoal">
@@ -191,6 +191,6 @@ export default async function EventPage({ params }: PageProps) {
           isSignedIn={!!session?.user}
         />
       </div>
-    </main>
+    </div>
   );
 }
