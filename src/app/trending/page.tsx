@@ -86,7 +86,7 @@ export default async function TrendingPage() {
   }
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-2">Trending</h1>
         <p className="text-zinc-400 mb-10">What&apos;s hot in the comedy world right now.</p>
@@ -245,6 +245,6 @@ export default async function TrendingPage() {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }

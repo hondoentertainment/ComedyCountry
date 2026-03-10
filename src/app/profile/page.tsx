@@ -61,7 +61,7 @@ export default async function ProfilePage() {
   const favoriteVenues = user.followsVenues.map((f) => f.venue);
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link
           href="/"
@@ -224,6 +224,6 @@ export default async function ProfilePage() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

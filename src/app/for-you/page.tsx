@@ -44,7 +44,7 @@ export default function ForYouPage() {
 
   if (status === "unauthenticated") {
     return (
-      <main className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center p-8">
           <h1 className="text-2xl font-bold text-white mb-3">For You</h1>
           <p className="text-zinc-400 mb-6">Sign in to get personalized comedy recommendations.</p>
@@ -55,12 +55,12 @@ export default function ForYouPage() {
             Sign in
           </Link>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-2">For You</h1>
         <p className="text-zinc-400 mb-8">
@@ -177,6 +177,6 @@ export default function ForYouPage() {
           </>
         )}
       </div>
-    </main>
+    </div>
   );
 }

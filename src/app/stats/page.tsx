@@ -96,7 +96,7 @@ export default async function StatsPage() {
   ];
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link href="/profile" className="text-sm text-zinc-400 hover:text-brand-gold mb-4 inline-block">
           ← Back to Profile
@@ -208,6 +208,6 @@ export default async function StatsPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
