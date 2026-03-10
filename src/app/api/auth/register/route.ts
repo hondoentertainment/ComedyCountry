@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 const MIN_USERNAME_LEN = 3;
 const MAX_USERNAME_LEN = 32;
 const MIN_PASSWORD_LEN = 8;
-const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
+const USERNAME_REGEX = /^[a-zA-Z0-9._-]+$/;
 
 export async function POST(request: Request) {
   try {
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
     if (!USERNAME_REGEX.test(username)) {
       return NextResponse.json(
-        { error: "Username can only contain letters, numbers, underscores, and hyphens" },
+        { error: "Username can only contain letters, numbers, periods, underscores, and hyphens" },
         { status: 400 }
       );
     }

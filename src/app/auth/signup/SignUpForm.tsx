@@ -59,12 +59,12 @@ export function SignUpForm() {
           required
           minLength={3}
           maxLength={32}
-          pattern="[a-zA-Z0-9_-]+"
+          pattern="[a-zA-Z0-9._-]+"
           className="w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           placeholder="johndoe"
         />
         <p className="text-zinc-500 text-xs mt-1">
-          Letters, numbers, underscores, hyphens. 3–32 chars.
+          Letters, numbers, periods, underscores, hyphens. 3–32 chars.
         </p>
       </div>
       <div>
