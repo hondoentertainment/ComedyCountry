@@ -178,6 +178,11 @@ Punchline Atlas is the nationwide comedy intelligence platform — discover venu
 | **v1.3** | Creator economy & direct-to-fan (exclusive content, tipping, merch, booking, press kits) | In Progress |
 | **v1.4** | Community & live experience (discussions, check-ins, UGC clips, live chat, fan clubs, polls) | In Progress |
 | **v2.0** | Marketplace & industry platform (talent marketplace, venue CRM, analytics, agent portal, sponsorships, API ecosystem) | Planned |
+| **v2.1** | Smart venue operations & POS (table mgmt, drink minimums, walk-ups, staff tools, POS integration) | Planned |
+| **v2.2** | Short-form comedy & viral discovery (TikTok-style clips, algorithmic feed, duets, trending bits) | Planned |
+| **v2.3** | Audience growth & marketing suite (SMS campaigns, retargeting, referrals, segmentation, influencer tools) | Planned |
+| **v2.4** | Mobile native & accessibility (React Native, Wallet passes, ASL show tags, captioned shows, sensory-friendly) | Planned |
+| **v2.5** | International expansion & localization (multi-language, multi-currency, global festivals, touring tools) | Planned |
 
 ---
 
@@ -257,6 +262,81 @@ Become the operating system for live comedy.
 | MK-06 | Sponsorship marketplace | Medium |
 | MK-07 | API partner ecosystem (webhooks, developer platform) | Medium |
 | MK-08 | Comedy scene reports (auto-generated quarterly) | Low |
+
+### 8.6 Phase v2.1 — Smart Venue Operations & POS
+
+Compete with Seat Engine & Ticket Fairy on venue-side tooling. Win the venue operator.
+
+| ID | Feature | Priority |
+|---|---|---|
+| VO-01 | Table management & seating charts (interactive drag-and-drop) | Critical |
+| VO-02 | Drink minimum enforcement (2-drink min per ticket type) | Critical |
+| VO-03 | Walk-up & door sales kiosk mode (tablet-optimized POS) | Critical |
+| VO-04 | Comp & VIP list management with approval workflows | High |
+| VO-05 | Staff scheduling & role-based access (door, bar, manager) | High |
+| VO-06 | POS integration bridge (Square, Toast, Clover) | High |
+| VO-07 | Real-time venue capacity & fire marshal compliance tracker | Medium |
+| VO-08 | Food & beverage menu management with pre-order | Medium |
+
+### 8.7 Phase v2.2 — Short-Form Comedy & Viral Discovery
+
+No competitor has this. Own the TikTok-of-comedy vertical.
+
+| ID | Feature | Priority |
+|---|---|---|
+| SF-01 | Vertical short-form video feed (≤90s comedy clips) | Critical |
+| SF-02 | Algorithmic discovery feed (engagement + taste signals) | Critical |
+| SF-03 | Clip-to-profile attribution (every clip links to comedian page) | Critical |
+| SF-04 | Duet / reaction videos (split-screen fan reactions) | High |
+| SF-05 | Trending bits & sounds (comedy-specific trending system) | High |
+| SF-06 | Show preview clips (venue/comedian can post 15s teasers) | High |
+| SF-07 | Clip challenges (weekly comedy prompts) | Medium |
+| SF-08 | Audio extraction & remix tools | Low |
+
+### 8.8 Phase v2.3 — Audience Growth & Marketing Suite
+
+Beat Seat Engine's marketing tools. Become the growth engine for comedy venues.
+
+| ID | Feature | Priority |
+|---|---|---|
+| AG-01 | SMS campaign engine (Twilio-powered, opt-in compliant) | Critical |
+| AG-02 | Audience segmentation (by taste, frequency, spend, location) | Critical |
+| AG-03 | Referral program engine (refer-a-friend discounts) | High |
+| AG-04 | Retargeting pixel management (Meta, Google Ads) | High |
+| AG-05 | Automated post-show follow-up sequences | High |
+| AG-06 | A/B testing for event listings & pricing | Medium |
+| AG-07 | Influencer partnership matching (local comedy influencers) | Medium |
+| AG-08 | Audience lookalike modeling for venue expansion | Low |
+
+### 8.9 Phase v2.4 — Mobile Native & Accessibility
+
+First comedy platform with true accessibility focus. Apple/Google Wallet native tickets.
+
+| ID | Feature | Priority |
+|---|---|---|
+| MN-01 | React Native app shell (iOS + Android) | Critical |
+| MN-02 | Apple Wallet & Google Wallet ticket passes | Critical |
+| MN-03 | ASL-interpreted show tagging & discovery filter | Critical |
+| MN-04 | Captioned/subtitled show discovery | High |
+| MN-05 | Sensory-friendly show tags (low-volume, seated, etc.) | High |
+| MN-06 | Offline mode with cached upcoming tickets & venue info | High |
+| MN-07 | Haptic feedback for live show interactions | Medium |
+| MN-08 | Voice-guided navigation for venue arrival | Low |
+
+### 8.10 Phase v2.5 — International Expansion & Localization
+
+No US comedy platform has gone global. Own international comedy discovery.
+
+| ID | Feature | Priority |
+|---|---|---|
+| IE-01 | Multi-language support (i18n framework with 10+ languages) | Critical |
+| IE-02 | Multi-currency pricing & payment (Stripe international) | Critical |
+| IE-03 | International comedy scene pages (Edinburgh, Melbourne, Montreal, London) | Critical |
+| IE-04 | Festival circuit tracker (Edinburgh Fringe, Just for Laughs, Melbourne Comedy Fest) | High |
+| IE-05 | Touring comedian visa/work permit info hub | High |
+| IE-06 | Regional comedy style taxonomy (UK panel, Aussie standup, Japanese manzai) | Medium |
+| IE-07 | Cross-border ticket sales with currency conversion | Medium |
+| IE-08 | Local promoter onboarding program | Low |
 
 ---
 

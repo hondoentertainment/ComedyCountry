@@ -253,6 +253,121 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 ---
 
+### Phase 14 — Smart Venue Operations & POS (v2.1)
+
+**Goal:** Win venue operators away from Seat Engine and Ticket Fairy with superior operations tooling.
+
+**Competitive context:** Seat Engine offers 360-degree venue management, Ticket Fairy has drink minimum & POS integration, QuickTix wins on comp/VIP list management. ComedyCountry must match and exceed these to own the venue relationship.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P14.1 | TableLayout model + interactive seating chart editor | Phase 12 | 📋 Planned |
+| P14.2 | DrinkMinimum model tied to ticket types | Phase 8 | 📋 Planned |
+| P14.3 | Walk-up & door sales kiosk mode (tablet UI) | Phase 8 | 📋 Planned |
+| P14.4 | Comp & VIP list management API + approval workflows | Phase 12 | 📋 Planned |
+| P14.5 | Staff scheduling (StaffShift model, role-based access) | Phase 5 | 📋 Planned |
+| P14.6 | POS integration bridge (Square, Toast, Clover webhooks) | Phase 12 | 📋 Planned |
+| P14.7 | Real-time venue capacity tracker & fire marshal compliance | P14.1 | 📋 Planned |
+| P14.8 | F&B menu management with pre-order (MenuCategory, MenuItem) | P14.6 | 📋 Planned |
+| P14.9 | Venue ops lib + API routes + tests | P14.1–P14.8 | 📋 Planned |
+| P14.10 | Venue operations dashboard page | P14.9 | 📋 Planned |
+
+**Deliverable:** Full venue operations suite — table management, drink minimums, walk-up sales, staff scheduling, POS bridge, and capacity tracking.
+
+---
+
+### Phase 15 — Short-Form Comedy & Viral Discovery (v2.2)
+
+**Goal:** Build the TikTok-of-comedy — no competitor has short-form algorithmic comedy discovery.
+
+**Competitive context:** JumpComedy helps comedians grow audiences but has no video feed. Open Comedy has profiles but no discovery engine. Instagram/TikTok have comedy but no show-to-ticket conversion. ComedyCountry can own the clip-to-ticket pipeline.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P15.1 | ShortClip model (≤90s, comedian attribution, engagement metrics) | Phase 11 | 📋 Planned |
+| P15.2 | Vertical video feed UI (swipe-based, autoplay) | P15.1 | 📋 Planned |
+| P15.3 | Algorithmic feed engine (engagement signals + taste profile) | P15.1, Phase 9 | 📋 Planned |
+| P15.4 | Clip-to-profile attribution (every clip links to comedian + next show) | P15.1 | 📋 Planned |
+| P15.5 | Duet & reaction system (split-screen fan recordings) | P15.1 | 📋 Planned |
+| P15.6 | Trending bits & sounds (comedy-specific trending algorithm) | P15.3 | 📋 Planned |
+| P15.7 | Show preview clips (15s teaser from venue/comedian) | P15.1 | 📋 Planned |
+| P15.8 | Weekly clip challenges (comedy prompts) | P15.6 | 📋 Planned |
+| P15.9 | Short-form lib + API routes + tests | P15.1–P15.8 | 📋 Planned |
+| P15.10 | Clips discovery page & feed integration | P15.9 | 📋 Planned |
+
+**Deliverable:** TikTok-style comedy clip feed with algorithmic discovery, comedian attribution, duets, trending, and clip-to-ticket conversion.
+
+---
+
+### Phase 16 — Audience Growth & Marketing Suite (v2.3)
+
+**Goal:** Become the growth engine venues can't live without — beat Seat Engine's email marketing with full-stack audience tools.
+
+**Competitive context:** Seat Engine bundles email marketing with ticketing. Ticket Fairy offers social sharing & promotional tools. No competitor offers SMS, retargeting pixel management, referrals, or audience segmentation in a unified suite.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P16.1 | SMS campaign engine (SMSCampaign model, Twilio integration) | Phase 12 | 📋 Planned |
+| P16.2 | Audience segmentation engine (taste, frequency, spend, location) | Phase 9, 12 | 📋 Planned |
+| P16.3 | Referral program (ReferralCode model, discount generation) | Phase 8 | 📋 Planned |
+| P16.4 | Retargeting pixel management (Meta Pixel, Google Ads tag) | Phase 12 | 📋 Planned |
+| P16.5 | Automated post-show follow-up sequences | Phase 12 | 📋 Planned |
+| P16.6 | A/B testing for event listings & pricing (ABTest model) | Phase 8 | 📋 Planned |
+| P16.7 | Influencer partnership matching (local comedy influencers) | Phase 9 | 📋 Planned |
+| P16.8 | Audience lookalike modeling for venue expansion markets | P16.2 | 📋 Planned |
+| P16.9 | Marketing lib + API routes + tests | P16.1–P16.8 | 📋 Planned |
+| P16.10 | Marketing suite dashboard page | P16.9 | 📋 Planned |
+
+**Deliverable:** Full marketing automation suite — SMS campaigns, audience segmentation, referral programs, retargeting, A/B testing, and influencer matching.
+
+---
+
+### Phase 17 — Mobile Native & Accessibility (v2.4)
+
+**Goal:** First comedy platform with true accessibility focus. Wallet-native tickets.
+
+**Competitive context:** No comedy ticketing platform offers ASL/captioned show discovery. Apple/Google Wallet passes are table stakes that most competitors lack. A native mobile app with offline mode would leapfrog every competitor's mobile-responsive web experience.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P17.1 | React Native app shell (shared API, iOS + Android) | Phase 7 | 📋 Planned |
+| P17.2 | Apple Wallet pass generation (PKPass) | Phase 8 | 📋 Planned |
+| P17.3 | Google Wallet pass generation | Phase 8 | 📋 Planned |
+| P17.4 | AccessibilityTag model (ASL, captioned, sensory-friendly) | Phase 1 | 📋 Planned |
+| P17.5 | Accessibility filter on events & venues | P17.4 | 📋 Planned |
+| P17.6 | Offline mode with cached tickets & venue info | P17.1 | 📋 Planned |
+| P17.7 | Haptic feedback for live show interactions | P17.1 | 📋 Planned |
+| P17.8 | Voice-guided venue navigation | P17.1 | 📋 Planned |
+| P17.9 | Accessibility lib + API routes + tests | P17.4–P17.5 | 📋 Planned |
+| P17.10 | Accessible show discovery page | P17.9 | 📋 Planned |
+
+**Deliverable:** React Native app, Wallet passes, accessibility-first show discovery (ASL, captions, sensory-friendly), offline mode.
+
+---
+
+### Phase 18 — International Expansion & Localization (v2.5)
+
+**Goal:** First US comedy platform to go global — own international comedy discovery.
+
+**Competitive context:** LaughStub, Seat Engine, QuickTix are all US-only. Edinburgh Fringe (3,800+ shows), Melbourne Comedy Festival, Just for Laughs Montreal represent massive untapped markets. No platform connects international festival-goers with local scene discovery.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P18.1 | i18n framework (next-intl, 10+ language support) | Phase 7 | 📋 Planned |
+| P18.2 | Multi-currency pricing (Stripe international, auto-conversion) | Phase 8 | 📋 Planned |
+| P18.3 | International scene pages (Edinburgh, Melbourne, Montreal, London, Berlin) | Phase 1 | 📋 Planned |
+| P18.4 | Festival circuit tracker (FestivalCircuit model) | Phase 1 | 📋 Planned |
+| P18.5 | Touring visa/work permit info hub (country-specific guides) | Phase 10 | 📋 Planned |
+| P18.6 | Regional comedy style taxonomy (UK panel, Aussie standup, Japanese manzai) | Phase 1 | 📋 Planned |
+| P18.7 | Cross-border ticket sales with currency conversion | P18.2 | 📋 Planned |
+| P18.8 | Local promoter onboarding program | Phase 12 | 📋 Planned |
+| P18.9 | International lib + API routes + tests | P18.1–P18.8 | 📋 Planned |
+| P18.10 | International discovery page | P18.9 | 📋 Planned |
+
+**Deliverable:** Multi-language, multi-currency platform with international comedy scenes, festival circuit tracking, and global promoter onboarding.
+
+---
+
 ### Phase 13 — Test Harness & Quality (Ongoing)
 
 **Goal:** Comprehensive test coverage across all platform layers.
@@ -298,6 +413,16 @@ Phase 1 (Core)
                             ├──► Phase 11 (Community) ◄── Phase 9 (social), Phase 10 (clips)
                             │       │
                             └──► Phase 12 (Marketplace) ◄── Phase 8, 10
+                                    │
+                                    ├──► Phase 14 (Venue Ops) ◄── Phase 8 (tickets), Phase 12 (CRM)
+                                    │
+                                    ├──► Phase 15 (Short-Form) ◄── Phase 9 (taste), Phase 11 (clips)
+                                    │
+                                    ├──► Phase 16 (Marketing) ◄── Phase 9 (segments), Phase 12 (CRM)
+                                    │
+                                    ├──► Phase 17 (Mobile/A11y) ◄── Phase 8 (Wallet), Phase 14 (kiosk)
+                                    │
+                                    └──► Phase 18 (International) ◄── Phase 8 (currency), Phase 12 (marketplace)
 
                             Phase 13 (Tests) runs in parallel with all phases
 ```
@@ -316,6 +441,11 @@ Phase 1 (Core)
 | Phase 11 | 2–3 weeks | Community & live experience | In Progress |
 | Phase 12 | 4–6 weeks | Marketplace & industry platform | In Progress |
 | Phase 13 | Ongoing | Test harness & quality | In Progress |
+| Phase 14 | 3–4 weeks | Smart venue operations & POS | Planned |
+| Phase 15 | 3–4 weeks | Short-form comedy & viral discovery | Planned |
+| Phase 16 | 3–4 weeks | Audience growth & marketing suite | Planned |
+| Phase 17 | 4–6 weeks | Mobile native & accessibility | Planned |
+| Phase 18 | 4–6 weeks | International expansion & localization | Planned |
 
 ---
 
@@ -331,6 +461,13 @@ Phase 1 (Core)
 | ML recommendation cold start | Fall back to popularity-based recommendations for new users |
 | UGC moderation at scale | Start with report-based moderation; add AI moderation in Phase 11.9 |
 | Multi-tenant data isolation | Enforce venue-group scoping at query layer; add integration tests |
+| POS integration complexity | Start with Square webhook bridge; defer Toast/Clover to post-launch |
+| Short-form video storage costs | Use external CDN (Cloudflare R2/S3); enforce 90s/50MB limits |
+| SMS compliance (TCPA) | Strict opt-in/opt-out; message frequency caps; compliant consent flows |
+| React Native maintenance burden | Share API layer; use Expo for rapid iteration; defer native modules |
+| International payment regulations | Start with Stripe-supported countries; add local PSPs as needed |
+| i18n translation quality | Use professional translators for top 5 languages; community for rest |
+| Accessibility legal compliance | Follow WCAG 2.1 AA; engage accessibility consultant for audit |
 
 ---
 
