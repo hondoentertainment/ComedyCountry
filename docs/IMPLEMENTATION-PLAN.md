@@ -148,6 +148,132 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 ---
 
+### Phase 8 — Native Ticketing & Commerce (v1.1)
+
+**Goal:** Own the ticket transaction — replace affiliate links with native checkout.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P8.1 | Stripe Connect setup for multi-party payments | Phase 7 | ✅ Partial |
+| P8.2 | TicketType model (GA, VIP, early bird) with inventory | P8.1 | ✅ |
+| P8.3 | Ticket purchase API (POST /api/tickets/purchase) | P8.2 | ✅ |
+| P8.4 | TicketPurchaseWidget component | P8.3 | ✅ |
+| P8.5 | QR code ticket generation + scan endpoint | P8.3 | ✅ |
+| P8.6 | Season passes & bundles (SeasonPass model) | P8.2 | ✅ |
+| P8.7 | Refund policy configuration per event | P8.3 | ✅ |
+| P8.8 | Dynamic pricing / early bird tiers | P8.2 | 📋 Planned |
+| P8.9 | Ticket transfer & gifting flow | P8.3 | 📋 Planned |
+| P8.10 | Post-purchase review prompt (cron job) | P8.3 | 📋 Planned |
+
+**Deliverable:** Native ticket checkout with QR codes, inventory management, season passes, and refund policies.
+
+---
+
+### Phase 9 — AI Discovery & Social Graph (v1.2)
+
+**Goal:** ML-powered taste matching and social proof to drive engagement.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P9.1 | TasteProfile model + computeTasteProfile engine | Phase 3 | ✅ |
+| P9.2 | Smart recommendations (collaborative + content-based) | P9.1 | ✅ |
+| P9.3 | Taste match scores on comedian profiles | P9.1 | ✅ |
+| P9.4 | TasteMatchBadge component | P9.3 | ✅ |
+| P9.5 | "Happening tonight" location-aware feed | P9.1 | ✅ |
+| P9.6 | Location-radius alerts (LocationAlert model) | P9.5 | ✅ |
+| P9.7 | Friends system (Friend model, requests) | Phase 3 | ✅ |
+| P9.8 | "Friends going" badge on event cards | P9.7 | ✅ |
+| P9.9 | 2-way calendar sync (Google, Apple, Outlook) | Phase 8 | 📋 Planned |
+| P9.10 | Friend finder & contacts sync | P9.7 | 📋 Planned |
+
+**Deliverable:** AI taste profiles, smart recommendations, location alerts, friends system, and social proof on events.
+
+---
+
+### Phase 10 — Creator Economy & Direct-to-Fan (v1.3)
+
+**Goal:** Make ComedyCountry the comedian's home base with monetization tools.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P10.1 | CreatorContent model + exclusive content feed | Phase 3 | ✅ |
+| P10.2 | ExclusiveContentFeed component | P10.1 | ✅ |
+| P10.3 | Fan tipping / virtual gifts (TipButton, Stripe Connect) | Phase 8 | ✅ |
+| P10.4 | Merch storefront (MerchItem model, creator/merch API) | P10.1 | ✅ |
+| P10.5 | Booking request system (BookingRequest model) | Phase 5 | ✅ |
+| P10.6 | Press kit / EPK generator | P10.1 | ✅ |
+| P10.7 | Setlist / material tracker (private comedian tool) | P10.1 | ✅ |
+| P10.8 | Unified revenue dashboard | P10.3, P10.4 | ✅ |
+| P10.9 | In-app video player (upload + embeds) | P10.1 | 📋 Planned |
+| P10.10 | Creator analytics expansion | P10.8 | 📋 Planned |
+
+**Deliverable:** Exclusive content, tipping, merch, booking requests, press kits, setlist tracker, and revenue dashboard.
+
+---
+
+### Phase 11 — Community & Live Experience (v1.4)
+
+**Goal:** Build the comedy fan community to keep users engaged between shows.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P11.1 | Discussion threads (Discussion model, threaded replies) | Phase 3 | ✅ |
+| P11.2 | DiscussionSection component | P11.1 | ✅ |
+| P11.3 | Venue check-ins (CheckIn model, "X here now") | Phase 3 | ✅ |
+| P11.4 | User-generated clips (Clip model, moderation) | Phase 3 | ✅ |
+| P11.5 | Live show chat (LiveChatWidget) | P11.1 | ✅ |
+| P11.6 | Comedy clubs / fan groups (FanClub model) | Phase 3 | ✅ |
+| P11.7 | Polls & predictions (Poll model, voting) | P11.6 | ✅ |
+| P11.8 | Achievements system expansion | Phase 3 | ✅ |
+| P11.9 | Content moderation pipeline (AI-powered) | P11.4 | 📋 Planned |
+| P11.10 | Comedy news feed (editorial + aggregated) | P11.1 | 📋 Planned |
+
+**Deliverable:** Discussion threads, check-ins, UGC clips, live chat, fan clubs, polls, and expanded achievements.
+
+---
+
+### Phase 12 — Marketplace & Industry Platform (v2.0)
+
+**Goal:** Become the operating system for live comedy with B2B tools.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P12.1 | Talent marketplace (MarketplaceListing model) | Phase 10 | ✅ |
+| P12.2 | Venue CRM & email campaigns (EmailCampaign model) | Phase 8 | ✅ |
+| P12.3 | Industry analytics dashboard (IndustryReport model) | Phase 5 | ✅ |
+| P12.4 | Agent & manager portal (AgentRoster model) | P12.1 | ✅ |
+| P12.5 | Sponsorship marketplace (Sponsorship model) | P12.1 | ✅ |
+| P12.6 | Developer API & keys (DeveloperKey model) | Phase 7 | ✅ |
+| P12.7 | Multi-venue management (VenueGroup model) | P12.2 | ✅ |
+| P12.8 | OpenAPI spec + embed API | P12.6 | ✅ |
+| P12.9 | Webhook system for partners | P12.6 | 📋 Planned |
+| P12.10 | Auto-generated quarterly city reports | P12.3 | 📋 Planned |
+
+**Deliverable:** Talent marketplace, venue CRM, industry analytics, agent portal, sponsorships, and developer API.
+
+---
+
+### Phase 13 — Test Harness & Quality (Ongoing)
+
+**Goal:** Comprehensive test coverage across all platform layers.
+
+| Task | Description | Dependencies | Status |
+|------|-------------|--------------|--------|
+| P13.1 | Vitest configuration with jsdom + React Testing Library | — | ✅ |
+| P13.2 | Core lib tests (venues, events, comedians, format, constants) | Phase 1 | ✅ |
+| P13.3 | Feature lib tests (badges, search, recommendations, tickets) | Phase 3 | ✅ |
+| P13.4 | Taste profile & notifications lib tests | Phase 9 | ✅ |
+| P13.5 | User export lib tests | Phase 4 | ✅ |
+| P13.6 | API route tests (auth, follow, claims, analytics, tickets) | Phase 3 | ✅ |
+| P13.7 | Additional API route tests (taste-profile, happening-tonight, discussions) | Phase 9-11 | ✅ |
+| P13.8 | Component tests (Nav, forms, buttons, widgets) | Phase 1 | ✅ |
+| P13.9 | Additional component tests (AttendanceButtons, Footer, CheckInButton) | Phase 11 | ✅ |
+| P13.10 | Playwright E2E tests for critical flows | Phase 7 | 📋 In Progress |
+
+**Deliverable:** 60+ test files covering lib functions, API routes, and React components with Vitest + React Testing Library.
+
+---
+
 ## 3. Dependency Graph (High Level)
 
 ```
@@ -162,19 +288,34 @@ Phase 1 (Core)
             └──► Phase 6 (Notifications)
                     │
                     └──► Phase 7 (Polish)
+                            │
+                            ├──► Phase 8 (Ticketing)
+                            │       │
+                            ├──► Phase 9 (AI Discovery) ◄── Phase 8 (purchase signals)
+                            │       │
+                            ├──► Phase 10 (Creator) ◄── Phase 8 (Stripe Connect)
+                            │       │
+                            ├──► Phase 11 (Community) ◄── Phase 9 (social), Phase 10 (clips)
+                            │       │
+                            └──► Phase 12 (Marketplace) ◄── Phase 8, 10
+
+                            Phase 13 (Tests) runs in parallel with all phases
 ```
 
 ---
 
-## 4. Recommended Timeline (Remaining Work)
+## 4. Timeline
 
-| Phase | Sprint | Focus |
-|-------|--------|-------|
-| Phase 5 | 1–2 weeks | Admin/CMS MVP |
-| Phase 6 | 2–3 weeks | In-app feed + email notifications |
-| Phase 7 | 1–2 weeks | PWA, performance, accessibility, E2E |
-
-**Total estimate (Phases 5–7):** 4–7 weeks for one developer.
+| Phase | Sprint | Focus | Status |
+|-------|--------|-------|--------|
+| Phase 1–4 | Complete | Core, data, users, privacy | ✅ |
+| Phase 5–7 | Complete | Admin, notifications, polish | ✅ |
+| Phase 8 | 3–4 weeks | Native ticketing & commerce | In Progress |
+| Phase 9 | 3–4 weeks | AI discovery & social graph | In Progress |
+| Phase 10 | 3–4 weeks | Creator economy tools | In Progress |
+| Phase 11 | 2–3 weeks | Community & live experience | In Progress |
+| Phase 12 | 4–6 weeks | Marketplace & industry platform | In Progress |
+| Phase 13 | Ongoing | Test harness & quality | In Progress |
 
 ---
 
@@ -186,6 +327,10 @@ Phase 1 (Core)
 | Map consent complexity | CookieConsentProvider already gates map load |
 | Admin auth scope creep | Start with API key or role flag; defer full RBAC |
 | Email deliverability | Use reputable provider (Resend/SendGrid); verify domain |
+| Stripe Connect complexity | Start with platform charges; defer direct payouts to Phase 10 |
+| ML recommendation cold start | Fall back to popularity-based recommendations for new users |
+| UGC moderation at scale | Start with report-based moderation; add AI moderation in Phase 11.9 |
+| Multi-tenant data isolation | Enforce venue-group scoping at query layer; add integration tests |
 
 ---
 
@@ -196,4 +341,6 @@ For each feature:
 - [ ] Works in production build (`npm run build`)
 - [ ] No console errors for happy path
 - [ ] Responsive on mobile
-- [ ] E2E test for critical path (where applicable)
+- [ ] Unit tests for lib functions and API routes
+- [ ] Component tests for interactive UI elements
+- [ ] E2E test for critical user flows (where applicable)

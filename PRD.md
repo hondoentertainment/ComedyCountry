@@ -164,16 +164,103 @@ Punchline Atlas is the nationwide comedy intelligence platform — discover venu
 
 ## 7. Roadmap
 
-| Milestone | Scope |
-|-----------|-------|
-| **v0.1** | Venues, comedians, schedule, map |
-| **v0.2** | YouTube sync, improved seed data ✅ |
-| **v0.3** | User auth, follow comedians/venues |
-| **v1.0** | Notifications, PWA, polish |
+| Milestone | Scope | Status |
+|-----------|-------|--------|
+| **v0.1** | Venues, comedians, schedule, map | ✅ Complete |
+| **v0.2** | YouTube sync, improved seed data | ✅ Complete |
+| **v0.3** | User auth, follow comedians/venues, reviews, badges | ✅ Complete |
+| **v0.4** | Privacy & legal (GDPR, cookie consent, data export) | ✅ Complete |
+| **v0.5** | Admin CMS (CRUD for venues, comedians, events) | ✅ Complete |
+| **v0.6** | Notifications & feed (in-app, email digests, push) | ✅ Complete |
+| **v1.0** | PWA, SEO, accessibility, performance polish | ✅ Complete |
+| **v1.1** | Native ticketing & commerce (Stripe checkout, QR tickets, inventory, season passes) | In Progress |
+| **v1.2** | AI-powered discovery & social graph (taste profiles, smart recs, location alerts, friends going) | In Progress |
+| **v1.3** | Creator economy & direct-to-fan (exclusive content, tipping, merch, booking, press kits) | In Progress |
+| **v1.4** | Community & live experience (discussions, check-ins, UGC clips, live chat, fan clubs, polls) | In Progress |
+| **v2.0** | Marketplace & industry platform (talent marketplace, venue CRM, analytics, agent portal, sponsorships, API ecosystem) | Planned |
 
 ---
 
-## 8. Appendix
+## 8. Phase Details (v1.1+)
+
+### 8.1 Phase v1.1 — Native Ticketing & Commerce
+
+Own the transaction — move from affiliate links to native ticket sales.
+
+| ID | Feature | Priority |
+|---|---|---|
+| T-01 | Native ticket checkout (Stripe-powered) | Critical |
+| T-02 | Mobile tickets with QR codes | Critical |
+| T-03 | Ticket inventory management (GA, VIP, early bird) | High |
+| T-04 | Dynamic pricing & early bird tiers | Medium |
+| T-05 | Season passes & multi-show bundles | Medium |
+| T-06 | Ticket transfer & gifting | Low |
+| T-07 | Refund & cancellation policies | High |
+| T-08 | Post-purchase review prompts | Medium |
+
+### 8.2 Phase v1.2 — AI Discovery & Social Graph
+
+Personalization that drives repeat visits.
+
+| ID | Feature | Priority |
+|---|---|---|
+| D-01 | Comedy taste profile (ML-derived from user signals) | Critical |
+| D-02 | Smart recommendations engine (collaborative + content-based) | Critical |
+| D-03 | Location-radius alerts | High |
+| D-04 | "Friends going" social proof on event cards | High |
+| D-05 | Friend finder & contacts sync | Medium |
+| D-06 | 2-way calendar sync (Google, Apple, Outlook) | Medium |
+| D-07 | "Happening tonight" location-aware feed | Medium |
+| D-08 | Taste-match percentage scores on comedian profiles | Low |
+
+### 8.3 Phase v1.3 — Creator Economy & Direct-to-Fan
+
+Make ComedyCountry the comedian's home base.
+
+| ID | Feature | Priority |
+|---|---|---|
+| CR-01 | Exclusive content feed (free + subscriber-gated) | Critical |
+| CR-02 | In-app video player (upload + embeds) | Critical |
+| CR-03 | Fan tipping / virtual gifts (Stripe Connect) | High |
+| CR-04 | Merch storefront | High |
+| CR-05 | Booking request system (venue → comedian) | High |
+| CR-06 | Press kit / EPK generator | Medium |
+| CR-07 | Setlist / material tracker (private comedian tool) | Medium |
+| CR-08 | Unified revenue dashboard | Medium |
+
+### 8.4 Phase v1.4 — Community & Live Experience
+
+Build the comedy fan community.
+
+| ID | Feature | Priority |
+|---|---|---|
+| CM-01 | Discussion threads (comedian, venue, event pages) | Critical |
+| CM-02 | Venue check-ins with "X people here now" | High |
+| CM-03 | User-generated clips (≤60s, moderated) | High |
+| CM-04 | Live show chat (real-time, auto-created for 50+ RSVPs) | Medium |
+| CM-05 | Comedy clubs / fan groups (public or invite-only) | Medium |
+| CM-06 | Polls & predictions | Low |
+| CM-07 | Comedy news feed (editorial + aggregated) | Low |
+| CM-08 | Achievements system expansion | Medium |
+
+### 8.5 Phase v2.0 — Marketplace & Industry Platform
+
+Become the operating system for live comedy.
+
+| ID | Feature | Priority |
+|---|---|---|
+| MK-01 | Talent marketplace (venues post dates, comedians apply) | Critical |
+| MK-02 | Venue CRM & marketing automation | Critical |
+| MK-03 | Industry analytics dashboard | High |
+| MK-04 | Multi-venue management | High |
+| MK-05 | Agent & manager portal | Medium |
+| MK-06 | Sponsorship marketplace | Medium |
+| MK-07 | API partner ecosystem (webhooks, developer platform) | Medium |
+| MK-08 | Comedy scene reports (auto-generated quarterly) | Low |
+
+---
+
+## 9. Appendix
 
 ### File Structure
 
@@ -183,9 +270,17 @@ src/
 │   ├── venues/          # Venue list + [id] detail
 │   ├── comedians/       # Comedian list + [slug] detail
 │   ├── schedule/        # National calendar
-│   └── map/             # Google Map of venues
-├── components/          # VenueMap, shared UI
-└── lib/                 # venues, comedians, events, constants
+│   ├── map/             # Google Map of venues
+│   ├── scenes/          # City comedy scenes
+│   ├── admin/           # Admin CMS (CRUD)
+│   ├── creator/         # Creator dashboard & tools
+│   ├── venue-dashboard/ # Venue operator dashboard
+│   ├── industry/        # Industry analytics
+│   ├── marketplace/     # Talent marketplace
+│   └── api/             # 98 API routes
+├── components/          # 72 React components
+├── lib/                 # 27 utility modules
+└── test/                # Test setup & harness
 ```
 
 ### Environment Variables
@@ -195,10 +290,23 @@ src/
 - `YOUTUBE_API_KEY` — YouTube Data API v3 key (for channel stats sync)
 - `BULK_IMPORT_API_KEY` — Optional; when set, POST /api/import requires this key in Authorization or X-API-Key header
 - `YOUTUBE_SYNC_API_KEY` — Optional; when set, POST /api/youtube/sync requires this key in Authorization or X-API-Key header
+- `NEXTAUTH_URL` — Production URL for NextAuth.js
+- `NEXTAUTH_SECRET` — Random secret for session signing
+- `GITHUB_ID` / `GITHUB_SECRET` — GitHub OAuth credentials
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — Google OAuth credentials
+- `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` — Stripe payments
+- `STRIPE_PRICE_*` — Stripe subscription price IDs
 
 ### Scripts
 
 | Command | Description |
 |---------|--------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run test` | Run unit tests (Vitest, watch mode) |
+| `npm run test:run` | Run unit tests (single run) |
+| `npm run test:e2e` | Run E2E tests (Playwright) |
 | `npm run db:sync-youtube` | Sync subscriber/video counts for comedian YouTube channels |
 | `npm run db:import -- <file>` | Bulk import venues and events from JSON file |
+| `npm run db:seed` | Seed database with initial data |
+| `npm run db:seed-all` | Comprehensive seed (all data) |
