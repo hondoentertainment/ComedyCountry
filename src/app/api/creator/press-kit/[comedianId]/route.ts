@@ -8,21 +8,28 @@ export async function GET(
   try {
     const comedian = await prisma.comedian.findUnique({
       where: { id: params.comedianId },
-      include: {
-        genres: true,
-        socialLinks: true,
-        specialReleases: { orderBy: { releaseDate: "desc" }, take: 10 },
-        events: {
-          include: { event: { select: { id: true, title: true, date: true } } },
-          orderBy: { event: { date: "desc" } },
-          take: 10,
-        },
-      },
     });
 
     if (!comedian) {
       return NextResponse.json({ error: "Comedian not found" }, { status: 404 });
     }
+
+    // Fetch related data separately for type safety
+    const [genres, socialLinks, specialReleases, eventLinks] = await Promise.all([
+      prisma.comedianGenre.findMany({ where: { comedianId: comedian.id } }),
+      prisma.comedianSocialLink.findMany({ where: { comedianId: comedian.id } }),
+      prisma.comedianSpecial.findMany({
+        where: { comedianId: comedian.id },
+        orderBy: { releaseYear: "desc" },
+        take: 10,
+      }),
+      prisma.eventComedian.findMany({
+        where: { comedianId: comedian.id },
+        include: { event: { select: { id: true, title: true, date: true } } },
+        orderBy: { event: { date: "desc" } },
+        take: 10,
+      }),
+    ]);
 
     // Aggregate stats
     const [followerCount, tipCount, eventCount] = await Promise.all([
@@ -31,17 +38,12 @@ export async function GET(
       prisma.eventComedian.count({ where: { comedianId: comedian.id } }),
     ]);
 
-    // Get top-rated tier ratings
-    let avgRating: number | null = null;
-    let ratingCount = 0;
+    // Get tier rating distribution
+    let tierCount = 0;
     try {
-      const tierAgg = await prisma.comedianTierRating.aggregate({
+      tierCount = await prisma.comedianTierRating.count({
         where: { comedianId: comedian.id },
-        _avg: { rating: true },
-        _count: true,
       });
-      avgRating = tierAgg._avg.rating;
-      ratingCount = tierAgg._count;
     } catch {
       // tier rating table may not exist
     }
@@ -67,17 +69,16 @@ export async function GET(
         touringStatus: comedian.touringStatus,
         website: comedian.website,
       },
-      genres: comedian.genres,
-      socialLinks: comedian.socialLinks,
-      specials: comedian.specialReleases,
-      recentShows: comedian.events.map((ec) => ec.event),
+      genres,
+      socialLinks,
+      specials: specialReleases,
+      recentShows: eventLinks.map((ec) => ec.event),
       clips,
       stats: {
         followers: followerCount,
         totalShows: eventCount,
         tips: tipCount,
-        avgRating,
-        ratingCount,
+        ratingCount: tierCount,
       },
     };
 
