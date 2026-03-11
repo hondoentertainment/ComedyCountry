@@ -87,6 +87,14 @@ model Comedian {
   youtubeChannel  YouTubeChannel?
   followers       ComedianFollow[]
   tierRatings     ComedianTierRating[]
+  // Phase 7
+  exclusiveContent ExclusiveContent[]
+  fanTips         FanTip[]
+  merchItems      MerchItem[]
+  bookingRequests BookingRequest[]
+  setlistEntries  SetlistEntry[]
+  // Phase 9
+  agentRosters    AgentRoster[]
 }
 
 enum TouringStatus {
@@ -162,6 +170,10 @@ model Event {
   comedians   EventComedian[]
   reviews     EventReview[]
   attendees   EventAttendance[]
+  // Phase 5
+  tickets     Ticket[]
+  ticketTypes TicketType[]
+  refundPolicy RefundPolicy?
 
   @@index([venueId])
   @@index([date])
@@ -793,4 +805,587 @@ model UserBadge {
 
   @@unique([userId, badge])
   @@index([userId])
+}
+
+// =============================================================================
+// Phase 5: Native Ticketing & Commerce
+// =============================================================================
+
+model Ticket {
+  id            String       @id @default(cuid())
+  eventId       String
+  userId        String
+  ticketTypeId  String
+  status        TicketStatus @default(VALID)
+  qrCode        String       @unique // unique QR code string
+  purchasePrice Decimal      @db.Decimal(10, 2)
+  stripePaymentId String?
+  transferredTo String?      // email of recipient if transferred
+  giftMessage   String?
+  scannedAt     DateTime?    // when scanned at venue door
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticketType    TicketType   @relation(fields: [ticketTypeId], references: [id])
+
+  @@index([eventId])
+  @@index([userId])
+  @@index([qrCode])
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  REFUNDED
+  TRANSFERRED
+  CANCELLED
+}
+
+model TicketType {
+  id          String   @id @default(cuid())
+  eventId     String
+  name        String   // GA, VIP, Early Bird
+  price       Decimal  @db.Decimal(10, 2)
+  capacity    Int
+  sold        Int      @default(0)
+  description String?
+  sortOrder   Int      @default(0)
+  saleStart   DateTime?
+  saleEnd     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tickets     Ticket[]
+
+  @@index([eventId])
+}
+
+model SeasonPass {
+  id          String   @id @default(cuid())
+  venueId     String
+  userId      String
+  name        String
+  totalShows  Int
+  usedShows   Int      @default(0)
+  price       Decimal  @db.Decimal(10, 2)
+  expiresAt   DateTime
+  stripePaymentId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([venueId])
+  @@index([userId])
+}
+
+model RefundPolicy {
+  id              String   @id @default(cuid())
+  eventId         String   @unique
+  refundDeadline  DateTime // last date to request refund
+  refundPercent   Int      @default(100) // percentage refunded
+  description     String?
+  createdAt       DateTime @default(now())
+
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+// =============================================================================
+// Phase 6: AI-Powered Discovery & Social Graph
+// =============================================================================
+
+model TasteProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  dimensions    String   // JSON: {dark: 0.8, observational: 0.6, physical: 0.2, ...}
+  topGenres     String   // JSON: ["dark", "observational", "storytelling"]
+  confidence    Float    @default(0) // 0-1 how much data we have
+  lastComputed  DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model LocationAlert {
+  id        String   @id @default(cuid())
+  userId    String
+  latitude  Float
+  longitude Float
+  radiusMi  Int      @default(50) // radius in miles
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model CalendarSync {
+  id          String   @id @default(cuid())
+  userId      String
+  provider    String   // google, apple, outlook
+  calendarId  String?  // external calendar ID
+  accessToken String?
+  refreshToken String?
+  lastSyncAt  DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, provider])
+}
+
+model FriendConnection {
+  id        String   @id @default(cuid())
+  userId    String
+  friendId  String
+  status    String   @default("pending") // pending, accepted, blocked
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, friendId])
+  @@index([userId, status])
+  @@index([friendId, status])
+}
+
+// =============================================================================
+// Phase 7: Creator Economy & Direct-to-Fan
+// =============================================================================
+
+model ExclusiveContent {
+  id          String   @id @default(cuid())
+  comedianId  String
+  title       String
+  body        String?
+  mediaUrl    String?  // video/image URL (S3/Vercel Blob)
+  mediaType   String?  // video, image, text
+  embedUrl    String?  // YouTube/TikTok embed
+  isGated     Boolean  @default(false) // subscriber-only
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, publishedAt])
+}
+
+model FanTip {
+  id          String   @id @default(cuid())
+  comedianId  String
+  userId      String
+  amount      Decimal  @db.Decimal(10, 2)
+  giftType    String?  // standing_ovation, encore, spotlight, etc.
+  message     String?
+  stripePaymentId String?
+  createdAt   DateTime @default(now())
+
+  comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, createdAt])
+  @@index([userId])
+}
+
+model MerchItem {
+  id          String   @id @default(cuid())
+  comedianId  String
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  imageUrl    String?
+  externalUrl String?  // Shopify/Printful link
+  inStock     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId])
+}
+
+model BookingRequest {
+  id          String   @id @default(cuid())
+  venueId     String
+  comedianId  String
+  requesterId String   // user ID of requester (venue operator)
+  date        DateTime
+  showType    String?
+  budget      Decimal? @db.Decimal(10, 2)
+  message     String?
+  status      BookingStatus @default(PENDING)
+  responseNote String?
+  respondedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, status])
+  @@index([venueId])
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  NEGOTIATING
+  CONFIRMED
+  CANCELLED
+}
+
+model SetlistEntry {
+  id          String   @id @default(cuid())
+  comedianId  String
+  eventId     String?
+  bitName     String
+  durationMin Float?   // duration in minutes
+  notes       String?
+  crowdRating Int?     // comedian's self-assessment 1-5
+  performedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, performedAt])
+}
+
+// =============================================================================
+// Phase 8: Community & Live Experience
+// =============================================================================
+
+model DiscussionThread {
+  id         String   @id @default(cuid())
+  entityType String   // comedian, venue, event
+  entityId   String
+  userId     String
+  title      String
+  body       String
+  isPinned   Boolean  @default(false)
+  isLocked   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  replies    DiscussionReply[]
+
+  @@index([entityType, entityId, createdAt])
+  @@index([userId])
+}
+
+model DiscussionReply {
+  id        String   @id @default(cuid())
+  threadId  String
+  userId    String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  thread    DiscussionThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+}
+
+model VenueCheckIn {
+  id        String   @id @default(cuid())
+  venueId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@index([venueId, createdAt])
+  @@index([userId])
+}
+
+model UserClip {
+  id          String   @id @default(cuid())
+  eventId     String?
+  comedianId  String?
+  venueId     String?
+  userId      String
+  videoUrl    String
+  thumbnailUrl String?
+  caption     String?
+  durationSec Int?
+  status      ClipStatus @default(PENDING)
+  upvotes     Int      @default(0)
+  downvotes   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  votes       ClipVote[]
+
+  @@index([comedianId, status])
+  @@index([venueId])
+  @@index([userId])
+}
+
+enum ClipStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DMCA_REMOVED
+}
+
+model ClipVote {
+  id      String @id @default(cuid())
+  clipId  String
+  userId  String
+  vote    Int    // 1 = upvote, -1 = downvote
+  createdAt DateTime @default(now())
+
+  clip    UserClip @relation(fields: [clipId], references: [id], onDelete: Cascade)
+
+  @@unique([clipId, userId])
+}
+
+model LiveChat {
+  id        String   @id @default(cuid())
+  eventId   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  messages  LiveChatMessage[]
+
+  @@unique([eventId])
+}
+
+model LiveChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  userId    String
+  message   String
+  createdAt DateTime @default(now())
+
+  chat      LiveChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId, createdAt])
+}
+
+model FanClub {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  coverUrl    String?
+  creatorId   String
+  isPublic    Boolean  @default(true)
+  inviteCode  String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     FanClubMember[]
+
+  @@index([creatorId])
+}
+
+model FanClubMember {
+  id        String   @id @default(cuid())
+  clubId    String
+  userId    String
+  role      String   @default("member") // admin, moderator, member
+  createdAt DateTime @default(now())
+
+  club      FanClub  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@unique([clubId, userId])
+}
+
+model Poll {
+  id          String   @id @default(cuid())
+  entityType  String   // comedian, venue, event
+  entityId    String
+  userId      String
+  question    String
+  options     String   // JSON array of option strings
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  votes       PollVote[]
+
+  @@index([entityType, entityId])
+}
+
+model PollVote {
+  id          String   @id @default(cuid())
+  pollId      String
+  userId      String
+  optionIndex Int
+  createdAt   DateTime @default(now())
+
+  poll        Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId])
+}
+
+// =============================================================================
+// Phase 9: Marketplace & Industry Platform
+// =============================================================================
+
+model TalentListing {
+  id          String   @id @default(cuid())
+  venueId     String
+  date        DateTime
+  showType    String   // headliner, feature, host, open_mic
+  genre       String?
+  budgetMin   Decimal? @db.Decimal(10, 2)
+  budgetMax   Decimal? @db.Decimal(10, 2)
+  description String?
+  status      String   @default("open") // open, filled, cancelled
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  applications TalentApplication[]
+
+  @@index([status, date])
+  @@index([venueId])
+}
+
+model TalentApplication {
+  id          String   @id @default(cuid())
+  listingId   String
+  comedianId  String
+  userId      String
+  message     String?
+  askingFee   Decimal? @db.Decimal(10, 2)
+  status      String   @default("pending") // pending, accepted, rejected
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  listing     TalentListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, comedianId])
+  @@index([comedianId])
+}
+
+model VenueCRM {
+  id          String   @id @default(cuid())
+  venueId     String
+  userId      String   // attendee
+  visitCount  Int      @default(1)
+  totalSpend  Decimal  @default(0) @db.Decimal(10, 2)
+  lastVisit   DateTime
+  tags        String?  // JSON: ["regular", "vip", "comedy_fan"]
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([venueId, userId])
+  @@index([venueId])
+}
+
+model EmailCampaign {
+  id          String   @id @default(cuid())
+  venueId     String
+  subject     String
+  body        String
+  segment     String?  // JSON filter criteria
+  sentCount   Int      @default(0)
+  openCount   Int      @default(0)
+  clickCount  Int      @default(0)
+  status      String   @default("draft") // draft, scheduled, sent
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([venueId])
+}
+
+model IndustryReport {
+  id          String   @id @default(cuid())
+  city        String
+  state       String
+  quarter     String   // "2026-Q1"
+  year        Int
+  metrics     String   // JSON: {totalShows, avgTicketPrice, topComedians, venueCount, ...}
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@unique([city, state, quarter])
+  @@index([year, quarter])
+}
+
+model VenueGroup {
+  id          String   @id @default(cuid())
+  name        String
+  ownerId     String   // user who manages the group
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  venues      VenueGroupMember[]
+  staff       VenueGroupStaff[]
+}
+
+model VenueGroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  venueId   String
+  createdAt DateTime @default(now())
+
+  group     VenueGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, venueId])
+}
+
+model VenueGroupStaff {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  role      String   @default("staff") // owner, admin, staff
+  createdAt DateTime @default(now())
+
+  group     VenueGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model AgentRoster {
+  id          String   @id @default(cuid())
+  userId      String   // agent/manager user
+  comedianId  String
+  commission  Decimal? @db.Decimal(5, 2) // percentage
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comedianId])
+  @@index([userId])
+}
+
+model Sponsorship {
+  id          String   @id @default(cuid())
+  brandName   String
+  contactEmail String
+  eventId     String?
+  comedianId  String?
+  venueId     String?
+  package     String   // logo, pre_show, branded_content, title_sponsor
+  amount      Decimal  @db.Decimal(10, 2)
+  status      String   @default("inquiry") // inquiry, negotiating, confirmed, active, completed
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([eventId])
+}
+
+model ApiKey {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  key         String   @unique
+  tier        String   @default("free") // free, pro, enterprise
+  rateLimit   Int      @default(100) // requests per hour
+  lastUsedAt  DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([key])
 }
