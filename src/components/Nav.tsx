@@ -16,6 +16,7 @@ const navItems = [
   { href: "/trending", label: "Trending" },
   { href: "/specials", label: "Specials" },
   { href: "/lists", label: "Lists" },
+  { href: "/news", label: "News" },
 ];
 
 const moreItems = [

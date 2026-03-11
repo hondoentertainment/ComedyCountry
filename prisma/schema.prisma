@@ -250,6 +250,9 @@ model User {
   followedByUsers   UserFollow[]       @relation("UserFollowing")
   followingUsers    UserFollow[]       @relation("UserFollowers")
   activityEvents    ActivityFeedItem[] @relation("ActivityActor")
+  transfersSent     TicketTransfer[]   @relation("TransfersSent")
+  transfersReceived TicketTransfer[]   @relation("TransfersReceived")
+  authoredArticles  NewsArticle[]      @relation("AuthoredArticles")
 }
 
 model Account {
@@ -828,6 +831,7 @@ model Ticket {
 
   event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
   ticketType    TicketType   @relation(fields: [ticketTypeId], references: [id])
+  transfers     TicketTransfer[]
 
   @@index([eventId])
   @@index([userId])
@@ -858,8 +862,25 @@ model TicketType {
 
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   tickets     Ticket[]
+  pricingTiers PricingTier[]
 
   @@index([eventId])
+}
+
+model PricingTier {
+  id            String   @id @default(cuid())
+  ticketTypeId  String
+  ticketType    TicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+  name          String     // "Early Bird", "Advance", "Door"
+  price         Decimal    @db.Decimal(10, 2)
+  startsAt      DateTime
+  endsAt        DateTime?
+  maxQuantity   Int?       // optional cap for this tier
+  sold          Int        @default(0)
+  sortOrder     Int        @default(0)
+  createdAt     DateTime   @default(now())
+
+  @@index([ticketTypeId])
 }
 
 model SeasonPass {
@@ -890,6 +911,28 @@ model RefundPolicy {
   event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@index([eventId])
+}
+
+model TicketTransfer {
+  id            String   @id @default(cuid())
+  ticketId      String
+  ticket        Ticket   @relation(fields: [ticketId], references: [id])
+  fromUserId    String
+  fromUser      User     @relation("TransfersSent", fields: [fromUserId], references: [id])
+  toEmail       String
+  toUserId      String?
+  toUser        User?    @relation("TransfersReceived", fields: [toUserId], references: [id])
+  message       String?
+  status        String   @default("pending") // pending, accepted, declined, expired
+  token         String   @unique @default(cuid())
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  acceptedAt    DateTime?
+
+  @@index([ticketId])
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([token])
 }
 
 // =============================================================================
@@ -1386,6 +1429,67 @@ model ApiKey {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  webhookEndpoints WebhookEndpoint[]
+
   @@index([userId])
   @@index([key])
+}
+
+model WebhookEndpoint {
+  id             String   @id @default(cuid())
+  apiKeyId       String
+  apiKey         ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  url            String
+  events         String[] @default([]) // ["event.created", "ticket.sold", "review.posted"]
+  secret         String   // HMAC signing secret
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deliveries     WebhookDelivery[]
+
+  @@index([apiKeyId])
+}
+
+model WebhookDelivery {
+  id            String   @id @default(cuid())
+  endpointId    String
+  endpoint      WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  event         String   // "event.created", "ticket.sold", etc.
+  payload       String   // JSON payload
+  statusCode    Int?
+  responseBody  String?
+  success       Boolean  @default(false)
+  attempts      Int      @default(0)
+  lastAttemptAt DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([endpointId])
+}
+
+// =============================================================================
+// Phase 11: Comedy News Feed
+// =============================================================================
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  body        String
+  coverImage  String?
+  category    String   // "industry", "festival", "venue_opening", "comedian_news", "editorial"
+  tags        String[] @default([])
+  authorId    String?
+  author      User?    @relation("AuthoredArticles", fields: [authorId], references: [id])
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  featured    Boolean  @default(false)
+  sourceUrl   String?  // for aggregated content
+  sourceName  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([published, publishedAt])
+  @@index([featured])
 }
