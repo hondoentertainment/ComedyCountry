@@ -182,7 +182,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                   <div>
                     <p className="text-white font-medium">Comedian: {app.comedianId}</p>
                     {app.message && <p className="text-zinc-400 text-sm mt-1">{app.message}</p>}
-                    {app.askingFee && (
+                    {app.askingFee != null && (
                       <p className="text-zinc-300 text-sm mt-1">
                         Asking: ${Number(app.askingFee)}
                       </p>
