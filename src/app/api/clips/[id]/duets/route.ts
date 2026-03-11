@@ -1,36 +1,35 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getClipFeed, createClip } from "@/lib/short-clips";
+import { getDuets, createDuet } from "@/lib/short-clips";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const tags = searchParams.get("tags");
-  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
-  const pageSize = Math.min(50, Math.max(1, parseInt(searchParams.get("pageSize") ?? "20", 10)));
-  const sort = (searchParams.get("sort") ?? "engagement") as "engagement" | "recent" | "views";
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
 
   try {
-    const data = await getClipFeed({
-      tags: tags ? tags.split(",").map((t) => t.trim()) : undefined,
-      page,
-      pageSize,
-      sort,
-    });
-    return NextResponse.json(data);
+    const duets = await getDuets(id);
+    return NextResponse.json(duets);
   } catch {
     return NextResponse.json(
-      { error: "Failed to load clip feed" },
+      { error: "Failed to load duets" },
       { status: 500 },
     );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+
+  const { id } = await params;
 
   let body: {
     comedianId?: string;
@@ -40,8 +39,6 @@ export async function POST(request: Request) {
     duration?: number;
     description?: string;
     tags?: string[];
-    isPreview?: boolean;
-    eventId?: string;
   };
   try {
     body = await request.json();
@@ -57,15 +54,18 @@ export async function POST(request: Request) {
   }
 
   try {
-    const clip = await createClip({
+    const duet = await createDuet(id, {
       ...body,
       videoUrl: body.videoUrl.trim(),
       duration: body.duration,
       userId: session.user.id,
     });
-    return NextResponse.json(clip, { status: 201 });
+    return NextResponse.json(duet, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to create clip";
+    const message = err instanceof Error ? err.message : "Failed to create duet";
+    if (message.includes("not found")) {
+      return NextResponse.json({ error: message }, { status: 404 });
+    }
     if (message.includes("duration")) {
       return NextResponse.json({ error: message }, { status: 400 });
     }
