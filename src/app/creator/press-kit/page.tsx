@@ -18,14 +18,13 @@ interface PressKit {
   };
   genres: { id: string; genre: string }[];
   socialLinks: { id: string; platform: string; url: string }[];
-  specials: { id: string; title: string; releaseDate: string | null }[];
+  specials: { id: string; title: string; releaseYear: number | null }[];
   recentShows: { id: string; title: string; date: string }[];
   clips: { id: string; title: string; mediaUrl: string | null; mediaType: string | null; publishedAt: string }[];
   stats: {
     followers: number;
     totalShows: number;
     tips: number;
-    avgRating: number | null;
     ratingCount: number;
   };
 }
@@ -116,8 +115,7 @@ export default function CreatorPressKitPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <MiniStat label="Followers" value={String(stats.followers)} />
         <MiniStat label="Shows" value={String(stats.totalShows)} />
-        <MiniStat label="Avg Rating" value={stats.avgRating ? stats.avgRating.toFixed(1) : "N/A"} />
-        <MiniStat label="Ratings" value={String(stats.ratingCount)} />
+        <MiniStat label="Tier Ratings" value={String(stats.ratingCount)} />
       </div>
 
       {/* Specials */}
@@ -128,7 +126,7 @@ export default function CreatorPressKitPage() {
             {specials.map((s) => (
               <div key={s.id} className="p-3 rounded-lg bg-brand-surface border border-zinc-800 flex justify-between items-center">
                 <span className="text-white">{s.title}</span>
-                {s.releaseDate && <span className="text-zinc-500 text-xs">{new Date(s.releaseDate).getFullYear()}</span>}
+                {s.releaseYear && <span className="text-zinc-500 text-xs">{s.releaseYear}</span>}
               </div>
             ))}
           </div>
