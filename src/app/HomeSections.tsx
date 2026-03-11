@@ -34,6 +34,8 @@ const FEATURED_SCENES = [
   { city: "austin", label: "Austin", state: "TX" },
   { city: "nashville", label: "Nashville", state: "TN" },
   { city: "atlanta", label: "Atlanta", state: "GA" },
+  { city: "seattle", label: "Seattle", state: "WA" },
+  { city: "minneapolis", label: "Minneapolis", state: "MN" },
 ];
 
 export async function HomeSections() {
@@ -250,7 +252,7 @@ export async function HomeSections() {
       <section className="mb-14">
         <h2 className="text-2xl font-bold text-white mb-2">Comedy scenes</h2>
         <p className="text-zinc-400 text-sm mb-6">Explore the best comedy cities in America.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {FEATURED_SCENES.map((scene) => (
             <Link
               key={scene.city}
