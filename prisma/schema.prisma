@@ -95,6 +95,14 @@ model Comedian {
   setlistEntries  SetlistEntry[]
   // Phase 9
   agentRosters    AgentRoster[]
+  // Phase 13: Creator Intelligence
+  revenueAttributions  RevenueAttribution[]
+  audienceUnifications AudienceUnification[]
+  contentDistributions ContentDistribution[]
+  careerMilestones     CareerMilestone[]
+  financialSummaries   FinancialSummary[]
+  // Podcast-to-Live Pipeline
+  podcastShows         PodcastShow[]
 }
 
 enum TouringStatus {
@@ -174,6 +182,8 @@ model Event {
   tickets     Ticket[]
   ticketTypes TicketType[]
   refundPolicy RefundPolicy?
+  // Phase 12
+  fairPricePolicy FairPricePolicy?
 
   @@index([venueId])
   @@index([date])
@@ -832,6 +842,8 @@ model Ticket {
   event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
   ticketType    TicketType   @relation(fields: [ticketTypeId], references: [id])
   transfers     TicketTransfer[]
+  verifications TicketVerification[]
+  resaleListings ResaleListingRequest[]
 
   @@index([eventId])
   @@index([userId])
@@ -1492,4 +1504,544 @@ model NewsArticle {
   @@index([category])
   @@index([published, publishedAt])
   @@index([featured])
+}
+
+// =============================================================================
+// Phase 12: Anti-Scalping & Fair Ticketing
+// =============================================================================
+
+model TicketVerification {
+  id                 String             @id @default(cuid())
+  ticketId           String
+  verificationMethod VerificationMethod
+  verifiedAt         DateTime?
+  verifierData       Json?
+  isVerified         Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  ticket             Ticket             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+}
+
+enum VerificationMethod {
+  EMAIL
+  PHONE
+  ID_SCAN
+}
+
+model FairPricePolicy {
+  id                  String   @id @default(cuid())
+  eventId             String   @unique
+  showAllFees         Boolean  @default(true)
+  maxMarkupPercent    Float    @default(0)
+  allowResale         Boolean  @default(false)
+  resaleMaxPercent    Float    @default(0)
+  antiScalpingEnabled Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  event               Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model TicketWaitlistQueue {
+  id         String              @id @default(cuid())
+  eventId    String
+  userId     String
+  position   Int
+  joinedAt   DateTime            @default(now())
+  notifiedAt DateTime?
+  claimedAt  DateTime?
+  expiresAt  DateTime
+  status     WaitlistQueueStatus @default(WAITING)
+
+  @@unique([eventId, userId])
+  @@index([eventId, status])
+  @@index([eventId, position])
+}
+
+enum WaitlistQueueStatus {
+  WAITING
+  OFFERED
+  CLAIMED
+  EXPIRED
+}
+
+model PriceTransparencyLog {
+  id             String   @id @default(cuid())
+  ticketTypeId   String
+  basePrice      Decimal  @db.Decimal(10, 2)
+  serviceFee     Decimal  @db.Decimal(10, 2)
+  processingFee  Decimal  @db.Decimal(10, 2)
+  totalPrice     Decimal  @db.Decimal(10, 2)
+  feePercentage  Float
+  shownAt        DateTime @default(now())
+
+  @@index([ticketTypeId])
+}
+
+model ResaleListingRequest {
+  id             String              @id @default(cuid())
+  ticketId       String
+  sellerId       String
+  maxPrice       Decimal             @db.Decimal(10, 2)
+  listingStatus  ResaleListingStatus @default(PENDING)
+  buyerId        String?
+  soldAt         DateTime?
+  artistRevShare Float               @default(0)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  ticket         Ticket              @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([sellerId])
+  @@index([listingStatus])
+}
+
+enum ResaleListingStatus {
+  PENDING
+  APPROVED
+  LISTED
+  SOLD
+  EXPIRED
+}
+
+// =============================================================================
+// Phase 13: Discovery Flywheel
+// =============================================================================
+
+model DiscoverySignal {
+  id         String              @id @default(cuid())
+  userId     String
+  signalType DiscoverySignalType
+  entityType DiscoveryEntityType
+  entityId   String
+  weight     Float
+  createdAt  DateTime            @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([signalType])
+}
+
+enum DiscoverySignalType {
+  VIEW
+  CLICK
+  ATTEND
+  FOLLOW
+  CLIP_WATCH
+  SHARE
+  REVIEW
+  CHECKIN
+  PURCHASE
+}
+
+enum DiscoveryEntityType {
+  EVENT
+  COMEDIAN
+  VENUE
+  CLIP
+  PODCAST
+}
+
+model PersonalizedFeed {
+  id         String               @id @default(cuid())
+  userId     String
+  feedType   PersonalizedFeedType
+  items      Json
+  computedAt DateTime             @default(now())
+  expiresAt  DateTime
+
+  @@unique([userId, feedType])
+  @@index([expiresAt])
+}
+
+enum PersonalizedFeedType {
+  FOR_YOU
+  HAPPENING_TONIGHT
+  TRENDING_NEAR_YOU
+  FRIENDS_ATTENDING
+}
+
+model SocialProof {
+  id              String              @id @default(cuid())
+  entityType      DiscoveryEntityType
+  entityId        String
+  friendsAttending Int                @default(0)
+  totalAttending  Int                 @default(0)
+  trendingScore   Float               @default(0)
+  buzzLevel       BuzzLevel           @default(LOW)
+  updatedAt       DateTime            @updatedAt
+
+  @@unique([entityType, entityId])
+  @@index([buzzLevel])
+  @@index([trendingScore])
+}
+
+enum BuzzLevel {
+  LOW
+  MEDIUM
+  HIGH
+  VIRAL
+}
+
+model DiscoveryBoost {
+  id              String              @id @default(cuid())
+  entityType      DiscoveryEntityType
+  entityId        String
+  boostType       DiscoveryBoostType
+  boostMultiplier Float
+  expiresAt       DateTime
+  createdAt       DateTime            @default(now())
+
+  @@index([entityType, entityId])
+  @@index([expiresAt])
+}
+
+enum DiscoveryBoostType {
+  NEW_COMEDIAN
+  RETURNING_FAVORITE
+  FRIEND_RECOMMENDED
+  TRENDING
+  EDITORIAL_PICK
+}
+
+model UserDiscoveryProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  preferredGenres   Json     @default("[]")
+  preferredVenues   Json     @default("[]")
+  preferredDays     Json     @default("[]")
+  averageSpend      Float    @default(0)
+  discoveryOpenness Float    @default(0.5)
+  lastComputedAt    DateTime @default(now())
+
+  @@index([userId])
+}
+
+// =============================================================================
+// Comedy Analytics Engine
+// =============================================================================
+
+enum CrowdReaction {
+  SILENT
+  CHUCKLES
+  LAUGHING
+  ROARING
+  STANDING_OVATION
+}
+
+enum BenchmarkMetric {
+  AVG_ATTENDANCE
+  AVG_SPEND
+  RETURN_RATE
+  SATISFACTION
+}
+
+model PerformanceMetric {
+  id            String        @id @default(cuid())
+  comedianId    String
+  eventId       String
+  bitTitle      String
+  laughScore    Int           // 0-100
+  crowdReaction CrowdReaction
+  audienceSize  Int
+  city          String
+  date          DateTime
+  createdAt     DateTime      @default(now())
+
+  @@index([comedianId])
+  @@index([eventId])
+  @@index([comedianId, date])
+  @@index([city])
+}
+
+model AudienceHeatmap {
+  id              String   @id @default(cuid())
+  comedianId      String
+  country         String   @default("US")
+  city            String
+  state           String
+  fanCount        Int
+  engagementScore Float
+  lastUpdated     DateTime @default(now())
+
+  @@unique([comedianId, country, city, state])
+  @@index([comedianId])
+  @@index([state])
+}
+
+model RevenueForecast {
+  id              String   @id @default(cuid())
+  eventId         String
+  predictedSales  Int
+  actualSales     Int?
+  confidenceScore Float    // 0-1
+  factors         Json     // JSON object with prediction factors
+  createdAt       DateTime @default(now())
+
+  @@index([eventId])
+}
+
+model VenueBenchmark {
+  id             String          @id @default(cuid())
+  venueId        String
+  metric         BenchmarkMetric
+  value          Float
+  period         String          // "2024-Q1", "2024-01", "2024"
+  percentileRank Float           // 0-100
+
+  @@unique([venueId, metric, period])
+  @@index([venueId])
+  @@index([metric, period])
+}
+
+model ComedianAnalytics {
+  id             String   @id @default(cuid())
+  comedianId     String
+  totalShows     Int
+  totalAudience  Int
+  avgRating      Float
+  topCities      Json     // [{ city, state, count }]
+  genreBreakdown Json     // [{ genre, percentage }]
+  growthRate     Float    // percentage growth period over period
+  period         String   // "2024-Q1", "2024", "all-time"
+  createdAt      DateTime @default(now())
+
+  @@unique([comedianId, period])
+  @@index([comedianId])
+}
+
+model IndustryTrend {
+  id            String   @id @default(cuid())
+  category      String   // "shows", "attendance", "genre", "emerging"
+  metric        String   // specific metric name
+  value         Float
+  previousValue Float
+  changePercent Float
+  period        String   // "2024-Q1", "2024-01"
+  region        String?  // null = national
+  createdAt     DateTime @default(now())
+
+  @@unique([category, metric, period, region])
+  @@index([category, period])
+  @@index([region])
+}
+
+// =============================================================================
+// Podcast-to-Live Pipeline
+// =============================================================================
+
+model PodcastShow {
+  id              String          @id @default(cuid())
+  comedianId      String
+  title           String
+  feedUrl         String
+  platform        PodcastPlatform
+  subscriberCount Int             @default(0)
+  lastEpisodeAt   DateTime?
+  synced          Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  comedian        Comedian        @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+  episodes        PodcastEpisode[]
+  liveRecordings  LiveRecordingSession[]
+
+  @@index([comedianId])
+}
+
+enum PodcastPlatform {
+  APPLE
+  SPOTIFY
+  YOUTUBE
+  RSS
+}
+
+model PodcastEpisode {
+  id               String   @id @default(cuid())
+  podcastId        String
+  title            String
+  description      String?
+  audioUrl         String
+  publishedAt      DateTime
+  durationSeconds  Int      @default(0)
+  guestComedianIds String[] @default([])
+  listenerCount    Int      @default(0)
+  topCities        Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  podcast          PodcastShow @relation(fields: [podcastId], references: [id], onDelete: Cascade)
+  ticketLinks      PodcastTicketLink[]
+
+  @@index([podcastId, publishedAt])
+}
+
+model PodcastTicketLink {
+  id        String   @id @default(cuid())
+  episodeId String
+  eventId   String
+  clipId    String?
+  clicks    Int      @default(0)
+  purchases Int      @default(0)
+  revenue   Float    @default(0)
+  createdAt DateTime @default(now())
+
+  episode   PodcastEpisode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@index([episodeId])
+  @@index([eventId])
+}
+
+model LiveRecordingSession {
+  id                    String              @id @default(cuid())
+  eventId               String
+  podcastId             String
+  consentRequired       Boolean             @default(true)
+  consentCollected      Boolean             @default(false)
+  audioQuality          AudioQuality        @default(STANDARD)
+  distributionPlatforms Json?
+  status                LiveRecordingStatus @default(PLANNED)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  podcast               PodcastShow         @relation(fields: [podcastId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([podcastId])
+}
+
+enum AudioQuality {
+  STANDARD
+  ENHANCED
+  STUDIO
+}
+
+enum LiveRecordingStatus {
+  PLANNED
+  RECORDING
+  POST_PRODUCTION
+  PUBLISHED
+}
+
+// =============================================================================
+// Phase 14: Creator Intelligence Dashboard
+// =============================================================================
+
+model RevenueAttribution {
+  id           String            @id @default(cuid())
+  comedianId   String
+  sourceType   RevenueSourceType
+  sourceId     String?
+  revenueType  RevenueType
+  amount       Float
+  attributedAt DateTime          @default(now())
+  createdAt    DateTime          @default(now())
+
+  comedian     Comedian          @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, attributedAt])
+  @@index([comedianId, sourceType])
+}
+
+enum RevenueSourceType {
+  CLIP
+  PODCAST
+  SOCIAL
+  REFERRAL
+  ORGANIC
+}
+
+enum RevenueType {
+  TICKET
+  MERCH
+  TIP
+  SUBSCRIPTION
+}
+
+model AudienceUnification {
+  id             String           @id @default(cuid())
+  comedianId     String
+  platform       AudiencePlatform
+  platformUserId String?
+  email          String?
+  followerCount  Int?
+  engagementRate Float?
+  lastSyncedAt   DateTime         @default(now())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  comedian       Comedian         @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, platform])
+  @@index([email])
+}
+
+enum AudiencePlatform {
+  TIKTOK
+  INSTAGRAM
+  YOUTUBE
+  PODCAST
+  TICKET_BUYER
+  MERCH_BUYER
+}
+
+model ContentDistribution {
+  id                    String    @id @default(cuid())
+  comedianId            String
+  contentId             String
+  title                 String
+  platforms             Json
+  scheduledAt           DateTime?
+  distributedAt         DateTime?
+  performanceByPlatform Json?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  comedian              Comedian  @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, contentId])
+  @@index([comedianId, scheduledAt])
+}
+
+model CareerMilestone {
+  id           String   @id @default(cuid())
+  comedianId   String
+  milestone    String
+  achievedAt   DateTime @default(now())
+  metric       String
+  value        Float
+  previousBest Float?
+  createdAt    DateTime @default(now())
+
+  comedian     Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId, achievedAt])
+}
+
+model FinancialSummary {
+  id                  String   @id @default(cuid())
+  comedianId          String
+  period              String
+  ticketRevenue       Float    @default(0)
+  merchRevenue        Float    @default(0)
+  tipRevenue          Float    @default(0)
+  subscriptionRevenue Float    @default(0)
+  totalRevenue        Float    @default(0)
+  expenses            Float?
+  netIncome           Float?
+  taxEstimate         Float?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  comedian            Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@unique([comedianId, period])
+  @@index([comedianId])
 }
