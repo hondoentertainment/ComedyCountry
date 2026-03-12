@@ -114,7 +114,29 @@ async function seedComedians() {
     }));
   }
 
-  const allComedians = [...comedians, ...extendedComedians, ...expandedComedians];
+  // Load alphabetical batch files (comedians-a-d.json, comedians-e-j.json, comedians-k-p.json, comedians-q-z.json)
+  const batchFiles = ["comedians-a-d.json", "comedians-e-j.json", "comedians-k-p.json", "comedians-q-z.json"];
+  let batchComedians: ComedianData[] = [];
+  for (const batchFile of batchFiles) {
+    const batchPath = path.join(__dirname, "../data", batchFile);
+    if (fs.existsSync(batchPath)) {
+      const batchData = JSON.parse(fs.readFileSync(batchPath, "utf-8"));
+      const entries = Array.isArray(batchData) ? batchData : (batchData.comedians || []);
+      batchComedians.push(
+        ...entries.map((c: Record<string, unknown>) => ({
+          name: c.name as string,
+          slug: (c.slug as string) || slugify(c.name as string),
+          bio: (c.bio as string) || undefined,
+          instagram: (c.instagram as string) || undefined,
+          touringStatus: (c.touringStatus as string) || "UNKNOWN",
+          genres: (c.genres as string[]) || [],
+        }))
+      );
+      console.log(`  Loaded ${entries.length} comedians from ${batchFile}`);
+    }
+  }
+
+  const allComedians = [...comedians, ...extendedComedians, ...expandedComedians, ...batchComedians];
 
   // Deduplicate by slug
   const seen = new Set<string>();
