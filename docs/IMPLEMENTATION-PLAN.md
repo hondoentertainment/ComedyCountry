@@ -161,9 +161,9 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 | P8.5 | QR code ticket generation + scan endpoint | P8.3 | ✅ |
 | P8.6 | Season passes & bundles (SeasonPass model) | P8.2 | ✅ |
 | P8.7 | Refund policy configuration per event | P8.3 | ✅ |
-| P8.8 | Dynamic pricing / early bird tiers | P8.2 | 📋 Planned |
-| P8.9 | Ticket transfer & gifting flow | P8.3 | 📋 Planned |
-| P8.10 | Post-purchase review prompt (cron job) | P8.3 | 📋 Planned |
+| P8.8 | Dynamic pricing / early bird tiers | P8.2 | ✅ |
+| P8.9 | Ticket transfer & gifting flow | P8.3 | ✅ |
+| P8.10 | Post-purchase review prompt (cron job) | P8.3 | ✅ |
 
 **Deliverable:** Native ticket checkout with QR codes, inventory management, season passes, and refund policies.
 
@@ -183,8 +183,8 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 | P9.6 | Location-radius alerts (LocationAlert model) | P9.5 | ✅ |
 | P9.7 | Friends system (Friend model, requests) | Phase 3 | ✅ |
 | P9.8 | "Friends going" badge on event cards | P9.7 | ✅ |
-| P9.9 | 2-way calendar sync (Google, Apple, Outlook) | Phase 8 | 📋 Planned |
-| P9.10 | Friend finder & contacts sync | P9.7 | 📋 Planned |
+| P9.9 | 2-way calendar sync (Google, Apple, Outlook) | Phase 8 | ✅ |
+| P9.10 | Friend finder & contacts sync | P9.7 | ✅ |
 
 **Deliverable:** AI taste profiles, smart recommendations, location alerts, friends system, and social proof on events.
 
@@ -204,8 +204,8 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 | P10.6 | Press kit / EPK generator | P10.1 | ✅ |
 | P10.7 | Setlist / material tracker (private comedian tool) | P10.1 | ✅ |
 | P10.8 | Unified revenue dashboard | P10.3, P10.4 | ✅ |
-| P10.9 | In-app video player (upload + embeds) | P10.1 | 📋 Planned |
-| P10.10 | Creator analytics expansion | P10.8 | 📋 Planned |
+| P10.9 | In-app video player (upload + embeds) | P10.1 | ✅ |
+| P10.10 | Creator analytics expansion | P10.8 | ✅ |
 
 **Deliverable:** Exclusive content, tipping, merch, booking requests, press kits, setlist tracker, and revenue dashboard.
 
@@ -225,8 +225,8 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 | P11.6 | Comedy clubs / fan groups (FanClub model) | Phase 3 | ✅ |
 | P11.7 | Polls & predictions (Poll model, voting) | P11.6 | ✅ |
 | P11.8 | Achievements system expansion | Phase 3 | ✅ |
-| P11.9 | Content moderation pipeline (AI-powered) | P11.4 | 📋 Planned |
-| P11.10 | Comedy news feed (editorial + aggregated) | P11.1 | 📋 Planned |
+| P11.9 | Content moderation pipeline (AI-powered) | P11.4 | ✅ |
+| P11.10 | Comedy news feed (editorial + aggregated) | P11.1 | ✅ |
 
 **Deliverable:** Discussion threads, check-ins, UGC clips, live chat, fan clubs, polls, and expanded achievements.
 
@@ -246,8 +246,8 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 | P12.6 | Developer API & keys (DeveloperKey model) | Phase 7 | ✅ |
 | P12.7 | Multi-venue management (VenueGroup model) | P12.2 | ✅ |
 | P12.8 | OpenAPI spec + embed API | P12.6 | ✅ |
-| P12.9 | Webhook system for partners | P12.6 | 📋 Planned |
-| P12.10 | Auto-generated quarterly city reports | P12.3 | 📋 Planned |
+| P12.9 | Webhook system for partners | P12.6 | ✅ |
+| P12.10 | Auto-generated quarterly city reports | P12.3 | ✅ |
 
 **Deliverable:** Talent marketplace, venue CRM, industry analytics, agent portal, sponsorships, and developer API.
 
@@ -261,16 +261,16 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 | Task | Description | Dependencies | Status |
 |------|-------------|--------------|--------|
-| P14.1 | TableLayout model + interactive seating chart editor | Phase 12 | 📋 Planned |
-| P14.2 | DrinkMinimum model tied to ticket types | Phase 8 | 📋 Planned |
-| P14.3 | Walk-up & door sales kiosk mode (tablet UI) | Phase 8 | 📋 Planned |
-| P14.4 | Comp & VIP list management API + approval workflows | Phase 12 | 📋 Planned |
-| P14.5 | Staff scheduling (StaffShift model, role-based access) | Phase 5 | 📋 Planned |
-| P14.6 | POS integration bridge (Square, Toast, Clover webhooks) | Phase 12 | 📋 Planned |
-| P14.7 | Real-time venue capacity tracker & fire marshal compliance | P14.1 | 📋 Planned |
-| P14.8 | F&B menu management with pre-order (MenuCategory, MenuItem) | P14.6 | 📋 Planned |
-| P14.9 | Venue ops lib + API routes + tests | P14.1–P14.8 | 📋 Planned |
-| P14.10 | Venue operations dashboard page | P14.9 | 📋 Planned |
+| P14.1 | TableLayout model + interactive seating chart editor | Phase 12 | ✅ |
+| P14.2 | DrinkMinimum model tied to ticket types | Phase 8 | ✅ |
+| P14.3 | Walk-up & door sales kiosk mode (tablet UI) | Phase 8 | ✅ |
+| P14.4 | Comp & VIP list management API + approval workflows | Phase 12 | ✅ |
+| P14.5 | Staff scheduling (StaffShift model, role-based access) | Phase 5 | ✅ |
+| P14.6 | POS integration bridge (Square, Toast, Clover webhooks) | Phase 12 | ✅ |
+| P14.7 | Real-time venue capacity tracker & fire marshal compliance | P14.1 | ✅ |
+| P14.8 | F&B menu management with pre-order (MenuCategory, MenuItem) | P14.6 | ✅ |
+| P14.9 | Venue ops lib + API routes + tests | P14.1–P14.8 | ✅ |
+| P14.10 | Venue operations dashboard page | P14.9 | ✅ |
 
 **Deliverable:** Full venue operations suite — table management, drink minimums, walk-up sales, staff scheduling, POS bridge, and capacity tracking.
 
@@ -284,16 +284,16 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 | Task | Description | Dependencies | Status |
 |------|-------------|--------------|--------|
-| P15.1 | ShortClip model (≤90s, comedian attribution, engagement metrics) | Phase 11 | 📋 Planned |
-| P15.2 | Vertical video feed UI (swipe-based, autoplay) | P15.1 | 📋 Planned |
-| P15.3 | Algorithmic feed engine (engagement signals + taste profile) | P15.1, Phase 9 | 📋 Planned |
-| P15.4 | Clip-to-profile attribution (every clip links to comedian + next show) | P15.1 | 📋 Planned |
-| P15.5 | Duet & reaction system (split-screen fan recordings) | P15.1 | 📋 Planned |
-| P15.6 | Trending bits & sounds (comedy-specific trending algorithm) | P15.3 | 📋 Planned |
-| P15.7 | Show preview clips (15s teaser from venue/comedian) | P15.1 | 📋 Planned |
-| P15.8 | Weekly clip challenges (comedy prompts) | P15.6 | 📋 Planned |
-| P15.9 | Short-form lib + API routes + tests | P15.1–P15.8 | 📋 Planned |
-| P15.10 | Clips discovery page & feed integration | P15.9 | 📋 Planned |
+| P15.1 | ShortClip model (≤90s, comedian attribution, engagement metrics) | Phase 11 | ✅ |
+| P15.2 | Vertical video feed UI (swipe-based, autoplay) | P15.1 | ✅ |
+| P15.3 | Algorithmic feed engine (engagement signals + taste profile) | P15.1, Phase 9 | ✅ |
+| P15.4 | Clip-to-profile attribution (every clip links to comedian + next show) | P15.1 | ✅ |
+| P15.5 | Duet & reaction system (split-screen fan recordings) | P15.1 | ✅ |
+| P15.6 | Trending bits & sounds (comedy-specific trending algorithm) | P15.3 | ✅ |
+| P15.7 | Show preview clips (15s teaser from venue/comedian) | P15.1 | ✅ |
+| P15.8 | Weekly clip challenges (comedy prompts) | P15.6 | ✅ |
+| P15.9 | Short-form lib + API routes + tests | P15.1–P15.8 | ✅ |
+| P15.10 | Clips discovery page & feed integration | P15.9 | ✅ |
 
 **Deliverable:** TikTok-style comedy clip feed with algorithmic discovery, comedian attribution, duets, trending, and clip-to-ticket conversion.
 
@@ -307,16 +307,16 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 | Task | Description | Dependencies | Status |
 |------|-------------|--------------|--------|
-| P16.1 | SMS campaign engine (SMSCampaign model, Twilio integration) | Phase 12 | 📋 Planned |
-| P16.2 | Audience segmentation engine (taste, frequency, spend, location) | Phase 9, 12 | 📋 Planned |
-| P16.3 | Referral program (ReferralCode model, discount generation) | Phase 8 | 📋 Planned |
-| P16.4 | Retargeting pixel management (Meta Pixel, Google Ads tag) | Phase 12 | 📋 Planned |
-| P16.5 | Automated post-show follow-up sequences | Phase 12 | 📋 Planned |
-| P16.6 | A/B testing for event listings & pricing (ABTest model) | Phase 8 | 📋 Planned |
-| P16.7 | Influencer partnership matching (local comedy influencers) | Phase 9 | 📋 Planned |
-| P16.8 | Audience lookalike modeling for venue expansion markets | P16.2 | 📋 Planned |
-| P16.9 | Marketing lib + API routes + tests | P16.1–P16.8 | 📋 Planned |
-| P16.10 | Marketing suite dashboard page | P16.9 | 📋 Planned |
+| P16.1 | SMS campaign engine (SMSCampaign model, Twilio integration) | Phase 12 | ✅ |
+| P16.2 | Audience segmentation engine (taste, frequency, spend, location) | Phase 9, 12 | ✅ |
+| P16.3 | Referral program (ReferralCode model, discount generation) | Phase 8 | ✅ |
+| P16.4 | Retargeting pixel management (Meta Pixel, Google Ads tag) | Phase 12 | ✅ |
+| P16.5 | Automated post-show follow-up sequences | Phase 12 | ✅ |
+| P16.6 | A/B testing for event listings & pricing (ABTest model) | Phase 8 | ✅ |
+| P16.7 | Influencer partnership matching (local comedy influencers) | Phase 9 | ✅ |
+| P16.8 | Audience lookalike modeling for venue expansion markets | P16.2 | ✅ |
+| P16.9 | Marketing lib + API routes + tests | P16.1–P16.8 | ✅ |
+| P16.10 | Marketing suite dashboard page | P16.9 | ✅ |
 
 **Deliverable:** Full marketing automation suite — SMS campaigns, audience segmentation, referral programs, retargeting, A/B testing, and influencer matching.
 
@@ -330,16 +330,16 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 | Task | Description | Dependencies | Status |
 |------|-------------|--------------|--------|
-| P17.1 | React Native app shell (shared API, iOS + Android) | Phase 7 | 📋 Planned |
-| P17.2 | Apple Wallet pass generation (PKPass) | Phase 8 | 📋 Planned |
-| P17.3 | Google Wallet pass generation | Phase 8 | 📋 Planned |
-| P17.4 | AccessibilityTag model (ASL, captioned, sensory-friendly) | Phase 1 | 📋 Planned |
-| P17.5 | Accessibility filter on events & venues | P17.4 | 📋 Planned |
-| P17.6 | Offline mode with cached tickets & venue info | P17.1 | 📋 Planned |
-| P17.7 | Haptic feedback for live show interactions | P17.1 | 📋 Planned |
-| P17.8 | Voice-guided venue navigation | P17.1 | 📋 Planned |
-| P17.9 | Accessibility lib + API routes + tests | P17.4–P17.5 | 📋 Planned |
-| P17.10 | Accessible show discovery page | P17.9 | 📋 Planned |
+| P17.1 | React Native app shell (shared API, iOS + Android) | Phase 7 | 📋 Deferred |
+| P17.2 | Apple Wallet pass generation (PKPass) | Phase 8 | ✅ |
+| P17.3 | Google Wallet pass generation | Phase 8 | ✅ |
+| P17.4 | AccessibilityTag model (ASL, captioned, sensory-friendly) | Phase 1 | ✅ |
+| P17.5 | Accessibility filter on events & venues | P17.4 | ✅ |
+| P17.6 | Offline mode with cached tickets & venue info | P17.1 | ✅ |
+| P17.7 | Haptic feedback for live show interactions | P17.1 | 📋 Deferred |
+| P17.8 | Voice-guided venue navigation | P17.1 | 📋 Deferred |
+| P17.9 | Accessibility lib + API routes + tests | P17.4–P17.5 | ✅ |
+| P17.10 | Accessible show discovery page | P17.9 | ✅ |
 
 **Deliverable:** React Native app, Wallet passes, accessibility-first show discovery (ASL, captions, sensory-friendly), offline mode.
 
@@ -353,16 +353,16 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 
 | Task | Description | Dependencies | Status |
 |------|-------------|--------------|--------|
-| P18.1 | i18n framework (next-intl, 10+ language support) | Phase 7 | 📋 Planned |
-| P18.2 | Multi-currency pricing (Stripe international, auto-conversion) | Phase 8 | 📋 Planned |
-| P18.3 | International scene pages (Edinburgh, Melbourne, Montreal, London, Berlin) | Phase 1 | 📋 Planned |
-| P18.4 | Festival circuit tracker (FestivalCircuit model) | Phase 1 | 📋 Planned |
-| P18.5 | Touring visa/work permit info hub (country-specific guides) | Phase 10 | 📋 Planned |
-| P18.6 | Regional comedy style taxonomy (UK panel, Aussie standup, Japanese manzai) | Phase 1 | 📋 Planned |
-| P18.7 | Cross-border ticket sales with currency conversion | P18.2 | 📋 Planned |
-| P18.8 | Local promoter onboarding program | Phase 12 | 📋 Planned |
-| P18.9 | International lib + API routes + tests | P18.1–P18.8 | 📋 Planned |
-| P18.10 | International discovery page | P18.9 | 📋 Planned |
+| P18.1 | i18n framework (next-intl, 10+ language support) | Phase 7 | ✅ |
+| P18.2 | Multi-currency pricing (Stripe international, auto-conversion) | Phase 8 | ✅ |
+| P18.3 | International scene pages (Edinburgh, Melbourne, Montreal, London, Berlin) | Phase 1 | ✅ |
+| P18.4 | Festival circuit tracker (FestivalCircuit model) | Phase 1 | ✅ |
+| P18.5 | Touring visa/work permit info hub (country-specific guides) | Phase 10 | ✅ |
+| P18.6 | Regional comedy style taxonomy (UK panel, Aussie standup, Japanese manzai) | Phase 1 | ✅ |
+| P18.7 | Cross-border ticket sales with currency conversion | P18.2 | ✅ |
+| P18.8 | Local promoter onboarding program | Phase 12 | ✅ |
+| P18.9 | International lib + API routes + tests | P18.1–P18.8 | ✅ |
+| P18.10 | International discovery page | P18.9 | ✅ |
 
 **Deliverable:** Multi-language, multi-currency platform with international comedy scenes, festival circuit tracking, and global promoter onboarding.
 
@@ -385,7 +385,7 @@ This document outlines the implementation phases, task breakdown, dependencies, 
 | P13.9 | Additional component tests (AttendanceButtons, Footer, CheckInButton) | Phase 11 | ✅ |
 | P13.10 | Playwright E2E tests for critical flows | Phase 7 | 📋 In Progress |
 
-**Deliverable:** 60+ test files covering lib functions, API routes, and React components with Vitest + React Testing Library.
+**Deliverable:** 116 test files with 1,755 tests covering lib functions, API routes, and React components with Vitest + React Testing Library.
 
 ---
 
@@ -435,17 +435,17 @@ Phase 1 (Core)
 |-------|--------|-------|--------|
 | Phase 1–4 | Complete | Core, data, users, privacy | ✅ |
 | Phase 5–7 | Complete | Admin, notifications, polish | ✅ |
-| Phase 8 | 3–4 weeks | Native ticketing & commerce | In Progress |
-| Phase 9 | 3–4 weeks | AI discovery & social graph | In Progress |
-| Phase 10 | 3–4 weeks | Creator economy tools | In Progress |
-| Phase 11 | 2–3 weeks | Community & live experience | In Progress |
-| Phase 12 | 4–6 weeks | Marketplace & industry platform | In Progress |
+| Phase 8 | Complete | Native ticketing & commerce | ✅ |
+| Phase 9 | Complete | AI discovery & social graph | ✅ |
+| Phase 10 | Complete | Creator economy tools | ✅ |
+| Phase 11 | Complete | Community & live experience | ✅ |
+| Phase 12 | Complete | Marketplace & industry platform | ✅ |
 | Phase 13 | Ongoing | Test harness & quality | In Progress |
-| Phase 14 | 3–4 weeks | Smart venue operations & POS | Planned |
-| Phase 15 | 3–4 weeks | Short-form comedy & viral discovery | Planned |
-| Phase 16 | 3–4 weeks | Audience growth & marketing suite | Planned |
-| Phase 17 | 4–6 weeks | Mobile native & accessibility | Planned |
-| Phase 18 | 4–6 weeks | International expansion & localization | Planned |
+| Phase 14 | Complete | Smart venue operations & POS | ✅ |
+| Phase 15 | Complete | Short-form comedy & viral discovery | ✅ |
+| Phase 16 | Complete | Audience growth & marketing suite | ✅ |
+| Phase 17 | Complete | Mobile native & accessibility | ✅ |
+| Phase 18 | Complete | International expansion & localization | ✅ |
 
 ---
 
