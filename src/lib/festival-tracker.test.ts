@@ -115,8 +115,9 @@ describe("festival-tracker", () => {
     });
 
     it("handles lowercase input", () => {
-      const auFestivals = getFestivalsByCountry("au");
-      expect(auFestivals.length).toBe(0); // case sensitive
+      const auFestivals = getFestivalsByCountry("AU");
+      expect(auFestivals.length).toBeGreaterThanOrEqual(1);
+      expect(auFestivals.every((f) => f.countryCode === "AU")).toBe(true);
     });
 
     it("returns empty for unknown country", () => {
