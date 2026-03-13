@@ -161,7 +161,7 @@ export async function getFeeBreakdown(
 export async function verifyTicketHolder(
   ticketId: string,
   method: "EMAIL" | "PHONE" | "ID_SCAN",
-  data: Record<string, unknown>
+  data: Record<string, string | number | boolean>
 ) {
   const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } });
   if (!ticket) {
@@ -173,7 +173,7 @@ export async function verifyTicketHolder(
       ticketId,
       verificationMethod: method,
       verifiedAt: new Date(),
-      verifierData: data,
+      verifierData: data as Record<string, string | number | boolean>,
       isVerified: true,
     },
   });
@@ -436,6 +436,162 @@ export async function purchaseResaleTicket(
     profit,
     artistShare,
     sellerProceeds: salePrice - artistShare,
+  };
+}
+
+// ── Waitlist Redistribution ───────────────────────────────────────────────────
+
+/**
+ * Auto-redistribute returned/cancelled tickets to the waitlist queue.
+ * Called when a ticket is cancelled, refunded, or a resale listing expires.
+ * Implements DICE-style fair redistribution: returned tickets automatically
+ * go to the next person in the FIFO queue.
+ */
+export async function redistributeToWaitlist(
+  eventId: string,
+  returnedTicketCount: number
+): Promise<{
+  redistributed: number;
+  offeredTo: Array<{ userId: string; position: number; expiresAt: Date }>;
+  remainingAvailable: number;
+}> {
+  if (returnedTicketCount <= 0) {
+    return { redistributed: 0, offeredTo: [], remainingAvailable: 0 };
+  }
+
+  // Get next N waiting users in FIFO order
+  const waiting = await prisma.ticketWaitlistQueue.findMany({
+    where: { eventId, status: "WAITING" },
+    orderBy: { position: "asc" },
+    take: returnedTicketCount,
+  });
+
+  const offerExpiry = new Date();
+  offerExpiry.setHours(offerExpiry.getHours() + WAITLIST_OFFER_EXPIRY_HOURS);
+
+  const offeredTo: Array<{ userId: string; position: number; expiresAt: Date }> = [];
+
+  for (const entry of waiting) {
+    await prisma.ticketWaitlistQueue.update({
+      where: { id: entry.id },
+      data: {
+        status: "OFFERED",
+        notifiedAt: new Date(),
+        expiresAt: offerExpiry,
+      },
+    });
+
+    offeredTo.push({
+      userId: entry.userId,
+      position: entry.position,
+      expiresAt: offerExpiry,
+    });
+  }
+
+  const remainingAvailable = returnedTicketCount - offeredTo.length;
+
+  return {
+    redistributed: offeredTo.length,
+    offeredTo,
+    remainingAvailable,
+  };
+}
+
+/**
+ * Expire stale offers and auto-advance the queue.
+ * Should be called periodically (cron) or on waitlist access.
+ */
+export async function expireAndAdvanceWaitlist(eventId: string): Promise<{
+  expired: number;
+  advanced: number;
+}> {
+  const now = new Date();
+
+  // Find expired offers
+  const expiredEntries = await prisma.ticketWaitlistQueue.findMany({
+    where: {
+      eventId,
+      status: "OFFERED",
+      expiresAt: { lt: now },
+    },
+  });
+
+  // Mark them expired
+  let expired = 0;
+  for (const entry of expiredEntries) {
+    await prisma.ticketWaitlistQueue.update({
+      where: { id: entry.id },
+      data: { status: "EXPIRED" },
+    });
+    expired++;
+  }
+
+  // Redistribute expired offers to next in queue
+  let advanced = 0;
+  if (expired > 0) {
+    const result = await redistributeToWaitlist(eventId, expired);
+    advanced = result.redistributed;
+  }
+
+  return { expired, advanced };
+}
+
+/**
+ * Handle ticket cancellation — automatically redistributes to waitlist.
+ * This is the main entry point when a ticket is returned/cancelled.
+ */
+export async function handleTicketCancellation(
+  eventId: string,
+  ticketId: string,
+  reason?: string
+): Promise<{
+  ticketCancelled: boolean;
+  waitlistRedistribution: Awaited<ReturnType<typeof redistributeToWaitlist>>;
+}> {
+  // Mark ticket as cancelled
+  const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } });
+  if (!ticket) {
+    throw new Error("Ticket not found");
+  }
+
+  if (ticket.eventId !== eventId) {
+    throw new Error("Ticket does not belong to this event");
+  }
+
+  await prisma.ticket.update({
+    where: { id: ticketId },
+    data: { status: "CANCELLED" },
+  });
+
+  // First expire any stale offers
+  await expireAndAdvanceWaitlist(eventId);
+
+  // Then redistribute the cancelled ticket
+  const redistribution = await redistributeToWaitlist(eventId, 1);
+
+  return {
+    ticketCancelled: true,
+    waitlistRedistribution: redistribution,
+  };
+}
+
+/**
+ * Get waitlist status overview for an event.
+ */
+export async function getWaitlistOverview(eventId: string) {
+  const [waiting, offered, claimed, expired, total] = await Promise.all([
+    prisma.ticketWaitlistQueue.count({ where: { eventId, status: "WAITING" } }),
+    prisma.ticketWaitlistQueue.count({ where: { eventId, status: "OFFERED" } }),
+    prisma.ticketWaitlistQueue.count({ where: { eventId, status: "CLAIMED" } }),
+    prisma.ticketWaitlistQueue.count({ where: { eventId, status: "EXPIRED" } }),
+    prisma.ticketWaitlistQueue.count({ where: { eventId } }),
+  ]);
+
+  return {
+    eventId,
+    total,
+    byStatus: { waiting, offered, claimed, expired },
+    conversionRate: total > 0 ? Math.round((claimed / total) * 100) : 0,
   };
 }
 

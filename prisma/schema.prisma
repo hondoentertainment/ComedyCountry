@@ -263,6 +263,8 @@ model User {
   transfersSent     TicketTransfer[]   @relation("TransfersSent")
   transfersReceived TicketTransfer[]   @relation("TransfersReceived")
   authoredArticles  NewsArticle[]      @relation("AuthoredArticles")
+  streamingConnections StreamingConnection[]
+  streamingGenreSignals StreamingGenreSignal[]
 }
 
 model Account {
@@ -1089,6 +1091,142 @@ enum BookingStatus {
   NEGOTIATING
   CONFIRMED
   CANCELLED
+}
+
+// =============================================================================
+// Phase 14: Smart Venue Operations & POS
+// =============================================================================
+
+model TableLayout {
+  id        String   @id @default(cuid())
+  venueId   String
+  name      String
+  rows      Int
+  columns   Int
+  seats     Json     // Array of seat objects
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([venueId])
+}
+
+model DrinkMinimum {
+  id           String   @id @default(cuid())
+  eventId      String
+  ticketType   String
+  minimumCount Int      @default(2)
+  minimumSpend Decimal? @db.Decimal(10, 2)
+  enforceAt    String   @default("door") // door | purchase | tab
+  createdAt    DateTime @default(now())
+
+  @@index([eventId])
+}
+
+model WalkUpSale {
+  id            String   @id @default(cuid())
+  eventId       String
+  ticketType    String
+  quantity      Int      @default(1)
+  amount        Float
+  paymentMethod String   // cash | card | comp
+  soldBy        String?
+  customerName  String?
+  customerEmail String?
+  createdAt     DateTime @default(now())
+
+  @@index([eventId])
+}
+
+model CompListEntry {
+  id         String   @id @default(cuid())
+  eventId    String
+  guestName  String
+  guestEmail String?
+  tickets    Int      @default(2)
+  reason     String?
+  approvedBy String?
+  status     String   @default("pending") // pending | approved | denied | used
+  checkedIn  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([eventId])
+}
+
+model StaffShift {
+  id        String   @id @default(cuid())
+  venueId   String
+  userId    String?
+  staffName String
+  role      String   // door | bar | manager | sound | host
+  eventId   String?
+  startTime DateTime
+  endTime   DateTime
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([venueId])
+  @@index([eventId])
+}
+
+model POSIntegration {
+  id         String   @id @default(cuid())
+  venueId    String
+  provider   String   // square | toast | clover
+  apiKey     String
+  locationId String?
+  webhookUrl String?
+  isActive   Boolean  @default(true)
+  lastSync   DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([venueId, provider])
+}
+
+model VenueCapacityLog {
+  id           String   @id @default(cuid())
+  venueId      String
+  eventId      String?
+  currentCount Int
+  maxCapacity  Int
+  source       String   // checkin | walkup | manual
+  timestamp    DateTime @default(now())
+
+  @@index([venueId, eventId])
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  venueId     String
+  category    String
+  name        String
+  description String?
+  price       Float
+  isAvailable Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  imageUrl    String?
+  allergens   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([venueId, category])
+}
+
+model PreOrder {
+  id           String   @id @default(cuid())
+  eventId      String
+  userId       String?
+  customerName String
+  items        Json     // Array of order items
+  totalAmount  Float
+  status       String   @default("pending") // pending | confirmed | preparing | ready | delivered
+  pickupTime   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([eventId])
 }
 
 model SetlistEntry {
@@ -2044,4 +2182,41 @@ model FinancialSummary {
 
   @@unique([comedianId, period])
   @@index([comedianId])
+}
+
+// =============================================================================
+// Phase 19: Streaming Platform Sync
+// =============================================================================
+
+model StreamingConnection {
+  id              String   @id @default(cuid())
+  userId          String
+  platform        String   // SPOTIFY | APPLE_MUSIC
+  platformUserId  String
+  accessToken     String
+  refreshToken    String?
+  connectedAt     DateTime @default(now())
+  lastSyncedAt    DateTime?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
+  @@index([userId])
+}
+
+model StreamingGenreSignal {
+  id        String   @id @default(cuid())
+  userId    String
+  platform  String   // SPOTIFY | APPLE_MUSIC
+  genre     String
+  weight    Float    @default(0)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, platform])
+  @@index([userId, genre])
 }
