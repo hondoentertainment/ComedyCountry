@@ -3,6 +3,7 @@ import Image from "next/image";
 import { listComedians, listDistinctGenres } from "@/lib/comedians";
 import { TOURING_STATUS_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { Pagination } from "@/components/Pagination";
+import { ComedianFilterBar } from "@/components/ComedianFilterBar";
 
 export const metadata = {
   title: "Comedians | Punchline Atlas",
@@ -63,59 +64,12 @@ export default async function ComediansPage({ searchParams }: PageProps) {
           </div>
         </div>
 
-        {/* Yelp-style filter bar */}
-        <form
-          method="get"
-          className="flex flex-wrap gap-3 mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80"
-        >
-          <div className="flex-1 min-w-[200px]">
-            <label htmlFor="search" className="sr-only">Search</label>
-            <input
-              id="search"
-              name="search"
-              type="search"
-              placeholder="Search comedians..."
-              defaultValue={search}
-              className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:border-transparent"
-            />
-          </div>
-          <div>
-            <label htmlFor="status" className="sr-only">Touring status</label>
-            <select
-              id="status"
-              name="status"
-              defaultValue={status ?? ""}
-              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
-            >
-              <option value="">All statuses</option>
-              {Object.entries(TOURING_STATUS_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="genre" className="sr-only">Genre</label>
-            <select
-              id="genre"
-              name="genre"
-              defaultValue={genre ?? ""}
-              className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50 min-w-[140px]"
-            >
-              <option value="">All genres</option>
-              {genres.map((g) => (
-                <option key={g} value={g}>
-                  {g.charAt(0).toUpperCase() + g.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button
-            type="submit"
-            className="px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
-          >
-            Filter
-          </button>
-        </form>
+        <ComedianFilterBar
+          genres={genres}
+          defaultStatus={status}
+          defaultGenre={genre}
+          defaultSearch={search}
+        />
 
         {/* Spotify-style card grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
