@@ -34,6 +34,7 @@ const providers: NextAuthOptions["providers"] = [
         name: user.name ?? user.username ?? undefined,
         email: user.email ?? undefined,
         image: user.image ?? undefined,
+        role: user.role,
       };
     },
   }),
@@ -44,12 +45,16 @@ export const authOptions: NextAuthOptions = {
   providers,
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.role = (user as { role?: string }).role ?? "user";
+      }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         (session.user as { id?: string }).id = token.id as string;
+        (session.user as { role?: string }).role = (token.role as string) ?? "user";
       }
       return session;
     },

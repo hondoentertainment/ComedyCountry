@@ -9,6 +9,12 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 const nextConfig = {
   images: {
     remotePatterns: [
+      { protocol: "https", hostname: "*.googleusercontent.com" },
+      { protocol: "https", hostname: "*.cloudinary.com" },
+      { protocol: "https", hostname: "*.amazonaws.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "cdn.comedycountry.com" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "**", pathname: "/**" },
     ],
     minimumCacheTTL: 60,

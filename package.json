@@ -19,8 +19,20 @@
     "db:import": "tsx scripts/bulk-import.ts",
     "scrape:jester": "tsx scripts/scrape-jester-comedians.ts",
     "db:import-jester": "tsx scripts/import-jester-comedians.ts",
+    "db:seed-all": "tsx scripts/seed-comprehensive.ts",
+    "db:seed-affiliates": "tsx scripts/seed-affiliates.ts",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:phase14": "vitest run src/lib/venue-ops.test.ts src/app/api/venue-ops/",
+    "test:phase15": "vitest run src/lib/short-clips.test.ts src/app/api/clips/",
+    "test:phase16": "vitest run src/lib/marketing.test.ts src/app/api/marketing/",
+    "test:phase17": "vitest run src/lib/accessibility.test.ts src/lib/wallet-passes.test.ts src/lib/offline-cache.test.ts src/app/api/accessibility/ src/app/api/wallet/ src/app/api/offline/",
+    "test:phase18": "vitest run src/lib/international.test.ts src/app/api/international/",
+    "test:lib": "vitest run src/lib/",
+    "test:api": "vitest run src/app/api/",
+    "test:components": "vitest run src/components/",
+    "test:harness": "vitest run src/test/",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
@@ -35,7 +47,8 @@
     "next": "^14.2.0",
     "next-auth": "^4.24.13",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",

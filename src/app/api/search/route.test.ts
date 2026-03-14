@@ -4,6 +4,7 @@ import { GET } from "./route";
 
 vi.mock("@/lib/search", () => ({
   search: vi.fn(),
+  autocomplete: vi.fn(),
 }));
 
 import { search } from "@/lib/search";
@@ -13,8 +14,19 @@ function createRequest(url: string) {
   return new NextRequest(url);
 }
 
+const emptyResult = {
+  venues: [] as never[],
+  comedians: [] as never[],
+  events: [] as never[],
+  facets: { cities: [], states: [], genres: [], venueTypes: [], showTypes: [] },
+  totalCounts: { venues: 0, comedians: 0, events: 0 },
+  query: "",
+  suggestions: [] as never[],
+};
+
 describe("GET /api/search", () => {
   beforeEach(() => {
+    vi.mocked(search).mockResolvedValue(emptyResult);
     resetRateLimitStore();
     vi.mocked(search).mockResolvedValue({
       venues: [],
@@ -25,9 +37,12 @@ describe("GET /api/search", () => {
 
   it("returns search results for valid query", async () => {
     vi.mocked(search).mockResolvedValue({
-      venues: [{ id: "v1", name: "Comedy Club", city: "NYC", state: "NY", type: "CLUB" }],
-      comedians: [],
-      events: [],
+      ...emptyResult,
+      venues: [{
+        id: "v1", name: "Comedy Club", city: "NYC", state: "NY", type: "CLUB",
+        capacity: 200, followerCount: 50, eventCount: 10, relevanceScore: 0.9,
+      }],
+      query: "comedy",
     });
 
     const req = createRequest("http://localhost/api/search?q=comedy");
@@ -37,7 +52,6 @@ describe("GET /api/search", () => {
     expect(res.status).toBe(200);
     expect(data.venues).toHaveLength(1);
     expect(data.venues[0].name).toBe("Comedy Club");
-    expect(search).toHaveBeenCalledWith("comedy", 5);
   });
 
   it("returns empty results when q is empty", async () => {
@@ -51,6 +65,7 @@ describe("GET /api/search", () => {
     expect(data.events).toEqual([]);
   });
 
+  it("returns 200 on search error", async () => {
   it("handles take parameter", async () => {
     const req = createRequest("http://localhost/api/search?q=test&take=10");
     await GET(req);

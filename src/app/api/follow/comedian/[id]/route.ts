@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkAndAwardBadges } from "@/lib/badges.achievement";
 
 export async function POST(
   _request: Request,
@@ -43,5 +44,6 @@ export async function POST(
       comedianId,
     },
   });
+  checkAndAwardBadges(session.user.id, "follow_comedian").catch(() => {});
   return NextResponse.json({ following: true });
 }

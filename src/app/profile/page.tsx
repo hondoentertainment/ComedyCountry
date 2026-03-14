@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getUserComedianBadges } from "@/lib/badges";
 import { ProfileForm } from "./ProfileForm";
 import { ComedianBadges } from "@/components/ComedianBadges";
+import UserBadges from "@/components/UserBadges";
 
 export const metadata = {
   title: "Profile | Punchline Atlas",
@@ -60,7 +61,7 @@ export default async function ProfilePage() {
   const favoriteVenues = user.followsVenues.map((f) => f.venue);
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link
           href="/"
@@ -90,6 +91,34 @@ export default async function ProfilePage() {
             />
           </div>
         </header>
+
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-white mb-3">Achievement Badges</h2>
+          <UserBadges />
+        </div>
+
+        <div className="flex gap-3 mb-8">
+          <Link
+            href="/stats"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-surface border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-600 text-sm font-medium transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            My Stats
+          </Link>
+          {user.username && (
+            <Link
+              href={`/u/${user.username}`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-surface border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-600 text-sm font-medium transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Public Profile
+            </Link>
+          )}
+        </div>
 
         <section className="space-y-6">
           <div>
@@ -195,6 +224,6 @@ export default async function ProfilePage() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

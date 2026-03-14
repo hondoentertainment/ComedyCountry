@@ -1,0 +1,77 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getWalletPass, voidWalletPass, updatePassStatus } from "@/lib/wallet-passes";
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ serial: string }> },
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const { serial } = await params;
+    const pass = await getWalletPass(serial);
+
+    return NextResponse.json(pass);
+  } catch (error) {
+    if (error instanceof Error && error.message === "Wallet pass not found") {
+      return NextResponse.json({ error: error.message }, { status: 404 });
+    }
+    console.error("GET /api/wallet/passes/[serial] error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch wallet pass" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ serial: string }> },
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const { serial } = await params;
+    const body = await request.json();
+    const { action, status } = body;
+
+    let result;
+    if (action === "void") {
+      result = await voidWalletPass(serial);
+    } else if (status) {
+      result = await updatePassStatus(serial, status);
+    } else {
+      return NextResponse.json(
+        { error: "Either action='void' or status is required" },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json(result);
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "Wallet pass not found") {
+        return NextResponse.json({ error: error.message }, { status: 404 });
+      }
+      if (
+        error.message === "Pass is already voided" ||
+        error.message.startsWith("Invalid status")
+      ) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+    }
+    console.error("PATCH /api/wallet/passes/[serial] error:", error);
+    return NextResponse.json(
+      { error: "Failed to update wallet pass" },
+      { status: 500 },
+    );
+  }
+}

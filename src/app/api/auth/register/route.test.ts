@@ -88,7 +88,7 @@ describe("POST /api/auth/register", () => {
     expect(res.status).toBe(400);
     const data = await res.json();
     expect(data.error).toBe(
-      "Username can only contain letters, numbers, underscores, and hyphens"
+      "Username can only contain letters, numbers, periods, underscores, and hyphens"
     );
   });
 
