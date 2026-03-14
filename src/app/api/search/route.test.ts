@@ -8,6 +8,7 @@ vi.mock("@/lib/search", () => ({
 }));
 
 import { search } from "@/lib/search";
+import { resetRateLimitStore } from "@/lib/api";
 
 function createRequest(url: string) {
   return new NextRequest(url);
@@ -26,6 +27,12 @@ const emptyResult = {
 describe("GET /api/search", () => {
   beforeEach(() => {
     vi.mocked(search).mockResolvedValue(emptyResult);
+    resetRateLimitStore();
+    vi.mocked(search).mockResolvedValue({
+      venues: [],
+      comedians: [],
+      events: [],
+    });
   });
 
   it("returns search results for valid query", async () => {
@@ -59,12 +66,25 @@ describe("GET /api/search", () => {
   });
 
   it("returns 200 on search error", async () => {
+  it("handles take parameter", async () => {
+    const req = createRequest("http://localhost/api/search?q=test&take=10");
+    await GET(req);
+    expect(search).toHaveBeenCalledWith("test", 10);
+  });
+
+  it("caps take at 20", async () => {
+    const req = createRequest("http://localhost/api/search?q=test&take=100");
+    await GET(req);
+    expect(search).toHaveBeenCalledWith("test", 20);
+  });
+
+  it("returns 500 on search error", async () => {
     vi.mocked(search).mockRejectedValue(new Error("DB error"));
     const req = createRequest("http://localhost/api/search?q=test");
     const res = await GET(req);
     const data = await res.json();
 
-    expect(res.status).toBe(200);
-    expect(data.venues).toEqual([]);
+    expect(res.status).toBe(500);
+    expect(data.error).toBe("Search failed");
   });
 });

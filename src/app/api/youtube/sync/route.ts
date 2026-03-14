@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { fetchChannelStats } from "@/lib/youtube";
+import { applyRateLimit, getClientAddress, jsonError, jsonResponse, logError, logInfo } from "@/lib/api";
 
 /**
  * POST /api/youtube/sync
@@ -11,14 +12,18 @@ import { fetchChannelStats } from "@/lib/youtube";
  * or "X-API-Key: <key>" header. If unset, endpoint is unprotected (dev only).
  */
 export async function POST(request: Request) {
+  const rateLimit = applyRateLimit(request, getClientAddress(request), {
+    prefix: "youtube-sync",
+    limit: 5,
+    windowMs: 60 * 1000,
+  });
+  if (rateLimit) return rateLimit;
+
   const apiKey = process.env.YOUTUBE_SYNC_API_KEY;
   const isProduction = process.env.NODE_ENV === "production";
 
   if (isProduction && !apiKey) {
-    return NextResponse.json(
-      { error: "YOUTUBE_SYNC_API_KEY required in production" },
-      { status: 503 }
-    );
+    return jsonError(request, 503, "YOUTUBE_SYNC_API_KEY required in production");
   }
 
   if (apiKey) {
@@ -28,19 +33,17 @@ export async function POST(request: Request) {
       ? authHeader.slice(7)
       : xApiKey;
     if (provided !== apiKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return jsonError(request, 401, "Unauthorized");
     }
   }
 
   if (!process.env.YOUTUBE_API_KEY) {
-    return NextResponse.json(
-      { error: "YOUTUBE_API_KEY not configured" },
-      { status: 503 }
-    );
+    return jsonError(request, 503, "YOUTUBE_API_KEY not configured");
   }
 
   const channels = await prisma.youTubeChannel.findMany();
   const results = { synced: 0, failed: 0, skipped: 0 };
+  logInfo(request, "Starting YouTube sync", { channels: channels.length });
 
   for (const ch of channels) {
     try {
@@ -61,12 +64,14 @@ export async function POST(request: Request) {
       });
       results.synced++;
     } catch (err) {
-      console.error(`[youtube] Sync failed for ${ch.channelId}:`, err);
+      logError(request, "YouTube sync failed for channel", err, {
+        channelId: ch.channelId,
+      });
       results.failed++;
     }
   }
 
-  return NextResponse.json({
+  return jsonResponse(request, {
     total: channels.length,
     ...results,
   });

@@ -15,6 +15,7 @@ vi.mock("bcryptjs", () => ({
 }));
 
 import { prisma } from "@/lib/prisma";
+import { resetRateLimitStore } from "@/lib/api";
 
 const mockPrisma = prisma as unknown as {
   user: {
@@ -34,6 +35,7 @@ async function postRegister(body: object) {
 
 describe("POST /api/auth/register", () => {
   beforeEach(() => {
+    resetRateLimitStore();
     vi.clearAllMocks();
     mockPrisma.user.findUnique.mockResolvedValue(null);
     mockPrisma.user.create.mockImplementation((args: { data: { username: string } }) =>

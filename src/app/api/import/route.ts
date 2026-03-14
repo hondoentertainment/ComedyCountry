@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { runBulkImport, type ImportPayload } from "@/lib/import";
+import { applyRateLimit, getClientAddress, jsonError, jsonResponse, logError, logInfo } from "@/lib/api";
 
 /**
  * POST /api/import
@@ -11,14 +12,18 @@ import { runBulkImport, type ImportPayload } from "@/lib/import";
  * "X-API-Key: <key>" header. If unset, endpoint is unprotected (dev only).
  */
 export async function POST(request: Request) {
+  const rateLimit = applyRateLimit(request, getClientAddress(request), {
+    prefix: "bulk-import",
+    limit: 5,
+    windowMs: 60 * 1000,
+  });
+  if (rateLimit) return rateLimit;
+
   const apiKey = process.env.BULK_IMPORT_API_KEY;
   const isProduction = process.env.NODE_ENV === "production";
 
   if (isProduction && !apiKey) {
-    return NextResponse.json(
-      { error: "BULK_IMPORT_API_KEY required in production" },
-      { status: 503 }
-    );
+    return jsonError(request, 503, "BULK_IMPORT_API_KEY required in production");
   }
 
   if (apiKey) {
@@ -28,7 +33,7 @@ export async function POST(request: Request) {
       ? authHeader.slice(7)
       : xApiKey;
     if (provided !== apiKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return jsonError(request, 401, "Unauthorized");
     }
   }
 
@@ -40,28 +45,25 @@ export async function POST(request: Request) {
       events: body.events ?? [],
     };
   } catch {
-    return NextResponse.json(
-      { error: "Invalid JSON body" },
-      { status: 400 }
-    );
+    return jsonError(request, 400, "Invalid JSON body");
   }
 
   if ((!payload.venues || payload.venues.length === 0) &&
       (!payload.events || payload.events.length === 0)) {
-    return NextResponse.json(
-      { error: "No venues or events to import" },
-      { status: 400 }
-    );
+    return jsonError(request, 400, "No venues or events to import");
   }
 
   try {
+    const venueCount = payload.venues?.length ?? 0;
+    const eventCount = payload.events?.length ?? 0;
+    logInfo(request, "Starting bulk import", {
+      venues: venueCount,
+      events: eventCount,
+    });
     const result = await runBulkImport(payload);
-    return NextResponse.json(result);
+    return jsonResponse(request, result);
   } catch (err) {
-    console.error("[import] Bulk import failed:", err);
-    return NextResponse.json(
-      { error: (err as Error).message },
-      { status: 500 }
-    );
+    logError(request, "Bulk import failed", err);
+    return jsonError(request, 500, (err as Error).message);
   }
 }

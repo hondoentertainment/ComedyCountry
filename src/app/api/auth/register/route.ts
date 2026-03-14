@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { applyRateLimit, getClientAddress, jsonError, jsonResponse, logError } from "@/lib/api";
 
 const MIN_USERNAME_LEN = 3;
 const MAX_USERNAME_LEN = 32;
@@ -13,6 +14,12 @@ export async function POST(request: Request) {
   if (!rl.success) {
     return NextResponse.json({ error: "Too many registration attempts. Try again later." }, { status: 429 });
   }
+  const rateLimit = applyRateLimit(request, getClientAddress(request), {
+    prefix: "auth-register",
+    limit: 10,
+    windowMs: 15 * 60 * 1000,
+  });
+  if (rateLimit) return rateLimit;
 
   try {
     const body = await request.json();
@@ -20,44 +27,33 @@ export async function POST(request: Request) {
     const password = (body.password ?? "").toString();
 
     if (!username || !password) {
-      return NextResponse.json(
-        { error: "Username and password are required" },
-        { status: 400 }
-      );
+      return jsonError(request, 400, "Username and password are required");
     }
     if (username.length < MIN_USERNAME_LEN) {
-      return NextResponse.json(
-        { error: `Username must be at least ${MIN_USERNAME_LEN} characters` },
-        { status: 400 }
-      );
+      return jsonError(request, 400, `Username must be at least ${MIN_USERNAME_LEN} characters`);
     }
     if (username.length > MAX_USERNAME_LEN) {
-      return NextResponse.json(
-        { error: `Username must be at most ${MAX_USERNAME_LEN} characters` },
-        { status: 400 }
-      );
+      return jsonError(request, 400, `Username must be at most ${MAX_USERNAME_LEN} characters`);
     }
     if (!USERNAME_REGEX.test(username)) {
       return NextResponse.json(
         { error: "Username can only contain letters, numbers, periods, underscores, and hyphens" },
         { status: 400 }
+      return jsonError(
+        request,
+        400,
+        "Username can only contain letters, numbers, underscores, and hyphens"
       );
     }
     if (password.length < MIN_PASSWORD_LEN) {
-      return NextResponse.json(
-        { error: `Password must be at least ${MIN_PASSWORD_LEN} characters` },
-        { status: 400 }
-      );
+      return jsonError(request, 400, `Password must be at least ${MIN_PASSWORD_LEN} characters`);
     }
 
     const existing = await prisma.user.findUnique({
       where: { username },
     });
     if (existing) {
-      return NextResponse.json(
-        { error: "Username is already taken" },
-        { status: 409 }
-      );
+      return jsonError(request, 409, "Username is already taken");
     }
 
     const passwordHash = await hash(password, 12);
@@ -69,15 +65,12 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({
+    return jsonResponse(request, {
       id: user.id,
       username: user.username,
     });
   } catch (e) {
-    console.error("Register error:", e);
-    return NextResponse.json(
-      { error: "Registration failed" },
-      { status: 500 }
-    );
+    logError(request, "Registration failed", e);
+    return jsonError(request, 500, "Registration failed");
   }
 }
