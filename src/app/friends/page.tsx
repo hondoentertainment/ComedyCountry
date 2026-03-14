@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = {
   title: "Friends | Punchline Atlas",
@@ -116,9 +117,11 @@ export default async function FriendsPage() {
                     className="flex items-center gap-3 p-3 rounded-lg bg-brand-surface border border-zinc-800"
                   >
                     {u?.image ? (
-                      <img
+                      <Image
                         src={u.image}
                         alt=""
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     ) : (
@@ -191,9 +194,11 @@ export default async function FriendsPage() {
                     className="flex items-center gap-3 p-3 rounded-lg bg-brand-surface border border-zinc-800 hover:border-zinc-700 transition-colors"
                   >
                     {u?.image ? (
-                      <img
+                      <Image
                         src={u.image}
                         alt=""
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     ) : (
@@ -262,9 +267,11 @@ export default async function FriendsPage() {
                     className="flex items-center gap-3 p-3 rounded-lg bg-brand-surface/50 border border-zinc-800/50"
                   >
                     {u?.image ? (
-                      <img
+                      <Image
                         src={u.image}
                         alt=""
+                        width={32}
+                        height={32}
                         className="w-8 h-8 rounded-full object-cover opacity-70"
                       />
                     ) : (

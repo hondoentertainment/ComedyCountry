@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 
 interface BookingRequest {
@@ -32,11 +32,7 @@ export default function CreatorBookingsPage() {
   const [respondingId, setRespondingId] = useState<string | null>(null);
   const [responseNote, setResponseNote] = useState("");
 
-  useEffect(() => {
-    loadBookings();
-  }, [filter]);
-
-  async function loadBookings() {
+  const loadBookings = useCallback(async () => {
     setLoading(true);
     try {
       const url = filter
@@ -46,7 +42,11 @@ export default function CreatorBookingsPage() {
       if (res.ok) setBookings(await res.json());
     } catch { /* ignore */ }
     setLoading(false);
-  }
+  }, [filter]);
+
+  useEffect(() => {
+    loadBookings();
+  }, [loadBookings]);
 
   async function handleRespond(id: string, status: string) {
     try {

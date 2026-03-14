@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getHappeningTonight } from "@/lib/taste-profile";
 
 export const metadata = {
@@ -101,10 +102,12 @@ export default async function HappeningTonightPage() {
                       <div className="flex -space-x-2">
                         {event.comedians.slice(0, 3).map((c) =>
                           c.headshotUrl ? (
-                            <img
+                            <Image
                               key={c.id}
                               src={c.headshotUrl}
                               alt={c.name}
+                              width={24}
+                              height={24}
                               className="w-6 h-6 rounded-full border-2 border-brand-surface object-cover"
                             />
                           ) : (

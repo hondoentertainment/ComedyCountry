@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface FriendInfo {
   id: string;
@@ -46,10 +47,12 @@ export function FriendsGoingBadge({ eventId }: FriendsGoingBadgeProps) {
       <span className="flex -space-x-1.5">
         {friends.slice(0, 3).map((f) =>
           f.image ? (
-            <img
+            <Image
               key={f.id}
               src={f.image}
               alt=""
+              width={20}
+              height={20}
               className="w-5 h-5 rounded-full border border-brand-surface object-cover"
             />
           ) : (

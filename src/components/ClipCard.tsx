@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 type ClipCardProps = {
   id: string;
@@ -106,12 +107,14 @@ export function ClipCard({
   return (
     <div className="relative flex flex-col rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-colors">
       {/* Video thumbnail */}
-      <Link href={`/clips?clip=${id}`} className="relative aspect-[9/16] bg-zinc-800">
+      <Link href={`/clips?clip=${id}`} className="relative aspect-[9/16] bg-zinc-800 block overflow-hidden">
         {thumbnailUrl ? (
-          <img
+          <Image
             src={thumbnailUrl}
             alt={title ?? "Comedy clip"}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-zinc-600">

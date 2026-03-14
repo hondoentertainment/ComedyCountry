@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface ContentItem {
   id: string;
@@ -102,11 +103,15 @@ export default function ExclusiveContentFeed({ comedianId, limit = 10 }: Exclusi
               )}
 
               {item.mediaUrl && item.mediaType === "image" && (
-                <img
-                  src={item.mediaUrl}
-                  alt={item.title}
-                  className="mt-3 rounded-lg max-h-80 object-cover w-full"
-                />
+                <div className="relative mt-3 w-full h-80 rounded-lg overflow-hidden">
+                  <Image
+                    src={item.mediaUrl}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               )}
 
               {item.mediaUrl && item.mediaType === "video" && (

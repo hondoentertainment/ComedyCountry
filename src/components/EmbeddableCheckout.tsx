@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 
 /**
  * White-Label Embeddable Checkout Widget
@@ -210,7 +211,7 @@ export default function EmbeddableCheckout({
       <div className="px-5 py-4 border-b border-gray-100" style={{ backgroundColor: primaryColor }}>
         <div className="flex items-center gap-3">
           {logoUrl && (
-            <img src={logoUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
+            <Image src={logoUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
           )}
           <div className="text-white">
             <h2 className="font-bold text-lg leading-tight">{eventTitle}</h2>

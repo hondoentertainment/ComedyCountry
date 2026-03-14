@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface PressKit {
   comedian: {
@@ -82,7 +83,7 @@ export default function CreatorPressKitPage() {
       {/* Header */}
       <div className="p-6 rounded-lg bg-brand-surface border border-zinc-800 mb-6 flex flex-col sm:flex-row items-center gap-6">
         {comedian.headshotUrl ? (
-          <img src={comedian.headshotUrl} alt={comedian.name} className="w-28 h-28 rounded-full object-cover border-2 border-brand-gold/30" />
+          <Image src={comedian.headshotUrl} alt={comedian.name} width={112} height={112} className="w-28 h-28 rounded-full object-cover border-2 border-brand-gold/30" />
         ) : (
           <div className="w-28 h-28 rounded-full bg-zinc-800 flex items-center justify-center text-3xl text-zinc-600">
             ?

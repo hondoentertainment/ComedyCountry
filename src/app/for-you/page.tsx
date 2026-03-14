@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface RecommendedComedian {
   id: string;
@@ -87,9 +88,11 @@ export default function ForYouPage() {
                       className="p-4 rounded-lg bg-brand-surface border border-zinc-800 hover:border-zinc-700 transition-colors group"
                     >
                       {c.headshotUrl ? (
-                        <img
+                        <Image
                           src={c.headshotUrl}
                           alt={c.name}
+                          width={64}
+                          height={64}
                           className="w-16 h-16 rounded-full mx-auto mb-3 object-cover"
                         />
                       ) : (

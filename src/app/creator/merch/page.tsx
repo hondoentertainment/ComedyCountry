@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface MerchItem {
   id: string;
@@ -167,7 +168,9 @@ export default function CreatorMerchPage() {
           {items.map((item) => (
             <div key={item.id} className="p-5 rounded-lg bg-brand-surface border border-zinc-800">
               {item.imageUrl && (
-                <img src={item.imageUrl} alt={item.name} className="w-full h-40 object-cover rounded-lg mb-3" />
+                <div className="relative w-full h-40 rounded-lg mb-3 overflow-hidden">
+                  <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
+                </div>
               )}
               <h3 className="text-white font-semibold">{item.name}</h3>
               {item.description && <p className="text-zinc-400 text-sm mt-1">{item.description}</p>}
