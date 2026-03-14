@@ -171,39 +171,37 @@ describe("podcast-pipeline", () => {
   // ─── Episode Sync & Retrieval ────────────────────────────────────────
 
   describe("syncPodcastEpisodes", () => {
-    it("marks podcast as synced with latest episode date", async () => {
-      const latestEp = { publishedAt: new Date("2025-12-01") };
-      mockPrisma.podcastEpisode.findFirst.mockResolvedValue(latestEp);
-      mockPrisma.podcastShow.update.mockResolvedValue({
+    it("syncs podcast episodes from RSS feed", async () => {
+      mockPrisma.podcastShow.findUnique.mockResolvedValue({
         id: "pod1",
-        synced: true,
-        lastEpisodeAt: latestEp.publishedAt,
+        title: "Test Show",
+        feedUrl: "https://example.com/feed.xml",
       });
+      mockPrisma.podcastEpisode.findMany.mockResolvedValue([]);
+      mockPrisma.podcastEpisode.create.mockResolvedValue({ id: "ep1" });
+      mockPrisma.podcastShow.update.mockResolvedValue({ id: "pod1" });
+
+      // Mock global fetch for RSS
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve("<rss><channel><title>Test</title></channel></rss>"),
+      });
+      vi.stubGlobal("fetch", mockFetch);
 
       const result = await syncPodcastEpisodes("pod1");
 
-      expect(result.synced).toBe(true);
-      expect(mockPrisma.podcastShow.update).toHaveBeenCalledWith({
-        where: { id: "pod1" },
-        data: { synced: true, lastEpisodeAt: latestEp.publishedAt },
-      });
+      expect(result.podcast).toBe("Test Show");
+      expect(typeof result.newEpisodes).toBe("number");
+      expect(typeof result.totalEpisodes).toBe("number");
+      expect(Array.isArray(result.errors)).toBe(true);
+
+      vi.unstubAllGlobals();
     });
 
-    it("handles podcast with no episodes (sets lastEpisodeAt to null)", async () => {
-      mockPrisma.podcastEpisode.findFirst.mockResolvedValue(null);
-      mockPrisma.podcastShow.update.mockResolvedValue({
-        id: "pod1",
-        synced: true,
-        lastEpisodeAt: null,
-      });
+    it("returns error when podcast not found", async () => {
+      mockPrisma.podcastShow.findUnique.mockResolvedValue(null);
 
-      const result = await syncPodcastEpisodes("pod1");
-
-      expect(result.synced).toBe(true);
-      expect(mockPrisma.podcastShow.update).toHaveBeenCalledWith({
-        where: { id: "pod1" },
-        data: { synced: true, lastEpisodeAt: null },
-      });
+      await expect(syncPodcastEpisodes("bad-id")).rejects.toThrow();
     });
   });
 
