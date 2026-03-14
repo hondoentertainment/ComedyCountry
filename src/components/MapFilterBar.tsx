@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 type VenueForFilter = {
   id: string;
@@ -11,11 +11,20 @@ type VenueForFilter = {
 type MapFilterBarProps = {
   venues: VenueForFilter[];
   onFilterChange: (filtered: VenueForFilter[]) => void;
+  state: string;
+  city: string;
+  onStateChange: (value: string) => void;
+  onCityChange: (value: string) => void;
 };
 
-export function MapFilterBar({ venues, onFilterChange }: MapFilterBarProps) {
-  const [state, setState] = useState<string>("");
-  const [city, setCity] = useState("");
+export function MapFilterBar({
+  venues,
+  onFilterChange,
+  state,
+  city,
+  onStateChange,
+  onCityChange,
+}: MapFilterBarProps) {
 
   const states = useMemo(() => {
     const stateSet = new Set<string>();
@@ -50,8 +59,8 @@ export function MapFilterBar({ venues, onFilterChange }: MapFilterBarProps) {
           id="map-state-filter"
           value={state}
           onChange={(e) => {
-            setState(e.target.value);
-            setCity("");
+            onStateChange(e.target.value);
+            onCityChange("");
           }}
           className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           aria-label="Filter by state"
@@ -70,7 +79,7 @@ export function MapFilterBar({ venues, onFilterChange }: MapFilterBarProps) {
           id="map-city-filter"
           type="text"
           value={city}
-          onChange={(e) => setCity(e.target.value)}
+          onChange={(e) => onCityChange(e.target.value)}
           placeholder="Filter by city…"
           className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 text-sm w-40 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           aria-label="Filter by city"
@@ -80,8 +89,8 @@ export function MapFilterBar({ venues, onFilterChange }: MapFilterBarProps) {
         <button
           type="button"
           onClick={() => {
-            setState("");
-            setCity("");
+            onStateChange("");
+            onCityChange("");
           }}
           className="text-sm text-zinc-400 hover:text-brand-gold"
         >

@@ -1,17 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import { useToast } from "@/components/Toast";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 export function SettingsActions() {
   const { toast } = useToast();
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [exportSuccess, setExportSuccess] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const deleteModalRef = useFocusTrap(deleteModalOpen);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDeleteModalOpen(false);
+    };
+    if (deleteModalOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [deleteModalOpen]);
 
   const handleExport = async () => {
     setExporting(true);
@@ -42,6 +56,7 @@ export function SettingsActions() {
 
   const handleDelete = async () => {
     if (deleteConfirm !== "DELETE") return;
+    setDeleteModalOpen(false);
     setDeleting(true);
     setDeleteError(null);
     try {
@@ -120,7 +135,7 @@ export function SettingsActions() {
               </div>
               <button
                 type="button"
-                onClick={handleDelete}
+                onClick={() => setDeleteModalOpen(true)}
                 disabled={deleting || deleteConfirm !== "DELETE"}
                 className="px-4 py-2 rounded-md bg-red-900/80 text-red-200 hover:bg-red-900 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
@@ -128,6 +143,41 @@ export function SettingsActions() {
               </button>
             </div>
           </div>
+
+          {deleteModalOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delete-modal-title"
+              ref={deleteModalRef}
+            >
+              <div className="w-full max-w-sm rounded-lg bg-zinc-900 border border-zinc-700 p-6 shadow-xl">
+                <h2 id="delete-modal-title" className="text-lg font-semibold text-white mb-2">
+                  Delete account
+                </h2>
+                <p className="text-sm text-zinc-400 mb-6">
+                  This cannot be undone.
+                </p>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteModalOpen(false)}
+                    className="px-4 py-2 rounded-md bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="px-4 py-2 rounded-md bg-red-900/80 text-red-200 hover:bg-red-900 font-medium transition-colors"
+                  >
+                    Confirm Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

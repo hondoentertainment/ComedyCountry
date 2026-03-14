@@ -33,7 +33,10 @@ export function FollowButton({
 
       if (res.status === 401) {
         setFollowing(previousFollowing);
-        window.location.href = signInUrl;
+        const callback = encodeURIComponent(
+          typeof window !== "undefined" ? window.location.pathname : "/"
+        );
+        window.location.href = `${signInUrl}?callbackUrl=${callback}`;
         return;
       }
 

@@ -1,13 +1,28 @@
 import { prisma } from "./prisma";
 import type { TouringStatus, Prisma } from "@prisma/client";
 
+const DEFAULT_GENRES = [
+  "Observational",
+  "Political",
+  "Storytelling",
+  "Absurdist",
+  "Dark",
+  "Improv",
+  "Sketch",
+  "Character",
+  "Topical",
+  "Insight",
+];
+
 export async function listDistinctGenres(): Promise<string[]> {
   const rows = await prisma.comedianGenre.findMany({
     select: { genre: true },
     distinct: ["genre"],
     orderBy: { genre: "asc" },
   });
-  return rows.map((r) => r.genre);
+  const fromDb = rows.map((r) => r.genre);
+  if (fromDb.length > 0) return fromDb;
+  return DEFAULT_GENRES;
 }
 
 type ListComediansParams = {

@@ -104,9 +104,17 @@ export function SignInButtons({ providerIds, callbackUrl = "/" }: SignInButtonsP
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-zinc-400 text-sm mb-1">
-              Password
-            </label>
+            <div className="flex items-baseline justify-between gap-2">
+              <label htmlFor="password" className="block text-zinc-400 text-sm mb-1">
+                Password
+              </label>
+              <Link
+                href="/auth/forgot-password"
+                className="text-xs text-amber-500 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <input
               id="password"
               type="password"
@@ -131,7 +139,10 @@ export function SignInButtons({ providerIds, callbackUrl = "/" }: SignInButtonsP
       {hasCredentials && (
         <p className="text-zinc-500 text-sm text-center">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="text-amber-500 hover:underline">
+          <Link
+            href={`/auth/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+            className="text-amber-500 hover:underline"
+          >
             Create one
           </Link>
         </p>

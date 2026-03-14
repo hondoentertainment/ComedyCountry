@@ -19,11 +19,20 @@ function BadgePill({
     variant === "firstTime"
       ? "bg-brand-gold/20 text-brand-gold border-brand-gold/40"
       : "bg-amber-600/20 text-amber-400 border-amber-500/40";
+  const description =
+    variant === "firstTime"
+      ? "First time: seen once"
+      : "Multiple rounds: seen in 2+ shows";
+  const descId = `badge-desc-${variant}`;
   return (
     <span
       className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${styles}`}
-      title={variant === "firstTime" ? "Seen once" : "Seen in multiple shows"}
+      title={description}
+      aria-describedby={descId}
     >
+      <span id={descId} className="sr-only">
+        {description}
+      </span>
       {variant === "firstTime" ? (
         <span aria-hidden>★</span>
       ) : (

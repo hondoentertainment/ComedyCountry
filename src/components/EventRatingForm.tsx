@@ -79,7 +79,15 @@ export function EventRatingForm({
       });
 
       if (res.status === 401) {
-        window.location.href = signInUrl;
+        const hasCallback = signInUrl.includes("callbackUrl=");
+        const path =
+          typeof window !== "undefined" && window.location?.pathname
+            ? window.location.pathname
+            : `/events/${eventId}`;
+        const url = hasCallback
+          ? signInUrl
+          : `${signInUrl}?callbackUrl=${encodeURIComponent(path)}`;
+        window.location.href = url;
         return;
       }
 
@@ -124,9 +132,18 @@ export function EventRatingForm({
       </div>
 
       <div>
-        <label htmlFor="comment" className="block text-sm text-zinc-400 mb-2">
-          Comment (optional)
-        </label>
+        <div className="flex items-baseline justify-between gap-2 mb-2">
+          <label htmlFor="comment" className="text-sm text-zinc-400">
+            Comment (optional)
+          </label>
+          <span
+            className="text-xs text-zinc-500 tabular-nums"
+            aria-live="polite"
+            aria-label={`${comment.length} of 2000 characters`}
+          >
+            {comment.length}/2000
+          </span>
+        </div>
         <textarea
           id="comment"
           value={comment}

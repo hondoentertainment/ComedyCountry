@@ -52,11 +52,11 @@ export function Nav() {
             <SearchBar />
           </div>
 
-          {/* Mobile search icon — navigates to /search */}
+          {/* Mobile search — prominent icon linking to /search */}
           <Link
             href="/search"
-            className="md:hidden p-2.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
-            aria-label="Search"
+            className="md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] -m-2 rounded-lg text-zinc-400 hover:text-brand-gold hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
+            aria-label="Search venues, comedians, and events"
           >
             <svg
               className="w-6 h-6"
@@ -95,31 +95,33 @@ export function Nav() {
                 <>
                   <Link
                     href="/profile"
-                    className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
+                    aria-current={pathname === "/profile" ? "page" : undefined}
+                    className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                   >
                     Profile
                   </Link>
                   <Link
                     href="/settings"
-                    className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
+                    aria-current={pathname === "/settings" ? "page" : undefined}
+                    className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                   >
                     Settings
                   </Link>
                   <button
                     type="button"
                     onClick={() => signOut({ callbackUrl: "/" })}
-                    className="px-4 py-2 rounded-lg text-zinc-500 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150"
+                    className="px-4 py-2 rounded-lg text-zinc-500 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                   >
                     Sign out
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/auth/signin"
-                  className="block px-4 py-2 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-sm font-semibold transition-all duration-150"
-                >
-                  Sign in
-                </Link>
+<Link
+                href="/auth/signin"
+                className="block px-4 py-2 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark"
+              >
+                Sign in
+              </Link>
               )}
             </div>
           </div>
@@ -128,7 +130,7 @@ export function Nav() {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+            className="md:hidden p-2.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
@@ -173,7 +175,7 @@ export function Nav() {
                     href={href}
                     aria-current={isActive(href, pathname) ? "page" : undefined}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
+                    className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                   >
                     {label}
                   </Link>
@@ -184,15 +186,17 @@ export function Nav() {
                   <>
                     <Link
                       href="/profile"
+                      aria-current={pathname === "/profile" ? "page" : undefined}
                       onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
+                      className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                     >
                       Profile
                     </Link>
                     <Link
                       href="/settings"
+                      aria-current={pathname === "/settings" ? "page" : undefined}
                       onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
+                      className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                     >
                       Settings
                     </Link>
@@ -202,7 +206,7 @@ export function Nav() {
                         setMobileOpen(false);
                         signOut({ callbackUrl: "/" });
                       }}
-                      className="block w-full text-left px-4 py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-base font-medium transition-colors"
+                      className="block w-full text-left px-4 py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                     >
                       Sign out
                     </button>
@@ -211,7 +215,7 @@ export function Nav() {
                   <Link
                     href="/auth/signin"
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-base font-semibold transition-colors"
+                    className="block px-4 py-3 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-base font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark"
                   >
                     Sign in
                   </Link>

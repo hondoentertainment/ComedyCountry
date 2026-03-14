@@ -101,8 +101,8 @@ describe("EventRatingForm", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Failed to save");
   });
 
-  it("redirects to sign-in on 401", async () => {
-    const locationMock = { href: "" };
+  it("redirects to sign-in with callbackUrl on 401", async () => {
+    const locationMock = { href: "", pathname: "/events/event-1" };
     vi.stubGlobal("location", locationMock);
 
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
@@ -120,6 +120,7 @@ describe("EventRatingForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Rate 2 out of 5" }));
     await userEvent.click(screen.getByRole("button", { name: "Submit review" }));
 
-    expect(locationMock.href).toBe("/auth/signin");
+    expect(locationMock.href).toMatch(/^\/auth\/signin\?callbackUrl=/);
+    expect(locationMock.href).toContain(encodeURIComponent("/events/event-1"));
   });
 });

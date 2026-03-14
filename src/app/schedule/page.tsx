@@ -42,6 +42,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
   let total = 0;
   let states: { state: string }[] = [];
   let ratingStats = new Map<string, { count: number; avgRating: number | null }>();
+  let dataUnavailable = false;
 
   try {
     const [result, venueStates] = await Promise.all([
@@ -62,7 +63,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
       ratingStats = await getEventRatingStatsBatch(events.map((e) => e.id));
     }
   } catch {
-    // DB not configured
+    dataUnavailable = true;
   }
 
   const formatDate = (d: Date) =>
@@ -78,6 +79,11 @@ export default async function SchedulePage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        {dataUnavailable && (
+          <div className="mb-6 p-4 rounded-card bg-amber-500/10 border border-amber-500/40 text-amber-200 text-center">
+            Data temporarily unavailable. Please try again later.
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-1">Schedule</h1>
@@ -152,7 +158,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
                   {img ? (
                     <Image
                       src={img}
-                      alt={title}
+                      alt={`Event photo: ${title}`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       sizes="(max-width: 640px) 100vw, 160px"

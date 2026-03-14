@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export function SignUpForm() {
+type SignUpFormProps = { callbackUrl?: string };
+
+export function SignUpForm({ callbackUrl = "/" }: SignUpFormProps) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +34,8 @@ export function SignUpForm() {
         setLoading(false);
         return;
       }
-      router.push("/auth/signin?registered=1");
+      const url = `/auth/signin?registered=1${callbackUrl !== "/" ? `&callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`;
+      router.push(url);
     } catch {
       setError("Something went wrong");
       setLoading(false);

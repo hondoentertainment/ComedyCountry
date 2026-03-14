@@ -13,8 +13,9 @@ export const metadata = {
 
 export default async function FollowingPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/auth/signin");
+  if (!session?.user?.id) redirect("/auth/signin?callbackUrl=/following");
 
+  // Sort order: most recently followed first (ComedianFollow/VenueFollow both have createdAt)
   const [comedianFollows, venueFollows] = await Promise.all([
     prisma.comedianFollow.findMany({
       where: { userId: session.user.id },
@@ -55,7 +56,8 @@ export default async function FollowingPage() {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-2">Following</h1>
         <p className="text-zinc-400 mb-8">
-          Comedians and venues you follow. Unfollow anytime from this page.
+          Comedians and venues you follow, sorted by most recently followed.
+          Unfollow anytime from this page.
         </p>
 
         <section className="mb-12">

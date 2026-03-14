@@ -29,6 +29,8 @@ export function SearchBar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [retryTrigger, setRetryTrigger] = useState(0);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,11 +39,13 @@ export function SearchBar() {
   useEffect(() => {
     if (query.length < 2) {
       setResults(null);
+      setError(false);
       return;
     }
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       setLoading(true);
+      setError(false);
       try {
         const res = await fetch(
           `/api/search?q=${encodeURIComponent(query)}&take=5`,
@@ -49,9 +53,14 @@ export function SearchBar() {
         );
         const data = await res.json();
         setResults(data);
+        setError(false);
         setOpen(true);
       } catch (e) {
-        if ((e as Error).name !== "AbortError") setResults(null);
+        if ((e as Error).name !== "AbortError") {
+          setResults(null);
+          setError(true);
+          setOpen(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -60,7 +69,7 @@ export function SearchBar() {
       clearTimeout(t);
       ctrl.abort();
     };
-  }, [query]);
+  }, [query, retryTrigger]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -129,14 +138,21 @@ export function SearchBar() {
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         setActiveIndex((i) => (i <= 0 ? optionCount - 1 : i - 1));
-      } else if (e.key === "Enter" && activeIndex >= 0 && options[activeIndex]) {
-        e.preventDefault();
-        router.push(options[activeIndex].href);
-        setOpen(false);
-        setActiveIndex(-1);
+      } else if (e.key === "Enter") {
+        if (activeIndex >= 0 && options[activeIndex]) {
+          e.preventDefault();
+          router.push(options[activeIndex].href);
+          setOpen(false);
+          setActiveIndex(-1);
+        } else if (open && hasResults && query.trim().length >= 2) {
+          e.preventDefault();
+          router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+          setOpen(false);
+          setActiveIndex(-1);
+        }
       }
     },
-    [open, optionCount, activeIndex, options, router]
+    [open, optionCount, activeIndex, options, router, hasResults, query]
   );
 
   return (
@@ -144,6 +160,15 @@ export function SearchBar() {
       <label htmlFor="site-search" className="sr-only">
         Search venues, comedians, and events
       </label>
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+        role="status"
+      >
+        {open && !loading && hasResults && `${optionCount} result${optionCount === 1 ? "" : "s"} available. Use arrow keys to navigate.`}
+        {open && !loading && isEmpty && !error && `No results for ${query}.`}
+      </div>
       <input
         id="site-search"
         ref={inputRef}
@@ -154,7 +179,7 @@ export function SearchBar() {
         onKeyDown={handleKeyDown}
         placeholder="Search…"
         role="combobox"
-        aria-expanded={!!(open && (loading || hasResults || isEmpty))}
+        aria-expanded={!!(open && (loading || hasResults || isEmpty || error))}
         aria-haspopup="listbox"
         aria-autocomplete="list"
         aria-controls="search-results"
@@ -165,7 +190,7 @@ export function SearchBar() {
         }
         className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:border-transparent"
       />
-      {open && (loading || hasResults || isEmpty) && (
+      {open && (loading || hasResults || isEmpty || error) && (
         <div
           id="search-results"
           role="listbox"
@@ -294,9 +319,27 @@ export function SearchBar() {
               </Link>
             </div>
           )}
-          {!loading && isEmpty && (
+          {!loading && isEmpty && !error && (
             <div className="px-4 py-6 text-center text-zinc-500 text-sm">
               No results for &ldquo;{query}&rdquo;
+            </div>
+          )}
+          {!loading && error && query.length >= 2 && (
+            <div
+              role="alert"
+              className="px-4 py-6 text-center text-zinc-300 text-sm space-y-3"
+            >
+              <p>Search failed. Please try again.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setError(false);
+                  setRetryTrigger((t) => t + 1);
+                }}
+                className="px-3 py-1.5 rounded bg-brand-gold/20 text-brand-gold hover:bg-brand-gold/30 text-sm font-medium"
+              >
+                Retry
+              </button>
             </div>
           )}
         </div>

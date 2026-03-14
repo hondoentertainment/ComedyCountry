@@ -55,14 +55,16 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const lastRefreshRef = useRef(0);
   const pages = Math.ceil(total / 10) || 1;
 
   const fetchReviews = useCallback(async (p = 1) => {
     setLoading(true);
+    setError(false);
     try {
       const res = await fetch(`/api/events/${eventId}/reviews?page=${p}`);
-      if (!res.ok) return;
+      if (!res.ok) throw new Error("Fetch failed");
       const data = (await res.json()) as {
         reviews: Review[];
         total: number;
@@ -72,8 +74,9 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
       setReviews(data.reviews);
       setTotal(data.total);
       setStats({ count: data.count, avgRating: data.avgRating });
+      setError(false);
     } catch {
-      // ignore
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -143,11 +146,27 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
         ))}
       </ul>
 
-      {loading && (
+      {loading && !error && (
         <p className="text-zinc-500 text-sm">Loading reviews…</p>
       )}
 
-      {!loading && reviews.length === 0 && (
+      {error && (
+        <div
+          role="alert"
+          className="py-4 text-center text-zinc-300 text-sm space-y-3"
+        >
+          <p>Failed to load reviews. Please try again.</p>
+          <button
+            type="button"
+            onClick={() => fetchReviews(page)}
+            className="px-3 py-1.5 rounded bg-brand-gold/20 text-brand-gold hover:bg-brand-gold/30 text-sm font-medium"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && reviews.length === 0 && (
         <p className="text-zinc-500 text-sm">No reviews yet. Be the first to rate this show!</p>
       )}
 

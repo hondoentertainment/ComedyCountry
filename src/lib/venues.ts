@@ -104,14 +104,50 @@ export async function getVenueStates() {
   )();
 }
 
-export async function listVenuesWithCoordinates(options?: { take?: number }) {
-  const take = options?.take ?? 500;
+type ListVenuesWithCoordinatesParams = {
+  take?: number;
+  state?: string;
+  city?: string;
+  search?: string;
+};
+
+export async function listVenuesWithCoordinates(
+  options?: ListVenuesWithCoordinatesParams
+) {
+  const { take = 500, state, city, search } = options ?? {};
+  const where: Prisma.VenueWhereInput = {
+    latitude: { not: null },
+    longitude: { not: null },
+  };
+  if (state) where.state = { equals: state, mode: "insensitive" };
+  if (city) where.city = { contains: city, mode: "insensitive" };
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { city: { contains: search, mode: "insensitive" } },
+      { state: { contains: search, mode: "insensitive" } },
+    ];
+  }
   return prisma.venue.findMany({
-    where: {
-      latitude: { not: null },
-      longitude: { not: null },
-    },
+    where,
     orderBy: [{ state: "asc" }, { city: "asc" }, { name: "asc" }],
     take,
   });
+}
+
+export async function getVenueStatesWithCoordinates() {
+  return unstable_cache(
+    async () =>
+      prisma.venue.findMany({
+        where: {
+          latitude: { not: null },
+          longitude: { not: null },
+        },
+        select: { state: true },
+        distinct: ["state"],
+        orderBy: { state: "asc" },
+      }),
+    ["venue-states-with-coords"],
+    { revalidate: 300 }
+  )();
 }

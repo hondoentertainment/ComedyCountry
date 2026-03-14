@@ -6,8 +6,13 @@ export const dynamic = "force-dynamic";
 
 function HomeSectionsFallback() {
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-      {/* Made for you skeleton — shown while session and for-you data load */}
+    <div
+      className="mx-auto max-w-6xl px-4 pb-16 sm:px-6"
+      role="status"
+      aria-label="Loading content"
+      aria-busy
+    >
+      {/* Skeleton for Made for you / Upcoming / Explore — shown while session and data load */}
       <div className="mb-14">
         <div className="h-8 w-40 bg-zinc-800 rounded animate-pulse mb-4" />
         <div className="h-4 w-56 bg-zinc-800 rounded animate-pulse mb-6" />
@@ -55,7 +60,7 @@ export default function HomePage() {
               href="/search"
               className="px-4 py-2.5 rounded-full bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
             >
-              Search shows & venues
+              Search comedians, venues, and events
             </Link>
             <Link
               href="/schedule"

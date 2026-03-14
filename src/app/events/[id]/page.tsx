@@ -81,7 +81,7 @@ export default async function EventPage({ params }: PageProps) {
         {img ? (
           <Image
             src={img}
-            alt={title}
+            alt={`Event photo: ${title}`}
             fill
             className="object-cover"
             priority

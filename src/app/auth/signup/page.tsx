@@ -9,9 +9,18 @@ export const metadata = {
   description: "Create an account to follow comedians and venues.",
 };
 
-export default async function SignUpPage() {
+export default async function SignUpPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
+  const { callbackUrl } = await searchParams;
+  const resolvedCallback =
+    typeof callbackUrl === "string" && callbackUrl.startsWith("/")
+      ? callbackUrl
+      : "/";
   const session = await getServerSession(authOptions);
-  if (session) redirect("/");
+  if (session) redirect(resolvedCallback);
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4">
@@ -20,10 +29,13 @@ export default async function SignUpPage() {
         <p className="text-zinc-400 mb-8">
           Sign up with a username and password to follow comedians and venues.
         </p>
-        <SignUpForm />
+        <SignUpForm callbackUrl={resolvedCallback} />
         <p className="text-zinc-500 text-sm mt-6">
           Already have an account?{" "}
-          <Link href="/auth/signin" className="text-amber-500 hover:underline">
+          <Link
+            href={`/auth/signin${resolvedCallback !== "/" ? `?callbackUrl=${encodeURIComponent(resolvedCallback)}` : ""}`}
+            className="text-amber-500 hover:underline"
+          >
             Sign in
           </Link>
         </p>

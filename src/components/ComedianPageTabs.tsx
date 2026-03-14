@@ -71,7 +71,7 @@ export function ComedianPageTabs({
           tabIndex={activeTab === "info" ? 0 : -1}
           onClick={() => setActiveTab("info")}
           onKeyDown={(e) => handleKeyDown(e, "info")}
-          className={`px-4 py-3 text-sm font-medium transition-colors -mb-px border-b-2 ${
+          className={`px-4 py-3 text-sm font-medium transition-colors -mb-px border-b-2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark rounded-t ${
             activeTab === "info"
               ? "text-brand-gold border-brand-gold"
               : "text-zinc-400 border-transparent hover:text-zinc-300"
@@ -89,7 +89,7 @@ export function ComedianPageTabs({
           tabIndex={activeTab === "rate" ? 0 : -1}
           onClick={() => setActiveTab("rate")}
           onKeyDown={(e) => handleKeyDown(e, "rate")}
-          className={`px-4 py-3 text-sm font-medium transition-colors -mb-px border-b-2 ${
+          className={`px-4 py-3 text-sm font-medium transition-colors -mb-px border-b-2 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark rounded-t ${
             activeTab === "rate"
               ? "text-brand-gold border-brand-gold"
               : "text-zinc-400 border-transparent hover:text-zinc-300"

@@ -87,7 +87,7 @@ export function CookieConsentProvider({
 }
 
 export function CookieBanner() {
-  const { consent, accept, reject } = useCookieConsent();
+  const { consent, accept, reject, openPreferences } = useCookieConsent();
   const [mounted, setMounted] = useState(false);
   const acceptButtonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useFocusTrap(mounted && consent === null, acceptButtonRef);
@@ -117,6 +117,14 @@ export function CookieBanner() {
             >
               Privacy Policy
             </Link>
+            .{" "}
+            <button
+              type="button"
+              onClick={openPreferences}
+              className="text-brand-gold hover:underline font-medium"
+            >
+              Manage preferences
+            </button>
           </p>
         </div>
         <div className="flex flex-wrap gap-2 shrink-0">

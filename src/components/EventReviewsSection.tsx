@@ -36,6 +36,7 @@ export function EventReviewsSection({
             <EventRatingForm
               eventId={eventId}
               initialReview={initialReview}
+              signInUrl={`/auth/signin?callbackUrl=${encodeURIComponent(`/events/${eventId}`)}`}
               onSuccess={() => setRefreshTrigger((t) => t + 1)}
             />
           ) : (

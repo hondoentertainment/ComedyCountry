@@ -23,6 +23,7 @@ export async function HomeSections() {
   let events: Awaited<ReturnType<typeof listEvents>>["events"] = [];
   let forYouEvents: Awaited<ReturnType<typeof getEventsForUser>>["events"] = [];
   let ratingStats = new Map<string, { count: number; avgRating: number | null }>();
+  let dataUnavailable = false;
 
   try {
     const [v, e, forYou] = await Promise.all([
@@ -38,7 +39,7 @@ export async function HomeSections() {
       ratingStats = await getEventRatingStatsBatch(Array.from(new Set(allIds)));
     }
   } catch {
-    /* DB not configured */
+    dataUnavailable = true;
   }
 
   const formatDate = (d: Date) =>
@@ -46,6 +47,11 @@ export async function HomeSections() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+      {dataUnavailable && (
+        <div className="mb-6 p-4 rounded-card bg-amber-500/10 border border-amber-500/40 text-amber-200 text-center">
+          Data temporarily unavailable. Please try again later.
+        </div>
+      )}
       {session?.user && (
         <section className="mb-14">
           <h2 className="text-2xl font-bold text-white mb-6">Made for you</h2>
@@ -69,7 +75,7 @@ export async function HomeSections() {
                     {img ? (
                       <Image
                         src={img}
-                        alt={comedianNames}
+                        alt={`Event photo featuring ${comedianNames}`}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -153,7 +159,7 @@ export async function HomeSections() {
                     {img ? (
                       <Image
                         src={img}
-                        alt={comedianNames}
+                        alt={`Event photo featuring ${comedianNames}`}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -213,7 +219,7 @@ export async function HomeSections() {
                     {photo ? (
                       <Image
                         src={photo.url}
-                        alt={photo.caption ?? v.name}
+                        alt={photo.caption ? `Photo of ${v.name}: ${photo.caption}` : `Photo of ${v.name}`}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -14,10 +14,14 @@ export default async function SignInPage({
 }: {
   searchParams: Promise<{ callbackUrl?: string; registered?: string }>;
 }) {
-  const session = await getServerSession(authOptions);
-  if (session) redirect("/");
-
   const { callbackUrl, registered } = await searchParams;
+  const session = await getServerSession(authOptions);
+  const resolvedCallback =
+    typeof callbackUrl === "string" && callbackUrl.startsWith("/")
+      ? callbackUrl
+      : "/";
+  if (session) redirect(resolvedCallback);
+
   const providerIds = authOptions.providers.map((p) => p.id);
 
   return (

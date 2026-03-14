@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ClearComediansFiltersLink } from "./ClearComediansFiltersLink";
 import { listComedians, listDistinctGenres } from "@/lib/comedians";
 import { TOURING_STATUS_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { Pagination } from "@/components/Pagination";
@@ -29,6 +30,7 @@ export default async function ComediansPage({ searchParams }: PageProps) {
   let comedians: Awaited<ReturnType<typeof listComedians>>["comedians"] = [];
   let total = 0;
   let genres: string[] = [];
+  let dataUnavailable = false;
 
   try {
     const result = await listComedians({
@@ -48,12 +50,17 @@ export default async function ComediansPage({ searchParams }: PageProps) {
     total = result.total;
     genres = await listDistinctGenres();
   } catch {
-    // DB not configured
+    dataUnavailable = true;
   }
 
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        {dataUnavailable && (
+          <div className="mb-6 p-4 rounded-card bg-amber-500/10 border border-amber-500/40 text-amber-200 text-center">
+            Data temporarily unavailable. Please try again later.
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-1">Comedians</h1>
@@ -169,12 +176,7 @@ export default async function ComediansPage({ searchParams }: PageProps) {
             <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
               Try a different search term, touring status, or genre.
             </p>
-            <Link
-              href="/comedians"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
-            >
-              Browse all comedians
-            </Link>
+            <ClearComediansFiltersLink />
           </div>
         )}
 

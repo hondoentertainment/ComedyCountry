@@ -141,8 +141,8 @@ describe("FollowButton", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Server error");
   });
 
-  it("redirects to sign-in on 401", async () => {
-    const locationMock = { ...originalLocation, href: "" };
+  it("redirects to sign-in with callbackUrl on 401", async () => {
+    const locationMock = { ...originalLocation, href: "", pathname: "/comedians/dave" };
     vi.stubGlobal("location", locationMock);
 
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
@@ -161,6 +161,7 @@ describe("FollowButton", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
 
-    expect(locationMock.href).toBe("/auth/signin");
+    expect(locationMock.href).toMatch(/^\/auth\/signin\?callbackUrl=/);
+    expect(locationMock.href).toContain(encodeURIComponent("/comedians/dave"));
   });
 });

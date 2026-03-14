@@ -86,4 +86,36 @@ describe("Nav", () => {
     render(<Nav />);
     expect(screen.getByRole("link", { name: "Search" })).toBeInTheDocument();
   });
+
+  it("Profile link has aria-current='page' when pathname is /profile", () => {
+    vi.mocked(usePathname).mockReturnValue("/profile");
+    vi.mocked(useSession).mockReturnValue({
+      data: {
+        user: { id: "test-id", name: "Test", email: "test@example.com" },
+        expires: "",
+      },
+      status: "authenticated",
+      update: vi.fn(),
+    } as ReturnType<typeof useSession>);
+
+    render(<Nav />);
+    const profileLink = screen.getByRole("link", { name: "Profile" });
+    expect(profileLink).toHaveAttribute("aria-current", "page");
+  });
+
+  it("Settings link has aria-current='page' when pathname is /settings", () => {
+    vi.mocked(usePathname).mockReturnValue("/settings");
+    vi.mocked(useSession).mockReturnValue({
+      data: {
+        user: { id: "test-id", name: "Test", email: "test@example.com" },
+        expires: "",
+      },
+      status: "authenticated",
+      update: vi.fn(),
+    } as ReturnType<typeof useSession>);
+
+    render(<Nav />);
+    const settingsLink = screen.getByRole("link", { name: "Settings" });
+    expect(settingsLink).toHaveAttribute("aria-current", "page");
+  });
 });

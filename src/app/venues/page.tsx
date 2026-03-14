@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ClearVenuesFiltersLink } from "./ClearVenuesFiltersLink";
 import { listVenues, getVenueStates } from "@/lib/venues";
 import { VENUE_TYPE_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { Pagination } from "@/components/Pagination";
@@ -24,6 +25,7 @@ export default async function VenuesPage({ searchParams }: PageProps) {
   let venues: Awaited<ReturnType<typeof listVenues>>["venues"] = [];
   let total = 0;
   let states: { state: string }[] = [];
+  let dataUnavailable = false;
 
   try {
     const [v, s] = await Promise.all([
@@ -41,12 +43,17 @@ export default async function VenuesPage({ searchParams }: PageProps) {
     total = v.total;
     states = s;
   } catch {
-    // DB not configured
+    dataUnavailable = true;
   }
 
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        {dataUnavailable && (
+          <div className="mb-6 p-4 rounded-card bg-amber-500/10 border border-amber-500/40 text-amber-200 text-center">
+            Data temporarily unavailable. Please try again later.
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-1">Venues</h1>
@@ -133,7 +140,7 @@ export default async function VenuesPage({ searchParams }: PageProps) {
                   {photo ? (
                     <Image
                       src={photo.url}
-                      alt={photo.caption ?? venue.name}
+                      alt={photo.caption ? `Photo of ${venue.name}: ${photo.caption}` : `Photo of ${venue.name}`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -177,12 +184,7 @@ export default async function VenuesPage({ searchParams }: PageProps) {
             <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
               Try adjusting your search, state, city, or venue type.
             </p>
-            <Link
-              href="/venues"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
-            >
-              Browse all venues
-            </Link>
+            <ClearVenuesFiltersLink />
           </div>
         )}
 

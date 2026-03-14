@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getUserComedianBadges } from "@/lib/badges";
 import { ProfileForm } from "./ProfileForm";
 import { ComedianBadges } from "@/components/ComedianBadges";
+import { FollowButton } from "@/components/FollowButton";
 
 export const metadata = {
   title: "Profile | Punchline Atlas",
@@ -44,6 +45,11 @@ export default async function ProfilePage() {
                 city: true,
                 state: true,
                 type: true,
+                photos: {
+                  take: 1,
+                  orderBy: { sortOrder: "asc" },
+                  select: { url: true },
+                },
               },
             },
           },
@@ -129,27 +135,31 @@ export default async function ProfilePage() {
               <ul className="grid gap-4 sm:grid-cols-2">
                 {favoriteComedians.map((c) => (
                   <li key={c.id}>
-                    <Link
-                      href={`/comedians/${c.slug}`}
-                      className="flex gap-4 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
-                    >
-                      {c.headshotUrl ? (
-                        <Image
-                          src={c.headshotUrl}
-                          alt={`Headshot of ${c.name}`}
-                          width={64}
-                          height={64}
-                          className="w-16 h-16 rounded-lg object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">
-                          {c.name.charAt(0)}
-                        </div>
-                      )}
-                      <span className="font-medium text-white truncate">
-                        {c.name}
-                      </span>
-                    </Link>
+                    <div className="flex gap-4 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                      <Link href={`/comedians/${c.slug}`} className="flex gap-4 min-w-0 flex-1">
+                        {c.headshotUrl ? (
+                          <Image
+                            src={c.headshotUrl}
+                            alt={`Headshot of ${c.name}`}
+                            width={64}
+                            height={64}
+                            className="w-16 h-16 rounded-lg object-cover shrink-0"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">
+                            {c.name.charAt(0)}
+                          </div>
+                        )}
+                        <span className="font-medium text-white truncate self-center">
+                          {c.name}
+                        </span>
+                      </Link>
+                      <FollowButton
+                        type="comedian"
+                        id={c.id}
+                        initialFollowing={true}
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -170,26 +180,43 @@ export default async function ProfilePage() {
               </p>
             ) : (
               <ul className="grid gap-4 sm:grid-cols-2">
-                {favoriteVenues.map((v) => (
-                  <li key={v.id}>
-                    <Link
-                      href={`/venues/${v.id}`}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
-                    >
-                      <div className="w-12 h-12 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">
-                        {v.name.charAt(0)}
+                {favoriteVenues.map((v) => {
+                  const photoUrl = v.photos?.[0]?.url;
+                  return (
+                    <li key={v.id}>
+                      <div className="flex gap-4 p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                        <Link href={`/venues/${v.id}`} className="flex gap-4 min-w-0 flex-1">
+                          {photoUrl ? (
+                            <Image
+                              src={photoUrl}
+                              alt={`Photo of ${v.name}`}
+                              width={64}
+                              height={64}
+                              className="w-16 h-16 rounded-lg object-cover shrink-0"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 rounded-lg bg-zinc-700 shrink-0 flex items-center justify-center text-xl text-zinc-500">
+                              {v.name.charAt(0)}
+                            </div>
+                          )}
+                          <div className="min-w-0 self-center">
+                            <span className="font-medium text-white block truncate">
+                              {v.name}
+                            </span>
+                            <span className="text-sm text-zinc-500">
+                              {v.city}, {v.state}
+                            </span>
+                          </div>
+                        </Link>
+                        <FollowButton
+                          type="venue"
+                          id={v.id}
+                          initialFollowing={true}
+                        />
                       </div>
-                      <div className="min-w-0">
-                        <span className="font-medium text-white block truncate">
-                          {v.name}
-                        </span>
-                        <span className="text-sm text-zinc-500">
-                          {v.city}, {v.state}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>

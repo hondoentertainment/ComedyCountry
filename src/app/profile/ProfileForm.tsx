@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/Toast";
 
 type ProfileFormProps = {
   userId: string;
@@ -8,6 +9,7 @@ type ProfileFormProps = {
 };
 
 export function ProfileForm({ userId, initialName }: ProfileFormProps) {
+  const { toast } = useToast();
   const [name, setName] = useState(initialName);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -26,6 +28,7 @@ export function ProfileForm({ userId, initialName }: ProfileFormProps) {
       });
       if (!res.ok) throw new Error("Failed to update");
       setSaved(true);
+      toast("Profile updated.");
       setTimeout(() => setSaved(false), 2000);
     } catch {
       setError("Failed to save. Please try again.");

@@ -89,12 +89,15 @@ export function SearchPageContent({
     const term = query.trim();
     if (term.length < 2) {
       setResults(null);
+      if (searchParams.get("q")) {
+        router.replace("/search", { scroll: false });
+      }
       return;
     }
     if (initialResults && term === initialQuery.trim()) return;
     const t = setTimeout(() => fetchResults(term), DEBOUNCE_MS);
     return () => clearTimeout(t);
-  }, [query, initialQuery, initialResults, fetchResults]);
+  }, [query, initialQuery, initialResults, fetchResults, searchParams, router]);
 
   useEffect(() => {
     const q = searchParams.get("q") ?? "";
