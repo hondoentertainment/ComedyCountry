@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   const params = request.nextUrl.searchParams;
-  const q = params.get("q") ?? "";
+  const q = (params.get("q") ?? "").slice(0, 200);
   const mode = params.get("mode"); // "autocomplete" for typeahead
   const take = Math.min(parseInt(params.get("take") ?? "10", 10) || 10, 50);
 

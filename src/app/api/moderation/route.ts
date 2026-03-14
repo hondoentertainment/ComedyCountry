@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
   // Only admins can view moderation queue
   const user = session.user as { id: string; role?: string };
-  if (user.role !== "ADMIN") {
+  if (user.role !== "admin") {
     return NextResponse.json({ error: "Admin access required" }, { status: 403 });
   }
 
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
     // Action: review — admin reviews a queued item
     if (action === "review") {
       const user = session.user as { id: string; role?: string };
-      if (user.role !== "ADMIN") {
+      if (user.role !== "admin") {
         return NextResponse.json(
           { error: "Admin access required" },
           { status: 403 },
@@ -159,7 +159,7 @@ export async function POST(request: Request) {
     // Action: issue-strike — admin issues a strike to a user
     if (action === "issue-strike") {
       const user = session.user as { id: string; role?: string };
-      if (user.role !== "ADMIN") {
+      if (user.role !== "admin") {
         return NextResponse.json(
           { error: "Admin access required" },
           { status: 403 },
@@ -181,7 +181,7 @@ export async function POST(request: Request) {
     // Action: remove-strike — admin removes a strike
     if (action === "remove-strike") {
       const user = session.user as { id: string; role?: string };
-      if (user.role !== "ADMIN") {
+      if (user.role !== "admin") {
         return NextResponse.json(
           { error: "Admin access required" },
           { status: 403 },

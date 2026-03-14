@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 const MIN_USERNAME_LEN = 3;
 const MAX_USERNAME_LEN = 32;
@@ -8,6 +9,11 @@ const MIN_PASSWORD_LEN = 8;
 const USERNAME_REGEX = /^[a-zA-Z0-9._-]+$/;
 
 export async function POST(request: Request) {
+  const rl = checkRateLimit(`register:${getRateLimitKey(request)}`, { limit: 5, windowSeconds: 300 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Too many registration attempts. Try again later." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const username = (body.username ?? "").toString().trim().toLowerCase();

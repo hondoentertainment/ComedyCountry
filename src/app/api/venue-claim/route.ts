@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     });
     if (existing) {
       return NextResponse.json(
-        { error: "You already have a claim for this venue", status: existing.status },
+        { error: "You already have a claim for this venue" },
         { status: 409 }
       );
     }

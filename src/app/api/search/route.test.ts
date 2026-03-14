@@ -14,13 +14,13 @@ function createRequest(url: string) {
 }
 
 const emptyResult = {
-  venues: [],
-  comedians: [],
-  events: [],
-  facets: {},
+  venues: [] as never[],
+  comedians: [] as never[],
+  events: [] as never[],
+  facets: { cities: [], states: [], genres: [], venueTypes: [], showTypes: [] },
   totalCounts: { venues: 0, comedians: 0, events: 0 },
   query: "",
-  suggestions: [],
+  suggestions: [] as never[],
 };
 
 describe("GET /api/search", () => {

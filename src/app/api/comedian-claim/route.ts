@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       where: { userId_comedianId: { userId: session.user.id, comedianId } },
     });
     if (existing) {
-      return NextResponse.json({ error: "You already have a claim for this comedian", status: existing.status }, { status: 409 });
+      return NextResponse.json({ error: "You already have a claim for this comedian" }, { status: 409 });
     }
 
     // Check if another user already has an approved claim

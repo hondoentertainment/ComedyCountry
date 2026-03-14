@@ -78,7 +78,9 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const status = searchParams.get("status") || "pending";
+  const rawStatus = searchParams.get("status") || "pending";
+  const VALID_STATUSES = ["pending", "reviewed", "resolved", "dismissed", "all"] as const;
+  const status = VALID_STATUSES.includes(rawStatus as typeof VALID_STATUSES[number]) ? rawStatus : "pending";
   const limit = Math.min(parseInt(searchParams.get("limit") || "50", 10), 100);
 
   try {

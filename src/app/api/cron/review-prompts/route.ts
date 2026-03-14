@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   // Verify API key
   const apiKey = request.headers.get("x-api-key");
   const cronApiKey = process.env.CRON_API_KEY;
-  if (cronApiKey && apiKey !== cronApiKey) {
+  if (!cronApiKey || apiKey !== cronApiKey) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

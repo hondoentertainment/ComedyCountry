@@ -69,6 +69,7 @@ export async function createCheckoutSession(params: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: encodeFormData(body),
+    signal: AbortSignal.timeout(15000),
   });
 
   if (!res.ok) {
@@ -91,6 +92,7 @@ export async function createPortalSession(customerId: string, returnUrl: string)
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: new URLSearchParams({ customer: customerId, return_url: returnUrl }),
+    signal: AbortSignal.timeout(15000),
   });
 
   if (!res.ok) {
