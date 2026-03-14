@@ -33,9 +33,12 @@ export function ClipFeed() {
   const [loading, setLoading] = useState(false);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
+  const loadingRef = useRef(false);
+  loadingRef.current = loading;
+
   const fetchClips = useCallback(
     async (pageNum: number, replace = false) => {
-      if (loading) return;
+      if (loadingRef.current) return;
       setLoading(true);
 
       try {
@@ -70,7 +73,7 @@ export function ClipFeed() {
         setLoading(false);
       }
     },
-    [activeTab, loading],
+    [activeTab],
   );
 
   // Reset and fetch on tab change
@@ -79,8 +82,7 @@ export function ClipFeed() {
     setPage(1);
     setHasMore(true);
     fetchClips(1, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
+  }, [activeTab, fetchClips]);
 
   // Infinite scroll observer
   useEffect(() => {

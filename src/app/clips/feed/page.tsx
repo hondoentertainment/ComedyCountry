@@ -70,8 +70,7 @@ export default function ClipFeedPage() {
     setActiveIndex(0);
     setHasMore(true);
     fetchClips(1, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [filter, fetchClips]);
 
   // Snap scroll observer to determine which clip is in view
   useEffect(() => {

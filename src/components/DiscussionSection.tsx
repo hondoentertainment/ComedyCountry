@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 
 type Thread = {
@@ -27,7 +27,7 @@ export function DiscussionSection({ entityType, entityId }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchThreads = async () => {
+  const fetchThreads = useCallback(async () => {
     try {
       const res = await fetch(
         `/api/discussions?entityType=${entityType}&entityId=${entityId}`,
@@ -41,12 +41,11 @@ export function DiscussionSection({ entityType, entityId }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [entityType, entityId]);
 
   useEffect(() => {
     fetchThreads();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entityType, entityId]);
+  }, [fetchThreads]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

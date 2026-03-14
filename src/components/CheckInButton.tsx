@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 type Props = {
   venueId: string;
@@ -12,7 +12,7 @@ export function CheckInButton({ venueId }: Props) {
   const [checkedIn, setCheckedIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCount = async () => {
+  const fetchCount = useCallback(async () => {
     try {
       const res = await fetch(`/api/checkins?venueId=${venueId}`);
       if (res.ok) {
@@ -22,12 +22,11 @@ export function CheckInButton({ venueId }: Props) {
     } catch {
       // Silently fail
     }
-  };
+  }, [venueId]);
 
   useEffect(() => {
     fetchCount();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [venueId]);
+  }, [fetchCount]);
 
   const handleCheckIn = async () => {
     setLoading(true);
