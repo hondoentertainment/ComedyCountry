@@ -44,7 +44,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/punchline_atlas"
 
 ```bash
 npm run db:generate
-npm run db:push
+npm run db:migrate:deploy
 npm run db:seed
 ```
 
@@ -85,7 +85,8 @@ prisma/
 |---------------|--------------------------------|
 | `npm run dev` | Start development server       |
 | `npm run build` | Build for production         |
-| `npm run db:push` | Push schema to database   |
+| `npm run db:push` | Push schema to database (local prototyping only)   |
+| `npm run db:migrate:deploy` | Apply committed migrations |
 | `npm run db:studio` | Open Prisma Studio (GUI) |
 | `npm run db:seed` | Run seed script           |
 | `npm run db:sync-youtube` | Sync YouTube channel stats (requires YOUTUBE_API_KEY) |
@@ -110,7 +111,7 @@ With `DATABASE_URL` in `.env` pointing to your production Postgres:
 npm run db:prod:setup
 ```
 
-Or run separately: `npm run db:push` then `npm run db:seed`.
+Then run `npm run db:seed` only when you explicitly want to seed that environment.
 
 ### 3. Connect to Vercel
 

@@ -40,7 +40,11 @@ jobs:
 
       - run: npx prisma generate
 
-      - run: npx prisma db push
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+      - run: npx prisma migrate deploy
 
       - run: npm run db:seed
 

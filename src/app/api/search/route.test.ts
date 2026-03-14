@@ -7,6 +7,7 @@ vi.mock("@/lib/search", () => ({
 }));
 
 import { search } from "@/lib/search";
+import { resetRateLimitStore } from "@/lib/api";
 
 function createRequest(url: string) {
   return new NextRequest(url);
@@ -14,6 +15,7 @@ function createRequest(url: string) {
 
 describe("GET /api/search", () => {
   beforeEach(() => {
+    resetRateLimitStore();
     vi.mocked(search).mockResolvedValue({
       venues: [],
       comedians: [],
@@ -61,13 +63,13 @@ describe("GET /api/search", () => {
     expect(search).toHaveBeenCalledWith("test", 20);
   });
 
-  it("returns 200 on search error", async () => {
+  it("returns 500 on search error", async () => {
     vi.mocked(search).mockRejectedValue(new Error("DB error"));
     const req = createRequest("http://localhost/api/search?q=test");
     const res = await GET(req);
     const data = await res.json();
 
-    expect(res.status).toBe(200);
-    expect(data.venues).toEqual([]);
+    expect(res.status).toBe(500);
+    expect(data.error).toBe("Search failed");
   });
 });
