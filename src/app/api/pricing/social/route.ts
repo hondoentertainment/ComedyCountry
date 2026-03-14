@@ -1,32 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAuth, badRequest, serverError } from "@/lib/api-utils";
+import { logger } from "@/lib/logger";
 import {
   computeSocialPrice,
   getEventSocialPricing,
 } from "@/lib/social-pricing";
 
-/**
- * Social Signal Pricing API
- *
- * GET ?eventId=xxx — get social-signal pricing for all ticket types
- * GET ?ticketTypeId=xxx — get social-signal pricing for a specific ticket type
- */
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { session, error } = await requireAuth();
+  if (error) return error;
 
   const { searchParams } = new URL(request.url);
   const eventId = searchParams.get("eventId");
   const ticketTypeId = searchParams.get("ticketTypeId");
-  const floor = searchParams.get("floor")
-    ? parseFloat(searchParams.get("floor")!)
-    : undefined;
-  const ceiling = searchParams.get("ceiling")
-    ? parseFloat(searchParams.get("ceiling")!)
-    : undefined;
+  const floor = searchParams.get("floor") ? parseFloat(searchParams.get("floor")!) : undefined;
+  const ceiling = searchParams.get("ceiling") ? parseFloat(searchParams.get("ceiling")!) : undefined;
+
+  if (floor !== undefined && (isNaN(floor) || floor < 0)) return badRequest("floor must be a positive number");
+  if (ceiling !== undefined && (isNaN(ceiling) || ceiling < 0)) return badRequest("ceiling must be a positive number");
 
   try {
     if (ticketTypeId) {
@@ -39,12 +30,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ eventId, ticketTypes: results });
     }
 
-    return NextResponse.json(
-      { error: "eventId or ticketTypeId is required" },
-      { status: 400 }
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to compute pricing";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return badRequest("eventId or ticketTypeId is required");
+  } catch (err) {
+    logger.error("Social pricing failed", {}, err instanceof Error ? err : undefined);
+    return serverError();
   }
 }

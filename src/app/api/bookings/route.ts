@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { z } from "zod/v4";
+import { requireAuth, parseBody, badRequest, serverError } from "@/lib/api-utils";
+import { logger } from "@/lib/logger";
 import {
   createBookingRequest,
   getBookingRequestsForComedian,
@@ -8,10 +9,8 @@ import {
 } from "@/lib/booking";
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { session, error } = await requireAuth();
+  if (error) return error;
 
   const { searchParams } = new URL(request.url);
   const comedianId = searchParams.get("comedianId");
@@ -35,46 +34,44 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(bookings);
     }
 
-    return NextResponse.json(
-      { error: "comedianId or venueId is required" },
-      { status: 400 }
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to get bookings";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return badRequest("comedianId or venueId is required");
+  } catch (err) {
+    logger.error("Failed to get bookings", {}, err instanceof Error ? err : undefined);
+    return serverError();
   }
 }
 
+const createBookingSchema = z.object({
+  venueId: z.string().min(1),
+  comedianId: z.string().min(1),
+  date: z.string().min(1),
+  showType: z.string().optional(),
+  budget: z.number().positive().optional(),
+  message: z.string().max(2000).optional(),
+});
+
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { session, error: authErr } = await requireAuth();
+  if (authErr) return authErr;
+
+  const { data, error: valErr } = await parseBody(request, createBookingSchema);
+  if (valErr) return valErr;
 
   try {
-    const body = await request.json();
-    const { venueId, comedianId, date, showType, budget, message } = body;
-
-    if (!venueId || !comedianId || !date) {
-      return NextResponse.json(
-        { error: "venueId, comedianId, and date are required" },
-        { status: 400 }
-      );
-    }
-
     const booking = await createBookingRequest({
-      venueId,
-      comedianId,
-      requesterId: session.user.id,
-      date: new Date(date),
-      showType,
-      budget,
-      message,
+      venueId: data.venueId,
+      comedianId: data.comedianId,
+      requesterId: session!.user!.id,
+      date: new Date(data.date),
+      showType: data.showType,
+      budget: data.budget,
+      message: data.message,
     });
 
     return NextResponse.json(booking, { status: 201 });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create booking";
-    return NextResponse.json({ error: message }, { status: 400 });
+  } catch (err) {
+    logger.error("Failed to create booking", {}, err instanceof Error ? err : undefined);
+    const message = err instanceof Error ? err.message : "Failed to create booking";
+    return badRequest(message);
   }
 }

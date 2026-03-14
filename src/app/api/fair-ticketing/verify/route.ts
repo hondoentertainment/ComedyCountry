@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   let body: {
     ticketId?: string;
     method?: "EMAIL" | "PHONE" | "ID_SCAN";
-    data?: Record<string, unknown>;
+    data?: Record<string, string | number | boolean>;
   };
   try {
     body = await request.json();
