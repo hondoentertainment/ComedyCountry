@@ -27,7 +27,8 @@ type VenueMapProps = {
 const mapContainerStyle = {
   width: "100%",
   height: "min(500px, 70vh)",
-  minHeight: "320px",
+  minHeight: "280px",
+  maxHeight: "calc(100dvh - 200px)",
 };
 
 const defaultCenter = { lat: 39.8283, lng: -98.5795 }; // USA center
@@ -195,6 +196,7 @@ function VenueMapInner({ venues }: VenueMapProps) {
           streetViewControl: false,
           rotateControl: true,
           fullscreenControl: true,
+          gestureHandling: "cooperative",
         }}
         {...(bounds && {
           onLoad: (map) => {

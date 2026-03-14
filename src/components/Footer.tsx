@@ -16,20 +16,20 @@ export function Footer() {
           <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Legal">
             <Link
               href="/terms"
-              className="text-sm text-zinc-400 hover:text-brand-gold transition-colors"
+              className="text-sm text-zinc-400 hover:text-brand-gold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-surface rounded"
             >
               Terms & Conditions
             </Link>
             <Link
               href="/privacy"
-              className="text-sm text-zinc-400 hover:text-brand-gold transition-colors"
+              className="text-sm text-zinc-400 hover:text-brand-gold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-surface rounded"
             >
               Privacy Policy
             </Link>
             <button
               type="button"
               onClick={openPreferences}
-              className="text-sm text-zinc-400 hover:text-brand-gold transition-colors text-left"
+              className="text-sm text-zinc-400 hover:text-brand-gold transition-colors text-left focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-surface rounded"
             >
               Cookie preferences
             </button>

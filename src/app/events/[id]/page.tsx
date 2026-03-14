@@ -10,6 +10,10 @@ import { SHOW_TYPE_LABELS } from "@/lib/constants";
 import { EventReviewsSection } from "@/components/EventReviewsSection";
 import { EventShareButtons } from "@/components/EventShareButtons";
 import { EventStructuredData } from "@/components/StructuredData";
+import { AttendanceButtons } from "@/components/AttendanceButtons";
+import { CalendarExport } from "@/components/CalendarExport";
+import { TicketButton } from "@/components/TicketButton";
+import WaitlistButton from "@/components/WaitlistButton";
 
 export const dynamic = "force-dynamic";
 
@@ -74,7 +78,7 @@ export default async function EventPage({ params }: PageProps) {
   const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <EventStructuredData event={event} baseUrl={siteUrl} />
       {/* Spotify-style hero with Yelp rating prominence */}
       <div className="relative h-48 sm:h-64 md:h-72 bg-brand-charcoal">
@@ -132,12 +136,23 @@ export default async function EventPage({ params }: PageProps) {
           <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded bg-zinc-700/80 text-zinc-300">
             {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
           </span>
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <EventShareButtons
               title={title}
               url={`${siteUrl}/events/${id}`}
               venueName={event.venue.name}
             />
+            <CalendarExport
+              eventId={id}
+              title={title}
+              date={event.date.toISOString()}
+              venue={event.venue.name}
+              location={`${event.venue.name}, ${event.venue.city}, ${event.venue.state}`}
+            />
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            <AttendanceButtons eventId={id} />
+            <WaitlistButton eventId={id} />
           </div>
           <div className="flex flex-wrap gap-2 mt-4">
             {event.comedians.map((ec) => (
@@ -150,14 +165,13 @@ export default async function EventPage({ params }: PageProps) {
               </Link>
             ))}
             {event.ticketUrl && (
-              <a
-                href={event.ticketUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <TicketButton
+                eventId={id}
+                ticketUrl={event.ticketUrl}
                 className="px-4 py-2 rounded-lg bg-brand-gold text-brand-dark text-sm font-semibold hover:bg-brand-gold/90 ml-2"
               >
                 Get tickets
-              </a>
+              </TicketButton>
             )}
           </div>
         </div>
@@ -177,6 +191,6 @@ export default async function EventPage({ params }: PageProps) {
           isSignedIn={!!session?.user}
         />
       </div>
-    </main>
+    </div>
   );
 }

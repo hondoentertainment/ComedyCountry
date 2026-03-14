@@ -968,28 +968,24 @@ Sign In (OAuth/Credentials) → Follow comedians/venues → Rate events → View
 | v0.3 | User auth, follows, profile, reviews, badges, tier ratings | ✅ |
 | v0.4 | Privacy (export, delete, GDPR API), Terms, Privacy, cookie consent | ✅ |
 
-### Planned
+| v0.5 | Admin/CMS, content management, claims, image upload | ✅ |
+| v0.6 | Notifications (in-app, email digest, push), activity feed | ✅ |
+| v0.7 | Social features (lists, RSVP, waitlist, group planning, user follows) | ✅ |
+| v0.8 | Monetization (Stripe subscriptions, promoted listings, ticket affiliates, ads) | ✅ |
+| v0.9 | Discovery (trending, specials, podcasts, festivals, open mics, compare, scenes, wrapped) | ✅ |
+| v1.0 | Creator tools (comedian/venue dashboards, analytics, verification), PWA, SEO, embed API | ✅ |
 
-| Version | Scope | Status |
-|---------|-------|--------|
-| v0.5 | Admin/CMS for content management (CRUD for venues, comedians, events, photo upload) | 📋 Planned |
-| v0.6 | Notifications & feed (in-app feed, email notifications, user preferences) | 📋 Planned |
-| v1.0 | Polish (PWA offline, performance audit, sitemap/robots.txt, accessibility audit, expanded E2E) | 📋 Planned |
+### Next Phases
 
-### Future Considerations
+See [docs/FEATURE-ROADMAP.md](./FEATURE-ROADMAP.md) for detailed competitive analysis and feature specifications.
 
-| Feature | Notes |
-|---------|-------|
-| Full-text search upgrade | pg_trgm, Algolia, or Meilisearch |
-| Media storage | S3/Vercel Blob for admin photo uploads |
-| Real-time updates | Pusher/Ably for live event updates |
-| Caching layer | Redis for sessions/heavy queries |
-| Push notifications | PWA push for followed comedian events |
-| Email digest | Daily/weekly digest of new events from follows |
-| Health endpoint | `/api/health` for monitoring |
-| Structured logging | Pino for production observability |
-| Error tracking | Sentry integration |
-| Analytics | Vercel Analytics or custom metrics |
+| Version | Theme | Key Deliverables |
+|---------|-------|-----------------|
+| v1.1 | Native Ticketing & Commerce | Stripe-powered checkout, QR mobile tickets, inventory management, dynamic pricing, season passes |
+| v1.2 | AI-Powered Discovery & Social Graph | Taste profiles, ML recommendations, location-radius alerts, "friends going" social proof, calendar sync |
+| v1.3 | Creator Economy & Direct-to-Fan | Exclusive content, in-app video, fan tipping, merch storefronts, booking requests, press kits |
+| v1.4 | Community & Live Experience | Discussion threads, venue check-ins, user-generated clips, live show chat, fan groups, expanded achievements |
+| v2.0 | Marketplace & Industry Platform | Talent marketplace, venue CRM, industry analytics, multi-venue management, agent portal, API ecosystem |
 
 ---
 

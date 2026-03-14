@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useId } from "react";
 import type { ComedianBadge } from "@/lib/badges";
 
 type ComedianBadgesProps = {
@@ -15,6 +16,7 @@ function BadgePill({
   label: string;
   variant: "firstTime" | "multiRound";
 }) {
+  const descId = useId();
   const styles =
     variant === "firstTime"
       ? "bg-brand-gold/20 text-brand-gold border-brand-gold/40"
@@ -23,7 +25,6 @@ function BadgePill({
     variant === "firstTime"
       ? "First time: seen once"
       : "Multiple rounds: seen in 2+ shows";
-  const descId = `badge-desc-${variant}`;
   return (
     <span
       className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${styles}`}
@@ -52,6 +53,7 @@ export function ComedianBadges({ badges, compact = false }: ComedianBadgesProps)
         {badges.map((b) => (
           <div key={b.comedianId} className="flex items-center gap-2">
             <BadgePill
+              id={`${b.comedianId}-${b.roundCount >= 2 ? "multi" : "first"}`}
               label={b.roundCount === 1 ? "First time" : `${b.roundCount} rounds`}
               variant={b.roundCount >= 2 ? "multiRound" : "firstTime"}
             />

@@ -117,7 +117,8 @@ export function CookieBanner() {
             >
               Privacy Policy
             </Link>
-            .{" "}
+            {" "}
+            or{" "}
             <button
               type="button"
               onClick={openPreferences}

@@ -77,7 +77,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
     new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         {dataUnavailable && (
           <div className="mb-6 p-4 rounded-card bg-amber-500/10 border border-amber-500/40 text-amber-200 text-center">
@@ -243,6 +243,6 @@ export default async function SchedulePage({ searchParams }: PageProps) {
           searchParams={{ from: from ?? fromDate.toISOString().slice(0, 10), city, state }}
         />
       </div>
-    </main>
+    </div>
   );
 }

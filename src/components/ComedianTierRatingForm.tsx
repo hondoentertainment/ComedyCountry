@@ -1,9 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "./Toast";
 
 const TIERS = ["S", "A", "B", "C", "D", "F"] as const;
+const TIER_BY_KEY: Record<string, string> = {
+  "1": "S",
+  "2": "A",
+  "3": "B",
+  "4": "C",
+  "5": "D",
+  "6": "F",
+};
 
 const TIER_COLORS: Record<string, string> = {
   S: "bg-amber-500/20 text-amber-400 border-amber-500/50 hover:bg-amber-500/30",
@@ -37,11 +45,14 @@ export function ComedianTierRatingForm({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const tierGroupRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setTier(initialTier ?? null);
   }, [initialTier]);
 
-  const handleSelect = async (selectedTier: string) => {
+  const handleSelect = useCallback(
+    async (selectedTier: string) => {
     setLoading(true);
     setSuccess(false);
     setError(null);
@@ -73,7 +84,26 @@ export function ComedianTierRatingForm({
     } finally {
       setLoading(false);
     }
-  };
+  },
+  [comedianId, comedianSlug, comedianName, signInUrl, onSuccess, toast]
+  );
+
+  useEffect(() => {
+    const el = tierGroupRef.current;
+    if (!el) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const active = document.activeElement as HTMLElement | null;
+      if (active?.tagName === "INPUT" || active?.tagName === "TEXTAREA") return;
+      const selected = TIER_BY_KEY[e.key];
+      if (selected && active && el.contains(active)) {
+        e.preventDefault();
+        handleSelect(selected);
+      }
+    };
+    el.addEventListener("keydown", handleKeyDown);
+    return () => el.removeEventListener("keydown", handleKeyDown);
+  }, [handleSelect]);
 
   const handleRemove = async () => {
     setLoading(true);
@@ -113,9 +143,11 @@ export function ComedianTierRatingForm({
         Rate {comedianName} by tier. S is the highest, F is the lowest.
       </p>
       <div
-        className="flex flex-wrap gap-2"
+        ref={tierGroupRef}
+        className="flex flex-wrap gap-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark focus-within:ring-2 focus-within:ring-brand-gold focus-within:ring-offset-2 focus-within:ring-offset-brand-dark"
         role="group"
-        aria-label="Select tier rating"
+        aria-label="Select tier rating (1=S, 2=A, 3=B, 4=C, 5=D, 6=F)"
+        tabIndex={0}
       >
         {TIERS.map((t) => (
           <button

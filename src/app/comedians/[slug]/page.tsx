@@ -10,6 +10,8 @@ import { formatEventPrice } from "@/lib/format";
 import { FollowButton } from "@/components/FollowButton";
 import { ComedianPageTabs } from "@/components/ComedianPageTabs";
 import { ComedianStructuredData } from "@/components/StructuredData";
+import { SimilarComedians } from "@/components/SimilarComedians";
+import { SpecialRating } from "@/components/SpecialRating";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -22,9 +24,9 @@ export async function generateMetadata({ params }: PageProps) {
   const description = comedian.bio
     ? `${comedian.bio.slice(0, 155)}${comedian.bio.length > 155 ? "…" : ""}`
     : `Comedian profile and upcoming shows for ${comedian.name}.`;
-  const images = comedian.headshotUrl
-    ? [{ url: comedian.headshotUrl, width: 400, height: 400, alt: `${comedian.name} headshot` }]
-    : undefined;
+  const ogImageUrl = comedian.headshotUrl
+    || `${siteUrl}/api/og?title=${encodeURIComponent(comedian.name)}&subtitle=${encodeURIComponent(description.slice(0, 80))}&type=comedian`;
+  const images = [{ url: ogImageUrl, width: comedian.headshotUrl ? 400 : 1200, height: comedian.headshotUrl ? 400 : 630, alt: `${comedian.name}` }];
   return {
     title: `${comedian.name} | Punchline Atlas`,
     description,
@@ -35,10 +37,10 @@ export async function generateMetadata({ params }: PageProps) {
       images,
     },
     twitter: {
-      card: images ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: `${comedian.name} | Punchline Atlas`,
       description,
-      images: comedian.headshotUrl ? [comedian.headshotUrl] : undefined,
+      images: [ogImageUrl],
     },
   };
 }
@@ -95,7 +97,7 @@ export default async function ComedianPage({ params }: PageProps) {
   const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <ComedianStructuredData
         comedian={{
           id: comedian.id,
@@ -126,6 +128,7 @@ export default async function ComedianPage({ params }: PageProps) {
               alt={`Headshot of ${comedian.name}`}
               width={128}
               height={128}
+              priority
               className="w-32 h-32 rounded-lg object-cover shrink-0"
             />
           ) : (
@@ -271,7 +274,7 @@ export default async function ComedianPage({ params }: PageProps) {
             </h2>
             <ul className="space-y-2">
               {comedian.specialReleases.map((special) => (
-                <li key={special.id} className="flex gap-2 items-center">
+                <li key={special.id} className="flex flex-wrap gap-2 items-center">
                   <span className="text-white font-medium">{special.title}</span>
                   {special.releaseYear && (
                     <span className="text-zinc-500 text-sm">
@@ -293,6 +296,7 @@ export default async function ComedianPage({ params }: PageProps) {
                       Watch
                     </a>
                   )}
+                  <SpecialRating specialId={special.id} />
                 </li>
               ))}
             </ul>
@@ -356,7 +360,11 @@ export default async function ComedianPage({ params }: PageProps) {
             </>
           }
         />
+
+        <div className="mt-10">
+          <SimilarComedians comedianId={comedian.id} />
+        </div>
       </div>
-    </main>
+    </div>
   );
 }

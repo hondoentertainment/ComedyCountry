@@ -46,7 +46,7 @@ function HomeSectionsFallback() {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="bg-gradient-to-b from-brand-charcoal/80 to-transparent">
         <div className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2">
@@ -93,6 +93,6 @@ export default function HomePage() {
       <Suspense fallback={<HomeSectionsFallback />}>
         <HomeSections />
       </Suspense>
-    </main>
+    </div>
   );
 }

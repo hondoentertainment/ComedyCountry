@@ -167,7 +167,7 @@ export function SearchBar() {
         role="status"
       >
         {open && !loading && hasResults && `${optionCount} result${optionCount === 1 ? "" : "s"} available. Use arrow keys to navigate.`}
-        {open && !loading && isEmpty && !error && `No results for ${query}.`}
+        {open && !loading && isEmpty && !error && `No results found for "${query}".`}
       </div>
       <input
         id="site-search"
@@ -219,7 +219,7 @@ export function SearchBar() {
                             href={`/comedians/${c.slug}`}
                             onClick={() => setOpen(false)}
                             onMouseEnter={() => setActiveIndex(idx)}
-                            className={`flex items-center gap-3 px-4 py-2 hover:bg-zinc-800 ${isActive ? "bg-zinc-800" : ""}`}
+                            className={`flex items-center gap-3 px-4 py-2 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-inset ${isActive ? "bg-zinc-800" : ""}`}
                             role="option"
                             aria-selected={isActive}
                           >
@@ -260,7 +260,7 @@ export function SearchBar() {
                             href={`/venues/${v.id}`}
                             onClick={() => setOpen(false)}
                             onMouseEnter={() => setActiveIndex(idx)}
-                            className={`block px-4 py-2 hover:bg-zinc-800 text-white font-medium ${isActive ? "bg-zinc-800" : ""}`}
+                            className={`block px-4 py-2 hover:bg-zinc-800 text-white font-medium focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-inset ${isActive ? "bg-zinc-800" : ""}`}
                             role="option"
                             aria-selected={isActive}
                           >
@@ -289,7 +289,7 @@ export function SearchBar() {
                             href={`/events/${e.id}`}
                             onClick={() => setOpen(false)}
                             onMouseEnter={() => setActiveIndex(idx)}
-                            className={`block px-4 py-2 hover:bg-zinc-800 ${isActive ? "bg-zinc-800" : ""}`}
+                            className={`block px-4 py-2 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-inset ${isActive ? "bg-zinc-800" : ""}`}
                             role="option"
                             aria-selected={isActive}
                           >
@@ -311,7 +311,7 @@ export function SearchBar() {
                 href={`/search?q=${encodeURIComponent(query)}`}
                 onClick={() => setOpen(false)}
                 onMouseEnter={() => setActiveIndex(optionCount - 1)}
-                className={`block px-4 py-2 text-brand-gold hover:bg-zinc-800 text-sm font-medium ${optionCount - 1 === activeIndex ? "bg-zinc-800" : ""}`}
+                className={`block px-4 py-2 text-brand-gold hover:bg-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-inset ${optionCount - 1 === activeIndex ? "bg-zinc-800" : ""}`}
                 role="option"
                 aria-selected={optionCount - 1 === activeIndex}
               >
@@ -336,7 +336,7 @@ export function SearchBar() {
                   setError(false);
                   setRetryTrigger((t) => t + 1);
                 }}
-                className="px-3 py-1.5 rounded bg-brand-gold/20 text-brand-gold hover:bg-brand-gold/30 text-sm font-medium"
+                className="px-3 py-1.5 rounded bg-brand-gold/20 text-brand-gold hover:bg-brand-gold/30 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-surface"
               >
                 Retry
               </button>

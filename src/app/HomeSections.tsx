@@ -7,6 +7,7 @@ import { getEventRatingStatsBatch } from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
 import { authOptions } from "@/lib/auth";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
+import { PromotedContent } from "@/components/PromotedContent";
 
 function StarRating({ rating, count }: { rating: number | null; count: number }) {
   if (count === 0) return <span className="text-zinc-500 text-sm">No reviews yet</span>;
@@ -17,6 +18,26 @@ function StarRating({ rating, count }: { rating: number | null; count: number })
   );
 }
 
+const DISCOVER_LINKS = [
+  { href: "/trending", label: "Trending", icon: "🔥", description: "What's hot right now" },
+  { href: "/comedians", label: "Comedians", icon: "🎤", description: "Browse 1,800+ comedians" },
+  { href: "/venues", label: "Venues", icon: "🏛️", description: "Clubs & theaters nationwide" },
+  { href: "/open-mics", label: "Open Mics", icon: "🎙️", description: "Find your local open mic" },
+  { href: "/festivals", label: "Festivals", icon: "🎪", description: "Comedy festivals coast to coast" },
+  { href: "/specials", label: "Specials", icon: "📺", description: "Rate and discover specials" },
+];
+
+const FEATURED_SCENES = [
+  { city: "new-york", label: "New York", state: "NY" },
+  { city: "los-angeles", label: "Los Angeles", state: "CA" },
+  { city: "chicago", label: "Chicago", state: "IL" },
+  { city: "austin", label: "Austin", state: "TX" },
+  { city: "nashville", label: "Nashville", state: "TN" },
+  { city: "atlanta", label: "Atlanta", state: "GA" },
+  { city: "seattle", label: "Seattle", state: "WA" },
+  { city: "minneapolis", label: "Minneapolis", state: "MN" },
+];
+
 export async function HomeSections() {
   const session = await getServerSession(authOptions);
   let venues: Awaited<ReturnType<typeof listVenues>>["venues"] = [];
@@ -24,6 +45,7 @@ export async function HomeSections() {
   let forYouEvents: Awaited<ReturnType<typeof getEventsForUser>>["events"] = [];
   let ratingStats = new Map<string, { count: number; avgRating: number | null }>();
   let dataUnavailable = false;
+  let dbAvailable = false;
 
   try {
     const [v, e, forYou] = await Promise.all([
@@ -34,6 +56,7 @@ export async function HomeSections() {
     venues = v.venues;
     events = e.events;
     forYouEvents = forYou.events;
+    dbAvailable = true;
     if (events.length > 0 || forYouEvents.length > 0) {
       const allIds = [...events.map((x) => x.id), ...forYouEvents.map((x) => x.id)];
       ratingStats = await getEventRatingStatsBatch(Array.from(new Set(allIds)));
@@ -52,6 +75,27 @@ export async function HomeSections() {
           Data temporarily unavailable. Please try again later.
         </div>
       )}
+
+      {/* Discover section — always visible */}
+      <section className="mb-14">
+        <h2 className="text-2xl font-bold text-white mb-2">Discover</h2>
+        <p className="text-zinc-400 text-sm mb-6">Explore everything comedy has to offer.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {DISCOVER_LINKS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="card-interactive p-4 text-center group block"
+            >
+              <span className="text-3xl block mb-2">{item.icon}</span>
+              <h3 className="font-semibold text-white text-sm">{item.label}</h3>
+              <p className="text-zinc-500 text-xs mt-1">{item.description}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Made for you — signed-in users only */}
       {session?.user && (
         <section className="mb-14">
           <h2 className="text-2xl font-bold text-white mb-6">Made for you</h2>
@@ -140,6 +184,7 @@ export async function HomeSections() {
         </section>
       )}
 
+      {/* Upcoming shows */}
       <section className="mb-14">
         <h2 className="text-2xl font-bold text-white mb-6">Upcoming shows</h2>
         <p className="text-zinc-400 text-sm mb-6">Top picks from the national calendar.</p>
@@ -187,19 +232,48 @@ export async function HomeSections() {
             })}
           </div>
         ) : (
-          <div className="py-16 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400 mb-1">No upcoming shows in our database yet.</p>
-            <p className="text-zinc-500 text-sm mb-3">We&apos;re adding shows every day—check back soon!</p>
-            <Link href="/schedule" className="inline-block text-brand-gold hover:underline font-medium">
-              View schedule →
-            </Link>
+          <div className="py-10 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
+            <p className="text-zinc-400 mb-1">No upcoming shows yet.</p>
+            <p className="text-zinc-500 text-sm mb-3">Browse comedians and venues to find shows near you.</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/comedians" className="inline-block text-brand-gold hover:underline font-medium">
+                Browse comedians →
+              </Link>
+              <Link href="/schedule" className="inline-block text-brand-gold hover:underline font-medium">
+                View schedule →
+              </Link>
+            </div>
           </div>
         )}
-        <Link href="/schedule" className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium">
-          View full schedule →
-        </Link>
+        {events.length > 0 && (
+          <Link href="/schedule" className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium">
+            View full schedule →
+          </Link>
+        )}
       </section>
 
+      {/* Promoted Events */}
+      {dbAvailable && <PromotedContent type="EVENT_FEATURED" className="mb-6 space-y-3" />}
+
+      {/* Comedy Scenes — always visible */}
+      <section className="mb-14">
+        <h2 className="text-2xl font-bold text-white mb-2">Comedy scenes</h2>
+        <p className="text-zinc-400 text-sm mb-6">Explore the best comedy cities in America.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {FEATURED_SCENES.map((scene) => (
+            <Link
+              key={scene.city}
+              href={`/scenes/${scene.city}`}
+              className="card-interactive p-5 text-center group block"
+            >
+              <h3 className="font-semibold text-white">{scene.label}</h3>
+              <p className="text-zinc-500 text-xs mt-1">{scene.state}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Explore venues */}
       <section>
         <h2 className="text-2xl font-bold text-white mb-6">Explore venues</h2>
         <p className="text-zinc-400 text-sm mb-6">
@@ -247,17 +321,19 @@ export async function HomeSections() {
             })}
           </div>
         ) : (
-          <div className="py-16 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400 mb-1">No venues in our database yet.</p>
-            <p className="text-zinc-500 text-sm mb-3">We&apos;re growing our catalog—come back soon.</p>
+          <div className="py-10 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
+            <p className="text-zinc-400 mb-1">No venues loaded yet.</p>
+            <p className="text-zinc-500 text-sm mb-3">Check out comedy scenes by city or browse all venues.</p>
             <Link href="/venues" className="inline-block text-brand-gold hover:underline font-medium">
               Browse venues →
             </Link>
           </div>
         )}
-        <Link href="/venues" className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium">
-          View all venues →
-        </Link>
+        {venues.length > 0 && (
+          <Link href="/venues" className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium">
+            View all venues →
+          </Link>
+        )}
       </section>
     </div>
   );

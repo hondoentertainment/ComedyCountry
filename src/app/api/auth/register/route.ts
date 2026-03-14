@@ -1,14 +1,19 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 import { applyRateLimit, getClientAddress, jsonError, jsonResponse, logError } from "@/lib/api";
 
 const MIN_USERNAME_LEN = 3;
 const MAX_USERNAME_LEN = 32;
 const MIN_PASSWORD_LEN = 8;
-const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
+const USERNAME_REGEX = /^[a-zA-Z0-9._-]+$/;
 
 export async function POST(request: Request) {
+  const rl = checkRateLimit(`register:${getRateLimitKey(request)}`, { limit: 5, windowSeconds: 300 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Too many registration attempts. Try again later." }, { status: 429 });
+  }
   const rateLimit = applyRateLimit(request, getClientAddress(request), {
     prefix: "auth-register",
     limit: 10,
@@ -34,7 +39,7 @@ export async function POST(request: Request) {
       return jsonError(
         request,
         400,
-        "Username can only contain letters, numbers, underscores, and hyphens"
+        "Username can only contain letters, numbers, periods, underscores, and hyphens"
       );
     }
     if (password.length < MIN_PASSWORD_LEN) {

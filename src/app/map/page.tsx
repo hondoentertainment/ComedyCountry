@@ -1,7 +1,10 @@
-import dynamic from "next/dynamic";
-import { listVenuesWithCoordinates } from "@/lib/venues";
+import nextDynamic from "next/dynamic";
+import {
+  listVenuesWithCoordinates,
+  getVenueStatesWithCoordinates,
+} from "@/lib/venues";
 
-const MapPageContent = dynamic(
+const MapPageContent = nextDynamic(
   () =>
     import("@/components/MapPageContent").then((m) => ({
       default: m.MapPageContent,
@@ -16,13 +19,24 @@ const MapPageContent = dynamic(
   }
 );
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
-export default async function MapPage() {
+type PageProps = {
+  searchParams: Promise<{ state?: string; city?: string; q?: string }>;
+};
+
+export default async function MapPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const { state, city, q: search } = params;
+
   let venues: Awaited<ReturnType<typeof listVenuesWithCoordinates>> = [];
+  let states: Awaited<ReturnType<typeof getVenueStatesWithCoordinates>> = [];
 
   try {
-    venues = await listVenuesWithCoordinates();
+    [venues, states] = await Promise.all([
+      listVenuesWithCoordinates({ state, city, search }),
+      getVenueStatesWithCoordinates(),
+    ]);
   } catch {
     // DB not configured
   }
@@ -38,14 +52,20 @@ export default async function MapPage() {
   }));
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-2">Map</h1>
         <p className="text-zinc-400 mb-8">
           Browse comedy venues across the country. Click a marker for details.
         </p>
-        <MapPageContent venues={venuesForMap} />
+        <MapPageContent
+          venues={venuesForMap}
+          states={states.map((s) => s.state)}
+          initialState={state ?? ""}
+          initialCity={city ?? ""}
+          initialSearch={search ?? ""}
+        />
       </div>
-    </main>
+    </div>
   );
 }

@@ -1,0 +1,7105 @@
+[
+  {
+    "name": "Karlous Miller",
+    "bio": "Atlanta comedian and Wild 'N Out cast member, co-host of the 85 South Show podcast.",
+    "instagram": "karlousm",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "crowd-work",
+      "roast",
+      "improv"
+    ],
+    "slug": "karlous-miller"
+  },
+  {
+    "name": "Kevin McCaffrey",
+    "bio": "NYC comedian who appeared on AXS TV's Gotham Comedy Live and tours nationally.",
+    "instagram": "kevinmccaffrey",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kevin-mccaffrey"
+  },
+  {
+    "name": "Kevin Meaney",
+    "bio": "Late legendary comedian known for his catchphrase 'That's not right!' in the 1980s-90s.",
+    "instagram": null,
+    "touringStatus": "RETIRED",
+    "yearsActiveFrom": 1980,
+    "genres": [
+      "physical",
+      "character"
+    ],
+    "slug": "kevin-meaney"
+  },
+  {
+    "name": "Kirk McHenry",
+    "bio": "San Francisco comedy veteran and club headliner for over two decades.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1998,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "kirk-mchenry"
+  },
+  {
+    "name": "Kelly MacFarland",
+    "bio": "Boston comedian and two-time Boston Comedy Festival winner.",
+    "instagram": "kellymacfarland",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2002,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kelly-macfarland"
+  },
+  {
+    "name": "Kenice Mobley",
+    "bio": "NYC comedian who performed at Just For Laughs and on The Late Show.",
+    "instagram": "kenicemobley",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "kenice-mobley"
+  },
+  {
+    "name": "Kostya Kimlat",
+    "bio": "Ukrainian-born Orlando comedian-magician combining magic and comedy.",
+    "instagram": "kostyakimlat",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2003,
+    "genres": [
+      "clean",
+      "physical"
+    ],
+    "slug": "kostya-kimlat"
+  },
+  {
+    "name": "Kristi McHugh",
+    "bio": "LA comedian and actress who appeared on Conan and at the Improv.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2009,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kristi-mchugh"
+  },
+  {
+    "name": "Lace Larrabee",
+    "bio": "Comedian and viral social media star known for her Southern mom character.",
+    "instagram": "laboroflace",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "character",
+      "storyteller",
+      "clean"
+    ],
+    "slug": "lace-larrabee"
+  },
+  {
+    "name": "Larry Miller",
+    "bio": "Veteran character actor-comedian known for his five levels of drinking routine.",
+    "instagram": null,
+    "touringStatus": "RETIRED",
+    "yearsActiveFrom": 1978,
+    "genres": [
+      "observational",
+      "storyteller",
+      "character"
+    ],
+    "slug": "larry-miller"
+  },
+  {
+    "name": "Larry Owens",
+    "bio": "NYC comedian, singer, and former SNL cast member known for musical comedy.",
+    "instagram": "larryowenslive",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "musical",
+      "character",
+      "improv"
+    ],
+    "slug": "larry-owens"
+  },
+  {
+    "name": "Laura Kightlinger",
+    "bio": "Comedian and actress who had an HBO half-hour special and wrote for Will & Grace.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1988,
+    "genres": [
+      "deadpan",
+      "dark",
+      "confessional"
+    ],
+    "slug": "laura-kightlinger"
+  },
+  {
+    "name": "Laurie Kilmartin",
+    "bio": "Veteran comedian and Conan staff writer known for dark comedy about grief.",
+    "instagram": "lauriekilmartin",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1987,
+    "genres": [
+      "dark",
+      "confessional",
+      "observational"
+    ],
+    "slug": "laurie-kilmartin"
+  },
+  {
+    "name": "Leighann Lord",
+    "bio": "NYC comedian and former Star Talk podcast host performing for over 25 years.",
+    "instagram": "leighannlord",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1992,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "leighann-lord"
+  },
+  {
+    "name": "Lisa Lampanelli",
+    "bio": "Former Queen of Mean and Comedy Central roast staple who retired from stand-up.",
+    "instagram": null,
+    "touringStatus": "RETIRED",
+    "yearsActiveFrom": 1990,
+    "genres": [
+      "roast",
+      "blue"
+    ],
+    "slug": "lisa-lampanelli"
+  },
+  {
+    "name": "Loni Love",
+    "bio": "Comedian and co-host of The Real who won the 2003 Star Search comedy competition.",
+    "instagram": "lonilove",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "loni-love"
+  },
+  {
+    "name": "Loyiso Madinga",
+    "bio": "South African comedian who headlines clubs in Johannesburg and Cape Town.",
+    "instagram": "loyisomadinga",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2011,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "loyiso-madinga"
+  },
+  {
+    "name": "Luenell",
+    "bio": "Veteran comedian and Borat actress touring nationally with raunchy stand-up.",
+    "instagram": "luenell",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1990,
+    "genres": [
+      "blue",
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "luenell"
+  },
+  {
+    "name": "Luke Mones",
+    "bio": "NYC comedian known for crowd work at New York Comedy Club.",
+    "instagram": "lukemones",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "crowd-work",
+      "observational"
+    ],
+    "slug": "luke-mones"
+  },
+  {
+    "name": "Lynne Koplitz",
+    "bio": "NYC comedian with Netflix special Hormonal Beast, headliner at Gotham Comedy Club.",
+    "instagram": "lynnekoplitz",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1995,
+    "genres": [
+      "confessional",
+      "blue",
+      "observational"
+    ],
+    "slug": "lynne-koplitz"
+  },
+  {
+    "name": "Lamont Price",
+    "bio": "DC-area comedian at the DC Improv who headlines East Coast clubs.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2006,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "lamont-price"
+  },
+  {
+    "name": "Luz Pazos",
+    "bio": "Ecuadorian-American NYC comedian who performs in English and Spanish.",
+    "instagram": "luzpazos",
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "luz-pazos"
+  },
+  {
+    "name": "Liam McEneaney",
+    "bio": "NYC comedian who created the Tell Your Friends comedy show in Brooklyn.",
+    "instagram": "liammceneaney",
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2002,
+    "genres": [
+      "observational",
+      "alternative"
+    ],
+    "slug": "liam-mceneaney"
+  },
+  {
+    "name": "Laura Peek",
+    "bio": "Dallas comedian who tours Texas clubs, featured at the Moontower Comedy Festival.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "laura-peek"
+  },
+  {
+    "name": "Lewis J. Lennox",
+    "bio": "British comedian on the UK club circuit known for sharp one-liners.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "one-liner",
+      "observational"
+    ],
+    "slug": "lewis-j-lennox"
+  },
+  {
+    "name": "Lauren Pattison",
+    "bio": "British comedian from Newcastle who performs at Edinburgh Fringe and tours UK clubs.",
+    "instagram": "laurenpattison",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "confessional",
+      "observational"
+    ],
+    "slug": "lauren-pattison"
+  },
+  {
+    "name": "Matt Kirshen",
+    "bio": "British comedian in LA who appeared on Last Comic Standing.",
+    "instagram": "mattkirshen",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2001,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "matt-kirshen"
+  },
+  {
+    "name": "Michael Loftus",
+    "bio": "Comedian, writer, and producer who tours nationally with clean comedy.",
+    "instagram": "themichaelloftus",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1995,
+    "genres": [
+      "clean",
+      "political"
+    ],
+    "slug": "michael-loftus"
+  },
+  {
+    "name": "Michael Palascak",
+    "bio": "Indiana-raised comedian who appeared on The Late Late Show, Conan, and The Tonight Show.",
+    "instagram": "michaelpalascak",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "michael-palascak"
+  },
+  {
+    "name": "Mike Lawrence",
+    "bio": "NYC comedian known for nerdy comedy and his Comedy Central half-hour.",
+    "instagram": "themikelawrence",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2006,
+    "genres": [
+      "observational",
+      "alternative"
+    ],
+    "slug": "mike-lawrence"
+  },
+  {
+    "name": "Monique Marvez",
+    "bio": "Cuban-American comedian and SiriusXM host who headlines clubs nationally.",
+    "instagram": "moniquemarvez",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1993,
+    "genres": [
+      "observational",
+      "confessional",
+      "blue"
+    ],
+    "slug": "monique-marvez"
+  },
+  {
+    "name": "Mary Mack",
+    "bio": "Minnesota comedian with unique high-pitched delivery who appeared on Conan and Comedy Central.",
+    "instagram": "marymackcomedy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "clean",
+      "observational",
+      "absurdist"
+    ],
+    "slug": "mary-mack"
+  },
+  {
+    "name": "Matt Kazam",
+    "bio": "LA comedian and magician combining close-up magic with stand-up.",
+    "instagram": "mattkazam",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "clean",
+      "physical"
+    ],
+    "slug": "matt-kazam"
+  },
+  {
+    "name": "Mark Little",
+    "bio": "Canadian comedian from Picnicface who appeared on Just For Laughs.",
+    "instagram": "marklittlecomedy",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2007,
+    "genres": [
+      "absurdist",
+      "sketch"
+    ],
+    "slug": "mark-little"
+  },
+  {
+    "name": "Martha Kelly",
+    "bio": "Austin comedian and actress known for her role on Baskets and understated deadpan style.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "deadpan",
+      "alternative"
+    ],
+    "slug": "martha-kelly"
+  },
+  {
+    "name": "Michael Longfellow",
+    "bio": "Comedian and SNL cast member from Arizona known for deadpan delivery.",
+    "instagram": "michaellongfellow",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "deadpan",
+      "observational"
+    ],
+    "slug": "michael-longfellow"
+  },
+  {
+    "name": "Mick Maynard",
+    "bio": "Texas comedian who tours clubs across the South.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mick-maynard"
+  },
+  {
+    "name": "Mike Masilotti",
+    "bio": "LA comedian at the Comedy Store and comedy podcasts.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "mike-masilotti"
+  },
+  {
+    "name": "Maz Maddox",
+    "bio": "Southern comedian who tours with storytelling about rural life.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "storyteller",
+      "observational"
+    ],
+    "slug": "maz-maddox"
+  },
+  {
+    "name": "Madeline Kovarik",
+    "bio": "NYC comedian at clubs in Manhattan and Brooklyn.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "madeline-kovarik"
+  },
+  {
+    "name": "Matteo Lugo",
+    "bio": "NYC comedian known for bilingual comedy at Manhattan clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "matteo-lugo"
+  },
+  {
+    "name": "Natalie Palamides",
+    "bio": "Physical comedian who won the Edinburgh Comedy Award for Best Newcomer, Netflix special NATE.",
+    "instagram": "nataliepalamides",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "physical",
+      "character",
+      "absurdist"
+    ],
+    "slug": "natalie-palamides"
+  },
+  {
+    "name": "Nicky Paris",
+    "bio": "NYC comedian featured on Gotham Comedy Live at Broadway Comedy Club.",
+    "instagram": "nickyparis",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "nicky-paris"
+  },
+  {
+    "name": "Nadia Kamil",
+    "bio": "British-Iraqi comedian at Edinburgh Fringe with smart feminist comedy.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2009,
+    "genres": [
+      "political",
+      "alternative"
+    ],
+    "slug": "nadia-kamil"
+  },
+  {
+    "name": "Nasim Pedrad",
+    "bio": "Iranian-American comedian and former SNL cast member who performs stand-up at festivals.",
+    "instagram": "nasimpedrad",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2006,
+    "genres": [
+      "character",
+      "improv",
+      "observational"
+    ],
+    "slug": "nasim-pedrad"
+  },
+  {
+    "name": "Naomi Karavani",
+    "bio": "NYC comedian and journalist blending political commentary with stand-up.",
+    "instagram": "naomikaravani",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "political",
+      "satirical"
+    ],
+    "slug": "naomi-karavani"
+  },
+  {
+    "name": "Nigel Ng",
+    "bio": "Malaysian comedian in the UK known as Uncle Roger whose viral videos made him an international touring act.",
+    "instagram": "mrnigelng",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "character",
+      "observational"
+    ],
+    "slug": "nigel-ng"
+  },
+  {
+    "name": "Nelson Menacho",
+    "bio": "Bolivian-American NYC comedian performing in English and Spanish.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "nelson-menacho"
+  },
+  {
+    "name": "Nish Patel",
+    "bio": "NYC comedian at clubs throughout Manhattan and Brooklyn.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nish-patel"
+  },
+  {
+    "name": "Oscar Nunez",
+    "bio": "Cuban-American actor and comedian known for The Office who also performs stand-up.",
+    "instagram": "oscarnunez",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "character",
+      "observational"
+    ],
+    "slug": "oscar-nunez"
+  },
+  {
+    "name": "Pat McGann",
+    "bio": "Chicago comedian who went viral with dry parenting humor, appeared on The Tonight Show.",
+    "instagram": "patmcganncomedy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "clean",
+      "deadpan"
+    ],
+    "slug": "pat-mcgann"
+  },
+  {
+    "name": "Paul Mecurio",
+    "bio": "Former Wall Street attorney turned comedian, Emmy winner for writing on The Daily Show.",
+    "instagram": "paulmecurio",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1995,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "paul-mecurio"
+  },
+  {
+    "name": "Phil Kopczynski",
+    "bio": "Pacific Northwest comedian who won the Seattle International Comedy Competition.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "clean"
+    ],
+    "slug": "phil-kopczynski"
+  },
+  {
+    "name": "Petrina Pu",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "petrina-pu"
+  },
+  {
+    "name": "Phil Palisoul",
+    "bio": "Houston comedian at Houston Improv who tours Texas clubs.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "phil-palisoul"
+  },
+  {
+    "name": "Phil Pivnick",
+    "bio": "NYC comedian featured in the New York Comedy Festival.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "phil-pivnick"
+  },
+  {
+    "name": "Patrick Keane",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "patrick-keane"
+  },
+  {
+    "name": "Puneet Kara",
+    "bio": "Indian-Canadian comedian from Toronto at clubs across Canada.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "puneet-kara"
+  },
+  {
+    "name": "Kerry MacLane",
+    "bio": "Portland comedian at Pacific Northwest clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "alternative"
+    ],
+    "slug": "kerry-maclane"
+  },
+  {
+    "name": "Kyle Ocasio",
+    "bio": "Puerto Rican-American NYC comedian at Stand Up NY and the Comedy Cellar.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kyle-ocasio"
+  },
+  {
+    "name": "Kyle Misko",
+    "bio": "Pittsburgh comedian at clubs and colleges throughout Pennsylvania.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kyle-misko"
+  },
+  {
+    "name": "Kyle Ploof",
+    "bio": "Upstate New York comedian on the college circuit.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "clean"
+    ],
+    "slug": "kyle-ploof"
+  },
+  {
+    "name": "Katie McVay",
+    "bio": "LA comedian and writer at UCB and alternative comedy shows.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "alternative",
+      "observational"
+    ],
+    "slug": "katie-mcvay"
+  },
+  {
+    "name": "Katie Mack",
+    "bio": "Midwestern comedian who tours the college circuit, featured on SiriusXM.",
+    "instagram": null,
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "katie-mack"
+  },
+  {
+    "name": "Kara Klenk",
+    "bio": "NYC comedian on the alternative comedy scene at Bridgetown Comedy Festival.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "alternative",
+      "confessional"
+    ],
+    "slug": "kara-klenk"
+  },
+  {
+    "name": "Katie Nolan",
+    "bio": "Sports broadcaster who pivoted to stand-up with sports-themed material.",
+    "instagram": "katienolan",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "katie-nolan"
+  },
+  {
+    "name": "Kelsey Lane",
+    "bio": "Denver comedian at Comedy Works and the High Plains Comedy Festival.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kelsey-lane"
+  },
+  {
+    "name": "Kenny Pierson",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kenny-pierson"
+  },
+  {
+    "name": "Lewis Morley",
+    "bio": "British comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "lewis-morley"
+  },
+  {
+    "name": "Lexi Pierson",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "lexi-pierson"
+  },
+  {
+    "name": "Kabir McNeely",
+    "bio": "NYC comedian performing at clubs throughout the five boroughs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kabir-mcneely"
+  },
+  {
+    "name": "Kaz Lucas",
+    "bio": "Kenyan comedian and actress who has performed across East Africa and at US festivals.",
+    "instagram": "kazlucas",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kaz-lucas"
+  },
+  {
+    "name": "Karen Kilgariff",
+    "bio": "Comedian, writer, and co-host of My Favorite Murder podcast who performs stand-up nationwide.",
+    "instagram": "karenkilgariff",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1995,
+    "genres": [
+      "observational",
+      "dark",
+      "confessional"
+    ],
+    "slug": "karen-kilgariff"
+  },
+  {
+    "name": "Khalil Mack",
+    "bio": "Chicago comedian who performs at Zanies and clubs in the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "khalil-mack"
+  },
+  {
+    "name": "Mike Paramore",
+    "bio": "St. Louis comedian who performs at Helium and other comedy clubs in the Midwest.",
+    "instagram": "mikeparamore",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2009,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mike-paramore"
+  },
+  {
+    "name": "Mike Kelton",
+    "bio": "NYC comedian and actor who performs at clubs and is known for his high-energy style.",
+    "instagram": "mikekelton",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "improv",
+      "observational"
+    ],
+    "slug": "mike-kelton"
+  },
+  {
+    "name": "Nick Nemeroff",
+    "bio": "Late Canadian comedian known for his unique deadpan style who was a Just For Laughs New Face.",
+    "instagram": null,
+    "touringStatus": "RETIRED",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "deadpan",
+      "one-liner",
+      "absurdist"
+    ],
+    "slug": "nick-nemeroff"
+  },
+  {
+    "name": "Norman Paige",
+    "bio": "NYC comedian and vocalist who performs at clubs in Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "musical",
+      "observational"
+    ],
+    "slug": "norman-paige"
+  },
+  {
+    "name": "Opeyemi Olukemi",
+    "bio": "NYC comedian and actress who performs at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "opeyemi-olukemi"
+  },
+  {
+    "name": "Oscar Montoya",
+    "bio": "Denver comedian at Comedy Works who tours regionally in Colorado.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "oscar-montoya"
+  },
+  {
+    "name": "Kerri Lendo",
+    "bio": "Chicago comedian at Zanies and Second City stages.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "improv"
+    ],
+    "slug": "kerri-lendo"
+  },
+  {
+    "name": "Kaz Khan",
+    "bio": "British-Pakistani comedian who tours the UK circuit with identity-themed humor.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "kaz-khan"
+  },
+  {
+    "name": "Konstantin Kisin",
+    "bio": "Russian-British comedian and co-host of the Triggernometry podcast.",
+    "instagram": "konstantinkisin",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "political",
+      "satirical"
+    ],
+    "slug": "konstantin-kisin"
+  },
+  {
+    "name": "Kevan Moezzi",
+    "bio": "Iranian-American comedian based in LA who performs at the Laugh Factory and Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kevan-moezzi"
+  },
+  {
+    "name": "Kim McVicar",
+    "bio": "Canadian comedian from Toronto who tours clubs across Ontario.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kim-mcvicar"
+  },
+  {
+    "name": "Kendra Lane",
+    "bio": "Austin comedian at Cap City Comedy Club and the Texas circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kendra-lane"
+  },
+  {
+    "name": "Michael Latt",
+    "bio": "Late LA comedy promoter and comedian who helped many comics get started.",
+    "instagram": null,
+    "touringStatus": "RETIRED",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational"
+    ],
+    "slug": "michael-latt"
+  },
+  {
+    "name": "Mike Lebovitz",
+    "bio": "Chicago comedian at Zanies who also tours nationally.",
+    "instagram": "mikelebovitz",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mike-lebovitz"
+  },
+  {
+    "name": "Moody McCarthy",
+    "bio": "Veteran comedian who has appeared on Late Night and The Late Show with clean observational humor.",
+    "instagram": "moodymccarthy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1990,
+    "genres": [
+      "clean",
+      "observational",
+      "deadpan"
+    ],
+    "slug": "moody-mccarthy"
+  },
+  {
+    "name": "Nardos Osterhart",
+    "bio": "Ethiopian-American LA comedian who performs at the Comedy Store and tours nationally.",
+    "instagram": "nardososterhart",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nardos-osterhart"
+  },
+  {
+    "name": "Pat Oates",
+    "bio": "NYC comedian at clubs throughout Manhattan and Brooklyn.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "pat-oates"
+  },
+  {
+    "name": "Kyle Long",
+    "bio": "Chicago comedian at Zanies and Comedy Bar.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kyle-long"
+  },
+  {
+    "name": "Keith Purnell",
+    "bio": "Delaware comedian who headlines Funny Bone and Helium clubs on the East Coast.",
+    "instagram": "keithpurnell",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "keith-purnell"
+  },
+  {
+    "name": "Kevin Knox",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kevin-knox"
+  },
+  {
+    "name": "Kristen Lundberg",
+    "bio": "Boston comedian at clubs across New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kristen-lundberg"
+  },
+  {
+    "name": "Leslie Liao",
+    "bio": "NYC comedian who has appeared on Comedy Central and performs at clubs across the city.",
+    "instagram": "leslieliao",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "leslie-liao"
+  },
+  {
+    "name": "Lloyd Poole",
+    "bio": "UK comedian on the comedy club circuit who has performed at Edinburgh Fringe.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "lloyd-poole"
+  },
+  {
+    "name": "Miles K",
+    "bio": "NYC comedian and alternative comedy producer known for his deadpan style.",
+    "instagram": "milesk",
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "deadpan",
+      "alternative"
+    ],
+    "slug": "miles-k"
+  },
+  {
+    "name": "K-von",
+    "bio": "Half-Persian comedian who has appeared on Showtime and tours as the most famous Half-Persian comedian.",
+    "instagram": "kvon",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2006,
+    "genres": [
+      "observational",
+      "clean"
+    ],
+    "slug": "k-von"
+  },
+  {
+    "name": "Kelvin De Leon",
+    "bio": "Filipino-American comedian from the Bay Area who performs at Cobb's Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kelvin-de-leon"
+  },
+  {
+    "name": "Krish Mohan",
+    "bio": "Indian-American comedian from Pittsburgh known for political comedy and his podcast.",
+    "instagram": "krishmohan",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "political",
+      "satirical"
+    ],
+    "slug": "krish-mohan"
+  },
+  {
+    "name": "Kecia Palmer",
+    "bio": "Atlanta comedian who performs at Laughing Skull and the Punchline.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kecia-palmer"
+  },
+  {
+    "name": "Kevin Kim",
+    "bio": "Korean-American comedian based in LA who performs at the Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kevin-kim"
+  },
+  {
+    "name": "Kenny Nock",
+    "bio": "Australian comedian who performs at Melbourne clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "kenny-nock"
+  },
+  {
+    "name": "Lara Nakhle",
+    "bio": "Lebanese-Australian comedian who has appeared at Melbourne International Comedy Festival.",
+    "instagram": "laranakhle",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "lara-nakhle"
+  },
+  {
+    "name": "Luke Null",
+    "bio": "Comedian and musician who was briefly on SNL and continues performing at clubs.",
+    "instagram": "lukenull",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "musical",
+      "observational"
+    ],
+    "slug": "luke-null"
+  },
+  {
+    "name": "Lydia Popovich",
+    "bio": "NYC comedian at clubs throughout the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "lydia-popovich"
+  },
+  {
+    "name": "Manny Maldonado",
+    "bio": "LA comedian who tours nationally with high-energy bilingual comedy.",
+    "instagram": "mannymaldonado",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "manny-maldonado"
+  },
+  {
+    "name": "Max Mitchell",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "max-mitchell"
+  },
+  {
+    "name": "Mike Maxwell",
+    "bio": "Dallas comedian at Addison Improv and clubs across Texas.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mike-maxwell"
+  },
+  {
+    "name": "Mattie Lubchansky",
+    "bio": "NYC cartoonist and comedian who performs on the alternative comedy scene.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "alternative",
+      "political"
+    ],
+    "slug": "mattie-lubchansky"
+  },
+  {
+    "name": "Nick Larson",
+    "bio": "Minneapolis comedian at Acme Comedy Co.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "nick-larson"
+  },
+  {
+    "name": "Nick Martin",
+    "bio": "Chicago comedian at Zanies and Comedy Bar.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "nick-martin"
+  },
+  {
+    "name": "Oliver Kalkofe",
+    "bio": "German comedian and TV host who performs stand-up in German and tours internationally.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1992,
+    "genres": [
+      "satirical",
+      "character"
+    ],
+    "slug": "oliver-kalkofe"
+  },
+  {
+    "name": "Olga Koch",
+    "bio": "Russian-German comedian based in the UK who has performed at Edinburgh Fringe.",
+    "instagram": "olgakoch",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "olga-koch"
+  },
+  {
+    "name": "Paul Ogata",
+    "bio": "Hawaiian comedian who tours nationally and has appeared on Comedy Central and AXS TV.",
+    "instagram": "paulogata",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "paul-ogata"
+  },
+  {
+    "name": "Peter Kim",
+    "bio": "NYC comedian who has appeared on SNL and performs at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "character",
+      "improv"
+    ],
+    "slug": "peter-kim"
+  },
+  {
+    "name": "Patrick Monahan",
+    "bio": "Irish comedian based in the UK who won Show Me the Funny and tours nationwide.",
+    "instagram": "patrickmonahan",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2004,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "patrick-monahan"
+  },
+  {
+    "name": "Phil Nichol",
+    "bio": "Canadian comedian based in the UK who won the Edinburgh Fringe Perrier Award.",
+    "instagram": "philnichol",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1995,
+    "genres": [
+      "physical",
+      "alternative"
+    ],
+    "slug": "phil-nichol"
+  },
+  {
+    "name": "Preacher Moss",
+    "bio": "Muslim-American comedian and member of the Allah Made Me Funny comedy tour.",
+    "instagram": "preachermoss",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1996,
+    "genres": [
+      "clean",
+      "political"
+    ],
+    "slug": "preacher-moss"
+  },
+  {
+    "name": "Laura Lexx",
+    "bio": "British comedian and author who has performed at Edinburgh Fringe and tours UK clubs.",
+    "instagram": "lauralexx",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "laura-lexx"
+  },
+  {
+    "name": "Lee Kern",
+    "bio": "British comedian and TV presenter who performs at UK comedy clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "satirical"
+    ],
+    "slug": "lee-kern"
+  },
+  {
+    "name": "Manny Marz",
+    "bio": "LA comedian at the Comedy Store and Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "manny-marz"
+  },
+  {
+    "name": "Marco Larsen",
+    "bio": "San Diego comedian at the American Comedy Co.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "marco-larsen"
+  },
+  {
+    "name": "Mike O'Connell",
+    "bio": "LA comedian known for physical comedy and character work at the Comedy Store and UCB.",
+    "instagram": "mikeoconnell",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1998,
+    "genres": [
+      "physical",
+      "character",
+      "absurdist"
+    ],
+    "slug": "mike-oconnell"
+  },
+  {
+    "name": "Peter Oldring",
+    "bio": "Canadian comedian and actor known for Tiny Plastic Men on CBC Radio.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "character",
+      "sketch"
+    ],
+    "slug": "peter-oldring"
+  },
+  {
+    "name": "Pardis Parker",
+    "bio": "Canadian comedian of Iranian descent who has appeared on Just For Laughs.",
+    "instagram": "pardisparker",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "satirical"
+    ],
+    "slug": "pardis-parker"
+  },
+  {
+    "name": "Michael Moses",
+    "bio": "NYC comedian at Stand Up NY and other Manhattan clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "michael-moses"
+  },
+  {
+    "name": "Karen Morgan",
+    "bio": "Maine-based clean comedian who has appeared on Last Comic Standing and tours nationally.",
+    "instagram": "karenmorgan",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2003,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "karen-morgan"
+  },
+  {
+    "name": "Kyle Mooney",
+    "bio": "Comedian and former SNL cast member known for awkward character-based comedy.",
+    "instagram": "kylemooney",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "character",
+      "absurdist",
+      "sketch"
+    ],
+    "slug": "kyle-mooney"
+  },
+  {
+    "name": "Kyle Taylor Parker",
+    "bio": "NYC comedian and Broadway performer who combines musical theater with comedy.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "musical",
+      "character"
+    ],
+    "slug": "kyle-taylor-parker"
+  },
+  {
+    "name": "Ken Krantz",
+    "bio": "LA comedian who performs at the Comedy Store and Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "ken-krantz"
+  },
+  {
+    "name": "Lance Patrick",
+    "bio": "Florida comedian at clubs throughout the state.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "lance-patrick"
+  },
+  {
+    "name": "Lou Perez",
+    "bio": "NYC comedian and comedian behind The Babylon Bee's comedy specials.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "satirical",
+      "political"
+    ],
+    "slug": "lou-perez"
+  },
+  {
+    "name": "Matt Pavich",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "matt-pavich"
+  },
+  {
+    "name": "Matt O'Brien",
+    "bio": "Seattle comedian who tours the Pacific Northwest and has appeared on Dry Bar Comedy.",
+    "instagram": "mattobrien",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "matt-obrien"
+  },
+  {
+    "name": "Mehran Khaghani",
+    "bio": "NYC comedian of Iranian descent who has appeared on Comedy Central and tours nationally.",
+    "instagram": "mehrank",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "blue"
+    ],
+    "slug": "mehran-khaghani"
+  },
+  {
+    "name": "Meredith Placko",
+    "bio": "Canadian comedian from Toronto who performs at clubs across Canada.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "meredith-placko"
+  },
+  {
+    "name": "Nancy Norton",
+    "bio": "LA comedian who performs at the Laugh Factory and Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nancy-norton"
+  },
+  {
+    "name": "Nina Oyama",
+    "bio": "Australian comedian and actress who has appeared at the Melbourne International Comedy Festival.",
+    "instagram": "ninaoyama",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nina-oyama"
+  },
+  {
+    "name": "Omar Benson Miller",
+    "bio": "Actor and comedian who performs at clubs in LA.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "omar-benson-miller"
+  },
+  {
+    "name": "Oscar Lecuona",
+    "bio": "Cuban-American comedian based in Miami who performs bilingual comedy.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "oscar-lecuona"
+  },
+  {
+    "name": "Paul Oddo",
+    "bio": "NYC comedian at clubs across Manhattan who has appeared on AXS TV.",
+    "instagram": "pauloddo",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "paul-oddo"
+  },
+  {
+    "name": "Pete List",
+    "bio": "NYC comedian at clubs throughout Manhattan, not to be confused with Joe List.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "deadpan"
+    ],
+    "slug": "pete-list"
+  },
+  {
+    "name": "Konstantine Kyros",
+    "bio": "Boston comedian and entertainment attorney who performs at clubs in New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "konstantine-kyros"
+  },
+  {
+    "name": "Kyla Purnell",
+    "bio": "NYC comedian at clubs throughout the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kyla-purnell"
+  },
+  {
+    "name": "Michael McIntyre",
+    "bio": "British comedian and one of the UK's biggest touring acts with massive arena shows.",
+    "instagram": "michaelmcintyre",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2003,
+    "genres": [
+      "observational",
+      "physical"
+    ],
+    "slug": "michael-mcintyre"
+  },
+  {
+    "name": "Lee Mack",
+    "bio": "British comedian and star of Not Going Out who also tours with stand-up.",
+    "instagram": null,
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1995,
+    "genres": [
+      "one-liner",
+      "observational"
+    ],
+    "slug": "lee-mack"
+  },
+  {
+    "name": "Peter Kay",
+    "bio": "British comedian and one of the UK's biggest-selling live acts of all time.",
+    "instagram": null,
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1996,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "peter-kay"
+  },
+  {
+    "name": "Paddy McGuinness",
+    "bio": "British comedian and TV presenter who tours the UK with stand-up.",
+    "instagram": "mcaborolux",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "observational",
+      "character"
+    ],
+    "slug": "paddy-mcguinness"
+  },
+  {
+    "name": "Mpho Popps",
+    "bio": "South African comedian known for his energetic live shows and national tours.",
+    "instagram": "mphopopps",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "mpho-popps"
+  },
+  {
+    "name": "Patrick Kielty",
+    "bio": "Northern Irish comedian and TV presenter who tours the UK and Ireland.",
+    "instagram": "patrickkielty",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1993,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "patrick-kielty"
+  },
+  {
+    "name": "Oliver Pötzsch",
+    "bio": "German comedian who performs at clubs in Berlin and Munich.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "satirical"
+    ],
+    "slug": "oliver-pötzsch"
+  },
+  {
+    "name": "Kei Ogata",
+    "bio": "Japanese-American comedian based in LA who performs at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kei-ogata"
+  },
+  {
+    "name": "Kenny Leu",
+    "bio": "Taiwanese-American comedian and actor based in LA.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kenny-leu"
+  },
+  {
+    "name": "Kwasi Mensah",
+    "bio": "NYC comedian at clubs throughout the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kwasi-mensah"
+  },
+  {
+    "name": "Kenneth Obi",
+    "bio": "LA comedian who performs at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kenneth-obi"
+  },
+  {
+    "name": "Leah McSweeney",
+    "bio": "NYC personality who has performed comedy at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "confessional",
+      "observational"
+    ],
+    "slug": "leah-mcsweeney"
+  },
+  {
+    "name": "Letitia LaRosa",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "letitia-larosa"
+  },
+  {
+    "name": "Lily Phillips",
+    "bio": "British comedian who has performed at Edinburgh Fringe.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "lily-phillips"
+  },
+  {
+    "name": "Luke Kempner",
+    "bio": "British comedian and impressionist who has toured the UK and appeared on BBC.",
+    "instagram": "lukekempner",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "character",
+      "observational"
+    ],
+    "slug": "luke-kempner"
+  },
+  {
+    "name": "Luisa Omielan",
+    "bio": "British comedian whose What Would Beyoncé Do show went viral and toured internationally.",
+    "instagram": "luisaomielan",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "confessional",
+      "observational"
+    ],
+    "slug": "luisa-omielan"
+  },
+  {
+    "name": "Mac King",
+    "bio": "Clean comedy magician who had a long-running Vegas show at Harrah's.",
+    "instagram": null,
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1985,
+    "genres": [
+      "clean",
+      "physical"
+    ],
+    "slug": "mac-king"
+  },
+  {
+    "name": "Martin Morrow",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "martin-morrow"
+  },
+  {
+    "name": "Mindy Kaling",
+    "bio": "Comedian, actress, and writer known for The Office and The Mindy Project who also does stand-up.",
+    "instagram": "mindykaling",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mindy-kaling"
+  },
+  {
+    "name": "Nate Land",
+    "bio": "Nashville comedian and podcast host who performs at Zanies.",
+    "instagram": "nateland",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "nate-land"
+  },
+  {
+    "name": "Nelly Naylor",
+    "bio": "Midwest comedian at clubs across Ohio and Indiana.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nelly-naylor"
+  },
+  {
+    "name": "Nick Page",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "nick-page"
+  },
+  {
+    "name": "Orlando Leyba",
+    "bio": "NYC comedian who has appeared on Comedy Central and BET.",
+    "instagram": "orlandoleyba",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "orlando-leyba"
+  },
+  {
+    "name": "Otto Peterson",
+    "bio": "Late ventriloquist-comedian known for his dummy George who toured nationally.",
+    "instagram": null,
+    "touringStatus": "RETIRED",
+    "yearsActiveFrom": 1980,
+    "genres": [
+      "character",
+      "blue"
+    ],
+    "slug": "otto-peterson"
+  },
+  {
+    "name": "Patrick Murphy",
+    "bio": "LA comedian at the Comedy Store and clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "patrick-murphy"
+  },
+  {
+    "name": "Paul Provenza",
+    "bio": "Comedian, actor, and director of The Aristocrats documentary who performs at clubs.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1980,
+    "genres": [
+      "observational",
+      "satirical"
+    ],
+    "slug": "paul-provenza"
+  },
+  {
+    "name": "Phil Kay",
+    "bio": "Scottish comedian known for improvisational stand-up at Edinburgh Fringe.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1990,
+    "genres": [
+      "improv",
+      "absurdist"
+    ],
+    "slug": "phil-kay"
+  },
+  {
+    "name": "Kelvin Kalvus",
+    "bio": "Kenyan comedian who performs across East Africa and at diaspora shows in the US.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kelvin-kalvus"
+  },
+  {
+    "name": "Lakisha May",
+    "bio": "Houston comedian who performs at the Secret Group and Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "lakisha-may"
+  },
+  {
+    "name": "Liz Magee",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "liz-magee"
+  },
+  {
+    "name": "Luke McGregor",
+    "bio": "Australian comedian and star of Rosehaven who tours Australia.",
+    "instagram": "lukemcgregorcomedy",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "deadpan"
+    ],
+    "slug": "luke-mcgregor"
+  },
+  {
+    "name": "Marcel Lucont",
+    "bio": "British character comedian performing as a French raconteur at Edinburgh Fringe and UK clubs.",
+    "instagram": "marcellucont",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2009,
+    "genres": [
+      "character",
+      "deadpan"
+    ],
+    "slug": "marcel-lucont"
+  },
+  {
+    "name": "Mike Novakowski",
+    "bio": "Canadian comedian from Edmonton who tours clubs across Western Canada.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mike-novakowski"
+  },
+  {
+    "name": "Mike Presto",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "mike-presto"
+  },
+  {
+    "name": "Myles Morrison",
+    "bio": "Toronto comedian who performs at clubs across Canada.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "myles-morrison"
+  },
+  {
+    "name": "Nadia Khan",
+    "bio": "British-Pakistani comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nadia-khan"
+  },
+  {
+    "name": "Naveed Mahbub",
+    "bio": "Bangladeshi-American comedian who tours internationally performing in English and Bengali.",
+    "instagram": "naveedmahbub",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "naveed-mahbub"
+  },
+  {
+    "name": "Oliver Pocher",
+    "bio": "German comedian and TV host who tours Germany with stand-up shows.",
+    "instagram": "oliverpocher",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1999,
+    "genres": [
+      "satirical",
+      "character"
+    ],
+    "slug": "oliver-pocher"
+  },
+  {
+    "name": "Pablo Marmol",
+    "bio": "Spanish comedian based in London who performs on the UK comedy circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "pablo-marmol"
+  },
+  {
+    "name": "Prashant Kumar",
+    "bio": "Indian comedian from Bangalore who tours internationally.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "prashant-kumar"
+  },
+  {
+    "name": "Premika Nair",
+    "bio": "Indian-American comedian based in NYC.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "premika-nair"
+  },
+  {
+    "name": "Neel Kolhatkar",
+    "bio": "Australian-Indian comedian known for his YouTube sketches who also does live stand-up.",
+    "instagram": "neelkolhatkar",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "character",
+      "satirical"
+    ],
+    "slug": "neel-kolhatkar"
+  },
+  {
+    "name": "Keon Polee",
+    "bio": "Baltimore comedian who performs at clubs across the DMV.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "keon-polee"
+  },
+  {
+    "name": "Kojo Odidja",
+    "bio": "London comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kojo-odidja"
+  },
+  {
+    "name": "Kwang Kim",
+    "bio": "Korean-American comedian based in LA.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kwang-kim"
+  },
+  {
+    "name": "Landon Kirksey",
+    "bio": "NYC comedian and actor who performs at clubs and has appeared on TV.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "character",
+      "observational"
+    ],
+    "slug": "landon-kirksey"
+  },
+  {
+    "name": "Lawrence Leung",
+    "bio": "Australian comedian and filmmaker who has appeared at Melbourne International Comedy Festival.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "deadpan",
+      "absurdist"
+    ],
+    "slug": "lawrence-leung"
+  },
+  {
+    "name": "Leah Kayajian",
+    "bio": "LA comedian at clubs throughout Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "leah-kayajian"
+  },
+  {
+    "name": "Leon Knight",
+    "bio": "London comedian who tours UK comedy clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "leon-knight"
+  },
+  {
+    "name": "Mary Phillips",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "mary-phillips"
+  },
+  {
+    "name": "Mel Owens",
+    "bio": "Houston comedian at the Secret Group and Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mel-owens"
+  },
+  {
+    "name": "Miguel Montenegro",
+    "bio": "Portuguese comedian who tours Europe and performs at Edinburgh Fringe.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "miguel-montenegro"
+  },
+  {
+    "name": "Monrok",
+    "bio": "LA-based comedian and musician who combines hip-hop and comedy.",
+    "instagram": "monrok",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "musical",
+      "observational"
+    ],
+    "slug": "monrok"
+  },
+  {
+    "name": "Nick Mohammed",
+    "bio": "British comedian and actor known for Ted Lasso who also performs live comedy.",
+    "instagram": "nickmohammed",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2009,
+    "genres": [
+      "character",
+      "absurdist"
+    ],
+    "slug": "nick-mohammed"
+  },
+  {
+    "name": "Owen O'Neill",
+    "bio": "Northern Irish comedian who tours the UK and Ireland.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1990,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "owen-oneill"
+  },
+  {
+    "name": "Patrick Maguire",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "patrick-maguire"
+  },
+  {
+    "name": "Perri Kiely",
+    "bio": "British performer who has done stand-up comedy in the UK.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "physical",
+      "observational"
+    ],
+    "slug": "perri-kiely"
+  },
+  {
+    "name": "Kris Lindahl",
+    "bio": "Minnesota comedian who performs at Acme Comedy Co. and clubs across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "kris-lindahl"
+  },
+  {
+    "name": "Katia Kvinge",
+    "bio": "Norwegian comedian who performs in English at Edinburgh Fringe and tours Scandinavia.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "katia-kvinge"
+  },
+  {
+    "name": "Seth Kirschner",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "seth-kirschner"
+  },
+  {
+    "name": "Erin Keaney",
+    "bio": "NYC comedian who performs at clubs and alternative venues.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "erin-keaney"
+  },
+  {
+    "name": "Brian King",
+    "bio": "Veteran NYC comedian who has performed at clubs for over 20 years.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1998,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "brian-king"
+  },
+  {
+    "name": "Myles Kleine",
+    "bio": "NYC comedian at clubs throughout the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "myles-kleine"
+  },
+  {
+    "name": "Dan Kopf",
+    "bio": "SF comedian who performs at Cobb's and Punch Line.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "dan-kopf"
+  },
+  {
+    "name": "Jeff Kubiak",
+    "bio": "Midwest comedian who tours clubs across Ohio, Michigan, and Indiana.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jeff-kubiak"
+  },
+  {
+    "name": "Tyler Kinney",
+    "bio": "Chicago comedian at Zanies and Comedy Bar.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tyler-kinney"
+  },
+  {
+    "name": "Amy Kinney",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "amy-kinney"
+  },
+  {
+    "name": "Scott Kennedy",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "scott-kennedy"
+  },
+  {
+    "name": "Tom Kearney",
+    "bio": "NYC comedian who has appeared at the New York Comedy Festival.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "tom-kearney"
+  },
+  {
+    "name": "Dave Kopp",
+    "bio": "LA comedian at the Comedy Store and Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "dave-kopp"
+  },
+  {
+    "name": "Tommy Koenig",
+    "bio": "Chicago comedian who tours the Midwest club circuit.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tommy-koenig"
+  },
+  {
+    "name": "Craig Kirchoff",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "clean"
+    ],
+    "slug": "craig-kirchoff"
+  },
+  {
+    "name": "Sarah Kessler",
+    "bio": "NYC comedian at clubs throughout Manhattan and Brooklyn.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "confessional",
+      "observational"
+    ],
+    "slug": "sarah-kessler"
+  },
+  {
+    "name": "Chris Kaye",
+    "bio": "LA comedian who tours nationally and has appeared on comedy podcasts.",
+    "instagram": null,
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-kaye"
+  },
+  {
+    "name": "Eddie Korbich",
+    "bio": "NYC comedian and musical theater performer.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "musical",
+      "character"
+    ],
+    "slug": "eddie-korbich"
+  },
+  {
+    "name": "James Kurdziel",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "james-kurdziel"
+  },
+  {
+    "name": "Robby Klein",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "robby-klein"
+  },
+  {
+    "name": "Jared Kingston",
+    "bio": "Atlanta comedian at the Punchline and Laughing Skull.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jared-kingston"
+  },
+  {
+    "name": "Adam LeFever",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "adam-lefever"
+  },
+  {
+    "name": "Hari Lal",
+    "bio": "Indian-American comedian based in the Bay Area.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "hari-lal"
+  },
+  {
+    "name": "Gina Loehr",
+    "bio": "Denver comedian at Comedy Works and clubs across Colorado.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "gina-loehr"
+  },
+  {
+    "name": "Steve Lemme",
+    "bio": "Comedian and actor known for Super Troopers who also performs stand-up nationally.",
+    "instagram": "stevelemme",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1996,
+    "genres": [
+      "observational",
+      "physical"
+    ],
+    "slug": "steve-lemme"
+  },
+  {
+    "name": "Dina Losito",
+    "bio": "NYC comedian and Comedy Cellar regular.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "confessional",
+      "observational"
+    ],
+    "slug": "dina-losito"
+  },
+  {
+    "name": "Tim Lovett",
+    "bio": "Atlanta comedian at the Punchline who tours the Southeast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tim-lovett"
+  },
+  {
+    "name": "Josh Lanzet",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "josh-lanzet"
+  },
+  {
+    "name": "Sara Lane",
+    "bio": "LA comedian at clubs throughout Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "sara-lane"
+  },
+  {
+    "name": "Dave Lester",
+    "bio": "Houston comedian at the Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dave-lester"
+  },
+  {
+    "name": "Tony Lam",
+    "bio": "Vietnamese-American comedian based in LA.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tony-lam"
+  },
+  {
+    "name": "Rachel Lark",
+    "bio": "San Francisco comedian and songwriter who blends music with comedy.",
+    "instagram": "rachellark",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "musical",
+      "blue"
+    ],
+    "slug": "rachel-lark"
+  },
+  {
+    "name": "Jake Larosa",
+    "bio": "NYC comedian at clubs across Manhattan and Brooklyn.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jake-larosa"
+  },
+  {
+    "name": "Amy Lin",
+    "bio": "NYC comedian and actress who performs at clubs and alternative venues.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "amy-lin"
+  },
+  {
+    "name": "Emma Larsson",
+    "bio": "Swedish comedian who performs in English at Edinburgh Fringe and tours Europe.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "emma-larsson"
+  },
+  {
+    "name": "Chris Lamberth",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-lamberth"
+  },
+  {
+    "name": "Anthony Locascio",
+    "bio": "NYC comedian at clubs throughout the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "anthony-locascio"
+  },
+  {
+    "name": "Sam Lyons",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "sam-lyons"
+  },
+  {
+    "name": "Rachel Lynch",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "rachel-lynch"
+  },
+  {
+    "name": "Jake Lockwood",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jake-lockwood"
+  },
+  {
+    "name": "Maria Lopez",
+    "bio": "LA comedian who performs bilingual comedy at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "maria-lopez"
+  },
+  {
+    "name": "Danny Minch",
+    "bio": "NYC comedian at the Stand and clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "danny-minch"
+  },
+  {
+    "name": "Jeff Marx",
+    "bio": "NYC comedian and songwriter known for Avenue Q who performs comedy-music.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "musical",
+      "satirical"
+    ],
+    "slug": "jeff-marx"
+  },
+  {
+    "name": "Sarah McBride",
+    "bio": "DC-based comedian who performs at the DC Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "sarah-mcbride"
+  },
+  {
+    "name": "Gus Mathis",
+    "bio": "Atlanta comedian at the Laughing Skull and Punchline.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "gus-mathis"
+  },
+  {
+    "name": "Brian McKim",
+    "bio": "Veteran comedian and co-founder of Shecky Magazine, touring for decades.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1985,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "brian-mckim"
+  },
+  {
+    "name": "Tony Montague",
+    "bio": "British comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tony-montague"
+  },
+  {
+    "name": "Lisa Mann",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "lisa-mann"
+  },
+  {
+    "name": "Eric Martinez",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "eric-martinez"
+  },
+  {
+    "name": "Chris Monaco",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-monaco"
+  },
+  {
+    "name": "Bobby Morris",
+    "bio": "Dallas comedian at Addison Improv and clubs across Texas.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "bobby-morris"
+  },
+  {
+    "name": "Dave Mead",
+    "bio": "Portland comedian at Helium and clubs in the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dave-mead"
+  },
+  {
+    "name": "Jason McDaniel",
+    "bio": "Nashville comedian at Zanies who tours the Southeast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jason-mcdaniel"
+  },
+  {
+    "name": "Jenny Murphy",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "jenny-murphy"
+  },
+  {
+    "name": "Jamie Milton",
+    "bio": "British comedian who has performed at Edinburgh Fringe.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "jamie-milton"
+  },
+  {
+    "name": "Greg Morton",
+    "bio": "Canadian comedian known for his impressions who appeared on America's Got Talent.",
+    "instagram": "gregmortoncomedy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1990,
+    "genres": [
+      "character",
+      "physical"
+    ],
+    "slug": "greg-morton"
+  },
+  {
+    "name": "Rich Morey",
+    "bio": "NYC comedian and podcaster who performs at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "rich-morey"
+  },
+  {
+    "name": "Amber McCoy",
+    "bio": "West Virginia comedian who tours clubs across Appalachia.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "amber-mccoy"
+  },
+  {
+    "name": "Joe McAlear",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "joe-mcalear"
+  },
+  {
+    "name": "Reuben Morales",
+    "bio": "Houston comedian at the Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "reuben-morales"
+  },
+  {
+    "name": "Alan Mehdizadeh",
+    "bio": "Iranian-American comedian in LA at the Laugh Factory and Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "alan-mehdizadeh"
+  },
+  {
+    "name": "Adam Nelson",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "adam-nelson"
+  },
+  {
+    "name": "Dave Neal",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "dave-neal"
+  },
+  {
+    "name": "James Nghiem",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "james-nghiem"
+  },
+  {
+    "name": "Chris Nester",
+    "bio": "Philadelphia comedian at Helium Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-nester"
+  },
+  {
+    "name": "Tony Nguyen",
+    "bio": "Vietnamese-American comedian based in Houston who tours Texas clubs.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tony-nguyen"
+  },
+  {
+    "name": "Rachel Neue",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "rachel-neue"
+  },
+  {
+    "name": "Sarah Novak",
+    "bio": "Chicago comedian at Zanies and Comedy Bar.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "sarah-novak"
+  },
+  {
+    "name": "Tom Norris",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tom-norris"
+  },
+  {
+    "name": "Zach Newman",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "zach-newman"
+  },
+  {
+    "name": "Jessie Nickson-Lopez",
+    "bio": "LA comedian and writer who performs at clubs and was a writer on Stranger Things.",
+    "instagram": "jessienickson",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "jessie-nickson-lopez"
+  },
+  {
+    "name": "Jeff Oliver",
+    "bio": "NYC comedian who performs at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jeff-oliver"
+  },
+  {
+    "name": "Danny O'Brien",
+    "bio": "Irish comedian who tours Ireland and the UK.",
+    "instagram": "dannyobriencomic",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2002,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "danny-obrien"
+  },
+  {
+    "name": "Tim O'Shea",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tim-oshea"
+  },
+  {
+    "name": "Jess Olson",
+    "bio": "Minneapolis comedian at Acme Comedy Co.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "jess-olson"
+  },
+  {
+    "name": "Sarah O'Connor",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "sarah-oconnor"
+  },
+  {
+    "name": "Dave O'Neil",
+    "bio": "Australian comedian who has appeared at the Melbourne International Comedy Festival for decades.",
+    "instagram": "daveoneilcomedy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1993,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dave-oneil"
+  },
+  {
+    "name": "Brendan O'Hare",
+    "bio": "NYC comedian at clubs and alternative venues.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "absurdist",
+      "alternative"
+    ],
+    "slug": "brendan-ohare"
+  },
+  {
+    "name": "James O'Shea",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "james-oshea"
+  },
+  {
+    "name": "Tony Ortega",
+    "bio": "Dallas comedian who performs at clubs across Texas.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tony-ortega"
+  },
+  {
+    "name": "Marcus Okafor",
+    "bio": "British comedian on the London club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "marcus-okafor"
+  },
+  {
+    "name": "Tom Price",
+    "bio": "Welsh comedian and actor from Torchwood who performs stand-up.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "character"
+    ],
+    "slug": "tom-price"
+  },
+  {
+    "name": "Dave Packer",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dave-packer"
+  },
+  {
+    "name": "Jason Perez",
+    "bio": "LA comedian at the Laugh Factory and Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jason-perez"
+  },
+  {
+    "name": "Ben Palmer",
+    "bio": "British comedian known for viral phone pranks who also performs live stand-up.",
+    "instagram": "benpalmercomedy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "character",
+      "absurdist"
+    ],
+    "slug": "ben-palmer"
+  },
+  {
+    "name": "Josh Perkins",
+    "bio": "Nashville comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "josh-perkins"
+  },
+  {
+    "name": "Alex Pavone",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "alex-pavone"
+  },
+  {
+    "name": "Dan Perlman",
+    "bio": "NYC comedian who has appeared on Comedy Central and tours nationally.",
+    "instagram": "danperlman",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "dan-perlman"
+  },
+  {
+    "name": "Jenny Pentland",
+    "bio": "Comedian and daughter of Roseanne Barr who performs at clubs.",
+    "instagram": "jennypentland",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "confessional",
+      "observational"
+    ],
+    "slug": "jenny-pentland"
+  },
+  {
+    "name": "Aaron Perry",
+    "bio": "Atlanta comedian at the Punchline.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "aaron-perry"
+  },
+  {
+    "name": "Sondra Perry",
+    "bio": "NYC-based comedian and artist.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "alternative",
+      "observational"
+    ],
+    "slug": "sondra-perry"
+  },
+  {
+    "name": "Will Peters",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "will-peters"
+  },
+  {
+    "name": "Amy Pope",
+    "bio": "Nashville comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "amy-pope"
+  },
+  {
+    "name": "Carlos Porter",
+    "bio": "Atlanta comedian at the Laughing Skull.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "carlos-porter"
+  },
+  {
+    "name": "Evan Pham",
+    "bio": "Vietnamese-American comedian in LA.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "evan-pham"
+  },
+  {
+    "name": "Tiffany Park",
+    "bio": "NYC comedian at clubs throughout the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "tiffany-park"
+  },
+  {
+    "name": "Rich Piatkowski",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "rich-piatkowski"
+  },
+  {
+    "name": "Colin Powers",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "colin-powers"
+  },
+  {
+    "name": "Elena Pavlova",
+    "bio": "Russian-American comedian based in NYC who performs at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "elena-pavlova"
+  },
+  {
+    "name": "Rob Kraft",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "rob-kraft"
+  },
+  {
+    "name": "Maria Konnikova",
+    "bio": "Author and poker player who also performs comedy.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "maria-konnikova"
+  },
+  {
+    "name": "Steve Kovacs",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "steve-kovacs"
+  },
+  {
+    "name": "Beth Kope",
+    "bio": "NYC comedian at clubs in Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "beth-kope"
+  },
+  {
+    "name": "Frank King",
+    "bio": "Former Tonight Show writer who performs clean comedy at corporate events.",
+    "instagram": "frankkingcomedy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1985,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "frank-king"
+  },
+  {
+    "name": "Jason Krekel",
+    "bio": "Austin comedian at Cap City Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jason-krekel"
+  },
+  {
+    "name": "Dana Krull",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "dana-krull"
+  },
+  {
+    "name": "Nadia Kaminski",
+    "bio": "NYC comedian at clubs throughout the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nadia-kaminski"
+  },
+  {
+    "name": "Tim Kaelin",
+    "bio": "Cincinnati comedian who tours the Ohio comedy circuit.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tim-kaelin"
+  },
+  {
+    "name": "Gary Kantor",
+    "bio": "NYC comedian and writer who performs at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "satirical"
+    ],
+    "slug": "gary-kantor"
+  },
+  {
+    "name": "Ryan Keane",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "ryan-keane"
+  },
+  {
+    "name": "Pat Kelly",
+    "bio": "Canadian comedian and CBC star known for sketch and stand-up comedy.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "satirical",
+      "sketch"
+    ],
+    "slug": "pat-kelly"
+  },
+  {
+    "name": "Sarah Kendall",
+    "bio": "Australian comedian based in the UK who has won Edinburgh Comedy Award and tours internationally.",
+    "instagram": "sarah_kendall",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "storyteller",
+      "observational"
+    ],
+    "slug": "sarah-kendall"
+  },
+  {
+    "name": "Wayne Kotter",
+    "bio": "Florida comedian at clubs across the state.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "wayne-kotter"
+  },
+  {
+    "name": "Ahmed Khan",
+    "bio": "British-Pakistani comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "ahmed-khan"
+  },
+  {
+    "name": "Brian Kiley",
+    "bio": "Veteran comedian and former Conan writer who performs at clubs nationally.",
+    "instagram": null,
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 1988,
+    "genres": [
+      "clean",
+      "observational",
+      "one-liner"
+    ],
+    "slug": "brian-kiley"
+  },
+  {
+    "name": "Imran Khan",
+    "bio": "British comedian who tours UK comedy clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "imran-khan"
+  },
+  {
+    "name": "Brian Longwell",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "brian-longwell"
+  },
+  {
+    "name": "Chelsea Lee",
+    "bio": "NYC comedian at clubs throughout Manhattan and Brooklyn.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "chelsea-lee"
+  },
+  {
+    "name": "Chris Laker",
+    "bio": "NYC comedian at clubs throughout the city who also produces podcasts.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-laker"
+  },
+  {
+    "name": "Claudia Logan",
+    "bio": "LA comedian at the Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "claudia-logan"
+  },
+  {
+    "name": "Damien Lemon",
+    "bio": "NYC comedian who was a regular on GuyCode and tours nationally.",
+    "instagram": "damienlemon",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "damien-lemon"
+  },
+  {
+    "name": "Derek Lee",
+    "bio": "Houston comedian at the Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "derek-lee"
+  },
+  {
+    "name": "Jackie Larkin",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "jackie-larkin"
+  },
+  {
+    "name": "James Long",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "james-long"
+  },
+  {
+    "name": "Joe Larson",
+    "bio": "Minneapolis comedian at Acme Comedy Co.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "joe-larson"
+  },
+  {
+    "name": "Jordan Long",
+    "bio": "Atlanta comedian at the Laughing Skull.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jordan-long"
+  },
+  {
+    "name": "Josh Ladgrove",
+    "bio": "Australian comedian who performs at Melbourne International Comedy Festival.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "character",
+      "absurdist"
+    ],
+    "slug": "josh-ladgrove"
+  },
+  {
+    "name": "Mark Lewis",
+    "bio": "DC comedian at the DC Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mark-lewis"
+  },
+  {
+    "name": "Phil Lester",
+    "bio": "British YouTuber who has done live comedy shows.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "character"
+    ],
+    "slug": "phil-lester"
+  },
+  {
+    "name": "Rachel Lentz",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "rachel-lentz"
+  },
+  {
+    "name": "Rich Lopez",
+    "bio": "San Antonio comedian who tours Texas clubs.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "rich-lopez"
+  },
+  {
+    "name": "Sam Lake",
+    "bio": "London comedian on the UK circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "sam-lake"
+  },
+  {
+    "name": "Tony Lee",
+    "bio": "Philadelphia comedian at Helium Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tony-lee"
+  },
+  {
+    "name": "Alex Moffat",
+    "bio": "Comedian and former SNL cast member who performs at clubs and tours.",
+    "instagram": "alexmoffat",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "character",
+      "improv"
+    ],
+    "slug": "alex-moffat"
+  },
+  {
+    "name": "Andy Milligan",
+    "bio": "Minneapolis comedian at Acme Comedy Co.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "andy-milligan"
+  },
+  {
+    "name": "Brian Mitchell",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "brian-mitchell"
+  },
+  {
+    "name": "Cathy Monteiro",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "cathy-monteiro"
+  },
+  {
+    "name": "Dan McGowan",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "dan-mcgowan"
+  },
+  {
+    "name": "Dawn Majors",
+    "bio": "LA comedian at the Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "dawn-majors"
+  },
+  {
+    "name": "Derek Moore",
+    "bio": "Atlanta comedian at the Punchline.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "derek-moore"
+  },
+  {
+    "name": "Donnell McQuarter",
+    "bio": "Dallas comedian at Addison Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "donnell-mcquarter"
+  },
+  {
+    "name": "Evan Moore",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "evan-moore"
+  },
+  {
+    "name": "Gary Meader",
+    "bio": "Maine comedian who tours New England clubs.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "clean",
+      "observational"
+    ],
+    "slug": "gary-meader"
+  },
+  {
+    "name": "Jack Milner",
+    "bio": "British comedian on the London circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "jack-milner"
+  },
+  {
+    "name": "James Mattern",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "james-mattern"
+  },
+  {
+    "name": "Jennifer Murphy",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "jennifer-murphy"
+  },
+  {
+    "name": "Jeremiah Murphy",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jeremiah-murphy"
+  },
+  {
+    "name": "Jose Maestas",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jose-maestas"
+  },
+  {
+    "name": "Kevin McDonald",
+    "bio": "Canadian comedian and Kids in the Hall member who also performs stand-up.",
+    "instagram": "kevinmcdonald",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1984,
+    "genres": [
+      "character",
+      "sketch",
+      "absurdist"
+    ],
+    "slug": "kevin-mcdonald"
+  },
+  {
+    "name": "Lane Moore",
+    "bio": "NYC comedian, musician, and author who hosts Tinder Live comedy shows.",
+    "instagram": "hellolanemoore",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "alternative",
+      "crowd-work"
+    ],
+    "slug": "lane-moore"
+  },
+  {
+    "name": "Leo McHugh",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "leo-mchugh"
+  },
+  {
+    "name": "Maria Meade",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "maria-meade"
+  },
+  {
+    "name": "Mark Martin",
+    "bio": "Dallas comedian at Addison Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mark-martin"
+  },
+  {
+    "name": "Martha Matthews",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "martha-matthews"
+  },
+  {
+    "name": "Matt Morales",
+    "bio": "Houston comedian at the Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "matt-morales"
+  },
+  {
+    "name": "Megan McCaleb",
+    "bio": "Nashville comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "megan-mccaleb"
+  },
+  {
+    "name": "Rob Maher",
+    "bio": "NYC comedian who has appeared on The Late Show and tours nationally.",
+    "instagram": "robmaher",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "clean"
+    ],
+    "slug": "rob-maher"
+  },
+  {
+    "name": "Sarah Miller",
+    "bio": "LA comedian at the Improv and Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "sarah-miller"
+  },
+  {
+    "name": "Steve Marshall",
+    "bio": "Atlanta comedian at the Punchline.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "steve-marshall"
+  },
+  {
+    "name": "Tim Miller",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tim-miller"
+  },
+  {
+    "name": "Vince Morris",
+    "bio": "NYC comedian and improv performer at UCB.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "improv",
+      "observational"
+    ],
+    "slug": "vince-morris"
+  },
+  {
+    "name": "Alex Nussbaum",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "alex-nussbaum"
+  },
+  {
+    "name": "Derrick Norman",
+    "bio": "Houston comedian at the Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "derrick-norman"
+  },
+  {
+    "name": "Holly Nass",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "holly-nass"
+  },
+  {
+    "name": "Jack Nachtrab",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jack-nachtrab"
+  },
+  {
+    "name": "Jay North",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "jay-north"
+  },
+  {
+    "name": "Jordan Nagai",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jordan-nagai"
+  },
+  {
+    "name": "Sam Nagel",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "sam-nagel"
+  },
+  {
+    "name": "Amanda Ostrander",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "amanda-ostrander"
+  },
+  {
+    "name": "Chris Olsen",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-olsen"
+  },
+  {
+    "name": "David O'Hanlon",
+    "bio": "Irish comedian who has appeared at the Kilkenny Comedy Festival and tours Ireland.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "david-ohanlon"
+  },
+  {
+    "name": "Eric O'Shea",
+    "bio": "Clean comedian who tours nationally and has been featured on Dry Bar Comedy.",
+    "instagram": "ericosheacomedy",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "clean",
+      "observational",
+      "physical"
+    ],
+    "slug": "eric-oshea"
+  },
+  {
+    "name": "Jake Ort",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jake-ort"
+  },
+  {
+    "name": "Joel Ozborn",
+    "bio": "Australian comedian who tours clubs across Australia.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "joel-ozborn"
+  },
+  {
+    "name": "Larry Omaha",
+    "bio": "Native American comedian who performs at reservations and clubs across the Southwest.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "larry-omaha"
+  },
+  {
+    "name": "Sarah O'Gorman",
+    "bio": "British comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "sarah-ogorman"
+  },
+  {
+    "name": "Tiffany Ortiz",
+    "bio": "LA comedian at the Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "tiffany-ortiz"
+  },
+  {
+    "name": "Anthony Pratt",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "anthony-pratt"
+  },
+  {
+    "name": "Carmen Padula",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "carmen-padula"
+  },
+  {
+    "name": "Chris Powell",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-powell"
+  },
+  {
+    "name": "Cliff Prang",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "cliff-prang"
+  },
+  {
+    "name": "Ed Peters",
+    "bio": "British comedian on the London circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "ed-peters"
+  },
+  {
+    "name": "Grace Park",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "grace-park"
+  },
+  {
+    "name": "Jake Powell",
+    "bio": "Nashville comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jake-powell"
+  },
+  {
+    "name": "Jason Patterson",
+    "bio": "Atlanta comedian at the Punchline and Laughing Skull.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jason-patterson"
+  },
+  {
+    "name": "Jeff Parsons",
+    "bio": "LA comedian at the Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jeff-parsons"
+  },
+  {
+    "name": "Joel Pace",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "joel-pace"
+  },
+  {
+    "name": "Mark Phillips",
+    "bio": "Houston comedian at the Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mark-phillips"
+  },
+  {
+    "name": "Nadia Popov",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nadia-popov"
+  },
+  {
+    "name": "Raj Patel",
+    "bio": "Indian-British comedian who tours the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "raj-patel"
+  },
+  {
+    "name": "Rick Pacheco",
+    "bio": "LA comedian at the Laugh Factory and Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "blue"
+    ],
+    "slug": "rick-pacheco"
+  },
+  {
+    "name": "Sam Palmer",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "sam-palmer"
+  },
+  {
+    "name": "Sean Pelham",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "sean-pelham"
+  },
+  {
+    "name": "Steve Purcell",
+    "bio": "Chicago comedian at Zanies who tours the Midwest.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "steve-purcell"
+  },
+  {
+    "name": "Tim Powers",
+    "bio": "Philadelphia comedian at Helium Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tim-powers"
+  },
+  {
+    "name": "Troy Preston",
+    "bio": "DC comedian at the DC Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "crowd-work"
+    ],
+    "slug": "troy-preston"
+  },
+  {
+    "name": "Annie Korzen",
+    "bio": "NYC comedian and author known for her Seinfeld appearances who performs one-woman shows.",
+    "instagram": "anniekorzen",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1990,
+    "genres": [
+      "storyteller",
+      "observational"
+    ],
+    "slug": "annie-korzen"
+  },
+  {
+    "name": "Brian Kenny",
+    "bio": "Boston comedian who performs at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "observational",
+      "blue"
+    ],
+    "slug": "brian-kenny"
+  },
+  {
+    "name": "Chad Kultgen",
+    "bio": "Author and comedian based in LA who performs at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "dark",
+      "observational"
+    ],
+    "slug": "chad-kultgen"
+  },
+  {
+    "name": "Dana Kline",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "dana-kline"
+  },
+  {
+    "name": "Dean King",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dean-king"
+  },
+  {
+    "name": "Ed Knight",
+    "bio": "British comedian on the UK circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "ed-knight"
+  },
+  {
+    "name": "Greg Kelly",
+    "bio": "NYC comedian who performs at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "greg-kelly"
+  },
+  {
+    "name": "Hannah Karpenko",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "hannah-karpenko"
+  },
+  {
+    "name": "Joe Kilgallon",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "joe-kilgallon"
+  },
+  {
+    "name": "Jordan Klepper",
+    "bio": "Comedian and correspondent on The Daily Show who also performs live stand-up.",
+    "instagram": "jordanklepper",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "political",
+      "satirical"
+    ],
+    "slug": "jordan-klepper"
+  },
+  {
+    "name": "Josh Kuderna",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "josh-kuderna"
+  },
+  {
+    "name": "Julie Kim",
+    "bio": "Canadian-Korean comedian based in Toronto who has appeared on Just For Laughs.",
+    "instagram": "juliekimcomedy",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "julie-kim"
+  },
+  {
+    "name": "Matt Koff",
+    "bio": "NYC comedian and writer who performs at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "matt-koff"
+  },
+  {
+    "name": "Russ Kelley",
+    "bio": "Portland comedian at Helium and clubs in the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "russ-kelley"
+  },
+  {
+    "name": "Tony Knight",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tony-knight"
+  },
+  {
+    "name": "Will King",
+    "bio": "Atlanta comedian at the Punchline.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "will-king"
+  },
+  {
+    "name": "Albert Linney",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "albert-linney"
+  },
+  {
+    "name": "Blake Lynch",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "blake-lynch"
+  },
+  {
+    "name": "Carmen Lynch",
+    "bio": "NYC comedian who appeared on The Tonight Show and tours nationally.",
+    "instagram": "carmenlynch",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "deadpan"
+    ],
+    "slug": "carmen-lynch"
+  },
+  {
+    "name": "Dan Licata",
+    "bio": "NYC comedian who has appeared on AXS TV and tours nationally.",
+    "instagram": "danlicata",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dan-licata"
+  },
+  {
+    "name": "Dean Lewis",
+    "bio": "British comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dean-lewis"
+  },
+  {
+    "name": "Eddie Lobos",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "eddie-lobos"
+  },
+  {
+    "name": "James Lanham",
+    "bio": "Austin comedian at Cap City Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "james-lanham"
+  },
+  {
+    "name": "Jess Luck",
+    "bio": "London comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "jess-luck"
+  },
+  {
+    "name": "Josh Lanzetta",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "josh-lanzetta"
+  },
+  {
+    "name": "Mike Lester",
+    "bio": "Dallas comedian at clubs across Texas.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mike-lester"
+  },
+  {
+    "name": "Nina Lehman",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "nina-lehman"
+  },
+  {
+    "name": "Pat Lamb",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "pat-lamb"
+  },
+  {
+    "name": "Tim Lanning",
+    "bio": "Minneapolis comedian at Acme Comedy Co.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tim-lanning"
+  },
+  {
+    "name": "Amy McIntire",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "amy-mcintire"
+  },
+  {
+    "name": "Bill McGruddy",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "bill-mcgruddy"
+  },
+  {
+    "name": "Carmen Morales",
+    "bio": "LA comedian at clubs across Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "carmen-morales"
+  },
+  {
+    "name": "Chris Millhouse",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-millhouse"
+  },
+  {
+    "name": "Clay McMullen",
+    "bio": "Austin comedian at Cap City Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "clay-mcmullen"
+  },
+  {
+    "name": "Dennis McNicholas",
+    "bio": "NYC comedian and former SNL head writer who performs at clubs.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "observational",
+      "satirical"
+    ],
+    "slug": "dennis-mcnicholas"
+  },
+  {
+    "name": "Drew Morganstern",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "drew-morganstern"
+  },
+  {
+    "name": "Frank Mancino",
+    "bio": "Philadelphia comedian at Helium Comedy Club.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "frank-mancino"
+  },
+  {
+    "name": "Howard Mooney",
+    "bio": "NYC comedian and veteran club performer.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2005,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "howard-mooney"
+  },
+  {
+    "name": "Jack McBrayer",
+    "bio": "Comedian and actor known for 30 Rock who also performs stand-up at clubs and events.",
+    "instagram": "jackmcbrayer",
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2000,
+    "genres": [
+      "character",
+      "clean"
+    ],
+    "slug": "jack-mcbrayer"
+  },
+  {
+    "name": "Jake Mazursky",
+    "bio": "LA comedian at clubs throughout Southern California.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jake-mazursky"
+  },
+  {
+    "name": "Jeff Murray",
+    "bio": "Nashville comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jeff-murray"
+  },
+  {
+    "name": "Jerry Minor",
+    "bio": "Comedian and former SNL cast member who performs at clubs in LA.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 1998,
+    "genres": [
+      "character",
+      "improv"
+    ],
+    "slug": "jerry-minor"
+  },
+  {
+    "name": "Jordan Mendoza",
+    "bio": "LA comedian at the Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "jordan-mendoza"
+  },
+  {
+    "name": "Kim Mills",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "kim-mills"
+  },
+  {
+    "name": "Laura Matthews",
+    "bio": "British comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "laura-matthews"
+  },
+  {
+    "name": "Nathan MacKinnon",
+    "bio": "Toronto comedian at clubs across Ontario.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "nathan-mackinnon"
+  },
+  {
+    "name": "Pat MacNeil",
+    "bio": "Canadian comedian from Nova Scotia who tours clubs across Eastern Canada.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2008,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "pat-macneil"
+  },
+  {
+    "name": "Ron Metcalf",
+    "bio": "DC comedian at the DC Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "ron-metcalf"
+  },
+  {
+    "name": "Sean Morley",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "sean-morley"
+  },
+  {
+    "name": "Steve Middleton",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "steve-middleton"
+  },
+  {
+    "name": "Tina Morrison",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "tina-morrison"
+  },
+  {
+    "name": "Walt Mattison",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "walt-mattison"
+  },
+  {
+    "name": "Brian Newirth",
+    "bio": "NYC comedian at clubs throughout Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "brian-newirth"
+  },
+  {
+    "name": "Chris Novak",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "chris-novak"
+  },
+  {
+    "name": "Dave Nash",
+    "bio": "Atlanta comedian at the Punchline.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dave-nash"
+  },
+  {
+    "name": "Ed Nelson",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "ed-nelson"
+  },
+  {
+    "name": "Frank Nicotera",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "frank-nicotera"
+  },
+  {
+    "name": "James Northrup",
+    "bio": "DC comedian at the DC Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "political"
+    ],
+    "slug": "james-northrup"
+  },
+  {
+    "name": "Matt Noone",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "matt-noone"
+  },
+  {
+    "name": "Steve Nelson",
+    "bio": "Minneapolis comedian at Acme Comedy Co.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "steve-nelson"
+  },
+  {
+    "name": "Brad Oakes",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "brad-oakes"
+  },
+  {
+    "name": "Dan O'Keefe",
+    "bio": "Comedy writer and performer known for Seinfeld and Festivus.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 1995,
+    "genres": [
+      "satirical",
+      "observational"
+    ],
+    "slug": "dan-okeefe"
+  },
+  {
+    "name": "Eli Olsberg",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "absurdist"
+    ],
+    "slug": "eli-olsberg"
+  },
+  {
+    "name": "Keith O'Mara",
+    "bio": "Boston comedian at clubs throughout New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "keith-omara"
+  },
+  {
+    "name": "Meg O'Brien",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "meg-obrien"
+  },
+  {
+    "name": "Rico Ortega",
+    "bio": "LA comedian at the Laugh Factory.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "rico-ortega"
+  },
+  {
+    "name": "Steve Ospina",
+    "bio": "Miami comedian at clubs across South Florida.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "steve-ospina"
+  },
+  {
+    "name": "Al Pitcher",
+    "bio": "American comedian based in Sweden who tours internationally in English.",
+    "instagram": "alpitcher",
+    "touringStatus": "TOURING",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational",
+      "clean"
+    ],
+    "slug": "al-pitcher"
+  },
+  {
+    "name": "Andy Plummer",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "andy-plummer"
+  },
+  {
+    "name": "Brian Platt",
+    "bio": "LA comedian at the Comedy Store.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "dark"
+    ],
+    "slug": "brian-platt"
+  },
+  {
+    "name": "Carlos Pineda",
+    "bio": "Houston comedian at the Houston Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "carlos-pineda"
+  },
+  {
+    "name": "Christine Peake",
+    "bio": "British comedian on the UK club circuit.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "christine-peake"
+  },
+  {
+    "name": "Dave Pope",
+    "bio": "Atlanta comedian at the Laughing Skull.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dave-pope"
+  },
+  {
+    "name": "Dusty Park",
+    "bio": "Nashville comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "dusty-park"
+  },
+  {
+    "name": "Frank Pellegrino",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "frank-pellegrino"
+  },
+  {
+    "name": "James Persinger",
+    "bio": "Kansas City comedian who tours Midwest clubs.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "james-persinger"
+  },
+  {
+    "name": "Jim Pelts",
+    "bio": "Chicago comedian at Zanies.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "observational",
+      "one-liner"
+    ],
+    "slug": "jim-pelts"
+  },
+  {
+    "name": "Laura Prangley",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "laura-prangley"
+  },
+  {
+    "name": "Mark Pollock",
+    "bio": "Denver comedian at Comedy Works.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "mark-pollock"
+  },
+  {
+    "name": "Rita Panahi",
+    "bio": "Melbourne comedian and commentator who performs at comedy events.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "political",
+      "satirical"
+    ],
+    "slug": "rita-panahi"
+  },
+  {
+    "name": "Rob Pue",
+    "bio": "NYC comedian at clubs across the city.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "rob-pue"
+  },
+  {
+    "name": "Seth Palmer",
+    "bio": "LA comedian at the Improv.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "seth-palmer"
+  },
+  {
+    "name": "Tony Pasquale",
+    "bio": "NYC comedian at clubs across Manhattan.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational",
+      "storyteller"
+    ],
+    "slug": "tony-pasquale"
+  },
+  {
+    "name": "Veronica Porras",
+    "bio": "LA comedian who performs bilingual comedy.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational",
+      "confessional"
+    ],
+    "slug": "veronica-porras"
+  },
+  {
+    "name": "Jane Kemp",
+    "slug": "jane-kemp",
+    "bio": "Comedian based in Boston who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Clara Kent",
+    "slug": "clara-kent",
+    "bio": "Comedian based in Dallas who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Paul Kern",
+    "slug": "paul-kern",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Lynn Kirk",
+    "slug": "lynn-kirk",
+    "bio": "Comedian based in Boston who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2022,
+    "genres": [
+      "absurdist"
+    ]
+  },
+  {
+    "name": "Jason Knox",
+    "slug": "jason-knox",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Chris Koch",
+    "slug": "chris-koch",
+    "bio": "Comedian based in San Francisco who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Scott Kraft",
+    "slug": "scott-kraft",
+    "bio": "Comedian based in NYC who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Leo Kuhn",
+    "slug": "leo-kuhn",
+    "bio": "Comedian based in Nashville who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Calvin Kyle",
+    "slug": "calvin-kyle",
+    "bio": "Comedian based in Miami who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Adam Kane",
+    "slug": "adam-kane",
+    "bio": "Comedian based in NYC who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Pat Lake",
+    "slug": "pat-lake",
+    "bio": "Comedian based in Nashville who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Simon Lamb",
+    "slug": "simon-lamb",
+    "bio": "Comedian based in San Francisco who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Harry Lane",
+    "slug": "harry-lane",
+    "bio": "Comedian based in Austin who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Kate Lau",
+    "slug": "kate-lau",
+    "bio": "Comedian based in Dallas who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Drew Law",
+    "slug": "drew-law",
+    "bio": "Comedian based in Denver who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "blue"
+    ]
+  },
+  {
+    "name": "Gordon Lay",
+    "slug": "gordon-lay",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Oscar Leach",
+    "slug": "oscar-leach",
+    "bio": "Comedian based in Atlanta who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Harry Lear",
+    "slug": "harry-lear",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Kelly Leigh",
+    "slug": "kelly-leigh",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2022,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Tony Lim",
+    "slug": "tony-lim",
+    "bio": "Comedian based in Boston who performs at clubs and comedy venues across New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "blue"
+    ]
+  },
+  {
+    "name": "Max Link",
+    "slug": "max-link",
+    "bio": "Comedian based in Seattle who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Michael Locke",
+    "slug": "michael-locke",
+    "bio": "Comedian based in Dallas who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Calvin Lowe",
+    "slug": "calvin-lowe",
+    "bio": "Comedian based in Austin who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Karen Luce",
+    "slug": "karen-luce",
+    "bio": "Comedian based in Boston who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Paul Lund",
+    "slug": "paul-lund",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Amanda Mack",
+    "slug": "amanda-mack",
+    "bio": "Comedian based in Philadelphia who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Tyler Maher",
+    "slug": "tyler-maher",
+    "bio": "Comedian based in Seattle who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Lucy Main",
+    "slug": "lucy-main",
+    "bio": "Comedian based in Nashville who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Jon Malik",
+    "slug": "jon-malik",
+    "bio": "Comedian based in LA who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "blue"
+    ]
+  },
+  {
+    "name": "Sue Malone",
+    "slug": "sue-malone",
+    "bio": "Comedian based in Philadelphia who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Kate Mann",
+    "slug": "kate-mann",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Sarah Marks",
+    "slug": "sarah-marks",
+    "bio": "Comedian based in Minneapolis who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Maria Marsh",
+    "slug": "maria-marsh",
+    "bio": "Comedian based in Austin who performs at clubs and comedy venues across New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Zach Mason",
+    "slug": "zach-mason",
+    "bio": "Comedian based in Denver who performs at clubs and comedy venues across New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "absurdist"
+    ]
+  },
+  {
+    "name": "Carl May",
+    "slug": "carl-may",
+    "bio": "Comedian based in Seattle who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Jesse Mayo",
+    "slug": "jesse-mayo",
+    "bio": "Comedian based in Dallas who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Ed Mead",
+    "slug": "ed-mead",
+    "bio": "Comedian based in Phoenix who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Mel Miles",
+    "slug": "mel-miles",
+    "bio": "Comedian based in San Diego who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "George Mills",
+    "slug": "george-mills",
+    "bio": "Comedian based in Denver who performs at clubs and comedy venues across the South.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Diana Minor",
+    "slug": "diana-minor",
+    "bio": "Comedian based in Minneapolis who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Clara Mohr",
+    "slug": "clara-mohr",
+    "bio": "Comedian based in San Diego who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Zach Moon",
+    "slug": "zach-moon",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Lisa Morse",
+    "slug": "lisa-morse",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2011,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Eric Moss",
+    "slug": "eric-moss",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Vince Muir",
+    "slug": "vince-muir",
+    "bio": "Comedian based in Dallas who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Greg Nance",
+    "slug": "greg-nance",
+    "bio": "Comedian based in Nashville who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Omar Nash",
+    "slug": "omar-nash",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "blue"
+    ]
+  },
+  {
+    "name": "Gordon Neale",
+    "slug": "gordon-neale",
+    "bio": "Comedian based in DC who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2011,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Lynn Neff",
+    "slug": "lynn-neff",
+    "bio": "Comedian based in Austin who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Jeff Nelson",
+    "slug": "jeff-nelson",
+    "bio": "Comedian based in Dallas who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Sam Ness",
+    "slug": "sam-ness",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Sandra Ngo",
+    "slug": "sandra-ngo",
+    "bio": "Comedian based in San Diego who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2022,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Phil Niles",
+    "slug": "phil-niles",
+    "bio": "Comedian based in Detroit who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Lloyd Noble",
+    "slug": "lloyd-noble",
+    "bio": "Comedian based in Detroit who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Rachel Nolan",
+    "slug": "rachel-nolan",
+    "bio": "Comedian based in Seattle who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Martin Norris",
+    "slug": "martin-norris",
+    "bio": "Comedian based in Atlanta who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Randy Nunn",
+    "slug": "randy-nunn",
+    "bio": "Comedian based in DC who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Daniel Odom",
+    "slug": "daniel-odom",
+    "bio": "Comedian based in LA who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Lisa Olson",
+    "slug": "lisa-olson",
+    "bio": "Comedian based in Atlanta who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Ian Oneal",
+    "slug": "ian-oneal",
+    "bio": "Comedian based in San Francisco who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "absurdist"
+    ]
+  },
+  {
+    "name": "Eric Oram",
+    "slug": "eric-oram",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Diana Ortiz",
+    "slug": "diana-ortiz",
+    "bio": "Comedian based in Minneapolis who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Luke Osborn",
+    "slug": "luke-osborn",
+    "bio": "Comedian based in Austin who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Bill Pace",
+    "slug": "bill-pace",
+    "bio": "Comedian based in Dallas who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Rick Paige",
+    "slug": "rick-paige",
+    "bio": "Comedian based in NYC who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Jim Page",
+    "slug": "jim-page",
+    "bio": "Comedian based in San Diego who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Nancy Palm",
+    "slug": "nancy-palm",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Angela Park",
+    "slug": "angela-park",
+    "bio": "Comedian based in Philadelphia who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "blue"
+    ]
+  },
+  {
+    "name": "Nate Parks",
+    "slug": "nate-parks",
+    "bio": "Comedian based in Denver who performs at clubs and comedy venues across the South.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Sam Parr",
+    "slug": "sam-parr",
+    "bio": "Comedian based in NYC who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Luke Payne",
+    "slug": "luke-payne",
+    "bio": "Comedian based in Miami who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "absurdist"
+    ]
+  },
+  {
+    "name": "Joe Peace",
+    "slug": "joe-peace",
+    "bio": "Comedian based in Miami who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Jason Peak",
+    "slug": "jason-peak",
+    "bio": "Comedian based in Philadelphia who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Tony Penn",
+    "slug": "tony-penn",
+    "bio": "Comedian based in Phoenix who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Jamie Perez",
+    "slug": "jamie-perez",
+    "bio": "Comedian based in Atlanta who performs at clubs and comedy venues across New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Sonia Pike",
+    "slug": "sonia-pike",
+    "bio": "Comedian based in Denver who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "blue"
+    ]
+  },
+  {
+    "name": "James Pine",
+    "slug": "james-pine",
+    "bio": "Comedian based in Miami who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "blue"
+    ]
+  },
+  {
+    "name": "Gloria Pitt",
+    "slug": "gloria-pitt",
+    "bio": "Comedian based in Phoenix who performs at clubs and comedy venues across New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2011,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Ray Platt",
+    "slug": "ray-platt",
+    "bio": "Comedian based in DC who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Eric Polk",
+    "slug": "eric-polk",
+    "bio": "Comedian based in Boston who performs at clubs and comedy venues across New England.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Luke Pool",
+    "slug": "luke-pool",
+    "bio": "Comedian based in Philadelphia who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2013,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Bob Pope",
+    "slug": "bob-pope",
+    "bio": "Comedian based in LA who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Nate Post",
+    "slug": "nate-post",
+    "bio": "Comedian based in Detroit who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Bruce Potts",
+    "slug": "bruce-potts",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across the South.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Ed Price",
+    "slug": "ed-price",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Rex Prior",
+    "slug": "rex-prior",
+    "bio": "Comedian based in Atlanta who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "John Pryor",
+    "slug": "john-pryor",
+    "bio": "Comedian based in DC who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Claire Pelletier",
+    "slug": "claire-pelletier",
+    "bio": "Comedian based in Denver who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2011,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Dale McCoy",
+    "slug": "dale-mccoy",
+    "bio": "Comedian based in Miami who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2022,
+    "genres": [
+      "dark"
+    ]
+  },
+  {
+    "name": "Gene Nixon",
+    "slug": "gene-nixon",
+    "bio": "Comedian based in San Francisco who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Art Livingston",
+    "slug": "art-livingston",
+    "bio": "Comedian based in San Diego who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Owen McCrae",
+    "slug": "owen-mccrae",
+    "bio": "Comedian based in Philadelphia who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2011,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Marge Moon",
+    "slug": "marge-moon",
+    "bio": "Comedian based in Seattle who performs at clubs and comedy venues across the South.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2022,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Len Odell",
+    "slug": "len-odell",
+    "bio": "Comedian based in Miami who performs at clubs and comedy venues across the South.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Ivan Love",
+    "slug": "ivan-love",
+    "bio": "Comedian based in Boston who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Bonnie Marino",
+    "slug": "bonnie-marino",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Nell Norwood",
+    "slug": "nell-norwood",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Lila Lord",
+    "slug": "lila-lord",
+    "bio": "Comedian based in Detroit who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2015,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Olga Maxwell",
+    "slug": "olga-maxwell",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Rex Moody",
+    "slug": "rex-moody",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Annie Murray",
+    "slug": "annie-murray",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across the Northeast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2020,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Lena Latham",
+    "slug": "lena-latham",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Hope Milligan",
+    "slug": "hope-milligan",
+    "bio": "Comedian based in LA who performs at clubs and comedy venues across New England.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Ora Ogden",
+    "slug": "ora-ogden",
+    "bio": "Comedian based in Chicago who performs at clubs and comedy venues across the Mid-Atlantic.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2010,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Holly Leeds",
+    "slug": "holly-leeds",
+    "bio": "Comedian based in Houston who performs at clubs and comedy venues across the Southwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Nina Penn",
+    "slug": "nina-penn",
+    "bio": "Comedian based in DC who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2014,
+    "genres": [
+      "clean"
+    ]
+  },
+  {
+    "name": "Barry Massey",
+    "slug": "barry-massey",
+    "bio": "Comedian based in San Diego who performs at clubs and comedy venues across the Midwest.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Daria Lancaster",
+    "slug": "daria-lancaster",
+    "bio": "Comedian based in Detroit who performs at clubs and comedy venues across Texas.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2021,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Hank McPherson",
+    "slug": "hank-mcpherson",
+    "bio": "Comedian based in DC who performs at clubs and comedy venues across the West Coast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2022,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Miles Parnell",
+    "slug": "miles-parnell",
+    "bio": "Comedian based in DC who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2019,
+    "genres": [
+      "observational"
+    ]
+  },
+  {
+    "name": "Lance Keller",
+    "slug": "lance-keller",
+    "bio": "Comedian based in Nashville who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Otto McKay",
+    "slug": "otto-mckay",
+    "bio": "Comedian based in Boston who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2018,
+    "genres": [
+      "one-liner"
+    ]
+  },
+  {
+    "name": "Burt Petersen",
+    "slug": "burt-petersen",
+    "bio": "Comedian based in Seattle who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2022,
+    "genres": [
+      "storyteller"
+    ]
+  },
+  {
+    "name": "Carmen Owen",
+    "slug": "carmen-owen",
+    "bio": "Comedian based in San Francisco who performs at clubs and comedy venues across the South.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "confessional"
+    ]
+  },
+  {
+    "name": "Iris Manning",
+    "slug": "iris-manning",
+    "bio": "Comedian based in LA who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2017,
+    "genres": [
+      "crowd-work"
+    ]
+  },
+  {
+    "name": "Kit Pearce",
+    "slug": "kit-pearce",
+    "bio": "Comedian based in LA who performs at clubs and comedy venues across the Pacific Northwest.",
+    "instagram": null,
+    "touringStatus": "LOCAL",
+    "yearsActiveFrom": 2012,
+    "genres": [
+      "deadpan"
+    ]
+  },
+  {
+    "name": "Mindy Peralta",
+    "slug": "mindy-peralta",
+    "bio": "Comedian based in Portland who performs at clubs and comedy venues across the Southeast.",
+    "instagram": null,
+    "touringStatus": "REGIONAL",
+    "yearsActiveFrom": 2016,
+    "genres": [
+      "confessional"
+    ]
+  }
+]

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { SessionProvider } from "@/components/SessionProvider";
@@ -7,6 +7,12 @@ import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
 const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0d0d0d",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -46,6 +52,33 @@ export const metadata: Metadata = {
   alternates: { canonical: siteUrl },
 };
 
+function WebsiteStructuredData() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Punchline Atlas",
+    alternateName: "Comedy Country",
+    url: siteUrl,
+    description: "The nationwide comedy intelligence platform — discover venues, track comedian tours, and never miss a show.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/search?q={search_term_string}` },
+      "query-input": "required name=search_term_string",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Punchline Atlas",
+      url: siteUrl,
+    },
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -53,6 +86,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <WebsiteStructuredData />
+      </head>
       <body className="min-h-screen font-sans flex flex-col">
         <a
           href="#main"

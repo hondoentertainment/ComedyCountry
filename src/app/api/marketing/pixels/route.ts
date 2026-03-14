@@ -1,0 +1,52 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { registerRetargetingPixel, getRetargetingPixels } from "@/lib/marketing";
+
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const venueId = searchParams.get("venueId");
+
+    if (!venueId) {
+      return NextResponse.json({ error: "venueId is required" }, { status: 400 });
+    }
+
+    const pixels = await getRetargetingPixels(venueId);
+    return NextResponse.json({ pixels });
+  } catch (error) {
+    console.error("GET /api/marketing/pixels error:", error);
+    return NextResponse.json({ error: "Failed to fetch pixels" }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { venueId, provider, pixelId, events } = body;
+
+    if (!venueId || !provider || !pixelId) {
+      return NextResponse.json(
+        { error: "venueId, provider, and pixelId are required" },
+        { status: 400 },
+      );
+    }
+
+    const pixel = await registerRetargetingPixel(venueId, provider, pixelId, events);
+    return NextResponse.json(pixel, { status: 201 });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Failed to register pixel";
+    const status = msg.includes("Invalid provider") ? 400 : 500;
+    return NextResponse.json({ error: msg }, { status });
+  }
+}

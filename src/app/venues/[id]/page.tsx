@@ -9,6 +9,7 @@ import { FollowButton } from "@/components/FollowButton";
 import { ImageGalleryLightbox } from "@/components/ImageGalleryLightbox";
 import { VenueMap } from "@/components/VenueMap";
 import { VenueStructuredData } from "@/components/StructuredData";
+import { VenueReviews } from "@/components/VenueReviews";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ id: string }> };
@@ -56,7 +57,7 @@ export default async function VenuePage({ params }: PageProps) {
   const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <VenueStructuredData venue={venue} baseUrl={siteUrl} />
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link
@@ -217,7 +218,9 @@ export default async function VenuePage({ params }: PageProps) {
             </div>
           )}
         </section>
+
+        <VenueReviews venueId={venue.id} />
       </div>
-    </main>
+    </div>
   );
 }

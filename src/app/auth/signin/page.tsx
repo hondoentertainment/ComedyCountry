@@ -25,7 +25,7 @@ export default async function SignInPage({
   const providerIds = authOptions.providers.map((p) => p.id);
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="text-center max-w-md w-full">
         <h1 className="text-2xl font-bold text-white mb-2">Sign in</h1>
         <p className="text-zinc-400 mb-8">
@@ -52,6 +52,6 @@ export default async function SignInPage({
           .
         </p>
       </div>
-    </main>
+    </div>
   );
 }
