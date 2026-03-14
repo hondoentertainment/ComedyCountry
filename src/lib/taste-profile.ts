@@ -1,4 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import {
+  addWeightedAttributes,
+  describeStretch,
+  emptyAttributeScores,
+  getAttributeLabel,
+  getTopKeys,
+  normalizeAttributeScores,
+  scoreAttributeOverlap,
+  summarizeComedyDNA,
+  type AttributeScoreMap,
+} from "@/lib/comedy-genome";
 
 /**
  * AI-Powered Comedy Taste Profile Engine.
@@ -7,7 +18,7 @@ import { prisma } from "@/lib/prisma";
  */
 
 export interface TasteDimensions {
-  [genre: string]: number; // 0.0 – 1.0 normalized score
+  [genre: string]: number;
 }
 
 export interface TasteProfileData {
@@ -15,8 +26,32 @@ export interface TasteProfileData {
   userId: string;
   dimensions: TasteDimensions;
   topGenres: string[];
+  attributeScores: AttributeScoreMap;
+  topAttributes: string[];
+  negativeSignals: AttributeScoreMap;
+  profileVersion: string;
+  profileSummary: string;
+  discoveryStretch: number;
   confidence: number;
   lastComputed: Date;
+}
+
+function safeParseObject(value?: string | null): AttributeScoreMap {
+  if (!value) return {};
+  try {
+    return JSON.parse(value) as AttributeScoreMap;
+  } catch {
+    return {};
+  }
+}
+
+function safeParseArray(value?: string | null): string[] {
+  if (!value) return [];
+  try {
+    return JSON.parse(value) as string[];
+  } catch {
+    return [];
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -24,12 +59,10 @@ export interface TasteProfileData {
 // ---------------------------------------------------------------------------
 
 export async function computeTasteProfile(
-  userId: string
+  userId: string,
 ): Promise<TasteProfileData> {
-  // Gather all user signals in parallel
   const [followedGenres, reviewData, attendanceData, tierRatings] =
     await Promise.all([
-      // Genres from followed comedians
       prisma.comedianFollow
         .findMany({
           where: { userId },
@@ -40,10 +73,9 @@ export async function computeTasteProfile(
           },
         })
         .then((rows) =>
-          rows.flatMap((r) => r.comedian.genres.map((g) => g.genre))
+          rows.flatMap((row) => row.comedian.genres.map((genre) => genre.genre)),
         ),
 
-      // Genres from reviewed events, weighted by rating
       prisma.eventReview.findMany({
         where: { userId },
         select: {
@@ -62,7 +94,6 @@ export async function computeTasteProfile(
         },
       }),
 
-      // Genres from attended events
       prisma.eventAttendance.findMany({
         where: { userId },
         select: {
@@ -80,7 +111,6 @@ export async function computeTasteProfile(
         },
       }),
 
-      // Tier ratings
       prisma.comedianTierRating.findMany({
         where: { userId },
         select: {
@@ -92,75 +122,102 @@ export async function computeTasteProfile(
       }),
     ]);
 
-  // Accumulate raw genre scores
-  const rawScores: Record<string, number> = {};
+  const rawGenreScores: Record<string, number> = {};
+  const rawAttributeScores = emptyAttributeScores();
+  const negativeSignals: AttributeScoreMap = {};
   let totalSignals = 0;
 
-  // Follows contribute weight 2
+  const addGenres = (genres: string[], weight: number) => {
+    for (const genre of genres) {
+      rawGenreScores[genre] = (rawGenreScores[genre] ?? 0) + weight;
+      totalSignals++;
+    }
+    addWeightedAttributes(rawAttributeScores, genres, weight);
+  };
+
+  const addNegativeGenres = (genres: string[], weight: number) => {
+    const negativeAttributes = emptyAttributeScores();
+    addWeightedAttributes(negativeAttributes, genres, weight);
+    for (const [attribute, score] of Object.entries(negativeAttributes)) {
+      negativeSignals[attribute] = (negativeSignals[attribute] ?? 0) + score;
+    }
+  };
+
   for (const genre of followedGenres) {
-    rawScores[genre] = (rawScores[genre] || 0) + 2;
-    totalSignals++;
+    addGenres([genre], 2);
   }
 
-  // Reviews weighted by rating (1-5 -> 0.5-2.5)
   for (const review of reviewData) {
-    const weight = review.rating / 2; // 1->0.5, 5->2.5
-    for (const ec of review.event.comedians) {
-      for (const g of ec.comedian.genres) {
-        rawScores[g.genre] = (rawScores[g.genre] || 0) + weight;
-        totalSignals++;
-      }
+    const genres = review.event.comedians.flatMap((ec) =>
+      ec.comedian.genres.map((genre) => genre.genre),
+    );
+    const positiveWeight = review.rating >= 4 ? review.rating / 2 : review.rating >= 3 ? 1 : 0;
+    const negativeWeight = review.rating <= 2 ? (3 - review.rating) * 1.25 : 0;
+
+    if (positiveWeight > 0) {
+      addGenres(genres, positiveWeight);
+    }
+    if (negativeWeight > 0) {
+      addNegativeGenres(genres, negativeWeight);
     }
   }
 
-  // Attendance contributes weight 1.5
-  for (const att of attendanceData) {
-    for (const ec of att.event.comedians) {
-      for (const g of ec.comedian.genres) {
-        rawScores[g.genre] = (rawScores[g.genre] || 0) + 1.5;
-        totalSignals++;
-      }
-    }
+  for (const attendance of attendanceData) {
+    const genres = attendance.event.comedians.flatMap((ec) =>
+      ec.comedian.genres.map((genre) => genre.genre),
+    );
+    addGenres(genres, 1.5);
   }
 
-  // Tier ratings: S=3, A=2.5, B=2, C=1, D=0.5
   const tierWeights: Record<string, number> = {
     S: 3,
     A: 2.5,
     B: 2,
     C: 1,
     D: 0.5,
+    F: 0,
   };
-  for (const tr of tierRatings) {
-    const weight = tierWeights[tr.tier] ?? 1;
-    for (const g of tr.comedian.genres) {
-      rawScores[g.genre] = (rawScores[g.genre] || 0) + weight;
-      totalSignals++;
+
+  for (const tierRating of tierRatings) {
+    const genres = tierRating.comedian.genres.map((genre) => genre.genre);
+    const weight = tierWeights[tierRating.tier] ?? 1;
+    if (weight > 0) {
+      addGenres(genres, weight);
+    }
+    if (tierRating.tier === "D" || tierRating.tier === "F") {
+      addNegativeGenres(genres, tierRating.tier === "F" ? 2 : 1);
     }
   }
 
-  // Normalize to 0.0 – 1.0
-  const maxScore = Math.max(...Object.values(rawScores), 1);
+  const maxGenreScore = Math.max(...Object.values(rawGenreScores), 1);
   const dimensions: TasteDimensions = {};
-  for (const [genre, score] of Object.entries(rawScores)) {
-    dimensions[genre] = Math.round((score / maxScore) * 100) / 100;
+  for (const [genre, score] of Object.entries(rawGenreScores)) {
+    dimensions[genre] = Math.round((score / maxGenreScore) * 100) / 100;
   }
 
-  // Top genres (up to 5)
   const topGenres = Object.entries(dimensions)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([genre]) => genre);
 
-  // Confidence: 0-1 based on how much data we have (saturates at ~50 signals)
+  const attributeScores = normalizeAttributeScores(rawAttributeScores);
+  const topAttributes = getTopKeys(attributeScores, 5);
+  const normalizedNegativeSignals = normalizeAttributeScores(negativeSignals);
   const confidence = Math.min(totalSignals / 50, 1);
+  const discoveryStretch = Math.max(0.2, Math.round((0.55 - confidence * 0.25) * 100) / 100);
+  const profileSummary = summarizeComedyDNA(attributeScores, topGenres, confidence);
 
-  // Upsert into DB
   const profile = await prisma.tasteProfile.upsert({
     where: { userId },
     update: {
       dimensions: JSON.stringify(dimensions),
       topGenres: JSON.stringify(topGenres),
+      attributeScores: JSON.stringify(attributeScores),
+      topAttributes: JSON.stringify(topAttributes),
+      negativeSignals: JSON.stringify(normalizedNegativeSignals),
+      profileVersion: "v2",
+      profileSummary,
+      discoveryStretch,
       confidence,
       lastComputed: new Date(),
     },
@@ -168,6 +225,12 @@ export async function computeTasteProfile(
       userId,
       dimensions: JSON.stringify(dimensions),
       topGenres: JSON.stringify(topGenres),
+      attributeScores: JSON.stringify(attributeScores),
+      topAttributes: JSON.stringify(topAttributes),
+      negativeSignals: JSON.stringify(normalizedNegativeSignals),
+      profileVersion: "v2",
+      profileSummary,
+      discoveryStretch,
       confidence,
       lastComputed: new Date(),
     },
@@ -178,6 +241,12 @@ export async function computeTasteProfile(
     userId: profile.userId,
     dimensions,
     topGenres,
+    attributeScores,
+    topAttributes,
+    negativeSignals: normalizedNegativeSignals,
+    profileVersion: profile.profileVersion ?? "v2",
+    profileSummary,
+    discoveryStretch,
     confidence: profile.confidence,
     lastComputed: profile.lastComputed,
   };
@@ -188,7 +257,7 @@ export async function computeTasteProfile(
 // ---------------------------------------------------------------------------
 
 export async function getTasteProfile(
-  userId: string
+  userId: string,
 ): Promise<TasteProfileData | null> {
   const profile = await prisma.tasteProfile.findUnique({
     where: { userId },
@@ -196,11 +265,27 @@ export async function getTasteProfile(
 
   if (!profile) return null;
 
+  const dimensions = safeParseObject(profile.dimensions);
+  const topGenres = safeParseArray(profile.topGenres);
+  const attributeScores = safeParseObject(profile.attributeScores);
+  const topAttributes =
+    safeParseArray(profile.topAttributes).length > 0
+      ? safeParseArray(profile.topAttributes)
+      : getTopKeys(attributeScores, 5);
+
   return {
     id: profile.id,
     userId: profile.userId,
-    dimensions: JSON.parse(profile.dimensions) as TasteDimensions,
-    topGenres: JSON.parse(profile.topGenres) as string[],
+    dimensions,
+    topGenres,
+    attributeScores,
+    topAttributes,
+    negativeSignals: safeParseObject(profile.negativeSignals),
+    profileVersion: profile.profileVersion ?? "v1",
+    profileSummary:
+      profile.profileSummary ??
+      summarizeComedyDNA(attributeScores, topGenres, profile.confidence),
+    discoveryStretch: profile.discoveryStretch ?? 0.35,
     confidence: profile.confidence,
     lastComputed: profile.lastComputed,
   };
@@ -212,11 +297,23 @@ export async function getTasteProfile(
 
 export async function getTasteMatchScore(
   userId: string,
-  comedianId: string
-): Promise<{ matchPct: number; matchingGenres: string[] }> {
+  comedianId: string,
+): Promise<{
+  matchPct: number;
+  matchingGenres: string[];
+  matchingAttributes: string[];
+  summary: string;
+  stretchLabel: "core" | "stretch" | "wildcard";
+}> {
   const profile = await getTasteProfile(userId);
   if (!profile || Object.keys(profile.dimensions).length === 0) {
-    return { matchPct: 0, matchingGenres: [] };
+    return {
+      matchPct: 0,
+      matchingGenres: [],
+      matchingAttributes: [],
+      summary: "Build your comedy DNA to unlock stronger match scores.",
+      stretchLabel: "wildcard",
+    };
   }
 
   const comedianGenres = await prisma.comedianGenre.findMany({
@@ -225,10 +322,15 @@ export async function getTasteMatchScore(
   });
 
   if (comedianGenres.length === 0) {
-    return { matchPct: 0, matchingGenres: [] };
+    return {
+      matchPct: 0,
+      matchingGenres: [],
+      matchingAttributes: [],
+      summary: "This comedian does not have enough tagged data yet.",
+      stretchLabel: "wildcard",
+    };
   }
 
-  // Calculate overlap score: average of user's affinity for the comedian's genres
   let totalAffinity = 0;
   const matchingGenres: string[] = [];
 
@@ -240,9 +342,29 @@ export async function getTasteMatchScore(
     }
   }
 
-  const matchPct = Math.round((totalAffinity / comedianGenres.length) * 100);
+  const matchPct = Math.min(
+    100,
+    Math.round((totalAffinity / comedianGenres.length) * 100),
+  );
+  const attributeMatch = scoreAttributeOverlap(
+    profile.attributeScores,
+    comedianGenres.map(({ genre }) => genre),
+  );
+  const stretchLabel = describeStretch(matchPct, profile.discoveryStretch);
+  const matchingLabels = attributeMatch.matchingAttributes
+    .slice(0, 3)
+    .map(getAttributeLabel);
 
-  return { matchPct: Math.min(matchPct, 100), matchingGenres };
+  return {
+    matchPct,
+    matchingGenres,
+    matchingAttributes: attributeMatch.matchingAttributes,
+    summary:
+      matchingLabels.length > 0
+        ? `${matchingLabels.join(", ")} are strong fits for your comedy DNA.`
+        : "This is a broader wildcard pick based on your current profile.",
+    stretchLabel,
+  };
 }
 
 // ---------------------------------------------------------------------------

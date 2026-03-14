@@ -8,6 +8,8 @@ interface TasteMatchBadgeProps {
 
 export function TasteMatchBadge({ comedianId }: TasteMatchBadgeProps) {
   const [matchPct, setMatchPct] = useState<number | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [stretchLabel, setStretchLabel] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +21,8 @@ export function TasteMatchBadge({ comedianId }: TasteMatchBadgeProps) {
       .then((data) => {
         if (data?.matchPct != null && data.matchPct > 0) {
           setMatchPct(data.matchPct);
+          setSummary(typeof data.summary === "string" ? data.summary : null);
+          setStretchLabel(typeof data.stretchLabel === "string" ? data.stretchLabel : null);
         }
       })
       .catch(() => {})
@@ -37,9 +41,10 @@ export function TasteMatchBadge({ comedianId }: TasteMatchBadgeProps) {
   return (
     <span
       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${color}`}
-      title="How well this comedian matches your taste profile"
+      title={summary ?? "How well this comedian matches your taste profile"}
     >
       {matchPct}% match
+      {stretchLabel && <span className="opacity-80">· {stretchLabel}</span>}
     </span>
   );
 }

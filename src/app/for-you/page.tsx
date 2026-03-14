@@ -11,8 +11,11 @@ interface RecommendedComedian {
   slug: string;
   headshotUrl: string | null;
   score: number;
+  matchPct?: number;
+  stretchLabel?: string;
   reason: string;
   genres: string[];
+  matchingAttributes?: string[];
 }
 
 interface RecommendedEvent {
@@ -22,6 +25,9 @@ interface RecommendedEvent {
   venue: { name: string; city: string; state: string };
   comedians: Array<{ name: string; slug: string }>;
   reason: string;
+  matchPct?: number;
+  stretchLabel?: string;
+  tags?: string[];
 }
 
 export default function ForYouPage() {
@@ -106,6 +112,11 @@ export default function ForYouPage() {
                       <p className="text-zinc-500 text-xs text-center mt-1 line-clamp-2">
                         {c.reason}
                       </p>
+                      {typeof c.matchPct === "number" && c.matchPct > 0 && (
+                        <p className="text-brand-gold text-[11px] text-center mt-1">
+                          {c.matchPct}% match · {c.stretchLabel ?? "core"}
+                        </p>
+                      )}
                       {c.genres.length > 0 && (
                         <div className="flex flex-wrap justify-center gap-1 mt-2">
                           {c.genres.slice(0, 2).map((g) => (
@@ -117,6 +128,14 @@ export default function ForYouPage() {
                             </span>
                           ))}
                         </div>
+                      )}
+                      {c.matchingAttributes && c.matchingAttributes.length > 0 && (
+                        <p className="text-zinc-500 text-[11px] text-center mt-2">
+                          {c.matchingAttributes
+                            .slice(0, 2)
+                            .map((attribute) => attribute.replace(/_/g, " "))
+                            .join(" • ")}
+                        </p>
                       )}
                     </Link>
                   ))}
@@ -145,6 +164,18 @@ export default function ForYouPage() {
                             {e.venue.name} · {e.venue.city}, {e.venue.state}
                           </p>
                           <p className="text-zinc-600 text-xs mt-1">{e.reason}</p>
+                          {e.tags && e.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {e.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 text-[10px]"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="text-right ml-4 shrink-0">
                           <p className="text-zinc-400 text-sm">
@@ -153,6 +184,11 @@ export default function ForYouPage() {
                               day: "numeric",
                             })}
                           </p>
+                          {typeof e.matchPct === "number" && e.matchPct > 0 && (
+                            <p className="text-brand-gold text-xs">
+                              {e.matchPct}% {e.stretchLabel ?? "fit"}
+                            </p>
+                          )}
                         </div>
                       </Link>
                     );

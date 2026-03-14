@@ -197,6 +197,7 @@ model EventReview {
   userId    String
   rating    Int      // 1-5
   comment   String?  // optional text comment
+  verifiedAttendance Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -982,6 +983,12 @@ model TasteProfile {
   userId        String   @unique
   dimensions    String   // JSON: {dark: 0.8, observational: 0.6, physical: 0.2, ...}
   topGenres     String   // JSON: ["dark", "observational", "storytelling"]
+  attributeScores String @default("{}") // JSON: multi-dimensional comedy genome attributes
+  topAttributes String    @default("[]") // JSON: ["crowd_work", "club_energy", ...]
+  negativeSignals String  @default("{}") // JSON: attributes the user tends to bounce off of
+  profileVersion String   @default("v2")
+  profileSummary String?
+  discoveryStretch Float  @default(0.35)
   confidence    Float    @default(0) // 0-1 how much data we have
   lastComputed  DateTime @default(now())
   createdAt     DateTime @default(now())
@@ -1860,6 +1867,7 @@ model SocialProof {
   friendsAttending Int                @default(0)
   totalAttending  Int                 @default(0)
   trendingScore   Float               @default(0)
+  trustScore      Float               @default(0)
   buzzLevel       BuzzLevel           @default(LOW)
   updatedAt       DateTime            @updatedAt
 
@@ -1902,11 +1910,60 @@ model UserDiscoveryProfile {
   preferredGenres   Json     @default("[]")
   preferredVenues   Json     @default("[]")
   preferredDays     Json     @default("[]")
+  attributeWeights  Json     @default("{}")
+  explanationCache  Json     @default("[]")
+  profileVersion    String   @default("v2")
   averageSpend      Float    @default(0)
   discoveryOpenness Float    @default(0.5)
   lastComputedAt    DateTime @default(now())
 
   @@index([userId])
+}
+
+model EventExperienceFeedback {
+  id                 String   @id @default(cuid())
+  eventId            String
+  userId             String
+  verifiedAttendance Boolean  @default(false)
+  setQuality         Int?
+  crowdFit           Int?
+  roomVibe           Int?
+  pacing             Int?
+  valueForPrice      Int?
+  openerStrength     Int?
+  surpriseGuests     Boolean?
+  wouldRecommend     Boolean?
+  notes              String?
+  moderationStatus   String   @default("visible") // visible | flagged | hidden
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([eventId, userId])
+  @@index([eventId, moderationStatus])
+  @@index([userId, createdAt])
+}
+
+model SceneInsightSnapshot {
+  id                String   @id @default(cuid())
+  city              String
+  state             String
+  slug              String   @unique
+  sceneScore        Float    @default(0)
+  momentumScore     Float    @default(0)
+  loyaltyScore      Float    @default(0)
+  varietyScore      Float    @default(0)
+  avgTicketPrice    Float    @default(0)
+  activeVenues      Int      @default(0)
+  upcomingShows     Int      @default(0)
+  topAttributes     Json     @default("[]")
+  featuredComedians Json     @default("[]")
+  lastComputedAt    DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([city, state])
+  @@index([sceneScore])
+  @@index([momentumScore])
 }
 
 // =============================================================================

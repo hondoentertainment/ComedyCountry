@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getComedyPassportSummary } from "@/lib/comedy-passport";
 
 export const metadata = {
   title: "Comedy Wrapped | Punchline Atlas",
@@ -30,8 +31,10 @@ export default async function WrappedPage() {
     tierRatings: 0,
     listsCreated: 0,
   };
+  let passport = null as Awaited<ReturnType<typeof getComedyPassportSummary>> | null;
 
   try {
+    passport = await getComedyPassportSummary(userId);
     const [
       attendances,
       reviews,
@@ -165,6 +168,31 @@ export default async function WrappedPage() {
               </div>
             ))}
           </div>
+        </section>
+      )}
+
+      {passport && (
+        <section className="mb-10">
+          <h2 className="text-xl font-bold text-white mb-4">Comedy Passport</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+            <StatCard label="Scenes Explored" value={passport.scenesExplored} />
+            <StatCard label="Comedians Seen" value={passport.comediansSeen} />
+            <StatCard label="Venues Visited" value={passport.venuesVisited} />
+            <StatCard label="Current Streak" value={passport.currentStreak} />
+          </div>
+          <p className="text-zinc-400 text-sm mb-3">{passport.nextMilestone}</p>
+          {passport.topScenes.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {passport.topScenes.map((scene) => (
+                <span
+                  key={`${scene.city}-${scene.state}`}
+                  className="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 text-sm"
+                >
+                  {scene.city}, {scene.state} ({scene.count})
+                </span>
+              ))}
+            </div>
+          )}
         </section>
       )}
 

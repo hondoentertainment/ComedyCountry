@@ -32,6 +32,7 @@ export default async function TasteProfilePage() {
     (a, b) => b[1] - a[1]
   );
   const topGenres = profile.topGenres;
+  const topAttributes = profile.topAttributes;
   const confidencePct = Math.round(profile.confidence * 100);
 
   return (
@@ -53,6 +54,11 @@ export default async function TasteProfilePage() {
         <p className="text-zinc-400 mb-8">
           Based on your follows, ratings, reviews, and show attendance.
         </p>
+
+        <div className="mb-8 p-4 rounded-lg bg-brand-surface border border-zinc-800">
+          <p className="text-white font-medium mb-1">Explainable match engine</p>
+          <p className="text-zinc-400 text-sm">{profile.profileSummary}</p>
+        </div>
 
         {/* Confidence indicator */}
         <div className="mb-8 p-4 rounded-lg bg-brand-surface border border-zinc-800">
@@ -93,6 +99,29 @@ export default async function TasteProfilePage() {
                 </span>
               ))}
             </div>
+          </section>
+        )}
+
+        {topAttributes.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-xl font-bold text-white mb-4">Comedy Genome</h2>
+            <div className="flex flex-wrap gap-2">
+              {topAttributes.map((attribute, index) => (
+                <span
+                  key={attribute}
+                  className={`px-4 py-2 rounded-full font-medium text-sm ${
+                    index === 0
+                      ? "bg-brand-gold text-brand-dark"
+                      : "bg-zinc-800 text-zinc-300"
+                  }`}
+                >
+                  {attribute.replace(/_/g, " ")}
+                </span>
+              ))}
+            </div>
+            <p className="text-zinc-500 text-sm mt-3">
+              These traits power explainable recommendations, stretch picks, and scene matching.
+            </p>
           </section>
         )}
 

@@ -1,4 +1,10 @@
 import { prisma } from "@/lib/prisma";
+import { getTasteProfile } from "@/lib/taste-profile";
+import {
+  describeStretch,
+  getAttributeLabel,
+  scoreAttributeOverlap,
+} from "@/lib/comedy-genome";
 
 /**
  * Personalized recommendation engine for Punchline Atlas.
@@ -12,8 +18,11 @@ interface RecommendedComedian {
   slug: string;
   headshotUrl: string | null;
   score: number;
+  matchPct: number;
+  stretchLabel: "core" | "stretch" | "wildcard";
   reason: string;
   genres: string[];
+  matchingAttributes: string[];
 }
 
 interface RecommendedEvent {
@@ -23,7 +32,101 @@ interface RecommendedEvent {
   venue: { name: string; city: string; state: string };
   comedians: Array<{ name: string; slug: string }>;
   score: number;
+  matchPct: number;
+  stretchLabel: "core" | "stretch" | "wildcard";
   reason: string;
+  tags: string[];
+}
+
+export async function getEventRecommendationInsight(
+  userId: string,
+  eventId: string,
+): Promise<RecommendedEvent | null> {
+  const [profile, followedComedians, followedVenues, event] = await Promise.all([
+    getTasteProfile(userId),
+    prisma.comedianFollow
+      .findMany({ where: { userId }, select: { comedianId: true } })
+      .then((rows) => rows.map((row) => row.comedianId)),
+    prisma.venueFollow
+      .findMany({ where: { userId }, select: { venueId: true } })
+      .then((rows) => rows.map((row) => row.venueId)),
+    prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        venue: { select: { name: true, city: true, state: true } },
+        comedians: {
+          include: {
+            comedian: {
+              select: { name: true, slug: true, genres: { select: { genre: true } } },
+            },
+          },
+        },
+        _count: { select: { attendees: true } },
+      },
+    }),
+  ]);
+
+  if (!event) return null;
+
+  const reasons: string[] = [];
+  const tags = new Set<string>();
+  let score = 0;
+  const followedPerformers = event.comedians.filter((entry) =>
+    followedComedians.includes(entry.comedianId),
+  );
+
+  if (followedPerformers.length > 0) {
+    reasons.push(
+      `${followedPerformers.map((performer) => performer.comedian.name).join(", ")} performing`,
+    );
+    tags.add("followed comic");
+    score += followedPerformers.length * 5;
+  }
+
+  if (followedVenues.includes(event.venueId)) {
+    reasons.push(`At ${event.venue.name}`);
+    tags.add("favorite room");
+    score += 3;
+  }
+
+  const eventGenres = event.comedians.flatMap((entry) =>
+    entry.comedian.genres.map((genre) => genre.genre),
+  );
+  const attributeMatch = profile
+    ? scoreAttributeOverlap(profile.attributeScores, eventGenres)
+    : { matchPct: 0, matchingAttributes: [] };
+
+  if (attributeMatch.matchingAttributes.length > 0) {
+    reasons.push(
+      `Fits your DNA: ${attributeMatch.matchingAttributes
+        .slice(0, 2)
+        .map(getAttributeLabel)
+        .join(" • ")}`,
+    );
+    tags.add("dna match");
+    score += attributeMatch.matchPct / 25;
+  }
+
+  score += Math.min(event._count.attendees * 0.1, 2);
+  if (event._count.attendees >= 25) {
+    tags.add("buzzing");
+  }
+
+  return {
+    id: event.id,
+    title: event.title,
+    date: event.date,
+    venue: event.venue,
+    comedians: event.comedians.map((entry) => ({
+      name: entry.comedian.name,
+      slug: entry.comedian.slug,
+    })),
+    score,
+    matchPct: attributeMatch.matchPct,
+    stretchLabel: describeStretch(attributeMatch.matchPct, profile?.discoveryStretch),
+    reason: reasons.join(" · ") || "Recommended for you",
+    tags: Array.from(tags),
+  };
 }
 
 /**
@@ -38,8 +141,8 @@ export async function getRecommendedComedians(
   userId: string,
   limit = 12
 ): Promise<RecommendedComedian[]> {
-  // 1. Get user's genre preferences from followed comedians and reviews
-  const [followedComedianIds, reviewedEvents] = await Promise.all([
+  const [profile, followedComedianIds, reviewedEvents] = await Promise.all([
+    getTasteProfile(userId),
     prisma.comedianFollow
       .findMany({ where: { userId }, select: { comedianId: true } })
       .then((f) => f.map((x) => x.comedianId)),
@@ -86,8 +189,9 @@ export async function getRecommendedComedians(
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([genre]) => genre);
+  const effectiveGenres = profile?.topGenres?.length ? profile.topGenres : topGenres;
 
-  if (topGenres.length === 0) {
+  if (effectiveGenres.length === 0) {
     // Cold start: return popular comedians
     const popular = await prisma.comedian.findMany({
       select: {
@@ -108,8 +212,11 @@ export async function getRecommendedComedians(
       slug: c.slug,
       headshotUrl: c.headshotUrl,
       score: c._count.followers,
+      matchPct: 0,
+      stretchLabel: "wildcard",
       reason: "Popular on Punchline Atlas",
       genres: c.genres.map((g) => g.genre),
+      matchingAttributes: [],
     }));
   }
 
@@ -117,7 +224,7 @@ export async function getRecommendedComedians(
   const candidates = await prisma.comedian.findMany({
     where: {
       id: { notIn: Array.from(seenComedianIds) },
-      genres: { some: { genre: { in: topGenres } } },
+      genres: { some: { genre: { in: effectiveGenres } } },
     },
     select: {
       id: true,
@@ -133,19 +240,47 @@ export async function getRecommendedComedians(
   // 3. Score candidates
   const scored = candidates.map((c) => {
     let score = 0;
-    let reason = "";
+    const reasons: string[] = [];
 
     // Genre match scoring
-    const matchingGenres = c.genres.filter((g) => topGenres.includes(g.genre));
+    const matchingGenres = c.genres.filter((g) => effectiveGenres.includes(g.genre));
     score += matchingGenres.length * 3;
     if (matchingGenres.length > 0) {
-      reason = `Matches your taste in ${matchingGenres.map((g) => g.genre).join(", ")}`;
+      reasons.push(`Matches your taste in ${matchingGenres.map((g) => g.genre).join(", ")}`);
     }
 
     // Popularity boost
     score += Math.min(c._count.followers * 0.005, 2);
 
-    if (!reason) reason = "Recommended for you";
+    const attributeMatch = profile
+      ? scoreAttributeOverlap(
+          profile.attributeScores,
+          c.genres.map((genre) => genre.genre),
+        )
+      : { matchPct: 0, matchingAttributes: [] };
+
+    if (attributeMatch.matchingAttributes.length > 0) {
+      reasons.push(
+        attributeMatch.matchingAttributes
+          .slice(0, 2)
+          .map(getAttributeLabel)
+          .join(" • "),
+      );
+    }
+
+    const matchPct = profile
+      ? Math.max(
+          attributeMatch.matchPct,
+          Math.min(
+            100,
+            Math.round(
+              (matchingGenres.reduce((sum, genre) => sum + (profile.dimensions[genre.genre] ?? 0), 0) /
+                Math.max(c.genres.length, 1)) *
+                100,
+            ),
+          ),
+        )
+      : 0;
 
     return {
       id: c.id,
@@ -153,8 +288,11 @@ export async function getRecommendedComedians(
       slug: c.slug,
       headshotUrl: c.headshotUrl,
       score,
-      reason,
+      matchPct,
+      stretchLabel: describeStretch(matchPct, profile?.discoveryStretch),
+      reason: reasons.join(" · ") || "Recommended for you",
       genres: c.genres.map((g) => g.genre),
+      matchingAttributes: attributeMatch.matchingAttributes,
     };
   });
 
@@ -170,7 +308,8 @@ export async function getRecommendedEvents(
   limit = 10
 ): Promise<RecommendedEvent[]> {
   // Get user's followed comedians and venue preferences
-  const [followedComedians, followedVenues, attendedEvents] = await Promise.all([
+  const [profile, followedComedians, followedVenues, attendedEvents] = await Promise.all([
+    getTasteProfile(userId),
     prisma.comedianFollow
       .findMany({ where: { userId }, select: { comedianId: true } })
       .then((f) => f.map((x) => x.comedianId)),
@@ -193,7 +332,11 @@ export async function getRecommendedEvents(
     },
     include: {
       venue: { select: { name: true, city: true, state: true } },
-      comedians: { include: { comedian: { select: { name: true, slug: true } } } },
+      comedians: {
+        include: {
+          comedian: { select: { name: true, slug: true, genres: { select: { genre: true } } } },
+        },
+      },
       _count: { select: { attendees: true } },
     },
     orderBy: { date: "asc" },
@@ -205,6 +348,7 @@ export async function getRecommendedEvents(
     .map((e) => {
       let score = 0;
       const reasons: string[] = [];
+      const tags = new Set<string>();
 
       // Followed comedian performing
       const followedPerformers = e.comedians.filter((ec) =>
@@ -215,16 +359,42 @@ export async function getRecommendedEvents(
         reasons.push(
           `${followedPerformers.map((p) => p.comedian.name).join(", ")} performing`
         );
+        tags.add("followed comic");
       }
 
       // Followed venue
       if (followedVenues.includes(e.venueId)) {
         score += 3;
         reasons.push(`At ${e.venue.name}`);
+        tags.add("favorite room");
+      }
+
+      const eventGenres = e.comedians.flatMap((ec) =>
+        "genres" in ec.comedian && Array.isArray(ec.comedian.genres)
+          ? (ec.comedian.genres as Array<{ genre: string }>).map((genre) => genre.genre)
+          : [],
+      );
+
+      const attributeMatch = profile
+        ? scoreAttributeOverlap(profile.attributeScores, eventGenres)
+        : { matchPct: 0, matchingAttributes: [] };
+      if (attributeMatch.matchingAttributes.length > 0) {
+        const labeled = attributeMatch.matchingAttributes
+          .slice(0, 2)
+          .map(getAttributeLabel)
+          .join(" • ");
+        reasons.push(`Fits your DNA: ${labeled}`);
+        tags.add("dna match");
+        score += attributeMatch.matchPct / 25;
       }
 
       // Popularity
       score += Math.min(e._count.attendees * 0.1, 2);
+      if (e._count.attendees >= 25) {
+        tags.add("buzzing");
+      }
+
+      const matchPct = attributeMatch.matchPct;
 
       return {
         id: e.id,
@@ -236,7 +406,10 @@ export async function getRecommendedEvents(
           slug: ec.comedian.slug,
         })),
         score,
+        matchPct,
+        stretchLabel: describeStretch(matchPct, profile?.discoveryStretch),
         reason: reasons.join(" · ") || "Recommended for you",
+        tags: Array.from(tags),
       };
     });
 

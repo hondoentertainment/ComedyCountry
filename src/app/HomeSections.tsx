@@ -8,6 +8,7 @@ import { formatEventPrice } from "@/lib/format";
 import { authOptions } from "@/lib/auth";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
 import { PromotedContent } from "@/components/PromotedContent";
+import { getTasteProfile } from "@/lib/taste-profile";
 
 function StarRating({ rating, count }: { rating: number | null; count: number }) {
   if (count === 0) return <span className="text-zinc-500 text-sm">No reviews yet</span>;
@@ -43,19 +44,24 @@ export async function HomeSections() {
   let venues: Awaited<ReturnType<typeof listVenues>>["venues"] = [];
   let events: Awaited<ReturnType<typeof listEvents>>["events"] = [];
   let forYouEvents: Awaited<ReturnType<typeof getEventsForUser>>["events"] = [];
+  let tasteProfile: Awaited<ReturnType<typeof getTasteProfile>> = null;
   let ratingStats = new Map<string, { count: number; avgRating: number | null }>();
   let dataUnavailable = false;
   let dbAvailable = false;
 
   try {
-    const [v, e, forYou] = await Promise.all([
+    const [profile, venueResult, eventResult, forYouResult] = await Promise.all([
+      session?.user?.id ? getTasteProfile(session.user.id) : Promise.resolve(null),
       listVenues({ take: 6 }),
       listEvents({ take: 8 }),
-      session?.user?.id ? getEventsForUser(session.user.id, 6) : Promise.resolve({ events: [], total: 0 }),
+      session?.user?.id
+        ? getEventsForUser(session.user.id, 6)
+        : Promise.resolve({ events: [], total: 0 }),
     ]);
-    venues = v.venues;
-    events = e.events;
-    forYouEvents = forYou.events;
+    tasteProfile = profile;
+    venues = venueResult.venues;
+    events = eventResult.events;
+    forYouEvents = forYouResult.events;
     dbAvailable = true;
     if (events.length > 0 || forYouEvents.length > 0) {
       const allIds = [...events.map((x) => x.id), ...forYouEvents.map((x) => x.id)];
@@ -102,6 +108,22 @@ export async function HomeSections() {
           <p className="text-zinc-400 text-sm mb-6 max-w-md">
             Shows from comedians and venues you follow.
           </p>
+          {tasteProfile?.topAttributes?.length ? (
+            <div className="mb-6 p-4 rounded-card bg-brand-surface border border-zinc-800">
+              <p className="text-white font-medium mb-1">Your comedy DNA</p>
+              <p className="text-zinc-400 text-sm mb-3">{tasteProfile.profileSummary}</p>
+              <div className="flex flex-wrap gap-2">
+                {tasteProfile.topAttributes.slice(0, 4).map((attribute) => (
+                  <span
+                    key={attribute}
+                    className="px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-300 text-xs"
+                  >
+                    {attribute.replace(/_/g, " ")}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null}
           {forYouEvents.length > 0 ? (
           <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

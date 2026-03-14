@@ -4,6 +4,12 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getEventReviews, getEventRatingStats } from "@/lib/event-reviews";
 import { checkAndAwardBadges } from "@/lib/badges.achievement";
+import {
+  hasVerifiedAttendance,
+  normalizeExperienceInput,
+  upsertEventExperienceFeedback,
+  type EventExperienceInput,
+} from "@/lib/live-reputation";
 
 // GET: List reviews and rating stats for an event
 export async function GET(
@@ -58,7 +64,7 @@ export async function POST(
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
 
-  let body: { rating?: number; comment?: string };
+  let body: { rating?: number; comment?: string; experience?: EventExperienceInput };
   try {
     body = await request.json();
   } catch {
@@ -67,6 +73,7 @@ export async function POST(
 
   const rating = typeof body.rating === "number" ? body.rating : undefined;
   const comment = typeof body.comment === "string" ? body.comment.trim() || null : undefined;
+  const experience = normalizeExperienceInput(body.experience);
 
   if (rating !== undefined && (rating < 1 || rating > 5)) {
     return NextResponse.json(
@@ -75,14 +82,15 @@ export async function POST(
     );
   }
 
-  if (rating === undefined && comment === undefined) {
+  if (rating === undefined && comment === undefined && !experience) {
     return NextResponse.json(
-      { error: "Provide rating and/or comment" },
+      { error: "Provide rating, comment, or crowd feedback" },
       { status: 400 }
     );
   }
 
   try {
+    const verifiedAttendance = await hasVerifiedAttendance(eventId, session.user.id);
     const review = await prisma.eventReview.upsert({
       where: {
         eventId_userId: { eventId, userId: session.user.id },
@@ -92,10 +100,12 @@ export async function POST(
         userId: session.user.id,
         rating: rating ?? 3,
         comment: comment ?? null,
+        verifiedAttendance,
       },
       update: {
         ...(rating !== undefined && { rating }),
         ...(comment !== undefined && { comment }),
+        verifiedAttendance,
       },
       include: {
         user: {
@@ -103,6 +113,10 @@ export async function POST(
         },
       },
     });
+
+    if (experience) {
+      await upsertEventExperienceFeedback(eventId, session.user.id, experience);
+    }
 
     checkAndAwardBadges(session.user.id, "review_event").catch(() => {});
     return NextResponse.json(review);

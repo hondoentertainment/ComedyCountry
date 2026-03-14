@@ -12,6 +12,7 @@ import { ComedianPageTabs } from "@/components/ComedianPageTabs";
 import { ComedianStructuredData } from "@/components/StructuredData";
 import { SimilarComedians } from "@/components/SimilarComedians";
 import { SpecialRating } from "@/components/SpecialRating";
+import { TasteMatchBadge } from "@/components/TasteMatchBadge";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -146,6 +147,7 @@ export default async function ComedianPage({ params }: PageProps) {
                 id={comedian.id}
                 initialFollowing={isFollowing}
               />
+              {session?.user && <TasteMatchBadge comedianId={comedian.id} />}
             </div>
             <div className="flex flex-wrap gap-2 mb-2">
               <span className="inline-block text-xs px-2 py-1 rounded bg-zinc-700 text-zinc-300">

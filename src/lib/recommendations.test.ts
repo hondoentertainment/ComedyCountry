@@ -12,7 +12,12 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
+vi.mock("@/lib/taste-profile", () => ({
+  getTasteProfile: vi.fn(),
+}));
+
 import { prisma } from "@/lib/prisma";
+import { getTasteProfile } from "@/lib/taste-profile";
 import { getRecommendedComedians, getRecommendedEvents } from "./recommendations";
 
 beforeEach(() => vi.clearAllMocks());
@@ -22,6 +27,7 @@ describe("getRecommendedComedians", () => {
     vi.mocked(prisma.comedianFollow.findMany).mockResolvedValue([]);
     vi.mocked(prisma.eventReview.findMany).mockResolvedValue([]);
     vi.mocked(prisma.comedianGenre.findMany).mockResolvedValue([]);
+    vi.mocked(getTasteProfile).mockResolvedValue(null);
     vi.mocked(prisma.comedian.findMany).mockResolvedValue([
       { id: "c1", name: "Dave", slug: "dave", headshotUrl: null, genres: [{ genre: "observational" }], _count: { followers: 100 } },
     ] as never);
@@ -40,6 +46,20 @@ describe("getRecommendedComedians", () => {
     vi.mocked(prisma.comedianGenre.findMany).mockResolvedValue([
       { genre: "dark" },
     ] as never);
+    vi.mocked(getTasteProfile).mockResolvedValue({
+      id: "tp-1",
+      userId: "user-1",
+      dimensions: { dark: 1 },
+      topGenres: ["dark"],
+      attributeScores: { dark: 1, club_energy: 0.6 },
+      topAttributes: ["dark", "club_energy"],
+      negativeSignals: {},
+      profileVersion: "v2",
+      profileSummary: "Dark and club-energy leaning.",
+      discoveryStretch: 0.35,
+      confidence: 0.6,
+      lastComputed: new Date(),
+    });
     vi.mocked(prisma.comedian.findMany).mockResolvedValue([
       { id: "c2", name: "New Comedian", slug: "new", headshotUrl: null, genres: [{ genre: "dark" }], _count: { followers: 50 } },
     ] as never);
@@ -57,6 +77,20 @@ describe("getRecommendedEvents", () => {
     ] as never);
     vi.mocked(prisma.venueFollow.findMany).mockResolvedValue([]);
     vi.mocked(prisma.eventAttendance.findMany).mockResolvedValue([]);
+    vi.mocked(getTasteProfile).mockResolvedValue({
+      id: "tp-1",
+      userId: "user-1",
+      dimensions: { dark: 1 },
+      topGenres: ["dark"],
+      attributeScores: { dark: 1 },
+      topAttributes: ["dark"],
+      negativeSignals: {},
+      profileVersion: "v2",
+      profileSummary: "Dark leaning.",
+      discoveryStretch: 0.35,
+      confidence: 0.6,
+      lastComputed: new Date(),
+    });
     vi.mocked(prisma.event.findMany).mockResolvedValue([
       {
         id: "e1",
@@ -64,7 +98,7 @@ describe("getRecommendedEvents", () => {
         date: new Date(),
         venueId: "v1",
         venue: { name: "Club", city: "NYC", state: "NY" },
-        comedians: [{ comedianId: "c1", comedian: { name: "Dave", slug: "dave" } }],
+        comedians: [{ comedianId: "c1", comedian: { name: "Dave", slug: "dave", genres: [{ genre: "dark" }] } }],
         _count: { attendees: 10 },
       },
     ] as never);

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { VENUE_TYPE_LABELS } from "@/lib/constants";
 import { formatEventPrice } from "@/lib/format";
+import { computeSceneIntelligence } from "@/lib/scene-intelligence";
 
 type PageProps = { params: Promise<{ city: string }> };
 
@@ -35,6 +36,7 @@ export default async function CityScenePage({ params }: PageProps) {
   const cityName = venues[0].city;
   const stateName = venues[0].state;
   const venueIds = venues.map((v) => v.id);
+  const insights = await computeSceneIntelligence(cityName, stateName).catch(() => null);
 
   // Get upcoming shows at these venues
   const upcomingShows = await prisma.event.findMany({
@@ -68,6 +70,32 @@ export default async function CityScenePage({ params }: PageProps) {
             {venues.length} venue{venues.length !== 1 ? "s" : ""} · {upcomingShows.length} upcoming show{upcomingShows.length !== 1 ? "s" : ""} · {stateName}
           </p>
         </div>
+
+        {insights && (
+          <section className="mb-10 p-5 rounded-xl bg-brand-surface border border-zinc-800">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+              <Metric label="Scene score" value={insights.sceneScore} accent />
+              <Metric label="Momentum" value={insights.momentumScore} />
+              <Metric label="Loyalty" value={insights.loyaltyScore} />
+              <Metric label="Variety" value={insights.varietyScore} />
+              <Metric
+                label="Avg. ticket"
+                value={insights.avgTicketPrice > 0 ? `$${insights.avgTicketPrice}` : "—"}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {insights.topAttributeLabels.map((attribute) => (
+                <span
+                  key={attribute}
+                  className="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 text-xs"
+                >
+                  {attribute}
+                </span>
+              ))}
+            </div>
+            <p className="text-zinc-400 text-sm">{insights.monetizationHint}</p>
+          </section>
+        )}
 
         {/* Venues Grid */}
         <section className="mb-14">
@@ -171,6 +199,23 @@ export default async function CityScenePage({ params }: PageProps) {
           </section>
         )}
       </div>
+    </div>
+  );
+}
+
+function Metric({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string | number;
+  accent?: boolean;
+}) {
+  return (
+    <div className="rounded-lg bg-brand-charcoal/40 border border-zinc-800 p-3">
+      <p className={`text-xl font-bold ${accent ? "text-brand-gold" : "text-white"}`}>{value}</p>
+      <p className="text-zinc-500 text-xs mt-1">{label}</p>
     </div>
   );
 }

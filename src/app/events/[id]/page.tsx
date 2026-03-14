@@ -14,6 +14,9 @@ import { AttendanceButtons } from "@/components/AttendanceButtons";
 import { CalendarExport } from "@/components/CalendarExport";
 import { TicketButton } from "@/components/TicketButton";
 import WaitlistButton from "@/components/WaitlistButton";
+import { getEventReputationSummary } from "@/lib/live-reputation";
+import { getComedyPassportSummary } from "@/lib/comedy-passport";
+import { getEventRecommendationInsight } from "@/lib/recommendations";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +67,13 @@ export default async function EventPage({ params }: PageProps) {
   const userReview = session?.user?.id
     ? await getUserReview(id, session.user.id).catch(() => null)
     : null;
+  const [reputation, passport, recommendation] = await Promise.all([
+    getEventReputationSummary(id).catch(() => null),
+    session?.user?.id ? getComedyPassportSummary(session.user.id).catch(() => null) : Promise.resolve(null),
+    session?.user?.id
+      ? getEventRecommendationInsight(session.user.id, id).catch(() => null)
+      : Promise.resolve(null),
+  ]);
 
   const formatDate = (d: Date) =>
     new Date(d).toLocaleDateString("en-US", {
@@ -175,6 +185,93 @@ export default async function EventPage({ params }: PageProps) {
             )}
           </div>
         </div>
+
+        {recommendation && (
+          <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
+            <h2 className="text-lg font-semibold text-white mb-2">Why this show fits you</h2>
+            <p className="text-zinc-400 text-sm">{recommendation.reason}</p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {typeof recommendation.matchPct === "number" && recommendation.matchPct > 0 && (
+                <span className="px-2 py-1 rounded-full bg-brand-gold/10 text-brand-gold text-xs">
+                  {recommendation.matchPct}% match
+                </span>
+              )}
+              {recommendation.stretchLabel && (
+                <span className="px-2 py-1 rounded-full bg-zinc-800 text-zinc-300 text-xs capitalize">
+                  {recommendation.stretchLabel} pick
+                </span>
+              )}
+              {(recommendation.tags ?? []).slice(0, 3).map((tag) => (
+                <span key={tag} className="px-2 py-1 rounded-full bg-zinc-800 text-zinc-400 text-xs">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {reputation && (
+          <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
+            <h2 className="text-lg font-semibold text-white mb-2">Verified crowd take</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div>
+                <p className="text-brand-gold text-xl font-bold">{reputation.trustScore}</p>
+                <p className="text-zinc-500 text-xs">Trust score</p>
+              </div>
+              <div>
+                <p className="text-white text-xl font-bold">{reputation.verifiedSignalRate}%</p>
+                <p className="text-zinc-500 text-xs">Verified signals</p>
+              </div>
+              <div>
+                <p className="text-white text-xl font-bold">
+                  {reputation.wouldRecommendRate ?? "—"}{reputation.wouldRecommendRate !== null ? "%" : ""}
+                </p>
+                <p className="text-zinc-500 text-xs">Would recommend</p>
+              </div>
+              <div>
+                <p className="text-white text-xl font-bold">{reputation.verifiedReviewCount}</p>
+                <p className="text-zinc-500 text-xs">Verified reviews</p>
+              </div>
+            </div>
+            {reputation.topSignals.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {reputation.topSignals.map((signal) => (
+                  <span
+                    key={signal}
+                    className="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-300 text-xs"
+                  >
+                    {signal}
+                  </span>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {passport && (
+          <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
+            <h2 className="text-lg font-semibold text-white mb-2">Your comedy passport</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+              <div>
+                <p className="text-brand-gold text-xl font-bold">{passport.showsAttended}</p>
+                <p className="text-zinc-500 text-xs">Shows attended</p>
+              </div>
+              <div>
+                <p className="text-white text-xl font-bold">{passport.scenesExplored}</p>
+                <p className="text-zinc-500 text-xs">Scenes explored</p>
+              </div>
+              <div>
+                <p className="text-white text-xl font-bold">{passport.comediansSeen}</p>
+                <p className="text-zinc-500 text-xs">Comedians seen</p>
+              </div>
+              <div>
+                <p className="text-white text-xl font-bold">{passport.currentStreak}</p>
+                <p className="text-zinc-500 text-xs">Current streak</p>
+              </div>
+            </div>
+            <p className="text-zinc-400 text-sm">{passport.nextMilestone}</p>
+          </section>
+        )}
 
         <EventReviewsSection
           eventId={id}

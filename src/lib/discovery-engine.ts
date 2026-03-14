@@ -1,4 +1,11 @@
 import { prisma } from "./prisma";
+import {
+  addWeightedAttributes,
+  emptyAttributeScores,
+  getAttributeLabel,
+  getTopKeys,
+  normalizeAttributeScores,
+} from "./comedy-genome";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -59,6 +66,9 @@ export interface DiscoveryProfile {
   preferredGenres: string[];
   preferredVenues: string[];
   preferredDays: string[];
+  attributeWeights: Record<string, number>;
+  explanationCache: string[];
+  profileVersion: string;
   averageSpend: number;
   discoveryOpenness: number;
   lastComputedAt: Date;
@@ -70,6 +80,7 @@ export interface SocialProofData {
   friendsAttending: number;
   totalAttending: number;
   trendingScore: number;
+  trustScore: number;
   buzzLevel: BuzzLevel;
 }
 
@@ -154,6 +165,7 @@ export async function computeDiscoveryProfile(
   const genreWeights = new Map<string, number>();
   const venueWeights = new Map<string, number>();
   const dayWeights = new Map<string, number>();
+  const rawAttributeWeights = emptyAttributeScores();
 
   // Fetch related events for entity signals
   const eventEntityIds = entitySignals
@@ -179,12 +191,14 @@ export async function computeDiscoveryProfile(
 
       // Genres
       for (const ec of event.comedians) {
+        const comedianGenres = ec.comedian.genres.map((g) => g.genre);
         for (const g of ec.comedian.genres) {
           genreWeights.set(
             g.genre,
             (genreWeights.get(g.genre) ?? 0) + weight,
           );
         }
+        addWeightedAttributes(rawAttributeWeights, comedianGenres, weight);
       }
 
       // Venue preferences
@@ -224,6 +238,8 @@ export async function computeDiscoveryProfile(
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
     .map(([day]) => day);
+  const attributeWeights = normalizeAttributeScores(rawAttributeWeights);
+  const explanationCache = getTopKeys(attributeWeights, 3).map(getAttributeLabel);
 
   // Compute average spend from purchase signals
   const purchaseSignals = signals.filter((s) => s.signalType === "PURCHASE");
@@ -242,6 +258,9 @@ export async function computeDiscoveryProfile(
     preferredGenres,
     preferredVenues,
     preferredDays,
+    attributeWeights,
+    explanationCache,
+    profileVersion: "v2",
     averageSpend,
     discoveryOpenness,
     lastComputedAt: new Date(),
@@ -254,6 +273,9 @@ export async function computeDiscoveryProfile(
       preferredGenres,
       preferredVenues,
       preferredDays,
+      attributeWeights,
+      explanationCache,
+      profileVersion: "v2",
       averageSpend,
       discoveryOpenness,
     },
@@ -261,6 +283,9 @@ export async function computeDiscoveryProfile(
       preferredGenres,
       preferredVenues,
       preferredDays,
+      attributeWeights,
+      explanationCache,
+      profileVersion: "v2",
       averageSpend,
       discoveryOpenness,
       lastComputedAt: new Date(),
@@ -288,6 +313,9 @@ export async function getDiscoveryProfile(
     preferredGenres: profile.preferredGenres as string[],
     preferredVenues: profile.preferredVenues as string[],
     preferredDays: profile.preferredDays as string[],
+    attributeWeights: (profile.attributeWeights as Record<string, number> | null) ?? {},
+    explanationCache: (profile.explanationCache as string[] | null) ?? [],
+    profileVersion: profile.profileVersion ?? "v1",
     averageSpend: profile.averageSpend,
     discoveryOpenness: profile.discoveryOpenness,
     lastComputedAt: profile.lastComputedAt,
@@ -627,6 +655,7 @@ export async function computeSocialProof(
     friendsAttending: 0,
     totalAttending,
     trendingScore,
+    trustScore: Math.min(100, Math.round((totalAttending * 0.6 + trendingScore * 0.4) * 10) / 10),
     buzzLevel,
   };
 
@@ -639,11 +668,13 @@ export async function computeSocialProof(
       entityId,
       totalAttending,
       trendingScore,
+      trustScore: data.trustScore,
       buzzLevel,
     },
     update: {
       totalAttending,
       trendingScore,
+      trustScore: data.trustScore,
       buzzLevel,
     },
   });
@@ -694,6 +725,7 @@ export async function getSocialProof(
     friendsAttending,
     totalAttending: proof.totalAttending,
     trendingScore: proof.trendingScore,
+    trustScore: proof.trustScore ?? 0,
     buzzLevel: proof.buzzLevel as BuzzLevel,
   };
 }
@@ -785,7 +817,8 @@ export function scoreFeedItem(
       socialProof.totalAttending * 0.1,
       SCORE_WEIGHTS.socialProof * 0.5,
     );
-    score += friendBoost + attendingBoost;
+    const trustBoost = Math.min((socialProof.trustScore ?? 0) / 10, 10);
+    score += friendBoost + attendingBoost + trustBoost;
 
     // Trending
     const trendingNorm = Math.min(
@@ -907,10 +940,15 @@ export async function getDiscoveryInsights(
       profile.preferredGenres.includes(g),
     );
     if (matchingGenres.length > 0) {
+      const topAttribute = Object.entries(profile.attributeWeights)
+        .sort((a, b) => b[1] - a[1])
+        .map(([attribute]) => attribute)[0];
       insights.push({
         entityId: event.id,
         entityType: "EVENT",
-        reason: `Because you like ${matchingGenres[0]} comedy`,
+        reason: topAttribute
+          ? `Because you lean ${getAttributeLabel(topAttribute).toLowerCase()} and like ${matchingGenres[0]} comedy`
+          : `Because you like ${matchingGenres[0]} comedy`,
       });
     }
   }
@@ -930,6 +968,9 @@ function createDefaultProfile(userId: string): DiscoveryProfile {
     preferredGenres: [],
     preferredVenues: [],
     preferredDays: [],
+    attributeWeights: {},
+    explanationCache: [],
+    profileVersion: "v2",
     averageSpend: 0,
     discoveryOpenness: 0.5,
     lastComputedAt: new Date(),

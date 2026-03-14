@@ -32,6 +32,9 @@ export function EventReviewsSection({
           Rate this show
         </h2>
         <div className="p-4 rounded-card bg-brand-surface border border-zinc-800/80">
+          <p className="text-xs text-zinc-500 mb-4">
+            Add a quick live-quality read so Punchline Atlas can learn what rooms and lineups actually fit your taste.
+          </p>
           {isSignedIn ? (
             <EventRatingForm
               eventId={eventId}

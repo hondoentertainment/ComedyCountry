@@ -9,6 +9,7 @@ type Review = {
   id: string;
   rating: number;
   comment: string | null;
+  verifiedAttendance?: boolean;
   createdAt: string;
   user: {
     name: string | null;
@@ -133,6 +134,11 @@ export function EventReviews({ eventId, initialStats, refreshTrigger = 0 }: Even
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-medium text-white">{displayName(r)}</span>
                   <Stars rating={r.rating} />
+                  {r.verifiedAttendance && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 text-[11px] font-medium border border-emerald-500/20">
+                      Verified attendee
+                    </span>
+                  )}
                   <span className="text-xs text-zinc-500">
                     {new Date(r.createdAt).toLocaleDateString()}
                   </span>
