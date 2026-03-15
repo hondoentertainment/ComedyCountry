@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 interface TicketData {
   id: string;
@@ -183,16 +184,22 @@ export default function TicketDetailPage() {
           &larr; Back to My Tickets
         </Link>
 
-        {/* QR Code */}
+        {/* QR Code — scannable at venue */}
         <div className="rounded-card bg-brand-surface border border-zinc-800/80 p-8 text-center mb-6">
           <div className="inline-flex flex-col items-center">
-            <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center mb-4">
-              <div className="text-center px-3">
-                <p className="text-zinc-800 font-mono text-xs break-all leading-relaxed">
-                  {ticket.qrCode}
-                </p>
-              </div>
+            <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center p-2 mb-4">
+              <Image
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(ticket.qrCode)}`}
+                alt="Ticket QR code"
+                width={180}
+                height={180}
+                className="w-full h-full object-contain"
+                unoptimized
+              />
             </div>
+            <p className="text-zinc-500 text-xs font-mono mb-2 truncate max-w-[200px]" title={ticket.qrCode}>
+              {ticket.qrCode}
+            </p>
             <StatusBadge status={ticket.status} />
           </div>
         </div>

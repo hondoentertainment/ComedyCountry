@@ -7,6 +7,8 @@ import { SettingsActions } from "./SettingsActions";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { SubscriptionManager } from "@/components/SubscriptionManager";
 import { PushNotificationToggle } from "@/components/PushNotificationToggle";
+import { LocationAlertsSection } from "@/components/LocationAlertsSection";
+import { CalendarFeedSection } from "@/components/CalendarFeedSection";
 
 export const metadata = {
   title: "Settings | Punchline Atlas",
@@ -81,6 +83,20 @@ export default async function SettingsPage() {
                 </Link>
               </li>
             </ul>
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-4">
+              Location alerts
+            </h2>
+            <LocationAlertsSection />
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-4">
+              Calendar sync
+            </h2>
+            <CalendarFeedSection />
           </div>
 
           <div>

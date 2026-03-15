@@ -16,6 +16,7 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.comedycountry.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "api.qrserver.com", pathname: "/v1/create-qr-code/**" },
       { protocol: "https", hostname: "**", pathname: "/**" },
     ],
     minimumCacheTTL: 60,

@@ -11,6 +11,7 @@ import { EventReviewsSection } from "@/components/EventReviewsSection";
 import { EventShareButtons } from "@/components/EventShareButtons";
 import { EventStructuredData } from "@/components/StructuredData";
 import { AttendanceButtons } from "@/components/AttendanceButtons";
+import { FriendsGoingBadge } from "@/components/FriendsGoingBadge";
 import { CalendarExport } from "@/components/CalendarExport";
 import { TicketButton } from "@/components/TicketButton";
 import WaitlistButton from "@/components/WaitlistButton";
@@ -160,8 +161,9 @@ export default async function EventPage({ params }: PageProps) {
               location={`${event.venue.name}, ${event.venue.city}, ${event.venue.state}`}
             />
           </div>
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <AttendanceButtons eventId={id} />
+            {session?.user && <FriendsGoingBadge eventId={id} />}
             <WaitlistButton eventId={id} />
           </div>
           <div className="flex flex-wrap gap-2 mt-4">

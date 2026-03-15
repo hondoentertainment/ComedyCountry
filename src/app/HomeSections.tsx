@@ -8,7 +8,8 @@ import { formatEventPrice } from "@/lib/format";
 import { authOptions } from "@/lib/auth";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
 import { PromotedContent } from "@/components/PromotedContent";
-import { getTasteProfile } from "@/lib/taste-profile";
+import { FriendsGoingBadge } from "@/components/FriendsGoingBadge";
+import { getTasteProfile, getHappeningTonight } from "@/lib/taste-profile";
 
 function StarRating({ rating, count }: { rating: number | null; count: number }) {
   if (count === 0) return <span className="text-zinc-500 text-sm">No reviews yet</span>;
@@ -48,20 +49,23 @@ export async function HomeSections() {
   let ratingStats = new Map<string, { count: number; avgRating: number | null }>();
   let dataUnavailable = false;
   let dbAvailable = false;
+  let tonightEvents: Awaited<ReturnType<typeof getHappeningTonight>> = [];
 
   try {
-    const [profile, venueResult, eventResult, forYouResult] = await Promise.all([
+    const [profile, venueResult, eventResult, forYouResult, tonight] = await Promise.all([
       session?.user?.id ? getTasteProfile(session.user.id) : Promise.resolve(null),
       listVenues({ take: 6 }),
       listEvents({ take: 8 }),
       session?.user?.id
         ? getEventsForUser(session.user.id, 6)
         : Promise.resolve({ events: [], total: 0 }),
+      getHappeningTonight(),
     ]);
     tasteProfile = profile;
     venues = venueResult.venues;
     events = eventResult.events;
     forYouEvents = forYouResult.events;
+    tonightEvents = tonight;
     dbAvailable = true;
     if (events.length > 0 || forYouEvents.length > 0) {
       const allIds = [...events.map((x) => x.id), ...forYouEvents.map((x) => x.id)];
@@ -80,6 +84,53 @@ export async function HomeSections() {
         <div className="mb-6 p-4 rounded-card bg-amber-500/10 border border-amber-500/40 text-amber-200 text-center">
           Data temporarily unavailable. Please try again later.
         </div>
+      )}
+
+      {/* Happening Tonight — prominent */}
+      {tonightEvents.length > 0 && (
+        <section className="mb-14">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-white">Happening tonight</h2>
+            <Link
+              href="/happening-tonight"
+              className="text-sm font-medium text-brand-gold hover:text-brand-gold/80 transition-colors"
+            >
+              See all →
+            </Link>
+          </div>
+          <p className="text-zinc-400 text-sm mb-4">
+            Live comedy shows today and tonight.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {tonightEvents.slice(0, 6).map((event) => {
+              const comedianNames = event.comedians.map((c) => c.name).join(", ");
+              const displayTitle = event.title ?? comedianNames;
+              return (
+                <Link
+                  key={event.id}
+                  href={`/events/${event.id}`}
+                  className="card-interactive p-4 rounded-lg border border-zinc-800 hover:border-zinc-700 flex gap-3"
+                >
+                  <div className="shrink-0 w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-xl">
+                    🎤
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-white truncate">{displayTitle}</h3>
+                    <p className="text-zinc-400 text-sm truncate">
+                      {event.venue.name} · {event.venue.city}, {event.venue.state}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      {event.showtime && (
+                        <span className="text-xs text-brand-gold font-medium">{event.showtime}</span>
+                      )}
+                      <FriendsGoingBadge eventId={event.id} />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
       )}
 
       {/* Discover section — always visible */}
@@ -154,6 +205,7 @@ export async function HomeSections() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-2">
                       <StarRating rating={stats?.avgRating ?? null} count={stats?.count ?? 0} />
+                      <FriendsGoingBadge eventId={e.id} />
                       <span className="text-xs px-2 py-0.5 rounded bg-black/40 text-zinc-300">
                         {SHOW_TYPE_LABELS[e.showType] ?? e.showType}
                       </span>
@@ -237,8 +289,9 @@ export async function HomeSections() {
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                    <div className="absolute bottom-2 left-2 right-2">
+                    <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-2">
                       <StarRating rating={stats?.avgRating ?? null} count={stats?.count ?? 0} />
+                      <FriendsGoingBadge eventId={e.id} />
                     </div>
                   </div>
                   <div className="p-3">

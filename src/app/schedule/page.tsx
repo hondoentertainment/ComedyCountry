@@ -6,6 +6,7 @@ import { getVenueStates } from "@/lib/venues";
 import { SHOW_TYPE_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { formatEventPrice } from "@/lib/format";
 import { Pagination } from "@/components/Pagination";
+import { FriendsGoingBadge } from "@/components/FriendsGoingBadge";
 import { ClearScheduleFiltersLink } from "./ClearScheduleFiltersLink";
 
 export const metadata = {
@@ -168,11 +169,12 @@ export default async function SchedulePage({ searchParams }: PageProps) {
                       🎤
                     </div>
                   )}
-                  <div className="absolute top-2 left-2">
+                  <div className="absolute top-2 left-2 flex flex-wrap items-center gap-2">
                     <StarRating
                       rating={stats?.avgRating ?? null}
                       count={stats?.count ?? 0}
                     />
+                    <FriendsGoingBadge eventId={event.id} />
                   </div>
                 </div>
 

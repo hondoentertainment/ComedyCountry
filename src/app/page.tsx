@@ -86,6 +86,12 @@ export default function HomePage() {
             >
               Map
             </Link>
+            <Link
+              href="/happening-tonight"
+              className="px-4 py-2.5 rounded-full bg-brand-surface border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-brand-surface-elevated font-medium transition-colors"
+            >
+              Happening tonight
+            </Link>
           </div>
         </div>
       </div>
