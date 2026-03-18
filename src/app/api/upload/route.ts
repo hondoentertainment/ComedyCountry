@@ -16,7 +16,7 @@ const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
  * Optional fields: entityType, entityId
  */
 export async function POST(request: Request) {
-  const rl = checkRateLimit(getRateLimitKey(request), { limit: 10, windowSeconds: 60 });
+  const rl = await checkRateLimit(getRateLimitKey(request), { limit: 10, windowSeconds: 60 });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }

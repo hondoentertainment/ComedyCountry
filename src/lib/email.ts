@@ -110,11 +110,10 @@ export function digestEmailHtml(
 </html>`;
 }
 
-export function eventReminderHtml(
+export function waitlistConfirmationHtml(
   userName: string,
   eventTitle: string,
   venueName: string,
-  dateStr: string,
   eventUrl: string,
 ): string {
   return `
@@ -125,9 +124,36 @@ export function eventReminderHtml(
   <div style="max-width:600px;margin:0 auto;padding:24px">
     <h1 style="color:#d4a843;font-size:22px;margin-bottom:4px">Punchline Atlas</h1>
     <p style="color:#ccc">Hey ${userName},</p>
-    <p style="color:#ccc">Reminder: <strong style="color:white">${eventTitle}</strong> at <strong>${venueName}</strong> is tomorrow (${dateStr})!</p>
+    <p style="color:#ccc">You're on the waitlist for <strong style="color:white">${eventTitle}</strong> at <strong>${venueName}</strong>.</p>
+    <p style="color:#ccc">We'll notify you when tickets become available.</p>
     <a href="${eventUrl}" style="display:inline-block;padding:12px 24px;background:#d4a843;color:#111;font-weight:bold;border-radius:8px;text-decoration:none;margin-top:12px">View Event</a>
-    <p style="color:#666;font-size:12px;margin-top:24px">You RSVP'd to this event on Punchline Atlas.</p>
+    <p style="color:#666;font-size:12px;margin-top:24px">You joined the waitlist on Punchline Atlas.</p>
+  </div>
+</body>
+</html>`;
+}
+
+export function eventReminderHtml(
+  userName: string,
+  eventTitle: string,
+  venueName: string,
+  dateStr: string,
+  eventUrl: string,
+  /** Optional: "in 24 hours" or "in 1 hour" – defaults to "tomorrow" */
+  whenStr?: string,
+): string {
+  const when = whenStr ?? "tomorrow";
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"/></head>
+<body style="margin:0;padding:0;background:#111;color:#eee;font-family:sans-serif">
+  <div style="max-width:600px;margin:0 auto;padding:24px">
+    <h1 style="color:#d4a843;font-size:22px;margin-bottom:4px">Punchline Atlas</h1>
+    <p style="color:#ccc">Hey ${userName},</p>
+    <p style="color:#ccc">Reminder: <strong style="color:white">${eventTitle}</strong> at <strong>${venueName}</strong> is ${when} (${dateStr})!</p>
+    <a href="${eventUrl}" style="display:inline-block;padding:12px 24px;background:#d4a843;color:#111;font-weight:bold;border-radius:8px;text-decoration:none;margin-top:12px">View Event</a>
+    <p style="color:#666;font-size:12px;margin-top:24px">You RSVP'd or have tickets for this event on Punchline Atlas.</p>
   </div>
 </body>
 </html>`;

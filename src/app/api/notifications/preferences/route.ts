@@ -29,13 +29,15 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
-  const { inApp, emailDigest } = body;
+  const { inApp, emailDigest, eventReminder24h, eventReminder1h } = body;
 
-  const data: { inApp?: boolean; emailDigest?: string } = {};
+  const data: { inApp?: boolean; emailDigest?: string; eventReminder24h?: boolean; eventReminder1h?: boolean } = {};
   if (typeof inApp === "boolean") data.inApp = inApp;
   if (emailDigest && ["off", "daily", "weekly"].includes(emailDigest)) {
     data.emailDigest = emailDigest;
   }
+  if (typeof eventReminder24h === "boolean") data.eventReminder24h = eventReminder24h;
+  if (typeof eventReminder1h === "boolean") data.eventReminder1h = eventReminder1h;
 
   const prefs = await prisma.notificationPreference.upsert({
     where: { userId: session.user.id },

@@ -13,6 +13,7 @@ const navItems = [
   { href: "/venues", label: "Venues" },
   { href: "/comedians", label: "Comedians" },
   { href: "/schedule", label: "Schedule" },
+  { href: "/happening-tonight", label: "Tonight" },
   { href: "/trending", label: "Trending" },
   { href: "/specials", label: "Specials" },
   { href: "/lists", label: "Lists" },
@@ -22,7 +23,6 @@ const navItems = [
 const moreItems = [
   { href: "/map", label: "Map" },
   { href: "/following", label: "Following" },
-  { href: "/happening-tonight", label: "Tonight" },
   { href: "/tickets", label: "My Tickets" },
   { href: "/taste-profile", label: "Taste Profile" },
   { href: "/friends", label: "Friends" },
@@ -49,8 +49,16 @@ function isActive(href: string, pathname: string) {
 export function Nav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [tonightCount, setTonightCount] = useState<number | null>(null);
   const { data: session, status } = useSession();
   const mobileMenuRef = useFocusTrap(mobileOpen);
+
+  useEffect(() => {
+    fetch("/api/happening-tonight")
+      .then((r) => r.json())
+      .then((data) => setTonightCount((data.events ?? []).length))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -106,9 +114,18 @@ export function Nav() {
                   <Link
                     href={href}
                     aria-current={isActive(href, pathname) ? "page" : undefined}
-                    className="block px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark ${
+                      href === "/happening-tonight" && tonightCount != null && tonightCount > 0
+                        ? "text-brand-gold hover:text-brand-gold/90 hover:bg-brand-gold/10"
+                        : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    }`}
                   >
                     {label}
+                    {href === "/happening-tonight" && tonightCount != null && tonightCount > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold" aria-label={`${tonightCount} shows tonight`}>
+                        {tonightCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
               ))}
@@ -228,9 +245,18 @@ export function Nav() {
                     href={href}
                     aria-current={isActive(href, pathname) ? "page" : undefined}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
+                    className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark ${
+                      href === "/happening-tonight" && tonightCount != null && tonightCount > 0
+                        ? "text-brand-gold hover:text-brand-gold/90 hover:bg-brand-gold/10"
+                        : "text-zinc-300 hover:text-white hover:bg-white/5"
+                    }`}
                   >
                     {label}
+                    {href === "/happening-tonight" && tonightCount != null && tonightCount > 0 && (
+                      <span className="px-2 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold">
+                        {tonightCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
               ))}

@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { sendPushToUser } from "./push";
 
 function haversineMi(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 3958.8;
@@ -74,17 +75,30 @@ export async function processLocationAlerts(): Promise<{ alertsProcessed: number
       });
       if (pref?.inApp === false) continue;
 
+      const notifTitle = `New show near you: ${title}`;
+      const notifMessage = `${title} at ${event.venue.name} (${event.venue.city}, ${event.venue.state}) on ${dateStr}`;
+
       await prisma.notification.create({
         data: {
           userId: alert.userId,
           type: "location_alert",
-          title: `New show near you: ${title}`,
-          message: `${title} at ${event.venue.name} (${event.venue.city}, ${event.venue.state}) on ${dateStr}`,
+          title: notifTitle,
+          message: notifMessage,
           eventId: event.id,
           venueId: event.venueId,
         },
       });
       notificationsCreated++;
+
+      try {
+        await sendPushToUser(alert.userId, {
+          title: notifTitle,
+          body: notifMessage,
+          url: `/events/${event.id}`,
+        });
+      } catch {
+        // Push failures must not block in-app notifications
+      }
     }
   }
 

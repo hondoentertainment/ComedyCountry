@@ -55,7 +55,7 @@ export async function listEvents(params: ListEventsParams = {}) {
   return { events, total };
 }
 
-export async function getEventById(id: string) {
+export async function getEventById(id: string, options?: { includeTicketTypes?: boolean }) {
   return prisma.event.findUnique({
     where: { id },
     include: {
@@ -63,6 +63,9 @@ export async function getEventById(id: string) {
       comedians: {
         include: { comedian: true },
       },
+      ...(options?.includeTicketTypes && {
+        ticketTypes: { select: { capacity: true, sold: true } },
+      }),
     },
   });
 }

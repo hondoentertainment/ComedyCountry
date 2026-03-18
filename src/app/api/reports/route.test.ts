@@ -16,7 +16,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 vi.mock("@/lib/rate-limit", () => ({
-  checkRateLimit: vi.fn().mockReturnValue({ success: true, remaining: 4 }),
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 4 }),
   getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
 }));
 

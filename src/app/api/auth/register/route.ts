@@ -10,7 +10,7 @@ const MIN_PASSWORD_LEN = 8;
 const USERNAME_REGEX = /^[a-zA-Z0-9._-]+$/;
 
 export async function POST(request: Request) {
-  const rl = checkRateLimit(`register:${getRateLimitKey(request)}`, { limit: 5, windowSeconds: 300 });
+  const rl = await checkRateLimit(`register:${getRateLimitKey(request)}`, { limit: 5, windowSeconds: 300 });
   if (!rl.success) {
     return NextResponse.json({ error: "Too many registration attempts. Try again later." }, { status: 429 });
   }

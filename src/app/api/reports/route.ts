@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
   // Rate limit: 5 reports per hour
   const rlKey = getRateLimitKey(request);
-  const rl = checkRateLimit(`report:${rlKey}`, { limit: 5, windowSeconds: 3600 });
+  const rl = await checkRateLimit(`report:${rlKey}`, { limit: 5, windowSeconds: 3600 });
   if (!rl.success) {
     return NextResponse.json({ error: "Too many reports. Please try again later." }, { status: 429 });
   }

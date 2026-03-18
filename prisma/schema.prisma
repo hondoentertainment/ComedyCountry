@@ -386,12 +386,14 @@ model Notification {
 }
 
 model NotificationPreference {
-  id            String  @id @default(cuid())
-  userId        String  @unique
-  inApp         Boolean @default(true)
-  emailDigest   String  @default("off") // off, daily, weekly
+  id               String  @id @default(cuid())
+  userId           String  @unique
+  inApp            Boolean @default(true)
+  emailDigest      String  @default("off") // off, daily, weekly
+  eventReminder24h Boolean @default(true)
+  eventReminder1h  Boolean @default(true)
 
-  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // =============================================================================
@@ -410,6 +412,18 @@ model EventAttendance {
 
   @@unique([userId, eventId])
   @@index([eventId])
+}
+
+/// Tracks event reminders sent (24h and 1h before) for deduplication.
+model EventReminder {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  kind      String   // "24h" | "1h"
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, userId, kind])
+  @@index([eventId, userId, kind])
 }
 
 // =============================================================================

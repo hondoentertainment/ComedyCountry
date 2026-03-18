@@ -9,6 +9,8 @@ export function NotificationPreferences() {
   const [saving, setSaving] = useState(false);
   const [inApp, setInApp] = useState(true);
   const [emailDigest, setEmailDigest] = useState("off");
+  const [eventReminder24h, setEventReminder24h] = useState(true);
+  const [eventReminder1h, setEventReminder1h] = useState(true);
 
   useEffect(() => {
     async function load() {
@@ -18,6 +20,8 @@ export function NotificationPreferences() {
           const data = await res.json();
           setInApp(data.inApp);
           setEmailDigest(data.emailDigest);
+          setEventReminder24h(data.eventReminder24h ?? true);
+          setEventReminder1h(data.eventReminder1h ?? true);
         }
       } catch {
         // Failed to load
@@ -28,7 +32,7 @@ export function NotificationPreferences() {
     load();
   }, []);
 
-  async function save(updates: { inApp?: boolean; emailDigest?: string }) {
+  async function save(updates: { inApp?: boolean; emailDigest?: string; eventReminder24h?: boolean; eventReminder1h?: boolean }) {
     setSaving(true);
     try {
       const res = await fetch("/api/notifications/preferences", {
@@ -40,6 +44,8 @@ export function NotificationPreferences() {
         const data = await res.json();
         setInApp(data.inApp);
         setEmailDigest(data.emailDigest);
+        setEventReminder24h(data.eventReminder24h ?? true);
+        setEventReminder1h(data.eventReminder1h ?? true);
         toast("Preferences saved");
       }
     } catch {
@@ -83,6 +89,59 @@ export function NotificationPreferences() {
             }`}
           />
         </button>
+      </div>
+
+      <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
+        <div className="mb-3">
+          <p className="text-zinc-300 font-medium">Event reminders</p>
+          <p className="text-zinc-500 text-sm">Email me before events I&apos;m attending</p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <button
+              onClick={() => {
+                const newVal = !eventReminder24h;
+                setEventReminder24h(newVal);
+                save({ eventReminder24h: newVal });
+              }}
+              disabled={saving}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ${
+                eventReminder24h ? "bg-brand-gold" : "bg-zinc-700"
+              }`}
+              role="switch"
+              aria-checked={eventReminder24h}
+            >
+              <span
+                className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
+                  eventReminder24h ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+            <span className="text-zinc-300 text-sm">24 hours before</span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <button
+              onClick={() => {
+                const newVal = !eventReminder1h;
+                setEventReminder1h(newVal);
+                save({ eventReminder1h: newVal });
+              }}
+              disabled={saving}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ${
+                eventReminder1h ? "bg-brand-gold" : "bg-zinc-700"
+              }`}
+              role="switch"
+              aria-checked={eventReminder1h}
+            >
+              <span
+                className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
+                  eventReminder1h ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+            <span className="text-zinc-300 text-sm">1 hour before</span>
+          </label>
+        </div>
       </div>
 
       <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">

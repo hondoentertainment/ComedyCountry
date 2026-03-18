@@ -9,7 +9,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Falls back to ILIKE if tsvector columns aren't available.
  */
 export async function GET(request: Request) {
-  const rl = checkRateLimit(getRateLimitKey(request), { limit: 30, windowSeconds: 60 });
+  const rl = await checkRateLimit(getRateLimitKey(request), { limit: 30, windowSeconds: 60 });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }

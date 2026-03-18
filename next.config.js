@@ -72,4 +72,16 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(nextConfig);
+let config = withPWA(nextConfig);
+try {
+  const { withSentryConfig } = require("@sentry/nextjs");
+  config = withSentryConfig(config, {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    silent: !process.env.CI,
+  });
+} catch {
+  // @sentry/nextjs not installed or optional
+}
+module.exports = config;

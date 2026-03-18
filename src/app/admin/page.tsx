@@ -28,7 +28,7 @@ export default async function AdminDashboard() {
     { label: "Reviews", count: stats.reviews, href: "#", color: "text-rose-400" },
     { label: "Pending Claims", count: stats.pendingClaims, href: "/admin/claims", color: "text-orange-400" },
     { label: "Active Subs", count: stats.subscriptions, href: "#", color: "text-cyan-400" },
-    { label: "Ticket Clicks", count: stats.ticketClicks, href: "#", color: "text-pink-400" },
+    { label: "Ticket Clicks", count: stats.ticketClicks, href: "/admin/ticket-clicks", color: "text-pink-400" },
   ];
 
   return (

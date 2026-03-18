@@ -18,6 +18,7 @@ import WaitlistButton from "@/components/WaitlistButton";
 import { getEventReputationSummary } from "@/lib/live-reputation";
 import { getComedyPassportSummary } from "@/lib/comedy-passport";
 import { getEventRecommendationInsight } from "@/lib/recommendations";
+import { getSimilarEvents } from "@/lib/similar-events";
 
 export const dynamic = "force-dynamic";
 
@@ -28,10 +29,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
   const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
   const description = `Rate and review ${title} at ${event.venue.name}`;
-  const img = event.comedians[0]?.comedian?.headshotUrl;
-  const images = img
-    ? [{ url: img, width: 1200, height: 630, alt: title }]
-    : undefined;
+  // Use first comedian headshot or placeholder
+  const img =
+    event.comedians[0]?.comedian?.headshotUrl ?? `${siteUrl}/og-default.png`;
+  const images = [
+    { url: img, width: 1200, height: 630, alt: title },
+  ];
   return {
     title: `${title} | Punchline Atlas`,
     description,
@@ -40,12 +43,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       description,
       url: `${siteUrl}/events/${id}`,
       images,
+      type: "website",
     },
     twitter: {
-      card: img ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: `${title} | Punchline Atlas`,
       description,
-      images: img ? [img] : undefined,
+      images: [img],
     },
   };
 }
@@ -58,12 +62,19 @@ export default async function EventPage({ params }: PageProps) {
   const { id } = await params;
 
   const [event, session, stats] = await Promise.all([
-    getEventById(id),
+    getEventById(id, { includeTicketTypes: true }),
     getServerSession(authOptions),
     getEventRatingStats(id).catch(() => ({ count: 0, avgRating: null })),
   ]);
 
   if (!event) notFound();
+
+  const ticketTypes = "ticketTypes" in event ? (event.ticketTypes as { capacity: number; sold: number }[]) ?? [] : [];
+  const totalCapacity = ticketTypes.reduce((s, t) => s + t.capacity, 0);
+  const totalSold = ticketTypes.reduce((s, t) => s + t.sold, 0);
+  const isSoldOut = ticketTypes.length > 0 && totalSold >= totalCapacity;
+
+  const similarEvents = await getSimilarEvents(id, 4).catch(() => []);
 
   const userReview = session?.user?.id
     ? await getUserReview(id, session.user.id).catch(() => null)
@@ -164,9 +175,9 @@ export default async function EventPage({ params }: PageProps) {
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <AttendanceButtons eventId={id} />
             {session?.user && <FriendsGoingBadge eventId={id} />}
-            <WaitlistButton eventId={id} />
+            {!isSoldOut && <WaitlistButton eventId={id} />}
           </div>
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="flex flex-wrap gap-2 mt-4 items-center">
             {event.comedians.map((ec) => (
               <Link
                 key={ec.id}
@@ -176,14 +187,40 @@ export default async function EventPage({ params }: PageProps) {
                 {ec.comedian.name}
               </Link>
             ))}
-            {event.ticketUrl && (
-              <TicketButton
-                eventId={id}
-                ticketUrl={event.ticketUrl}
-                className="px-4 py-2 rounded-lg bg-brand-gold text-brand-dark text-sm font-semibold hover:bg-brand-gold/90 ml-2"
-              >
-                Get tickets
-              </TicketButton>
+            <span className="flex-1" />
+            {isSoldOut ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-amber-400 font-medium">Sold out</span>
+                <WaitlistButton eventId={id} />
+                <span className="text-zinc-600">·</span>
+                <EventShareButtons
+                  title={title}
+                  url={`${siteUrl}/events/${id}`}
+                  venueName={event.venue.name}
+                />
+              </div>
+            ) : event.ticketUrl ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <TicketButton
+                  eventId={id}
+                  ticketUrl={event.ticketUrl}
+                  className="px-4 py-2 rounded-lg bg-brand-gold text-brand-dark text-sm font-semibold hover:bg-brand-gold/90"
+                >
+                  Get tickets
+                </TicketButton>
+                <span className="text-zinc-600">·</span>
+                <EventShareButtons
+                  title={title}
+                  url={`${siteUrl}/events/${id}`}
+                  venueName={event.venue.name}
+                />
+              </div>
+            ) : (
+              <EventShareButtons
+                title={title}
+                url={`${siteUrl}/events/${id}`}
+                venueName={event.venue.name}
+              />
             )}
           </div>
         </div>
@@ -247,6 +284,47 @@ export default async function EventPage({ params }: PageProps) {
                 ))}
               </div>
             )}
+          </section>
+        )}
+
+        {similarEvents.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-lg font-semibold text-white mb-4">More like this</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {similarEvents.map((ev) => {
+                const evTitle = ev.title ?? ev.comedians.map((ec) => ec.comedian.name).join(", ");
+                const evImg = ev.comedians[0]?.comedian?.headshotUrl;
+                return (
+                  <Link
+                    key={ev.id}
+                    href={`/events/${ev.id}`}
+                    className="card-interactive flex gap-3 p-4 rounded-card bg-brand-surface border border-zinc-800/80 hover:border-zinc-700 transition-colors"
+                  >
+                    <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-brand-charcoal relative">
+                      {evImg ? (
+                        <Image
+                          src={evImg}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-2xl text-zinc-600">
+                          🎤
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-white truncate">{evTitle}</p>
+                      <p className="text-sm text-zinc-400">
+                        {ev.venue.name} · {new Date(ev.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </section>
         )}
 

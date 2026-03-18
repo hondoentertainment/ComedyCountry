@@ -1,7 +1,7 @@
 /**
- * Simple in-memory rate limiter for API routes.
- * Not shared across serverless instances — for production,
- * replace with Redis-backed limiter (e.g. @upstash/ratelimit).
+ * Rate limiter for API routes.
+ * Uses Vercel KV (Upstash Redis) when KV_REST_API_URL and KV_REST_API_TOKEN
+ * are set; otherwise falls back to in-memory (not shared across serverless instances).
  */
 
 interface RateLimitEntry {
@@ -11,7 +11,7 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// Cleanup stale entries every 5 minutes
+// Cleanup stale entries every 5 minutes (in-memory only)
 setInterval(() => {
   const now = Date.now();
   store.forEach((entry, key) => {
@@ -32,20 +32,57 @@ export interface RateLimitResult {
   resetAt: number;
 }
 
+function hasKvConfig(): boolean {
+  return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+}
+
 /**
- * Check rate limit for a given key (e.g. IP or userId).
- * Returns { success, remaining, resetAt }.
+ * Fixed-window rate limit using Vercel KV.
+ * Key format: rl:{identifier}:{windowIndex} where windowIndex = floor(now / windowSeconds).
  */
-export function checkRateLimit(
+async function checkRateLimitKV(
   key: string,
-  config: RateLimitConfig = { limit: 60, windowSeconds: 60 },
+  config: RateLimitConfig,
+): Promise<RateLimitResult> {
+  const { kv } = await import("@vercel/kv");
+  const nowSec = Math.floor(Date.now() / 1000);
+  const windowIndex = Math.floor(nowSec / config.windowSeconds);
+  const redisKey = `rl:${key}:${windowIndex}`;
+
+  const count = await kv.incr(redisKey);
+  if (count === 1) {
+    await kv.expire(redisKey, config.windowSeconds);
+  }
+
+  const resetAt = (windowIndex + 1) * config.windowSeconds * 1000;
+
+  if (count > config.limit) {
+    return { success: false, remaining: 0, resetAt };
+  }
+
+  return {
+    success: true,
+    remaining: config.limit - count,
+    resetAt,
+  };
+}
+
+/**
+ * In-memory rate limit (fixed-window style for consistency).
+ */
+function checkRateLimitMemory(
+  key: string,
+  config: RateLimitConfig,
 ): RateLimitResult {
   const now = Date.now();
-  const entry = store.get(key);
+  const windowIndex = Math.floor(now / 1000 / config.windowSeconds);
+  const memoryKey = `${key}:${windowIndex}`;
+  const entry = store.get(memoryKey);
 
-  if (!entry || entry.resetAt < now) {
-    const resetAt = now + config.windowSeconds * 1000;
-    store.set(key, { count: 1, resetAt });
+  const resetAt = (windowIndex + 1) * config.windowSeconds * 1000;
+
+  if (!entry) {
+    store.set(memoryKey, { count: 1, resetAt });
     return { success: true, remaining: config.limit - 1, resetAt };
   }
 
@@ -54,7 +91,26 @@ export function checkRateLimit(
     return { success: false, remaining: 0, resetAt: entry.resetAt };
   }
 
-  return { success: true, remaining: config.limit - entry.count, resetAt: entry.resetAt };
+  return {
+    success: true,
+    remaining: config.limit - entry.count,
+    resetAt: entry.resetAt,
+  };
+}
+
+/**
+ * Check rate limit for a given key (e.g. IP or userId).
+ * Returns { success, remaining, resetAt }.
+ * Uses KV when KV_REST_API_URL and KV_REST_API_TOKEN are set; otherwise in-memory.
+ */
+export async function checkRateLimit(
+  key: string,
+  config: RateLimitConfig = { limit: 60, windowSeconds: 60 },
+): Promise<RateLimitResult> {
+  if (hasKvConfig()) {
+    return checkRateLimitKV(key, config);
+  }
+  return checkRateLimitMemory(key, config);
 }
 
 /**

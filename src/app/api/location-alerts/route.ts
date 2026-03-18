@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { canUseLocationAlerts } from "@/lib/subscription-gates";
 
 /**
  * GET - List user's location alerts.
@@ -33,6 +35,17 @@ export async function GET() {
  * Body: { latitude, longitude, radiusMi }
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(getRateLimitKey(request), {
+    limit: 10,
+    windowSeconds: 60,
+  });
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+    );
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -50,6 +63,14 @@ export async function POST(request: Request) {
     }
 
     const radius = typeof radiusMi === "number" ? Math.max(1, Math.min(radiusMi, 500)) : 50;
+
+    const allowed = await canUseLocationAlerts(session.user.id);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Free accounts can have 1 location alert. Upgrade to Pro for unlimited." },
+        { status: 403 }
+      );
+    }
 
     const alert = await prisma.locationAlert.create({
       data: {

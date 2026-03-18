@@ -6,13 +6,28 @@ type EventStructuredDataProps = {
     showtime: string | null;
     ticketUrl: string | null;
     venue: { name: string; address: string | null; city: string; state: string };
-    comedians: Array<{ comedian: { name: string } }>;
+    comedians: Array<{
+      comedian: {
+        name: string;
+        slug?: string | null;
+        headshotUrl?: string | null;
+      };
+    }>;
   };
   baseUrl: string;
 };
 
 export function EventStructuredData({ event, baseUrl }: EventStructuredDataProps) {
   const name = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
+  const performers = event.comedians.map((ec) => ({
+    "@type": "Person" as const,
+    name: ec.comedian.name,
+    jobTitle: "Comedian" as const,
+    ...(ec.comedian.slug && { url: `${baseUrl}/comedians/${ec.comedian.slug}` }),
+    ...(ec.comedian.headshotUrl && { image: ec.comedian.headshotUrl }),
+  }));
+  const image =
+    event.comedians[0]?.comedian?.headshotUrl ?? undefined;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -21,17 +36,19 @@ export function EventStructuredData({ event, baseUrl }: EventStructuredDataProps
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     location: {
-      "@type": "Place",
+      "@type": "Place" as const,
       name: event.venue.name,
       address: {
-        "@type": "PostalAddress",
+        "@type": "PostalAddress" as const,
         streetAddress: event.venue.address ?? undefined,
         addressLocality: event.venue.city,
         addressRegion: event.venue.state,
       },
     },
     url: `${baseUrl}/events/${event.id}`,
-    ...(event.ticketUrl && { offers: { "@type": "Offer", url: event.ticketUrl } }),
+    ...(performers.length > 0 && { performer: performers.length === 1 ? performers[0] : performers }),
+    ...(image && { image }),
+    ...(event.ticketUrl && { offers: { "@type": "Offer" as const, url: event.ticketUrl } }),
     ...(event.showtime && { doorTime: event.showtime }),
   };
   return (

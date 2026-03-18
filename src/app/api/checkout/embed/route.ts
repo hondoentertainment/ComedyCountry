@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   const headers = corsHeaders(origin);
 
   // Rate limit
-  const rl = checkRateLimit(getRateLimitKey(request), { limit: 30, windowSeconds: 60 });
+  const rl = await checkRateLimit(getRateLimitKey(request), { limit: 30, windowSeconds: 60 });
   if (!rl.success) {
     return NextResponse.json(
       { error: "Rate limit exceeded" },

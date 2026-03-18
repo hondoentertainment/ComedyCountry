@@ -67,7 +67,7 @@ const postSchema = z.discriminatedUnion("action", [
 ]);
 
 export async function POST(request: NextRequest) {
-  const rl = checkRateLimit(getRateLimitKey(request), { limit: 30, windowSeconds: 60 });
+  const rl = await checkRateLimit(getRateLimitKey(request), { limit: 30, windowSeconds: 60 });
   if (!rl.success) return rateLimited();
 
   const { data, error: valErr } = await parseBody(request, postSchema);

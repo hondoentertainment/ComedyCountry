@@ -1,21 +1,13 @@
-import { prisma } from "@/lib/prisma";
-import { jsonResponse } from "@/lib/api";
+import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
-  let database = "up";
-
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-  } catch {
-    database = "down";
-  }
-
-  return jsonResponse(request, {
-    ok: database === "up",
-    service: "punchline-atlas",
+/**
+ * GET /api/health
+ * Simple uptime check - returns 200 with status and timestamp.
+ * No auth required. Used for monitoring and uptime checks.
+ */
+export async function GET() {
+  return NextResponse.json({
+    status: "ok",
     timestamp: new Date().toISOString(),
-    checks: {
-      database,
-    },
   });
 }

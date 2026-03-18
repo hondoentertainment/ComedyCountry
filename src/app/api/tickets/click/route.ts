@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Track ticket clicks for affiliate revenue.
@@ -9,6 +10,17 @@ import { prisma } from "@/lib/prisma";
  * Appends affiliate tags to ticket URLs when matching partners exist.
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(getRateLimitKey(request), {
+    limit: 10,
+    windowSeconds: 60,
+  });
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+    );
+  }
+
   const session = await getServerSession(authOptions);
   const body = await request.json();
   const { eventId, ticketUrl, referrer } = body;
