@@ -2374,3 +2374,23 @@ model DirectMessage {
   @@index([conversationId, createdAt])
   @@index([senderId])
 }
+
+// =============================================================================
+// Wallet Passes (Apple & Google Wallet)
+// =============================================================================
+
+model WalletPass {
+  id           String   @id @default(cuid())
+  userId       String
+  ticketId     String
+  platform     String   // "apple" | "google"
+  passUrl      String
+  serialNumber String   @unique
+  status       String   @default("active") // active | voided | expired
+  lastUpdated  DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([ticketId])
+  @@index([serialNumber])
+}

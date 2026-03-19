@@ -3,28 +3,63 @@
   "appName": "Punchline Atlas",
   "webDir": "out",
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "iosScheme": "https",
+    "hostname": "app.punchlineatlas.com"
   },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "launchFadeOutDuration": 300,
       "backgroundColor": "#0d0d0d",
       "showSpinner": true,
-      "spinnerColor": "#d4a843"
+      "spinnerColor": "#d4a843",
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": true,
+      "splashImmersive": true
     },
     "PushNotifications": {
       "presentationOptions": ["badge", "sound", "alert"]
     },
     "StatusBar": {
       "style": "DARK",
-      "backgroundColor": "#0d0d0d"
+      "backgroundColor": "#0d0d0d",
+      "overlaysWebView": false
+    },
+    "Keyboard": {
+      "resize": "body",
+      "style": "DARK",
+      "resizeOnFullScreen": true
+    },
+    "Haptics": {
+      "selectionDuration": 50
+    },
+    "Browser": {
+      "presentationStyle": "fullscreen"
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#d4a843",
+      "sound": "notification.wav"
+    },
+    "CapacitorHttp": {
+      "enabled": true
     }
   },
   "ios": {
     "contentInset": "automatic",
-    "preferredContentMode": "mobile"
+    "preferredContentMode": "mobile",
+    "scheme": "punchlineatlas",
+    "backgroundColor": "#0d0d0d",
+    "allowsLinkPreview": true,
+    "scrollEnabled": true
   },
   "android": {
-    "backgroundColor": "#0d0d0d"
+    "backgroundColor": "#0d0d0d",
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "appendUserAgent": "PunchlineAtlas-Android"
   }
 }
