@@ -109,4 +109,82 @@ describe("Pagination", () => {
     );
     expect(screen.getByRole("navigation")).toHaveTextContent("Showing 41–60 of 100");
   });
+
+  it("shows correct end on last page with partial results", () => {
+    render(
+      <Pagination
+        total={45}
+        currentPage={3}
+        basePath="/events"
+        searchParams={{}}
+      />
+    );
+    expect(screen.getByRole("navigation")).toHaveTextContent("Showing 41–45 of 45");
+  });
+
+  it("enables both Previous and Next on middle page", () => {
+    render(
+      <Pagination
+        total={100}
+        currentPage={3}
+        basePath="/events"
+        searchParams={{}}
+      />
+    );
+
+    const prevLink = screen.getByRole("link", { name: "Previous" });
+    const nextLink = screen.getByRole("link", { name: "Next" });
+    expect(prevLink).toBeInTheDocument();
+    expect(nextLink).toBeInTheDocument();
+  });
+
+  it("excludes empty search params from URL", () => {
+    render(
+      <Pagination
+        total={50}
+        currentPage={1}
+        basePath="/events"
+        searchParams={{ search: "", city: undefined }}
+      />
+    );
+    const nextLink = screen.getByRole("link", { name: "Next" });
+    expect(nextLink).toHaveAttribute("href", "/events?page=2");
+  });
+
+  it("builds URL without query string when no params and page 1", () => {
+    render(
+      <Pagination
+        total={50}
+        currentPage={2}
+        basePath="/events"
+        searchParams={{}}
+      />
+    );
+    const prevLink = screen.getByRole("link", { name: "Previous" });
+    expect(prevLink).toHaveAttribute("href", "/events");
+  });
+
+  it("has Pagination aria-label on nav", () => {
+    render(
+      <Pagination
+        total={50}
+        currentPage={1}
+        basePath="/events"
+        searchParams={{}}
+      />
+    );
+    expect(screen.getByRole("navigation", { name: "Pagination" })).toBeInTheDocument();
+  });
+
+  it("shows Page X of Y text", () => {
+    render(
+      <Pagination
+        total={100}
+        currentPage={2}
+        basePath="/events"
+        searchParams={{}}
+      />
+    );
+    expect(screen.getByText("Page 2 of 5")).toBeInTheDocument();
+  });
 });

@@ -200,5 +200,222 @@ describe("venues", () => {
         })
       );
     });
+
+    it("defaults to 500 take limit", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+
+      await listVenuesWithCoordinates();
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ take: 500 })
+      );
+    });
+
+    it("accepts custom take limit", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+
+      await listVenuesWithCoordinates({ take: 100 });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ take: 100 })
+      );
+    });
+
+    it("filters by state when provided", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+
+      await listVenuesWithCoordinates({ state: "CA" });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            state: { equals: "CA", mode: "insensitive" },
+          }),
+        })
+      );
+    });
+
+    it("filters by city when provided", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+
+      await listVenuesWithCoordinates({ city: "LA" });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            city: { contains: "LA", mode: "insensitive" },
+          }),
+        })
+      );
+    });
+
+    it("filters by search across name, city, and state", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+
+      await listVenuesWithCoordinates({ search: "comedy" });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: [
+              { name: { contains: "comedy", mode: "insensitive" } },
+              { city: { contains: "comedy", mode: "insensitive" } },
+              { state: { contains: "comedy", mode: "insensitive" } },
+            ],
+          }),
+        })
+      );
+    });
+
+    it("handles undefined options gracefully", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+
+      const result = await listVenuesWithCoordinates(undefined);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("listVenues additional edge cases", () => {
+    it("filters by type when provided", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+      mockPrisma.venue.count.mockResolvedValue(0);
+
+      await listVenues({ type: "THEATER" as never });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ type: "THEATER" }),
+        })
+      );
+    });
+
+    it("filters by capacity range", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+      mockPrisma.venue.count.mockResolvedValue(0);
+
+      await listVenues({ capacityMin: 100, capacityMax: 500 });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            capacity: { gte: 100, lte: 500 },
+          }),
+        })
+      );
+    });
+
+    it("filters by capacityMin only", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+      mockPrisma.venue.count.mockResolvedValue(0);
+
+      await listVenues({ capacityMin: 100 });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            capacity: { gte: 100 },
+          }),
+        })
+      );
+    });
+
+    it("filters by capacityMax only", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+      mockPrisma.venue.count.mockResolvedValue(0);
+
+      await listVenues({ capacityMax: 500 });
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            capacity: { lte: 500 },
+          }),
+        })
+      );
+    });
+
+    it("orders by state, city, then name", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+      mockPrisma.venue.count.mockResolvedValue(0);
+
+      await listVenues();
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: [{ state: "asc" }, { city: "asc" }, { name: "asc" }],
+        })
+      );
+    });
+
+    it("includes first photo sorted by sortOrder", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([]);
+      mockPrisma.venue.count.mockResolvedValue(0);
+
+      await listVenues();
+
+      expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: {
+            photos: { orderBy: { sortOrder: "asc" }, take: 1 },
+          },
+        })
+      );
+    });
+
+    it("defaults upcomingEventCount to 0 when no events", async () => {
+      mockPrisma.venue.findMany.mockResolvedValue([
+        { id: "v1", name: "Club" },
+      ]);
+      mockPrisma.venue.count.mockResolvedValue(1);
+      mockPrisma.event.groupBy.mockResolvedValue([]);
+
+      const result = await listVenues();
+      expect(result.venues[0]).toMatchObject({ upcomingEventCount: 0 });
+    });
+  });
+
+  describe("getVenue additional cases", () => {
+    it("includes social links in response", async () => {
+      mockPrisma.venue.findUnique.mockResolvedValue(null);
+
+      await getVenue("v1");
+
+      expect(mockPrisma.venue.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: expect.objectContaining({
+            socialLinks: true,
+            _count: { select: { events: true } },
+          }),
+        })
+      );
+    });
+
+    it("only includes future events", async () => {
+      const before = new Date();
+      mockPrisma.venue.findUnique.mockResolvedValue(null);
+
+      await getVenue("v1");
+
+      const call = mockPrisma.venue.findUnique.mock.calls[0][0] as {
+        include: { events: { where: { date: { gte: Date } } } };
+      };
+      const dateFilter = call.include.events.where.date.gte;
+      expect(dateFilter.getTime()).toBeGreaterThanOrEqual(before.getTime());
+    });
+
+    it("limits events to 10", async () => {
+      mockPrisma.venue.findUnique.mockResolvedValue(null);
+
+      await getVenue("v1");
+
+      expect(mockPrisma.venue.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: expect.objectContaining({
+            events: expect.objectContaining({ take: 10 }),
+          }),
+        })
+      );
+    });
   });
 });

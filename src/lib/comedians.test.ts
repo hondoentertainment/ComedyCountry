@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { listComedians, getComedian } from "./comedians";
+import { listDistinctGenres, listComedians, getComedian } from "./comedians";
 
 vi.mock("./prisma", () => ({
   prisma: {
@@ -7,6 +7,9 @@ vi.mock("./prisma", () => ({
       findMany: vi.fn(),
       findUnique: vi.fn(),
       count: vi.fn(),
+    },
+    comedianGenre: {
+      findMany: vi.fn(),
     },
   },
 }));
@@ -19,11 +22,57 @@ const mockPrisma = prisma as unknown as {
     findUnique: ReturnType<typeof vi.fn>;
     count: ReturnType<typeof vi.fn>;
   };
+  comedianGenre: {
+    findMany: ReturnType<typeof vi.fn>;
+  };
 };
 
 describe("comedians", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe("listDistinctGenres", () => {
+    it("returns genres from database when available", async () => {
+      mockPrisma.comedianGenre.findMany.mockResolvedValue([
+        { genre: "Dark" },
+        { genre: "Observational" },
+        { genre: "Political" },
+      ]);
+
+      const result = await listDistinctGenres();
+      expect(result).toEqual(["Dark", "Observational", "Political"]);
+
+      expect(mockPrisma.comedianGenre.findMany).toHaveBeenCalledWith({
+        select: { genre: true },
+        distinct: ["genre"],
+        orderBy: { genre: "asc" },
+      });
+    });
+
+    it("returns default genres when none in database", async () => {
+      mockPrisma.comedianGenre.findMany.mockResolvedValue([]);
+
+      const result = await listDistinctGenres();
+      expect(result).toEqual([
+        "Observational",
+        "Political",
+        "Storytelling",
+        "Absurdist",
+        "Dark",
+        "Improv",
+        "Sketch",
+        "Character",
+        "Topical",
+        "Insight",
+      ]);
+    });
+
+    it("returns 10 default genres", async () => {
+      mockPrisma.comedianGenre.findMany.mockResolvedValue([]);
+      const result = await listDistinctGenres();
+      expect(result).toHaveLength(10);
+    });
   });
 
   describe("listComedians", () => {
@@ -135,6 +184,68 @@ describe("comedians", () => {
       const result = await getComedian("nonexistent");
 
       expect(result).toBeNull();
+    });
+
+    it("only includes future events (gte now)", async () => {
+      const before = new Date();
+      mockPrisma.comedian.findUnique.mockResolvedValue(null);
+
+      await getComedian("test-slug");
+
+      const call = mockPrisma.comedian.findUnique.mock.calls[0][0] as {
+        include: {
+          events: { where: { event: { date: { gte: Date } } } };
+        };
+      };
+      const dateFilter = call.include.events.where.event.date.gte;
+      expect(dateFilter.getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(dateFilter.getTime()).toBeLessThanOrEqual(Date.now() + 1000);
+    });
+
+    it("limits events to 20", async () => {
+      mockPrisma.comedian.findUnique.mockResolvedValue(null);
+
+      await getComedian("test-slug");
+
+      expect(mockPrisma.comedian.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: expect.objectContaining({
+            events: expect.objectContaining({
+              take: 20,
+            }),
+          }),
+        })
+      );
+    });
+
+    it("orders events by ascending date", async () => {
+      mockPrisma.comedian.findUnique.mockResolvedValue(null);
+
+      await getComedian("test-slug");
+
+      expect(mockPrisma.comedian.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: expect.objectContaining({
+            events: expect.objectContaining({
+              orderBy: { event: { date: "asc" } },
+            }),
+          }),
+        })
+      );
+    });
+
+    it("includes special releases ordered by releaseYear desc", async () => {
+      mockPrisma.comedian.findUnique.mockResolvedValue(null);
+
+      await getComedian("test-slug");
+
+      expect(mockPrisma.comedian.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: expect.objectContaining({
+            specialReleases: { orderBy: { releaseYear: "desc" } },
+          }),
+        })
+      );
     });
   });
 });
