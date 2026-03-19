@@ -949,6 +949,8 @@ model SeasonPass {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  redemptions SeasonPassRedemption[]
+
   @@index([venueId])
   @@index([userId])
 }
@@ -2393,4 +2395,122 @@ model WalletPass {
   @@index([userId])
   @@index([ticketId])
   @@index([serialNumber])
+}
+
+// =============================================================================
+// Phase 3: Ticketing & Payments Hardening
+// =============================================================================
+
+/// Tracks processed Stripe webhook events for idempotency.
+model StripeWebhookEvent {
+  id            String   @id @default(cuid())
+  stripeEventId String   @unique
+  eventType     String
+  processed     Boolean  @default(false)
+  processedAt   DateTime?
+  retryCount    Int      @default(0)
+  lastError     String?
+  payload       Json
+  createdAt     DateTime @default(now())
+
+  @@index([stripeEventId])
+  @@index([eventType, processed])
+  @@index([createdAt])
+}
+
+/// Tracks refund requests and their lifecycle.
+model TicketRefund {
+  id              String   @id @default(cuid())
+  ticketId        String
+  userId          String
+  type            String   // "full" | "partial"
+  originalAmount  Decimal  @db.Decimal(10, 2)
+  refundAmount    Decimal  @db.Decimal(10, 2)
+  refundPercent   Int
+  status          String   @default("pending") // pending | processing | completed | failed | denied
+  stripeRefundId  String?
+  reason          String?
+  policySnapshot  Json?    // snapshot of the policy at refund time
+  processedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([ticketId])
+  @@index([userId])
+  @@index([status])
+}
+
+/// Promo codes for ticket discounts.
+model PromoCode {
+  id                String   @id @default(cuid())
+  code              String   @unique
+  discountType      String   // "percentage" | "fixed"
+  discountValue     Decimal  @db.Decimal(10, 2)
+  maxUses           Int?
+  currentUses       Int      @default(0)
+  expiresAt         DateTime?
+  minPurchase       Decimal? @db.Decimal(10, 2)
+  applicableEventIds String[] @default([])
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+}
+
+/// Tracks price history for ticket types over time.
+model PriceHistory {
+  id              String   @id @default(cuid())
+  ticketTypeId    String
+  price           Decimal  @db.Decimal(10, 2)
+  tierName        String?
+  demandMultiplier Float   @default(1.0)
+  sellThrough     Float    @default(0)
+  reason          String?  // "tier_change" | "demand_update" | "manual" | "promo"
+  recordedAt      DateTime @default(now())
+
+  @@index([ticketTypeId, recordedAt])
+}
+
+/// Tracks season pass redemptions for individual events.
+model SeasonPassRedemption {
+  id        String   @id @default(cuid())
+  passId    String
+  eventId   String
+  showNumber Int
+  redeemedAt DateTime @default(now())
+
+  pass      SeasonPass @relation(fields: [passId], references: [id], onDelete: Cascade)
+
+  @@unique([passId, eventId])
+  @@index([passId])
+  @@index([eventId])
+}
+
+/// Orders grouping multiple ticket purchases.
+model TicketOrder {
+  id              String   @id @default(cuid())
+  userId          String
+  eventId         String
+  subtotal        Decimal  @db.Decimal(10, 2)
+  serviceFee      Decimal  @db.Decimal(10, 2)
+  processingFee   Decimal  @db.Decimal(10, 2)
+  tax             Decimal  @db.Decimal(10, 2) @default(0)
+  discount        Decimal  @db.Decimal(10, 2) @default(0)
+  total           Decimal  @db.Decimal(10, 2)
+  promoCode       String?
+  stripeSessionId String?
+  stripePaymentId String?
+  status          String   @default("pending") // pending | completed | failed | refunded
+  customerEmail   String
+  customerName    String?
+  ticketIds       String[] @default([])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([stripeSessionId])
+  @@index([status])
 }
