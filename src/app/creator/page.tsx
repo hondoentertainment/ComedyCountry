@@ -12,6 +12,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 const tabs = [
+  { label: "Analytics", href: "/creator/analytics", icon: "📈" },
   { label: "Content", href: "/creator/content", icon: "📝" },
   { label: "Tips", href: "/creator/revenue", icon: "💰" },
   { label: "Merch", href: "/creator/merch", icon: "🛍️" },

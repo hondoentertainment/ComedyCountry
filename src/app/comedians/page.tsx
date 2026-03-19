@@ -8,7 +8,7 @@ import { ComedianFilterBar } from "@/components/ComedianFilterBar";
 
 export const metadata = {
   title: "Comedians | Punchline Atlas",
-  description: "Explore comedian profiles, touring schedules, and YouTube content.",
+  description: "Explore comedian profiles, touring schedules, and YouTube content. Filter by genre, status, and sort by popularity.",
 };
 
 type PageProps = {
@@ -17,6 +17,7 @@ type PageProps = {
     genre?: string;
     search?: string;
     page?: string;
+    sort?: string;
   }>;
 };
 
@@ -24,7 +25,7 @@ export const revalidate = 60;
 
 export default async function ComediansPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const { status, genre, search, page } = params;
+  const { status, genre, search, page, sort } = params;
   const currentPage = Math.max(1, parseInt(page ?? "1", 10) || 1);
   const skip = (currentPage - 1) * PAGE_SIZE;
 
@@ -50,9 +51,21 @@ export default async function ComediansPage({ searchParams }: PageProps) {
     comedians = result.comedians;
     total = result.total;
     genres = await listDistinctGenres();
+
+    // Apply sort
+    if (sort === "popularity") {
+      comedians.sort((a, b) => b._count.events - a._count.events);
+    } else if (sort === "recently_added") {
+      comedians.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } else if (sort === "most_shows") {
+      comedians.sort((a, b) => b._count.events - a._count.events);
+    }
+    // Default sort is by name (A-Z), which is already the Prisma orderBy
   } catch {
     dataUnavailable = true;
   }
+
+  const activeFilterCount = [status, genre, search, sort].filter(Boolean).length;
 
   return (
     <div className="min-h-screen">
@@ -66,9 +79,24 @@ export default async function ComediansPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-3xl font-bold text-white mb-1">Comedians</h1>
             <p className="text-zinc-400 text-sm">
-              {total} comedian{total !== 1 ? "s" : ""} — explore profiles and tour dates
+              {total} comedian{total !== 1 ? "s" : ""} -- explore profiles and tour dates
+              {activeFilterCount > 0 && (
+                <span className="text-brand-gold ml-1">
+                  ({activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""} active)
+                </span>
+              )}
             </p>
           </div>
+          {sort && (
+            <p className="text-xs text-zinc-500">
+              Sorted by:{" "}
+              <span className="text-zinc-400">
+                {sort === "popularity" ? "Popularity" :
+                 sort === "recently_added" ? "Recently added" :
+                 sort === "most_shows" ? "Most shows" : sort}
+              </span>
+            </p>
+          )}
         </div>
 
         <ComedianFilterBar
@@ -76,6 +104,7 @@ export default async function ComediansPage({ searchParams }: PageProps) {
           defaultStatus={status}
           defaultGenre={genre}
           defaultSearch={search}
+          defaultSort={sort}
         />
 
         {/* Spotify-style card grid */}
@@ -138,7 +167,7 @@ export default async function ComediansPage({ searchParams }: PageProps) {
           total={total}
           currentPage={currentPage}
           basePath="/comedians"
-          searchParams={{ status, genre, search }}
+          searchParams={{ status, genre, search, sort }}
         />
       </div>
     </div>

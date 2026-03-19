@@ -164,4 +164,66 @@ describe("FollowButton", () => {
     expect(locationMock.href).toMatch(/^\/auth\/signin\?callbackUrl=/);
     expect(locationMock.href).toContain(encodeURIComponent("/comedians/dave"));
   });
+
+  it("reverts to original state on network error", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Network")));
+
+    render(
+      <FollowButton
+        type="comedian"
+        id="comedian-1"
+        initialFollowing={false}
+      />
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Follow" }));
+
+    // Should revert to Follow (not following) after error
+    expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+  });
+
+  it("disables button while loading", async () => {
+    let resolvePromise: (value: unknown) => void;
+    const pendingPromise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+
+    vi.stubGlobal("fetch", vi.fn().mockReturnValue(pendingPromise));
+
+    render(
+      <FollowButton
+        type="comedian"
+        id="comedian-1"
+        initialFollowing={false}
+      />
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Follow" }));
+
+    const button = screen.getByRole("button");
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("aria-busy", "true");
+
+    // Resolve to clean up
+    resolvePromise!({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ following: true }),
+    });
+  });
+
+  it("has correct aria-label when following", () => {
+    render(
+      <FollowButton
+        type="comedian"
+        id="comedian-1"
+        initialFollowing={true}
+      />
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Following (click to unfollow)" })
+    ).toBeInTheDocument();
+  });
 });
