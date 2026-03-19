@@ -460,3 +460,245 @@ export async function getPreOrders(eventId: string) {
     orderBy: { createdAt: "desc" },
   });
 }
+
+// ── Table CRUD ───────────────────────────────────────────────────────────────
+
+export async function updateTableLayout(
+  id: string,
+  data: {
+    name?: string;
+    rows?: number;
+    columns?: number;
+    seats?: Array<{ row: number; col: number; type: string; label?: string }>;
+    isDefault?: boolean;
+  },
+) {
+  const layout = await prisma.tableLayout.findUnique({ where: { id } });
+  if (!layout) throw new Error("Table layout not found");
+
+  if (data.isDefault) {
+    await prisma.tableLayout.updateMany({
+      where: { venueId: layout.venueId, isDefault: true },
+      data: { isDefault: false },
+    });
+  }
+
+  return prisma.tableLayout.update({
+    where: { id },
+    data: {
+      name: data.name ?? layout.name,
+      rows: data.rows ?? layout.rows,
+      columns: data.columns ?? layout.columns,
+      seats: data.seats ?? (layout.seats as unknown[]),
+      isDefault: data.isDefault ?? layout.isDefault,
+    },
+  });
+}
+
+export async function deleteTableLayout(id: string) {
+  const layout = await prisma.tableLayout.findUnique({ where: { id } });
+  if (!layout) throw new Error("Table layout not found");
+  await prisma.tableLayout.delete({ where: { id } });
+  return { deleted: true };
+}
+
+// ── POS Summary ──────────────────────────────────────────────────────────────
+
+export async function getPOSSummary(venueId: string, eventId?: string) {
+  const where = eventId ? { eventId } : { eventId: { not: undefined as unknown as string } };
+
+  // Walk-up sales
+  const walkUps = await prisma.walkUpSale.findMany({
+    where: eventId ? { eventId } : {},
+    orderBy: { createdAt: "desc" },
+  });
+
+  const walkUpTotal = walkUps.reduce((sum, w) => sum + w.amount, 0);
+  const walkUpByMethod: Record<string, { count: number; revenue: number }> = {};
+  for (const w of walkUps) {
+    if (!walkUpByMethod[w.paymentMethod]) {
+      walkUpByMethod[w.paymentMethod] = { count: 0, revenue: 0 };
+    }
+    walkUpByMethod[w.paymentMethod].count += w.quantity;
+    walkUpByMethod[w.paymentMethod].revenue += w.amount;
+  }
+
+  // Pre-orders
+  const preOrders = await prisma.preOrder.findMany({
+    where: eventId ? { eventId } : {},
+  });
+  const preOrderTotal = preOrders.reduce((sum, p) => sum + p.totalAmount, 0);
+  const preOrdersByStatus: Record<string, number> = {};
+  for (const p of preOrders) {
+    preOrdersByStatus[p.status] = (preOrdersByStatus[p.status] ?? 0) + 1;
+  }
+
+  // Ticket revenue
+  let ticketRevenue = 0;
+  let ticketsSold = 0;
+  try {
+    if (eventId) {
+      const agg = await prisma.ticket.aggregate({
+        where: { eventId, status: "VALID" },
+        _sum: { purchasePrice: true },
+        _count: true,
+      });
+      ticketRevenue = Number(agg._sum.purchasePrice ?? 0);
+      ticketsSold = agg._count;
+    }
+  } catch { /* ignore */ }
+
+  // Menu item categories
+  const menuItems = await prisma.menuItem.findMany({
+    where: { venueId },
+    select: { category: true, price: true, isAvailable: true },
+  });
+  const menuCategories: Record<string, { count: number; avgPrice: number }> = {};
+  for (const item of menuItems) {
+    if (!menuCategories[item.category]) {
+      menuCategories[item.category] = { count: 0, avgPrice: 0 };
+    }
+    menuCategories[item.category].count += 1;
+    menuCategories[item.category].avgPrice += item.price;
+  }
+  for (const cat of Object.values(menuCategories)) {
+    cat.avgPrice = cat.count > 0 ? Math.round((cat.avgPrice / cat.count) * 100) / 100 : 0;
+  }
+
+  return {
+    walkUpSales: {
+      total: walkUps.length,
+      revenue: walkUpTotal,
+      byMethod: walkUpByMethod,
+    },
+    preOrders: {
+      total: preOrders.length,
+      revenue: preOrderTotal,
+      byStatus: preOrdersByStatus,
+    },
+    tickets: {
+      sold: ticketsSold,
+      revenue: ticketRevenue,
+    },
+    totalRevenue: walkUpTotal + preOrderTotal + ticketRevenue,
+    menuCategories,
+  };
+}
+
+// ── Venue Analytics ──────────────────────────────────────────────────────────
+
+export async function getVenueAnalytics(venueId: string) {
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now);
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  // Events
+  const [upcomingEvents, pastEvents] = await Promise.all([
+    prisma.event.findMany({
+      where: { venueId, date: { gte: now } },
+      orderBy: { date: "asc" },
+      take: 10,
+      include: {
+        comedians: { include: { comedian: { select: { id: true, name: true, slug: true } } } },
+        tickets: { select: { purchasePrice: true } },
+      },
+    }),
+    prisma.event.findMany({
+      where: { venueId, date: { lt: now } },
+      orderBy: { date: "desc" },
+      take: 10,
+      include: {
+        comedians: { include: { comedian: { select: { id: true, name: true, slug: true } } } },
+        tickets: { select: { purchasePrice: true } },
+      },
+    }),
+  ]);
+
+  const totalRevenue = pastEvents.reduce(
+    (sum, e) => sum + e.tickets.reduce((s, t) => s + Number(t.purchasePrice), 0),
+    0,
+  );
+
+  // Staff
+  const staffShifts = await prisma.staffShift.findMany({
+    where: { venueId, startTime: { gte: thirtyDaysAgo } },
+    orderBy: { startTime: "desc" },
+  });
+
+  const staffByRole: Record<string, number> = {};
+  const uniqueStaff = new Set<string>();
+  for (const s of staffShifts) {
+    staffByRole[s.role] = (staffByRole[s.role] ?? 0) + 1;
+    uniqueStaff.add(s.staffName);
+  }
+
+  // Followers
+  const followerCount = await prisma.venueFollow.count({ where: { venueId } });
+  const recentFollowers = await prisma.venueFollow.count({
+    where: { venueId, createdAt: { gte: thirtyDaysAgo } },
+  });
+
+  // Reviews
+  const reviewAgg = await prisma.venueReview.aggregate({
+    where: { venueId },
+    _avg: { rating: true },
+    _count: true,
+  });
+
+  // Benchmarks
+  let benchmarks: Array<{ metric: string; value: number; percentile: number }> = [];
+  try {
+    const bm = await prisma.venueBenchmark.findMany({ where: { venueId }, take: 10 });
+    benchmarks = bm.map((b) => ({ metric: b.metric, value: b.value, percentile: b.percentileRank }));
+  } catch { /* ignore */ }
+
+  return {
+    upcomingEvents: upcomingEvents.map((e) => ({
+      id: e.id,
+      title: e.title,
+      date: e.date,
+      comedians: e.comedians.map((c) => c.comedian),
+      ticketsSold: e.tickets.length,
+      revenue: e.tickets.reduce((s, t) => s + Number(t.purchasePrice), 0),
+    })),
+    pastEvents: pastEvents.map((e) => ({
+      id: e.id,
+      title: e.title,
+      date: e.date,
+      comedians: e.comedians.map((c) => c.comedian),
+      ticketsSold: e.tickets.length,
+      revenue: e.tickets.reduce((s, t) => s + Number(t.purchasePrice), 0),
+    })),
+    totalRevenue,
+    staff: {
+      totalStaff: uniqueStaff.size,
+      recentShifts: staffShifts.length,
+      byRole: staffByRole,
+    },
+    followers: {
+      total: followerCount,
+      recent: recentFollowers,
+    },
+    reviews: {
+      averageRating: reviewAgg._avg.rating ?? 0,
+      totalReviews: reviewAgg._count,
+    },
+    benchmarks,
+  };
+}
+
+// ── Reservation Management ───────────────────────────────────────────────────
+
+export async function getVenueEvents(venueId: string, upcoming = true) {
+  const now = new Date();
+  return prisma.event.findMany({
+    where: { venueId, date: upcoming ? { gte: now } : { lt: now } },
+    orderBy: { date: upcoming ? "asc" : "desc" },
+    take: 20,
+    include: {
+      comedians: {
+        include: { comedian: { select: { id: true, name: true, slug: true, headshotUrl: true } } },
+      },
+    },
+  });
+}
