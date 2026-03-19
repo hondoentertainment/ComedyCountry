@@ -1,26 +1,50 @@
 import { Suspense } from "react";
-import { search } from "@/lib/search";
+import { unifiedSearch, defaultFilters } from "@/lib/search";
 import { SearchPageContent } from "@/components/SearchPageContent";
+import type { SearchResponse } from "@/types/search";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Search | Punchline Atlas",
-  description: "Search venues, comedians, and upcoming comedy events.",
+  description: "Search venues, comedians, and upcoming comedy events. Filter by city, state, genre, date, and more.",
 };
 
 type PageProps = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 };
 
 export default async function SearchPage({ searchParams }: PageProps) {
-  const { q = "" } = await searchParams;
-  const term = q.trim();
-  const initialResults = term.length >= 2 ? await search(term, 10) : null;
+  const params = await searchParams;
+  const q = (params.q ?? "").trim();
+
+  let initialResults: SearchResponse | null = null;
+
+  if (q.length >= 2) {
+    try {
+      const filters = {
+        ...defaultFilters(),
+        q,
+        type: (params.type ?? "all") as "all" | "venue" | "comedian" | "event",
+        city: params.city,
+        state: params.state,
+        genre: params.genre,
+        venueType: params.venueType,
+        showType: params.showType,
+        dateFrom: params.dateFrom,
+        dateTo: params.dateTo,
+        sort: (params.sort ?? "relevance") as "relevance" | "popularity" | "name" | "date" | "recently_added",
+        offset: parseInt(params.offset ?? "0", 10) || 0,
+      };
+      initialResults = await unifiedSearch(filters);
+    } catch {
+      // Fall through with null results; the client component will handle fetching
+    }
+  }
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <Suspense
           fallback={
             <>
@@ -32,7 +56,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
           }
         >
           <SearchPageContent
-            initialQuery={term}
+            initialQuery={q}
             initialResults={initialResults}
           />
         </Suspense>

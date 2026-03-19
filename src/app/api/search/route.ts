@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { search, autocomplete } from "@/lib/search";
+import { search, autocomplete, unifiedSearch, parseFilters } from "@/lib/search";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
@@ -9,15 +9,27 @@ export async function GET(request: NextRequest) {
   }
 
   const params = request.nextUrl.searchParams;
+  const mode = params.get("mode");
   const q = (params.get("q") ?? "").slice(0, 200);
-  const mode = params.get("mode"); // "autocomplete" for typeahead
-  const take = Math.min(parseInt(params.get("take") ?? "10", 10) || 10, 50);
 
   try {
+    // Autocomplete mode for typeahead
     if (mode === "autocomplete") {
       const results = await autocomplete(q);
       return NextResponse.json(results);
     }
+
+    // Unified search mode: returns typed, ranked, paginated results
+    if (mode === "unified") {
+      const filters = parseFilters(params);
+      const response = await unifiedSearch(filters);
+      return NextResponse.json(response, {
+        headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" },
+      });
+    }
+
+    // Legacy mode: backwards-compatible flat response
+    const take = Math.min(parseInt(params.get("take") ?? "10", 10) || 10, 50);
 
     const filters = {
       city: params.get("city") ?? undefined,
@@ -36,7 +48,7 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { venues: [], comedians: [], events: [], facets: {}, totalCounts: {}, query: q, suggestions: [] },
-      { status: 200 }
+      { status: 200 },
     );
   }
 }

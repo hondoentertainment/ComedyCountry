@@ -254,3 +254,266 @@ export function scoreAttributeOverlap(
     matchingAttributes: matchingAttributes.slice(0, 4),
   };
 }
+
+// =============================================================================
+// Comedy Genome / Recommendation Engine Enhancements
+// =============================================================================
+
+/**
+ * Genre affinity vector: maps genre strings to numeric affinity scores [0-1].
+ */
+export interface GenreAffinityVector {
+  [genre: string]: number;
+}
+
+/**
+ * Build a genre affinity vector from user signals.
+ * Weights:
+ *   follow:    2.0
+ *   check-in:  1.5
+ *   review 4+: rating/2
+ *   review 3:  1.0
+ *   review <3: 0 (negative signal)
+ *   tier S/A:  3.0/2.5
+ *   tier B:    2.0
+ *   tier C/D:  1.0/0.5
+ *   tier F:    0
+ */
+export function buildGenreAffinityVector(
+  signals: {
+    followGenres: string[];
+    checkInGenres: string[];
+    reviewedGenres: Array<{ genres: string[]; rating: number }>;
+    tierRatedGenres: Array<{ genres: string[]; tier: string }>;
+  },
+): GenreAffinityVector {
+  const raw: Record<string, number> = {};
+  let totalWeight = 0;
+
+  const add = (genres: string[], weight: number) => {
+    for (const g of genres) {
+      const key = normalizeComedyKey(g);
+      raw[key] = (raw[key] ?? 0) + weight;
+      totalWeight += weight;
+    }
+  };
+
+  // Follow signals
+  add(signals.followGenres, 2.0);
+
+  // Check-in signals
+  add(signals.checkInGenres, 1.5);
+
+  // Review signals
+  for (const r of signals.reviewedGenres) {
+    const weight = r.rating >= 4 ? r.rating / 2 : r.rating >= 3 ? 1 : 0;
+    if (weight > 0) add(r.genres, weight);
+  }
+
+  // Tier rating signals
+  const tierWeights: Record<string, number> = { S: 3, A: 2.5, B: 2, C: 1, D: 0.5, F: 0 };
+  for (const t of signals.tierRatedGenres) {
+    const weight = tierWeights[t.tier] ?? 1;
+    if (weight > 0) add(t.genres, weight);
+  }
+
+  // Normalize to [0, 1]
+  if (totalWeight === 0) return {};
+  const maxVal = Math.max(...Object.values(raw), 1);
+  const vector: GenreAffinityVector = {};
+  for (const [key, val] of Object.entries(raw)) {
+    vector[key] = Math.round((val / maxVal) * 100) / 100;
+  }
+  return vector;
+}
+
+/**
+ * Compute cosine similarity between two attribute score maps.
+ * Returns a value between 0 and 1.
+ */
+export function cosineSimilarity(a: AttributeScoreMap, b: AttributeScoreMap): number {
+  const allKeysSet = new Set([...Object.keys(a), ...Object.keys(b)]);
+  const allKeys = Array.from(allKeysSet);
+  let dotProduct = 0;
+  let magnitudeA = 0;
+  let magnitudeB = 0;
+
+  for (const key of allKeys) {
+    const va = a[key] ?? 0;
+    const vb = b[key] ?? 0;
+    dotProduct += va * vb;
+    magnitudeA += va * va;
+    magnitudeB += vb * vb;
+  }
+
+  const denominator = Math.sqrt(magnitudeA) * Math.sqrt(magnitudeB);
+  if (denominator === 0) return 0;
+  return Math.round((dotProduct / denominator) * 100) / 100;
+}
+
+/**
+ * Score similarity between two comedians based on their genre vectors.
+ * Returns a similarity score between 0 and 100.
+ */
+export function scoreComedianSimilarity(
+  genresA: string[],
+  genresB: string[],
+): { similarity: number; sharedAttributes: string[] } {
+  if (genresA.length === 0 || genresB.length === 0) {
+    return { similarity: 0, sharedAttributes: [] };
+  }
+
+  const scoresA = emptyAttributeScores();
+  addWeightedAttributes(scoresA, genresA, 1);
+  const normalizedA = normalizeAttributeScores(scoresA);
+
+  const scoresB = emptyAttributeScores();
+  addWeightedAttributes(scoresB, genresB, 1);
+  const normalizedB = normalizeAttributeScores(scoresB);
+
+  const similarity = cosineSimilarity(normalizedA, normalizedB);
+  const similarityPct = Math.round(similarity * 100);
+
+  // Find shared high-scoring attributes
+  const sharedAttributes: string[] = [];
+  for (const key of Object.keys(normalizedA)) {
+    if ((normalizedA[key] ?? 0) >= 0.5 && (normalizedB[key] ?? 0) >= 0.5) {
+      sharedAttributes.push(key);
+    }
+  }
+
+  return {
+    similarity: similarityPct,
+    sharedAttributes: sharedAttributes.slice(0, 4),
+  };
+}
+
+/**
+ * Score how well a comedian matches a user's taste profile.
+ * Combines attribute overlap, genre affinity, and negative signal penalties.
+ */
+export function scoreTasteMatch(
+  profileAttributeScores: AttributeScoreMap,
+  profileGenreAffinity: GenreAffinityVector,
+  negativeSignals: AttributeScoreMap,
+  comedianGenres: string[],
+  discoveryStretch: number,
+): {
+  matchPct: number;
+  matchingAttributes: string[];
+  stretchLabel: "core" | "stretch" | "wildcard";
+  penalizedAttributes: string[];
+  explanation: string;
+} {
+  if (comedianGenres.length === 0 || Object.keys(profileAttributeScores).length === 0) {
+    return {
+      matchPct: 0,
+      matchingAttributes: [],
+      stretchLabel: "wildcard",
+      penalizedAttributes: [],
+      explanation: "Not enough data for a match score.",
+    };
+  }
+
+  // Attribute overlap score
+  const attributeOverlap = scoreAttributeOverlap(profileAttributeScores, comedianGenres);
+
+  // Direct genre affinity score
+  let genreAffinityScore = 0;
+  let genreCount = 0;
+  for (const genre of comedianGenres) {
+    const key = normalizeComedyKey(genre);
+    const affinity = profileGenreAffinity[key] ?? 0;
+    genreAffinityScore += affinity;
+    genreCount++;
+  }
+  const avgGenreAffinity = genreCount > 0 ? genreAffinityScore / genreCount : 0;
+  const genrePct = Math.round(avgGenreAffinity * 100);
+
+  // Negative signal penalty
+  const comedianScores = emptyAttributeScores();
+  addWeightedAttributes(comedianScores, comedianGenres, 1);
+  const normalizedComedianScores = normalizeAttributeScores(comedianScores);
+
+  let negativePenalty = 0;
+  const penalizedAttributes: string[] = [];
+  for (const [attr, weight] of Object.entries(normalizedComedianScores)) {
+    const negativeWeight = negativeSignals[attr] ?? 0;
+    if (negativeWeight > 0.3 && weight > 0.3) {
+      negativePenalty += negativeWeight * weight * 15;
+      penalizedAttributes.push(attr);
+    }
+  }
+
+  // Combined score (weighted blend)
+  const combinedPct = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(attributeOverlap.matchPct * 0.6 + genrePct * 0.4 - negativePenalty),
+    ),
+  );
+
+  const stretchLabel = describeStretch(combinedPct, discoveryStretch);
+  const matchingLabels = attributeOverlap.matchingAttributes.slice(0, 3).map(getAttributeLabel);
+
+  let explanation: string;
+  if (combinedPct >= 75) {
+    explanation = `Strong match: ${matchingLabels.join(", ")} align with your comedy DNA.`;
+  } else if (combinedPct >= 45) {
+    explanation = matchingLabels.length > 0
+      ? `Partial match on ${matchingLabels.join(", ")}. Could be a rewarding stretch.`
+      : "Some overlap with your taste profile. Worth exploring.";
+  } else {
+    explanation = "Outside your usual zone. A wildcard pick for discovery.";
+  }
+
+  if (penalizedAttributes.length > 0) {
+    const penalizedLabels = penalizedAttributes.slice(0, 2).map(getAttributeLabel);
+    explanation += ` (Note: you've bounced off ${penalizedLabels.join(", ")} before.)`;
+  }
+
+  return {
+    matchPct: combinedPct,
+    matchingAttributes: attributeOverlap.matchingAttributes,
+    stretchLabel,
+    penalizedAttributes,
+    explanation,
+  };
+}
+
+/**
+ * Given a list of comedians with genres, rank them by similarity to a target comedian.
+ */
+export function rankBySimilarity(
+  targetGenres: string[],
+  candidates: Array<{ id: string; genres: string[] }>,
+): Array<{ id: string; similarity: number; sharedAttributes: string[] }> {
+  return candidates
+    .map((c) => {
+      const { similarity, sharedAttributes } = scoreComedianSimilarity(targetGenres, c.genres);
+      return { id: c.id, similarity, sharedAttributes };
+    })
+    .filter((c) => c.similarity > 0)
+    .sort((a, b) => b.similarity - a.similarity);
+}
+
+/**
+ * Compute a confidence score based on number of signals.
+ * Returns a value between 0 and 1.
+ */
+export function computeConfidence(signalCounts: {
+  follows: number;
+  reviews: number;
+  checkIns: number;
+  tierRatings: number;
+}): number {
+  const total =
+    signalCounts.follows * 2 +
+    signalCounts.reviews * 3 +
+    signalCounts.checkIns * 1.5 +
+    signalCounts.tierRatings * 2;
+
+  // 50 weighted signals = 1.0 confidence
+  return Math.min(1, Math.round((total / 50) * 100) / 100);
+}
