@@ -283,7 +283,6 @@ async function processRefund(
   }
 
   // Create refund record and update ticket in a transaction
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const refundRecord = await prisma.$transaction(async (tx: any) => {
     // Mark ticket as refunded
     await tx.ticket.update({

@@ -66,7 +66,6 @@ export async function GET(
         })
       : [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const eventMap = new Map(events.map((e: any) => [e.id, e]));
 
     const now = new Date();
@@ -94,7 +93,6 @@ export async function GET(
 
     // Mark which upcoming events have already been redeemed
     const redeemedEventIds = new Set(eventIds);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const availableEvents = upcomingEvents.map((e: any) => ({
       ...e,
       alreadyRedeemed: redeemedEventIds.has(e.id),
@@ -258,7 +256,6 @@ export async function POST(
     }
 
     // Process redemption in a transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const redemption = await prisma.$transaction(async (tx: any) => {
       // Re-check pass state inside transaction
       const freshPass = await tx.seasonPass.findUnique({
