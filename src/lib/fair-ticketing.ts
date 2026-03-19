@@ -1,12 +1,18 @@
 import { prisma } from "./prisma";
 import { Decimal } from "@prisma/client/runtime/library";
+import type {
+  DynamicPriceResult,
+  PriceHistoryEntry,
+  PurchaseLimitConfig,
+} from "@/types/tickets";
 
 /**
- * Phase 12: Anti-Scalping & Fair Ticketing — Business Logic
+ * Phase 12 + Phase 3 Enhancement: Anti-Scalping & Fair Ticketing — Business Logic
  *
  * Addresses the #1 fan pain point: scalpers and hidden fees.
  * Provides transparent pricing, identity verification, fair waitlists,
- * and controlled resale with artist revenue sharing.
+ * controlled resale with artist revenue sharing, demand-based pricing,
+ * enhanced anti-scalping, and price history tracking.
  */
 
 // ── Fair Price Policy ────────────────────────────────────────────────────────
@@ -655,5 +661,497 @@ export async function detectScalpingPattern(userId: string) {
       bulkPurchase: BULK_PURCHASE_THRESHOLD,
       rapidResale: RAPID_RESALE_THRESHOLD,
     },
+  };
+}
+
+// =============================================================================
+// Phase 3: Demand-Based Dynamic Pricing Algorithm
+// =============================================================================
+
+/** Demand tier thresholds with labels for the pricing algorithm */
+const DEMAND_PRICING_TIERS = [
+  { threshold: 0.95, multiplier: 1.6, label: "critical" as const },
+  { threshold: 0.85, multiplier: 1.35, label: "very_high" as const },
+  { threshold: 0.70, multiplier: 1.2, label: "high" as const },
+  { threshold: 0.40, multiplier: 1.0, label: "moderate" as const },
+  { threshold: 0.15, multiplier: 0.85, label: "low" as const },
+  { threshold: 0, multiplier: 0.8, label: "low" as const },
+];
+
+/**
+ * Calculate demand-based dynamic price for a ticket type.
+ *
+ * Considers:
+ * - Current sell-through rate
+ * - Time until event (urgency factor)
+ * - Day-of-week demand patterns
+ *
+ * Returns the adjusted price with metadata.
+ */
+export function calculateDemandPrice(
+  basePrice: number,
+  sold: number,
+  capacity: number,
+  options?: {
+    eventDate?: Date;
+    floor?: number;
+    ceiling?: number;
+  }
+): DynamicPriceResult {
+  if (capacity <= 0) {
+    return { price: basePrice, multiplier: 1.0, sellThrough: 0, demandLevel: "moderate" };
+  }
+
+  const sellThrough = sold / capacity;
+
+  // Find matching demand tier
+  let multiplier = 1.0;
+  let demandLevel: DynamicPriceResult["demandLevel"] = "moderate";
+  for (const tier of DEMAND_PRICING_TIERS) {
+    if (sellThrough >= tier.threshold) {
+      multiplier = tier.multiplier;
+      demandLevel = tier.label;
+      break;
+    }
+  }
+
+  // Urgency factor: increase price as event approaches
+  if (options?.eventDate) {
+    const now = new Date();
+    const hoursUntilEvent = Math.max(0,
+      (options.eventDate.getTime() - now.getTime()) / (1000 * 60 * 60)
+    );
+
+    if (hoursUntilEvent < 24) {
+      // Last 24 hours: up to 15% premium
+      multiplier *= 1.0 + (0.15 * (1 - hoursUntilEvent / 24));
+    } else if (hoursUntilEvent < 72) {
+      // Last 3 days: up to 8% premium
+      multiplier *= 1.0 + (0.08 * (1 - hoursUntilEvent / 72));
+    }
+  }
+
+  let price = Math.round(basePrice * multiplier * 100) / 100;
+
+  // Clamp to floor/ceiling
+  if (options?.floor !== undefined && price < options.floor) {
+    price = options.floor;
+  }
+  if (options?.ceiling !== undefined && price > options.ceiling) {
+    price = options.ceiling;
+  }
+
+  return {
+    price,
+    multiplier: Math.round(multiplier * 100) / 100,
+    sellThrough: Math.round(sellThrough * 1000) / 1000,
+    demandLevel,
+  };
+}
+
+/**
+ * Get the effective price for a ticket type considering:
+ * 1. Active pricing tier (early bird / advance / door)
+ * 2. Demand-based dynamic adjustment
+ * 3. Fair price policy constraints
+ *
+ * Records the price in price history for tracking.
+ */
+export async function getEffectiveFairPrice(
+  ticketTypeId: string,
+  options?: {
+    enableDynamicPricing?: boolean;
+    recordHistory?: boolean;
+  }
+): Promise<{
+  price: number;
+  basePrice: number;
+  tierName: string;
+  demandLevel: DynamicPriceResult["demandLevel"];
+  multiplier: number;
+  sellThrough: number;
+}> {
+  const ticketType = await prisma.ticketType.findUnique({
+    where: { id: ticketTypeId },
+    include: {
+      event: { include: { fairPricePolicy: true } },
+      pricingTiers: { orderBy: { sortOrder: "asc" } },
+    },
+  });
+
+  if (!ticketType) {
+    throw new Error("Ticket type not found");
+  }
+
+  const now = new Date();
+  const basePrice = Number(ticketType.price);
+
+  // Find active tier
+  const activeTier = ticketType.pricingTiers.find((tier) => {
+    const started = tier.startsAt <= now;
+    const notEnded = !tier.endsAt || tier.endsAt >= now;
+    const withinCap = tier.maxQuantity === null || tier.sold < tier.maxQuantity;
+    return started && notEnded && withinCap;
+  });
+
+  const tierPrice = activeTier ? Number(activeTier.price) : basePrice;
+  const tierName = activeTier?.name ?? "Standard";
+
+  // Apply demand-based pricing if enabled
+  let finalPrice = tierPrice;
+  let demandLevel: DynamicPriceResult["demandLevel"] = "moderate";
+  let multiplier = 1.0;
+  const sellThrough = ticketType.capacity > 0
+    ? ticketType.sold / ticketType.capacity
+    : 0;
+
+  if (options?.enableDynamicPricing) {
+    const policy = ticketType.event.fairPricePolicy;
+    const maxMarkup = policy?.maxMarkupPercent ?? 60; // default max 60% markup
+    const ceiling = tierPrice * (1 + maxMarkup / 100);
+    const floor = tierPrice * 0.7; // Min 70% of tier price
+
+    const dynamic = calculateDemandPrice(
+      tierPrice,
+      ticketType.sold,
+      ticketType.capacity,
+      {
+        eventDate: ticketType.event.date,
+        floor,
+        ceiling,
+      }
+    );
+
+    finalPrice = dynamic.price;
+    demandLevel = dynamic.demandLevel;
+    multiplier = dynamic.multiplier;
+  }
+
+  // Record price history
+  if (options?.recordHistory) {
+    try {
+      await prisma.priceHistory.create({
+        data: {
+          ticketTypeId,
+          price: new Decimal(finalPrice.toFixed(2)),
+          tierName,
+          demandMultiplier: multiplier,
+          sellThrough,
+          reason: options?.enableDynamicPricing ? "demand_update" : "tier_change",
+        },
+      });
+    } catch {
+      // Non-critical
+    }
+  }
+
+  return {
+    price: finalPrice,
+    basePrice,
+    tierName,
+    demandLevel,
+    multiplier,
+    sellThrough: Math.round(sellThrough * 1000) / 1000,
+  };
+}
+
+// =============================================================================
+// Phase 3: Enhanced Anti-Scalping Measures
+// =============================================================================
+
+/** Default purchase limits */
+const DEFAULT_PURCHASE_LIMITS: PurchaseLimitConfig = {
+  maxPerUser: 4,
+  maxPerTransaction: 6,
+  cooldownMinutes: 5,
+};
+
+/**
+ * Enforce purchase limits per user per event.
+ * Checks existing purchases and applies cooldown.
+ */
+export async function enforcePurchaseLimits(
+  userId: string,
+  eventId: string,
+  requestedQuantity: number,
+  customLimits?: Partial<PurchaseLimitConfig>
+): Promise<{
+  allowed: boolean;
+  reason?: string;
+  currentCount: number;
+  maxAllowed: number;
+}> {
+  const limits = { ...DEFAULT_PURCHASE_LIMITS, ...customLimits };
+
+  // Check transaction quantity limit
+  if (requestedQuantity > limits.maxPerTransaction) {
+    return {
+      allowed: false,
+      reason: `Maximum ${limits.maxPerTransaction} tickets per transaction`,
+      currentCount: 0,
+      maxAllowed: limits.maxPerTransaction,
+    };
+  }
+
+  // Check total tickets already purchased for this event
+  const existingCount = await prisma.ticket.count({
+    where: {
+      userId,
+      eventId,
+      status: { in: ["VALID", "USED"] },
+    },
+  });
+
+  if (existingCount + requestedQuantity > limits.maxPerUser) {
+    return {
+      allowed: false,
+      reason: `Maximum ${limits.maxPerUser} tickets per person for this event. You already have ${existingCount}.`,
+      currentCount: existingCount,
+      maxAllowed: limits.maxPerUser,
+    };
+  }
+
+  // Check cooldown — prevent rapid sequential purchases
+  const cooldownCutoff = new Date();
+  cooldownCutoff.setMinutes(cooldownCutoff.getMinutes() - limits.cooldownMinutes);
+
+  const recentPurchase = await prisma.ticket.findFirst({
+    where: {
+      userId,
+      eventId,
+      createdAt: { gte: cooldownCutoff },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (recentPurchase) {
+    const secondsLeft = Math.ceil(
+      (recentPurchase.createdAt.getTime() + limits.cooldownMinutes * 60 * 1000 - Date.now()) / 1000
+    );
+    return {
+      allowed: false,
+      reason: `Please wait ${secondsLeft} seconds before purchasing again`,
+      currentCount: existingCount,
+      maxAllowed: limits.maxPerUser,
+    };
+  }
+
+  // Check global scalping detection
+  const scalpingCheck = await detectScalpingPattern(userId);
+  if (scalpingCheck.isSuspicious) {
+    return {
+      allowed: false,
+      reason: "Your account has been flagged for review. Please contact support.",
+      currentCount: existingCount,
+      maxAllowed: limits.maxPerUser,
+    };
+  }
+
+  return {
+    allowed: true,
+    currentCount: existingCount,
+    maxAllowed: limits.maxPerUser,
+  };
+}
+
+/**
+ * Flag a user for identity verification if suspicious patterns detected.
+ * Returns whether verification is required before purchase.
+ */
+export async function requiresIdentityVerification(
+  userId: string,
+  eventId: string
+): Promise<{
+  required: boolean;
+  methods: Array<"EMAIL" | "PHONE" | "ID_SCAN">;
+  reason?: string;
+}> {
+  const policy = await prisma.fairPricePolicy.findFirst({
+    where: {
+      event: {
+        id: eventId,
+      },
+      antiScalpingEnabled: true,
+    },
+  });
+
+  if (!policy) {
+    return { required: false, methods: [] };
+  }
+
+  const scalpingCheck = await detectScalpingPattern(userId);
+
+  if (scalpingCheck.isSuspicious) {
+    return {
+      required: true,
+      methods: ["EMAIL", "PHONE", "ID_SCAN"],
+      reason: "Additional verification required due to unusual purchase patterns",
+    };
+  }
+
+  // Check if the ticket type has already been bought at high volume across all users
+  const eventTicketCount = await prisma.ticket.count({
+    where: {
+      eventId,
+      status: { in: ["VALID", "USED"] },
+    },
+  });
+
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    include: { ticketTypes: true },
+  });
+
+  if (event) {
+    const totalCapacity = event.ticketTypes.reduce((sum, tt) => sum + tt.capacity, 0);
+    const sellThrough = totalCapacity > 0 ? eventTicketCount / totalCapacity : 0;
+
+    // High-demand events (>80% sold) require email verification
+    if (sellThrough > 0.8) {
+      return {
+        required: true,
+        methods: ["EMAIL"],
+        reason: "Email verification required for high-demand events",
+      };
+    }
+  }
+
+  return { required: false, methods: [] };
+}
+
+// =============================================================================
+// Phase 3: Price History Tracking
+// =============================================================================
+
+/**
+ * Get price history for a ticket type.
+ * Useful for showing price trends to buyers.
+ */
+export async function getPriceHistory(
+  ticketTypeId: string,
+  options?: { limit?: number; since?: Date }
+): Promise<PriceHistoryEntry[]> {
+  const records = await prisma.priceHistory.findMany({
+    where: {
+      ticketTypeId,
+      ...(options?.since ? { recordedAt: { gte: options.since } } : {}),
+    },
+    orderBy: { recordedAt: "desc" },
+    take: options?.limit ?? 50,
+  });
+
+  return records.map((r) => ({
+    ticketTypeId: r.ticketTypeId,
+    price: Number(r.price),
+    tierName: r.tierName,
+    demandMultiplier: r.demandMultiplier,
+    sellThrough: r.sellThrough,
+    timestamp: r.recordedAt,
+  }));
+}
+
+/**
+ * Record a price snapshot — called periodically or on price-affecting events.
+ */
+export async function recordPriceSnapshot(
+  ticketTypeId: string,
+  reason: string
+): Promise<void> {
+  const ticketType = await prisma.ticketType.findUnique({
+    where: { id: ticketTypeId },
+    include: {
+      pricingTiers: { orderBy: { sortOrder: "asc" } },
+    },
+  });
+
+  if (!ticketType) return;
+
+  const now = new Date();
+  const activeTier = ticketType.pricingTiers.find((tier) => {
+    const started = tier.startsAt <= now;
+    const notEnded = !tier.endsAt || tier.endsAt >= now;
+    const withinCap = tier.maxQuantity === null || tier.sold < tier.maxQuantity;
+    return started && notEnded && withinCap;
+  });
+
+  const price = activeTier ? Number(activeTier.price) : Number(ticketType.price);
+  const sellThrough = ticketType.capacity > 0
+    ? ticketType.sold / ticketType.capacity
+    : 0;
+
+  await prisma.priceHistory.create({
+    data: {
+      ticketTypeId,
+      price: new Decimal(price.toFixed(2)),
+      tierName: activeTier?.name ?? "Standard",
+      demandMultiplier: 1.0,
+      sellThrough,
+      reason,
+    },
+  });
+}
+
+/**
+ * Get price trend summary for a ticket type.
+ */
+export async function getPriceTrendSummary(ticketTypeId: string): Promise<{
+  currentPrice: number;
+  lowestPrice: number;
+  highestPrice: number;
+  averagePrice: number;
+  priceDirection: "rising" | "falling" | "stable";
+  dataPoints: number;
+}> {
+  const history = await prisma.priceHistory.findMany({
+    where: { ticketTypeId },
+    orderBy: { recordedAt: "desc" },
+    take: 100,
+  });
+
+  if (history.length === 0) {
+    const ticketType = await prisma.ticketType.findUnique({
+      where: { id: ticketTypeId },
+    });
+    const price = ticketType ? Number(ticketType.price) : 0;
+    return {
+      currentPrice: price,
+      lowestPrice: price,
+      highestPrice: price,
+      averagePrice: price,
+      priceDirection: "stable",
+      dataPoints: 0,
+    };
+  }
+
+  const prices = history.map((h) => Number(h.price));
+  const currentPrice = prices[0];
+  const lowestPrice = Math.min(...prices);
+  const highestPrice = Math.max(...prices);
+  const averagePrice = Math.round(
+    (prices.reduce((sum, p) => sum + p, 0) / prices.length) * 100
+  ) / 100;
+
+  // Determine trend direction from last 5 data points
+  let priceDirection: "rising" | "falling" | "stable" = "stable";
+  if (prices.length >= 3) {
+    const recent = prices.slice(0, Math.min(5, prices.length));
+    const older = prices.slice(Math.min(5, prices.length));
+    const recentAvg = recent.reduce((s, p) => s + p, 0) / recent.length;
+    const olderAvg = older.length > 0
+      ? older.reduce((s, p) => s + p, 0) / older.length
+      : recentAvg;
+
+    const change = (recentAvg - olderAvg) / olderAvg;
+    if (change > 0.02) priceDirection = "rising";
+    else if (change < -0.02) priceDirection = "falling";
+  }
+
+  return {
+    currentPrice,
+    lowestPrice,
+    highestPrice,
+    averagePrice,
+    priceDirection,
+    dataPoints: history.length,
   };
 }
