@@ -175,5 +175,168 @@ describe("events", () => {
         })
       );
     });
+
+    it("defaults take to 10", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        followsComedians: [{ comedianId: "c1" }],
+        followsVenues: [],
+      });
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await getEventsForUser("user-1");
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ take: 10 })
+      );
+    });
+
+    it("accepts custom take parameter", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        followsComedians: [{ comedianId: "c1" }],
+        followsVenues: [],
+      });
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await getEventsForUser("user-1", 25);
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ take: 25 })
+      );
+    });
+
+    it("queries only comedian follows when no venue follows", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        followsComedians: [{ comedianId: "c1" }, { comedianId: "c2" }],
+        followsVenues: [],
+      });
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await getEventsForUser("user-1");
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: [
+              { comedians: { some: { comedianId: { in: ["c1", "c2"] } } } },
+            ],
+          }),
+        })
+      );
+    });
+
+    it("queries only venue follows when no comedian follows", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        followsComedians: [],
+        followsVenues: [{ venueId: "v1" }],
+      });
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await getEventsForUser("user-1");
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: [{ venueId: { in: ["v1"] } }],
+          }),
+        })
+      );
+    });
+  });
+
+  describe("listEvents additional edge cases", () => {
+    it("filters by date range when both from and to provided", async () => {
+      const from = new Date("2025-01-01");
+      const to = new Date("2025-12-31");
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await listEvents({ from, to });
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            date: { gte: from, lte: to },
+          }),
+        })
+      );
+    });
+
+    it("filters by state and city via venue relation", async () => {
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await listEvents({ city: "Nashville", state: "TN" });
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            venue: {
+              city: { contains: "Nashville", mode: "insensitive" },
+              state: { equals: "TN", mode: "insensitive" },
+            },
+          }),
+        })
+      );
+    });
+
+    it("orders events by ascending date", async () => {
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await listEvents();
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { date: "asc" },
+        })
+      );
+    });
+
+    it("includes venue and comedian data", async () => {
+      mockPrisma.event.findMany.mockResolvedValue([]);
+      mockPrisma.event.count.mockResolvedValue(0);
+
+      await listEvents();
+
+      expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: {
+            venue: true,
+            comedians: { include: { comedian: true } },
+          },
+        })
+      );
+    });
+  });
+
+  describe("getEventById additional cases", () => {
+    it("includes ticket types when option is set", async () => {
+      mockPrisma.event.findUnique.mockResolvedValue(null);
+
+      await getEventById("e1", { includeTicketTypes: true });
+
+      expect(mockPrisma.event.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          include: expect.objectContaining({
+            ticketTypes: { select: { capacity: true, sold: true } },
+          }),
+        })
+      );
+    });
+
+    it("excludes ticket types by default", async () => {
+      mockPrisma.event.findUnique.mockResolvedValue(null);
+
+      await getEventById("e1");
+
+      const call = mockPrisma.event.findUnique.mock.calls[0][0] as {
+        include: Record<string, unknown>;
+      };
+      expect(call.include).not.toHaveProperty("ticketTypes");
+    });
   });
 });

@@ -52,6 +52,53 @@ function user(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function comedian(overrides: Record<string, unknown> = {}) {
+  const id = nextId("comedian");
+  return {
+    id,
+    name: `Comedian ${id}`,
+    slug: `comedian-${id}`,
+    bio: "A very funny comedian",
+    headshotUrl: `https://example.com/headshots/${id}.jpg`,
+    touringStatus: "TOURING",
+    website: `https://comedian-${id}.com`,
+    yearsActiveFrom: 2010,
+    yearsActiveTo: null,
+    representation: null,
+    genres: [],
+    socialLinks: [],
+    specialReleases: [],
+    podcastLinks: [],
+    youtubeChannel: null,
+    _count: { events: 5, followers: 100 },
+    createdAt: date(-30),
+    updatedAt: date(),
+    ...overrides,
+  };
+}
+
+function comedianGenre(overrides: Record<string, unknown> = {}) {
+  const id = nextId("cg");
+  return {
+    id,
+    comedianId: "comedian-1",
+    genre: "Observational",
+    ...overrides,
+  };
+}
+
+function eventComedian(overrides: Record<string, unknown> = {}) {
+  const id = nextId("ec");
+  return {
+    id,
+    eventId: "event-1",
+    comedianId: "comedian-1",
+    role: "headline",
+    comedian: comedian(),
+    ...overrides,
+  };
+}
+
 function venue(overrides: Record<string, unknown> = {}) {
   const id = nextId("venue");
   return {
@@ -458,6 +505,9 @@ export const factories = {
 
   // Core
   user,
+  comedian,
+  comedianGenre,
+  eventComedian,
   venue,
   event,
 
