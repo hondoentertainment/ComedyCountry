@@ -50,14 +50,6 @@ export function OfflineIndicator() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-sync when coming back online
-  useEffect(() => {
-    if (online && wasOffline && pendingCount > 0) {
-      handleSync();
-      setWasOffline(false);
-    }
-  }, [online, wasOffline, pendingCount]);
-
   const handleSync = useCallback(async () => {
     if (syncing || !isOnline()) return;
     setSyncing(true);
@@ -71,6 +63,14 @@ export function OfflineIndicator() {
       setSyncing(false);
     }
   }, [syncing]);
+
+  // Auto-sync when coming back online
+  useEffect(() => {
+    if (online && wasOffline && pendingCount > 0) {
+      handleSync();
+      setWasOffline(false);
+    }
+  }, [online, wasOffline, pendingCount, handleSync]);
 
   // Offline banner
   if (!online) {

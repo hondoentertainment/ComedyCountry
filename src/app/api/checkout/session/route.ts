@@ -225,7 +225,6 @@ export async function POST(request: Request) {
       ) / 100;
 
     // Create tickets and order in a transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { order, tickets } = await prisma.$transaction(async (tx: any) => {
       const createdTickets: Array<{
         id: string;
