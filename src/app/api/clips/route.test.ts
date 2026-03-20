@@ -19,7 +19,7 @@ import { getClipFeed, createClip } from "@/lib/short-clips";
 import { getServerSession } from "next-auth";
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("GET /api/clips", () => {
@@ -29,7 +29,7 @@ describe("GET /api/clips", () => {
 
   it("returns clip feed with defaults", async () => {
     const feedData = { clips: [{ id: "c1" }], total: 1, page: 1, pageSize: 20 };
-    vi.mocked(getClipFeed).mockResolvedValue(feedData);
+    vi.mocked(getClipFeed).mockResolvedValue(feedData as any);
 
     const req = createRequest("http://localhost/api/clips");
     const res = await GET(req);
@@ -46,7 +46,7 @@ describe("GET /api/clips", () => {
   });
 
   it("passes tags filter", async () => {
-    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 20 });
+    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 20 } as any);
 
     const req = createRequest("http://localhost/api/clips?tags=standup,improv");
     await GET(req);
@@ -59,7 +59,7 @@ describe("GET /api/clips", () => {
   });
 
   it("passes sort parameter", async () => {
-    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 20 });
+    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 20 } as any);
 
     const req = createRequest("http://localhost/api/clips?sort=recent");
     await GET(req);
@@ -70,7 +70,7 @@ describe("GET /api/clips", () => {
   });
 
   it("passes pagination parameters", async () => {
-    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 2, pageSize: 10 });
+    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 2, pageSize: 10 } as any);
 
     const req = createRequest("http://localhost/api/clips?page=2&pageSize=10");
     await GET(req);
@@ -208,7 +208,7 @@ describe("POST /api/clips", () => {
   });
 
   it("caps pageSize to 50", async () => {
-    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 50 });
+    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 50 } as any);
 
     const req = createRequest("http://localhost/api/clips?pageSize=100");
     await GET(req);
@@ -219,7 +219,7 @@ describe("POST /api/clips", () => {
   });
 
   it("enforces minimum page of 1", async () => {
-    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 20 });
+    vi.mocked(getClipFeed).mockResolvedValue({ clips: [], total: 0, page: 1, pageSize: 20 } as any);
 
     const req = createRequest("http://localhost/api/clips?page=0");
     await GET(req);

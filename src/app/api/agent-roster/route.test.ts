@@ -35,7 +35,7 @@ const mockPrisma = prisma as unknown as {
 };
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("GET /api/agent-roster", () => {
@@ -52,7 +52,7 @@ describe("GET /api/agent-roster", () => {
   it("returns roster for authenticated user", async () => {
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } });
     vi.mocked(getAgentRoster).mockResolvedValue([
-      { id: "ar1", comedian: { name: "Dave" } },
+      { id: "ar1", comedian: { name: "Dave" } } as any,
     ]);
 
     const res = await GET();

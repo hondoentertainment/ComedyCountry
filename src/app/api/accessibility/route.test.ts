@@ -53,7 +53,7 @@ import { GET as getVenues } from "./venues/route";
 import { GET as getStats } from "./stats/route";
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("Accessibility API Routes", () => {

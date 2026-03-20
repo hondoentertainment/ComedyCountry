@@ -14,7 +14,7 @@
  *   await assertError(res, 401, "Unauthorized");
  */
 
-import { expect } from "vitest";
+import { expect, it } from "vitest";
 
 /**
  * Assert response status and optionally inspect JSON body.
