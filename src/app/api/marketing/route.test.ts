@@ -89,7 +89,7 @@ import {
 import { GET as getInfluencers } from "./influencers/route";
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("Marketing API Routes", () => {

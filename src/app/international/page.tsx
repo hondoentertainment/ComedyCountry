@@ -62,9 +62,9 @@ export default async function InternationalPage() {
       }),
       prisma.comedyStyle.findMany({ orderBy: { name: "asc" } }),
     ]);
-    scenes = scenesData;
-    upcomingFestivals = festivalsData;
-    comedyStyles = stylesData;
+    scenes = scenesData as typeof scenes;
+    upcomingFestivals = festivalsData as typeof upcomingFestivals;
+    comedyStyles = stylesData as typeof comedyStyles;
   } catch {
     // DB not configured
   }

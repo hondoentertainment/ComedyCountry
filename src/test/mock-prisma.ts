@@ -36,7 +36,8 @@ const PRISMA_METHODS = [
   "groupBy",
 ] as const;
 
-type MockFn = ReturnType<typeof vi.fn>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MockFn = any;
 
 type MockModel = {
   [K in (typeof PRISMA_METHODS)[number]]: MockFn;

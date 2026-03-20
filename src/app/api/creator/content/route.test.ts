@@ -24,7 +24,7 @@ import { getComedianForUser, getExclusiveContent, createExclusiveContent } from 
 import { getServerSession } from "next-auth";
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("GET /api/creator/content", () => {
@@ -41,7 +41,7 @@ describe("GET /api/creator/content", () => {
   it("returns exclusive content for comedian", async () => {
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } });
     vi.mocked(getExclusiveContent).mockResolvedValue([
-      { id: "ec1", title: "Post 1" },
+      { id: "ec1", title: "Post 1" } as any,
     ]);
 
     const req = createRequest("http://localhost/api/creator/content?comedianId=c1");
@@ -94,7 +94,7 @@ describe("POST /api/creator/content", () => {
 
   it("returns 400 when title missing", async () => {
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } });
-    vi.mocked(getComedianForUser).mockResolvedValue({ id: "c1", name: "Dave" });
+    vi.mocked(getComedianForUser).mockResolvedValue({ id: "c1", name: "Dave" } as any);
 
     const req = createRequest("http://localhost/api/creator/content", {
       method: "POST",
@@ -106,11 +106,11 @@ describe("POST /api/creator/content", () => {
 
   it("creates content and returns 201", async () => {
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } });
-    vi.mocked(getComedianForUser).mockResolvedValue({ id: "c1", name: "Dave" });
+    vi.mocked(getComedianForUser).mockResolvedValue({ id: "c1", name: "Dave" } as any);
     vi.mocked(createExclusiveContent).mockResolvedValue({
       id: "ec1",
       title: "My Bit",
-    });
+    } as any);
 
     const req = createRequest("http://localhost/api/creator/content", {
       method: "POST",

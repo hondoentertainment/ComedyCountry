@@ -24,12 +24,17 @@ export default async function VenueOpsPage() {
   try {
     const claim = await prisma.venueClaim.findFirst({
       where: { userId: session.user.id, status: "APPROVED" },
-      include: { venue: { select: { id: true, name: true, slug: true } } },
       orderBy: { createdAt: "desc" },
     });
-    if (claim?.venue) {
-      venueId = claim.venue.id;
-      venueName = claim.venue.name;
+    if (claim) {
+      const venue = await prisma.venue.findUnique({
+        where: { id: claim.venueId },
+        select: { id: true, name: true },
+      });
+      if (venue) {
+        venueId = venue.id;
+        venueName = venue.name;
+      }
     }
   } catch {
     // VenueClaim table may not exist yet

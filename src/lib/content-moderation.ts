@@ -393,14 +393,14 @@ export async function addToModerationQueue(item: {
 }): Promise<ModerationQueueItem> {
   const record = await prisma.analyticsEvent.create({
     data: {
-      eventType: "moderation_queue",
+      action: "moderation_queue",
       entityType: item.contentType,
       entityId: item.contentId,
       userId: item.userId,
-      metadata: {
+      metadata: JSON.stringify({
         reason: item.reason,
         status: "PENDING_REVIEW",
-      },
+      }),
     },
   });
 
@@ -422,7 +422,7 @@ export async function getModerationQueue(
   limit = 50,
 ): Promise<ModerationQueueItem[]> {
   const where: Record<string, unknown> = {
-    eventType: "moderation_queue",
+    action: "moderation_queue",
   };
 
   if (status) {
@@ -459,11 +459,11 @@ export async function reviewModerationItem(
   const record = await prisma.analyticsEvent.update({
     where: { id: itemId },
     data: {
-      metadata: {
+      metadata: JSON.stringify({
         status: decision,
         reviewedAt: new Date().toISOString(),
         reviewedBy: reviewerId,
-      },
+      }),
     },
   });
 
@@ -489,7 +489,7 @@ export async function reviewModerationItem(
 export async function getUserStrikes(userId: string): Promise<UserStrikeRecord> {
   const strikes = await prisma.analyticsEvent.findMany({
     where: {
-      eventType: "moderation_strike",
+      action: "moderation_strike",
       userId,
     },
     orderBy: { createdAt: "desc" },
@@ -520,15 +520,15 @@ export async function issueStrike(
 ): Promise<UserStrikeRecord> {
   await prisma.analyticsEvent.create({
     data: {
-      eventType: "moderation_strike",
+      action: "moderation_strike",
       entityType: "user",
       entityId: userId,
       userId,
-      metadata: {
+      metadata: JSON.stringify({
         reason,
         category,
         issuedAt: new Date().toISOString(),
-      },
+      }),
     },
   });
 

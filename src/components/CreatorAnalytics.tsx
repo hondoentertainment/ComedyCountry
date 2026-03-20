@@ -103,7 +103,7 @@ function MiniBarChart({
   );
 }
 
-export default function CreatorAnalytics() {
+export default function CreatorAnalytics({ comedianId }: { comedianId?: string }) {
   const [overview, setOverview] = useState<OverviewStats | null>(null);
   const [viewTrends, setViewTrends] = useState<ViewTrend[]>([]);
   const [followerGrowth, setFollowerGrowth] = useState<AudienceGrowthPoint[]>([]);

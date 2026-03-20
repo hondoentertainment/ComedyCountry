@@ -107,8 +107,12 @@ export async function getTopComediansByCity(
       date: { gte: start, lte: end },
     },
     select: {
-      comedianId: true,
-      comedian: { select: { id: true, name: true } },
+      id: true,
+      comedians: {
+        select: {
+          comedian: { select: { id: true, name: true } },
+        },
+      },
       reviews: { select: { rating: true } },
     },
   });
@@ -120,20 +124,21 @@ export async function getTopComediansByCity(
   >();
 
   for (const event of events) {
-    if (!event.comedianId || !event.comedian) continue;
+    for (const ec of event.comedians) {
+      const comedianId = ec.comedian.id;
+      const existing = comedianMap.get(comedianId);
+      const eventRatings = event.reviews.map((r: { rating: number }) => r.rating);
 
-    const existing = comedianMap.get(event.comedianId);
-    const eventRatings = event.reviews.map((r: { rating: number }) => r.rating);
-
-    if (existing) {
-      existing.showCount += 1;
-      existing.ratings.push(...eventRatings);
-    } else {
-      comedianMap.set(event.comedianId, {
-        name: event.comedian.name,
-        showCount: 1,
-        ratings: eventRatings,
-      });
+      if (existing) {
+        existing.showCount += 1;
+        existing.ratings.push(...eventRatings);
+      } else {
+        comedianMap.set(comedianId, {
+          name: ec.comedian.name,
+          showCount: 1,
+          ratings: eventRatings,
+        });
+      }
     }
   }
 
@@ -175,7 +180,7 @@ export async function getAttendanceTrends(
     },
     select: {
       id: true,
-      capacity: true,
+      venue: { select: { capacity: true } },
       _count: { select: { tickets: true } },
     },
   });
@@ -191,7 +196,7 @@ export async function getAttendanceTrends(
 
   // Sell-out rate: events where tickets sold >= capacity
   const sellOutCount = events.filter(
-    (e) => e.capacity && e._count.tickets >= e.capacity
+    (e) => e.venue.capacity && e._count.tickets >= e.venue.capacity
   ).length;
   const sellOutRate =
     events.length > 0
@@ -222,7 +227,7 @@ export async function getRevenueBenchmarks(
       },
     },
     select: {
-      price: true,
+      purchasePrice: true,
       event: {
         select: {
           id: true,
@@ -232,7 +237,7 @@ export async function getRevenueBenchmarks(
     },
   });
 
-  const totalRevenue = tickets.reduce((sum, t) => sum + (t.price ?? 0), 0);
+  const totalRevenue = tickets.reduce((sum, t) => sum + Number(t.purchasePrice ?? 0), 0);
   const avgTicketPrice =
     tickets.length > 0
       ? Math.round((totalRevenue / tickets.length) * 100) / 100
@@ -255,11 +260,11 @@ export async function getRevenueBenchmarks(
     const venueId = ticket.event.venue.id;
     const existing = venueRevenue.get(venueId);
     if (existing) {
-      existing.revenue += ticket.price ?? 0;
+      existing.revenue += Number(ticket.purchasePrice) ?? 0;
     } else {
       venueRevenue.set(venueId, {
         name: ticket.event.venue.name,
-        revenue: ticket.price ?? 0,
+        revenue: Number(ticket.purchasePrice) ?? 0,
       });
     }
   }

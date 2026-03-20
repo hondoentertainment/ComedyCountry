@@ -67,19 +67,9 @@ export async function computeAudienceProfile(
   const tickets = await prisma.ticket.findMany({
     where: { eventId: { in: eventIds } },
     include: {
-      user: {
-        select: {
-          id: true,
-          location: true,
-          birthDate: true,
-        },
-      },
       event: {
-        select: {
-          id: true,
-          comedianId: true,
-          comedian: { select: { id: true, name: true } },
-          tags: true,
+        include: {
+          comedians: { include: { comedian: { select: { id: true, name: true } } } },
         },
       },
     },
@@ -88,7 +78,7 @@ export async function computeAudienceProfile(
   // Unique attendees
   const attendeeMap = new Map<
     string,
-    { visits: number; totalSpend: number; location?: string | null; birthDate?: Date | null }
+    { visits: number; totalSpend: number }
   >();
 
   for (const ticket of tickets) {
@@ -96,26 +86,25 @@ export async function computeAudienceProfile(
     if (!userId) continue;
 
     const existing = attendeeMap.get(userId);
+    const price = Number(ticket.purchasePrice ?? 0);
     if (existing) {
       existing.visits += 1;
-      existing.totalSpend += ticket.price ?? 0;
+      existing.totalSpend += price;
     } else {
       attendeeMap.set(userId, {
         visits: 1,
-        totalSpend: ticket.price ?? 0,
-        location: ticket.user?.location,
-        birthDate: ticket.user?.birthDate,
+        totalSpend: price,
       });
     }
   }
 
   const totalAttendees = attendeeMap.size;
 
-  // Genre distribution from event tags
+  // Genre distribution from event comedians' genres
   const genreCounts: Record<string, number> = {};
   for (const ticket of tickets) {
-    const tags = (ticket.event?.tags as string[]) ?? [];
-    for (const tag of tags) {
+    const genres = ticket.event?.comedians?.flatMap((ec: { comedian: { id: string; name: string } }) => ec.comedian.name) ?? [];
+    for (const tag of genres) {
       genreCounts[tag] = (genreCounts[tag] ?? 0) + 1;
     }
   }
@@ -132,36 +121,11 @@ export async function computeAudienceProfile(
         : 0;
   }
 
-  // Average age
-  const now = new Date();
-  const ages: number[] = [];
-  for (const [, attendee] of attendeeMap) {
-    if (attendee.birthDate) {
-      const age = Math.floor(
-        (now.getTime() - attendee.birthDate.getTime()) /
-          (365.25 * 24 * 60 * 60 * 1000),
-      );
-      if (age > 0 && age < 120) ages.push(age);
-    }
-  }
-  const avgAge =
-    ages.length > 0
-      ? Math.round((ages.reduce((s, a) => s + a, 0) / ages.length) * 10) / 10
-      : null;
+  // Average age (not available without user relation)
+  const avgAge: number | null = null;
 
-  // Location distribution
-  const locationCounts: Record<string, number> = {};
-  for (const [, attendee] of attendeeMap) {
-    const loc = attendee.location ?? "Unknown";
-    locationCounts[loc] = (locationCounts[loc] ?? 0) + 1;
-  }
+  // Location distribution (not available without user relation)
   const locationDistribution: Record<string, number> = {};
-  for (const [loc, count] of Object.entries(locationCounts)) {
-    locationDistribution[loc] =
-      totalAttendees > 0
-        ? Math.round((count / totalAttendees) * 100) / 100
-        : 0;
-  }
 
   // Avg visits & spend per member
   let totalVisits = 0;
@@ -182,9 +146,9 @@ export async function computeAudienceProfile(
   // Top comedians
   const comedianCounts: Record<string, { name: string; count: number }> = {};
   for (const ticket of tickets) {
-    const cid = ticket.event?.comedianId;
-    const cname = ticket.event?.comedian?.name;
-    if (cid && cname) {
+    for (const ec of (ticket.event?.comedians ?? [])) {
+      const cid = ec.comedian.id;
+      const cname = ec.comedian.name;
       if (!comedianCounts[cid]) {
         comedianCounts[cid] = { name: cname, count: 0 };
       }
@@ -469,12 +433,12 @@ export async function getAudienceOverlap(
   // Get unique user IDs for each venue
   const [ticketsA, ticketsB] = await Promise.all([
     prisma.ticket.findMany({
-      where: { eventId: { in: eventIdsA }, userId: { not: null } },
+      where: { eventId: { in: eventIdsA }, userId: { not: "" } },
       select: { userId: true },
       distinct: ["userId"],
     }),
     prisma.ticket.findMany({
-      where: { eventId: { in: eventIdsB }, userId: { not: null } },
+      where: { eventId: { in: eventIdsB }, userId: { not: "" } },
       select: { userId: true },
       distinct: ["userId"],
     }),
@@ -526,7 +490,7 @@ export async function getAudienceGrowthTrend(
   const tickets = await prisma.ticket.findMany({
     where: {
       eventId: { in: eventIds },
-      userId: { not: null },
+      userId: { not: "" },
       createdAt: { gte: startDate },
     },
     select: {

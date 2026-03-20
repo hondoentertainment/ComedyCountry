@@ -1,4 +1,5 @@
 import { randomBytes } from "crypto";
+import { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
 
 /**
@@ -177,7 +178,7 @@ export async function createAudienceSegment(data: {
       venueId: data.venueId ?? null,
       name: data.name,
       description: data.description ?? null,
-      criteria: data.criteria,
+      criteria: data.criteria as Prisma.InputJsonValue,
       isSystem: data.isSystem ?? false,
     },
   });
@@ -359,8 +360,8 @@ export async function getReferralStats(userId: string) {
   });
 
   const totalCodes = codes.length;
-  const totalRedemptions = codes.reduce((sum, c) => sum + c.useCount, 0);
-  const totalRevenue = codes.reduce((sum, c) => sum + c.revenue, 0);
+  const totalRedemptions = codes.reduce((sum: number, c: { useCount: number }) => sum + c.useCount, 0);
+  const totalRevenue = codes.reduce((sum: number, c: { revenue: number }) => sum + c.revenue, 0);
   const activeCodes = codes.filter((c) => c.isActive).length;
 
   return {
@@ -627,8 +628,8 @@ export async function matchInfluencers(
 
   // Filter by genres if specified (array overlap check in app layer)
   if (criteria.genres && criteria.genres.length > 0) {
-    return matches.filter((m) =>
-      criteria.genres!.some((g) => m.comedyGenres.includes(g)),
+    return matches.filter((m: { comedyGenres: string[] }) =>
+      criteria.genres!.some((g: string) => m.comedyGenres.includes(g)),
     );
   }
 

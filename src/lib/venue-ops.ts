@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
 
 /**
@@ -489,7 +490,7 @@ export async function updateTableLayout(
       name: data.name ?? layout.name,
       rows: data.rows ?? layout.rows,
       columns: data.columns ?? layout.columns,
-      seats: data.seats ?? (layout.seats as unknown[]),
+      seats: (data.seats ?? layout.seats) as Prisma.InputJsonValue,
       isDefault: data.isDefault ?? layout.isDefault,
     },
   });

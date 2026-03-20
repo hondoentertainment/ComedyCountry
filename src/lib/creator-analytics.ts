@@ -376,7 +376,7 @@ export async function getRevenueByContentType(
   }
 
   const breakdown: RevenueByContentType[] = [];
-  for (const [contentType, data] of typeMap.entries()) {
+  for (const [contentType, data] of Array.from(typeMap.entries())) {
     breakdown.push({
       contentType,
       revenue: data.revenue,

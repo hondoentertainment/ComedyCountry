@@ -316,14 +316,15 @@ export async function checkMilestones(comedianId: string) {
     try {
       const events = await prisma.event.findMany({
         where: { comedians: { some: { comedianId } } },
-        select: { id: true, capacity: true },
+        select: { id: true, ticketTypes: { select: { capacity: true } } },
       });
       for (const event of events) {
-        if (event.capacity && event.capacity > 0) {
+        const totalCapacity = event.ticketTypes.reduce((sum: number, tt: { capacity: number }) => sum + tt.capacity, 0);
+        if (totalCapacity > 0) {
           const ticketCount = await prisma.ticket.count({
             where: { eventId: event.id, status: "VALID" },
           });
-          if (ticketCount >= event.capacity) {
+          if (ticketCount >= totalCapacity) {
             detected.push({
               milestone: "First sold-out show",
               metric: "sellout",

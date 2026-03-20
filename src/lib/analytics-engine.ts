@@ -770,7 +770,7 @@ export async function computeIndustryTrends(region?: string, period?: string) {
             category: t.category,
             metric: t.metric,
             period: currentPeriod,
-            region: region || null,
+            region: region ?? '',
           },
         },
         update: {
@@ -820,9 +820,6 @@ export async function getAudienceDemographics(comedianId: string) {
       },
     },
     include: {
-      user: {
-        select: { id: true },
-      },
       event: {
         include: {
           venue: { select: { city: true, state: true } },

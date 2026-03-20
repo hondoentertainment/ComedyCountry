@@ -48,7 +48,7 @@ function createRequest(url: string, method = "GET", body?: unknown) {
     options.body = JSON.stringify(body);
     options.headers = { "Content-Type": "application/json" };
   }
-  return new NextRequest(`http://localhost${url}`, options);
+  return new NextRequest(`http://localhost${url}`, options as any);
 }
 
 describe("Analytics API Routes", () => {
@@ -331,7 +331,7 @@ describe("Analytics API Routes", () => {
           totalShows: 50,
           avgRating: 4.2,
           period: "all-time",
-        },
+        } as any,
       ]);
 
       const res = await comedianStatsGET(
@@ -360,7 +360,7 @@ describe("Analytics API Routes", () => {
           metric: "total_shows",
           value: 100,
           changePercent: 10,
-        },
+        } as any,
       ]);
 
       const res = await industryGET(

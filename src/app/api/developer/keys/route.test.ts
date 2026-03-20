@@ -35,7 +35,7 @@ const mockPrisma = prisma as unknown as {
 };
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("GET /api/developer/keys", () => {
@@ -98,7 +98,7 @@ describe("POST /api/developer/keys", () => {
       id: "ak1",
       name: "My App",
       key: "pa_free_xyz",
-    });
+    } as any);
 
     const req = createRequest("http://localhost/api/developer/keys", {
       method: "POST",

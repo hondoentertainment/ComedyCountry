@@ -1129,6 +1129,9 @@ describe("discovery-engine", () => {
       averageSpend: 0,
       discoveryOpenness: 0.5,
       lastComputedAt: new Date(),
+      attributeWeights: {},
+      explanationCache: [],
+      profileVersion: "v2",
     };
 
     it("scores higher for genre match", () => {
@@ -1155,7 +1158,7 @@ describe("discovery-engine", () => {
       const withSocial = scoreFeedItem(
         baseItem,
         baseProfile,
-        { entityType: "EVENT", entityId: "event-1", friendsAttending: 5, totalAttending: 100, trendingScore: 50, buzzLevel: "HIGH" },
+        { entityType: "EVENT", entityId: "event-1", friendsAttending: 5, totalAttending: 100, trendingScore: 50, buzzLevel: "HIGH", trustScore: 50 },
         ["dark"],
         [],
       );
@@ -1195,7 +1198,7 @@ describe("discovery-engine", () => {
       const extremeScore = scoreFeedItem(
         baseItem,
         baseProfile,
-        { entityType: "EVENT", entityId: "event-1", friendsAttending: 1000, totalAttending: 10000, trendingScore: 1000, buzzLevel: "VIRAL" },
+        { entityType: "EVENT", entityId: "event-1", friendsAttending: 1000, totalAttending: 10000, trendingScore: 1000, buzzLevel: "VIRAL", trustScore: 100 },
         ["dark", "observational"],
         [{ boostMultiplier: 10 }],
       );

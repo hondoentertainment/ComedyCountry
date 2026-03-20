@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { verifyWebhookSignature } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
@@ -72,7 +73,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       create: {
         stripeEventId,
         eventType,
-        payload: event as Record<string, unknown>,
+        payload: event as unknown as Prisma.InputJsonValue,
         processed: false,
         retryCount: 0,
       },

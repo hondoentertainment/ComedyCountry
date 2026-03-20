@@ -75,8 +75,8 @@ describe("wallet-passes", () => {
       expect(result.status).toBe("active");
       expect(result.serialNumber).toMatch(/^PASS-[A-F0-9]+$/);
       expect(result.payload).toBeDefined();
-      expect(result.payload.passTypeIdentifier).toBe("pass.com.punchlineatlas.ticket");
-      expect(result.payload.eventTicket).toBeDefined();
+      expect((result.payload as any).passTypeIdentifier).toBe("pass.com.punchlineatlas.ticket");
+      expect((result.payload as any).eventTicket).toBeDefined();
     });
 
     it("generates a Google wallet pass", async () => {
@@ -90,7 +90,7 @@ describe("wallet-passes", () => {
 
       expect(result.platform).toBe("google");
       expect(result.payload).toBeDefined();
-      expect(result.payload.classId).toBe("punchlineatlas.comedy_ticket");
+      expect((result.payload as any).classId).toBe("punchlineatlas.comedy_ticket");
     });
 
     it("throws when ticket not found", async () => {

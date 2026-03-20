@@ -263,7 +263,7 @@ export default async function MarketingDashboardPage({
             </div>
           ) : (
             <div className="space-y-3">
-              {smsCampaigns.map((campaign) => {
+              {smsCampaigns.map((campaign: any) => {
                 const deliveryRate =
                   campaign.recipientCount > 0
                     ? (
@@ -328,7 +328,7 @@ export default async function MarketingDashboardPage({
             </div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {segments.map((segment) => (
+              {segments.map((segment: any) => (
                 <div
                   key={segment.id}
                   className="rounded-xl border border-zinc-800/80 bg-brand-surface p-4"
@@ -375,7 +375,7 @@ export default async function MarketingDashboardPage({
             </div>
           ) : (
             <div className="space-y-3">
-              {abTests.map((test) => {
+              {abTests.map((test: any) => {
                 const vA = test.variantA as {
                   value: string;
                   impressions: number;
@@ -453,7 +453,7 @@ export default async function MarketingDashboardPage({
               </div>
             ) : (
               <div className="space-y-3">
-                {followUps.map((seq) => {
+                {followUps.map((seq: any) => {
                   const steps = (seq.steps as Array<{ channel: string }>) ?? [];
                   return (
                     <div
@@ -491,7 +491,7 @@ export default async function MarketingDashboardPage({
               </div>
             ) : (
               <div className="space-y-3">
-                {influencers.map((inf) => (
+                {influencers.map((inf: any) => (
                   <div
                     key={inf.id}
                     className="flex items-center justify-between rounded-xl border border-zinc-800/80 bg-brand-surface p-4"
@@ -532,7 +532,7 @@ export default async function MarketingDashboardPage({
             </div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {pixels.map((pixel) => (
+              {pixels.map((pixel: any) => (
                 <div
                   key={pixel.id}
                   className="rounded-xl border border-zinc-800/80 bg-brand-surface p-4"

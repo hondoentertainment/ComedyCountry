@@ -53,7 +53,7 @@ export function ComedianBadges({ badges, compact = false }: ComedianBadgesProps)
         {badges.map((b) => (
           <div key={b.comedianId} className="flex items-center gap-2">
             <BadgePill
-              id={`${b.comedianId}-${b.roundCount >= 2 ? "multi" : "first"}`}
+              key={`${b.comedianId}-${b.roundCount >= 2 ? "multi" : "first"}`}
               label={b.roundCount === 1 ? "First time" : `${b.roundCount} rounds`}
               variant={b.roundCount >= 2 ? "multiRound" : "firstTime"}
             />

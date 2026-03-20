@@ -95,8 +95,7 @@ export async function generateInviteLink(userId: string): Promise<{
       userId,
       type: "friend_invite",
       title: "Invite link created",
-      message: `Your invite link token: ${token}`,
-      metadata: JSON.stringify({ token, expiresAt: expiresAt.toISOString() }),
+      message: `Your invite link token: ${token}. Expires: ${expiresAt.toISOString()}`,
     },
   });
 
@@ -133,7 +132,7 @@ export async function importContacts(
   }
 
   // Normalize and deduplicate emails
-  const uniqueEmails = [...new Set(emails.map((e) => e.trim().toLowerCase()))];
+  const uniqueEmails = Array.from(new Set(emails.map((e) => e.trim().toLowerCase())));
 
   // Find users with matching emails (exclude self)
   const matchedUsers = await prisma.user.findMany({
@@ -236,7 +235,7 @@ export async function getFriendSuggestions(
       countMap.set(a.userId, (countMap.get(a.userId) ?? 0) + 1);
     }
 
-    const topIds = [...countMap.entries()]
+    const topIds = Array.from(countMap.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, limit)
       .map(([id]) => id);
@@ -284,7 +283,7 @@ export async function getFriendSuggestions(
     }
   }
 
-  const topFofIds = [...fofCount.entries()]
+  const topFofIds = Array.from(fofCount.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit)
     .map(([id]) => id);

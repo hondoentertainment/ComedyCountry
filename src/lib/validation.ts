@@ -197,7 +197,7 @@ export function validateRequest<T>(
   if (result.success) {
     return { success: true, data: result.data, errors: null };
   }
-  const issues = (result.error.issues ?? result.error.errors ?? []) as ZodIssue[];
+  const issues = (result.error.issues ?? []) as ZodIssue[];
   return { success: false, data: null, errors: issues };
 }
 
@@ -208,7 +208,7 @@ export async function validateBody<T>(
   const body = await request.json();
   const result = schema.safeParse(body);
   if (!result.success) {
-    const issues = (result.error.issues ?? result.error.errors ?? []) as ZodIssue[];
+    const issues = (result.error.issues ?? []) as ZodIssue[];
     throw new ValidationError(issues);
   }
   return result.data;

@@ -212,7 +212,7 @@ export async function getUserEngagements(userId: string, clipId: string) {
     where: { userId, clipId },
   });
 
-  return engagements.map((e) => e.type);
+  return engagements.map((e: { type: string }) => e.type);
 }
 
 /* ─── Create duet ─────────────────────────────────────────────────────── */
@@ -287,7 +287,7 @@ export async function updateTrendingScores() {
   const now = Date.now();
   const HALF_LIFE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-  const updates = bits.map((bit) => {
+  const updates = bits.map((bit: { id: string; updatedAt: Date; clipCount: number; viewCount: number; score: number; peakDate: Date | null }) => {
     const ageMs = now - bit.updatedAt.getTime();
     const decay = Math.pow(0.5, ageMs / HALF_LIFE_MS);
     const rawScore = bit.clipCount * 2 + bit.viewCount * 0.1;

@@ -37,7 +37,7 @@ function formatPeriodLabel(period: string): string {
   return `${monthNames[monthIndex]} ${year.slice(2)}`;
 }
 
-export default function CreatorRevenueChart() {
+export default function CreatorRevenueChart({ comedianId }: { comedianId?: string }) {
   const [data, setData] = useState<RevenuePeriod[]>([]);
   const [months, setMonths] = useState(6);
   const [loading, setLoading] = useState(true);

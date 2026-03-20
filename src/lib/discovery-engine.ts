@@ -359,7 +359,7 @@ export async function generateForYouFeed(
       entityType: "EVENT",
       entityId: event.id,
       score: 0,
-      title: event.title,
+      title: event.title ?? '',
       subtitle: event.venue?.name,
       socialProof: socialProof ?? undefined,
       boostApplied: boosts.length > 0,
@@ -422,7 +422,7 @@ export async function generateHappeningTonightFeed(
       entityType: "EVENT",
       entityId: event.id,
       score: 0,
-      title: event.title,
+      title: event.title ?? '',
       subtitle: event.venue?.name,
       socialProof: socialProof ?? undefined,
     };
@@ -507,6 +507,7 @@ export async function generateTrendingNearYouFeed(
       friendsAttending: sp.friendsAttending,
       totalAttending: sp.totalAttending,
       trendingScore: sp.trendingScore,
+      trustScore: sp.trustScore ?? 0,
       buzzLevel: sp.buzzLevel as BuzzLevel,
     };
 
@@ -514,7 +515,7 @@ export async function generateTrendingNearYouFeed(
       entityType: "EVENT",
       entityId: event.id,
       score: 0,
-      title: event.title,
+      title: event.title ?? '',
       subtitle: event.venue?.name,
       socialProof: socialProofData,
     };
@@ -587,14 +588,14 @@ export async function generateFriendsAttendingFeed(
 
   const feedItems: FeedItem[] = [];
 
-  for (const [eventId, friendCount] of eventFriendCount) {
+  for (const [eventId, friendCount] of Array.from(eventFriendCount.entries())) {
     const event = eventMap.get(eventId)!;
 
     const item: FeedItem = {
       entityType: "EVENT",
       entityId: eventId,
       score: friendCount * 10,
-      title: event.title,
+      title: event.title ?? '',
       subtitle: event.venue?.name,
       socialProof: {
         friendsAttending: friendCount,

@@ -62,7 +62,7 @@ const mockPrisma = prisma as unknown as {
 };
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 /* ─── Scenes ─────────────────────────────────────────────────────────── */
