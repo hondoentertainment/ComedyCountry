@@ -1,0 +1,5 @@
+documents:
+  - path: architecture.md
+    always_load: true
+  - path: api-map.md
+    always_load: false

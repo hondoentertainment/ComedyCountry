@@ -1,0 +1,32 @@
+spec_version: "0.1.0"
+name: comedy-country
+version: 1.0.0
+description: Punchline Atlas — AI agent for building and maintaining ComedyCountry, a nationwide comedy intelligence platform
+author: hondoentertainment
+license: MIT
+model:
+  preferred: claude-opus-4-6
+  fallback:
+    - claude-sonnet-4-5-20250929
+    - claude-haiku-4-5-20251001
+  constraints:
+    temperature: 0.2
+    max_tokens: 8192
+skills:
+  - feature-dev
+  - api-dev
+  - db-schema
+  - testing
+  - venue-ops
+runtime:
+  max_turns: 30
+  timeout: 300
+tags:
+  - nextjs
+  - typescript
+  - prisma
+  - comedy
+  - entertainment
+  - full-stack
+  - api
+  - e-commerce
