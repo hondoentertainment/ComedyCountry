@@ -30,7 +30,9 @@ export default function VenueClaimPage() {
       fetch(`/api/search?q=${encodeURIComponent(query)}&type=venues&limit=5`)
         .then((r) => r.json())
         .then((data) => setVenues(data.venues || []))
-        .catch(() => {});
+        .catch((err) => {
+          console.error('VenueClaim search failed:', err);
+        });
     }, 300);
     return () => clearTimeout(timeout);
   }, [query]);
