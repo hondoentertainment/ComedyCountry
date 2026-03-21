@@ -56,7 +56,7 @@ function StarButton({
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") e.preventDefault();
       }}
-      className={`p-0.5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-1 focus:ring-offset-brand-dark rounded ${
+      className={`p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-1 focus:ring-offset-brand-dark rounded ${
         filled ? "text-brand-gold" : "text-zinc-500 hover:text-zinc-400"
       }`}
       aria-label={`Rate ${value} out of 5`}

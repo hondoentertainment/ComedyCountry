@@ -24,6 +24,7 @@ export function AdminEventForm({ event }: { event?: EventData }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [venues, setVenues] = useState<VenueOption[]>([]);
   const [allComedians, setAllComedians] = useState<ComedianOption[]>([]);
   const [selectedComedians, setSelectedComedians] = useState<string[]>(
@@ -35,11 +36,17 @@ export function AdminEventForm({ event }: { event?: EventData }) {
     fetch("/api/admin/venues?page=1")
       .then(r => r.json())
       .then(d => setVenues(d.venues ?? []))
-      .catch(() => {});
+      .catch((err) => {
+        console.error('AdminEventForm venues fetch failed:', err);
+        setError('Failed to load venues. Please refresh the page.');
+      });
     fetch("/api/admin/comedians?page=1")
       .then(r => r.json())
       .then(d => setAllComedians(d.comedians?.map((c: ComedianOption) => ({ id: c.id, name: c.name })) ?? []))
-      .catch(() => {});
+      .catch((err) => {
+        console.error('AdminEventForm comedians fetch failed:', err);
+        setError('Failed to load comedians. Please refresh the page.');
+      });
   }, []);
 
   function addComedian(id: string) {
@@ -60,8 +67,23 @@ export function AdminEventForm({ event }: { event?: EventData }) {
       ).slice(0, 10)
     : [];
 
+  function validate(form: HTMLFormElement): boolean {
+    const errors: Record<string, string> = {};
+    const data = new FormData(form);
+    if (!data.get("venueId")?.toString().trim()) errors.venueId = "Venue is required";
+    if (!data.get("date")?.toString().trim()) errors.date = "Date is required";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0];
+      form.querySelector<HTMLElement>(`[name="${firstKey}"]`)?.focus();
+      return false;
+    }
+    return true;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!validate(e.currentTarget)) return;
     setSaving(true);
     setError("");
 
@@ -134,6 +156,9 @@ export function AdminEventForm({ event }: { event?: EventData }) {
             name="venueId"
             required
             defaultValue={event?.venueId ?? ""}
+            aria-invalid={!!fieldErrors.venueId}
+            aria-describedby={fieldErrors.venueId ? "venueId-error" : undefined}
+            onChange={() => setFieldErrors(prev => ({ ...prev, venueId: "" }))}
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           >
             <option value="">Select venue...</option>
@@ -143,6 +168,7 @@ export function AdminEventForm({ event }: { event?: EventData }) {
               </option>
             ))}
           </select>
+          {fieldErrors.venueId && <p id="venueId-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.venueId}</p>}
         </div>
 
         <div>
@@ -155,8 +181,12 @@ export function AdminEventForm({ event }: { event?: EventData }) {
             type="date"
             required
             defaultValue={dateVal}
+            aria-invalid={!!fieldErrors.date}
+            aria-describedby={fieldErrors.date ? "date-error" : undefined}
+            onChange={() => setFieldErrors(prev => ({ ...prev, date: "" }))}
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           />
+          {fieldErrors.date && <p id="date-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.date}</p>}
         </div>
 
         <div>

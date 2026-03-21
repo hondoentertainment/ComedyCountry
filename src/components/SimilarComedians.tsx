@@ -21,7 +21,9 @@ export function SimilarComedians({ comedianId }: { comedianId: string }) {
     fetch(`/api/comedians/${comedianId}/similar`)
       .then((r) => r.json())
       .then((data) => setComedians(data.similar ?? []))
-      .catch(() => {})
+      .catch((err) => {
+        console.error('SimilarComedians fetch failed:', err);
+      })
       .finally(() => setLoading(false));
   }, [comedianId]);
 

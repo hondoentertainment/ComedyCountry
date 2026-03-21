@@ -142,9 +142,9 @@ export default async function EventPage({ params }: PageProps) {
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <Link
           href="/schedule"
-          className="text-sm text-zinc-400 hover:text-brand-gold mb-6 inline-block"
+          className="inline-flex items-center text-sm text-zinc-400 hover:text-brand-gold transition-colors mb-6"
         >
-          ← Back to schedule
+          ← Back to Events
         </Link>
 
         <div className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">

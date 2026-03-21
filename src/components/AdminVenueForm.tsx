@@ -21,9 +21,26 @@ export function AdminVenueForm({ venue }: { venue?: VenueData }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  function validate(form: HTMLFormElement): boolean {
+    const errors: Record<string, string> = {};
+    const data = new FormData(form);
+    if (!data.get("name")?.toString().trim()) errors.name = "Name is required";
+    if (!data.get("city")?.toString().trim()) errors.city = "City is required";
+    if (!data.get("state")?.toString().trim()) errors.state = "State is required";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0];
+      form.querySelector<HTMLInputElement>(`[name="${firstKey}"]`)?.focus();
+      return false;
+    }
+    return true;
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!validate(e.currentTarget)) return;
     setSaving(true);
     setError("");
 
@@ -81,8 +98,12 @@ export function AdminVenueForm({ venue }: { venue?: VenueData }) {
             name="name"
             required
             defaultValue={venue?.name}
+            aria-invalid={!!fieldErrors.name}
+            aria-describedby={fieldErrors.name ? "name-error" : undefined}
+            onChange={() => setFieldErrors(prev => ({ ...prev, name: "" }))}
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           />
+          {fieldErrors.name && <p id="name-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.name}</p>}
         </div>
 
         <div className="sm:col-span-2">
@@ -106,8 +127,12 @@ export function AdminVenueForm({ venue }: { venue?: VenueData }) {
             name="city"
             required
             defaultValue={venue?.city}
+            aria-invalid={!!fieldErrors.city}
+            aria-describedby={fieldErrors.city ? "city-error" : undefined}
+            onChange={() => setFieldErrors(prev => ({ ...prev, city: "" }))}
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           />
+          {fieldErrors.city && <p id="city-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.city}</p>}
         </div>
 
         <div>
@@ -120,8 +145,12 @@ export function AdminVenueForm({ venue }: { venue?: VenueData }) {
             required
             defaultValue={venue?.state}
             placeholder="e.g., CA"
+            aria-invalid={!!fieldErrors.state}
+            aria-describedby={fieldErrors.state ? "state-error" : undefined}
+            onChange={() => setFieldErrors(prev => ({ ...prev, state: "" }))}
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           />
+          {fieldErrors.state && <p id="state-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.state}</p>}
         </div>
 
         <div>

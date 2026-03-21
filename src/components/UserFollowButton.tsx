@@ -12,9 +12,16 @@ export function UserFollowButton({ userId, initialFollowing = false, initialCoun
   const [following, setFollowing] = useState(initialFollowing);
   const [count, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const toggle = useCallback(async () => {
     setLoading(true);
+    setError(null);
+    const prevFollowing = following;
+    const prevCount = count;
+    // Optimistic update
+    setFollowing(!following);
+    setCount((c) => c + (!following ? 1 : -1));
     try {
       const res = await fetch("/api/users/follow", {
         method: "POST",
@@ -22,18 +29,22 @@ export function UserFollowButton({ userId, initialFollowing = false, initialCoun
         body: JSON.stringify({ userId }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setFollowing(data.following);
-        setCount((c) => c + (data.following ? 1 : -1));
-      }
-    } catch {
-      // ignore
+      if (!res.ok) throw new Error('Failed to update follow');
+      const data = await res.json();
+      setFollowing(data.following);
+      setCount(prevCount + (data.following ? 1 : -1));
+    } catch (err) {
+      console.error('UserFollowButton toggle failed:', err);
+      setFollowing(prevFollowing);
+      setCount(prevCount);
+      setError('Could not update follow. Please try again.');
     }
     setLoading(false);
-  }, [userId]);
+  }, [userId, following, count]);
 
   return (
+    <span className="inline-flex flex-col items-start gap-1">
+    {error && <span className="text-xs text-red-400" role="alert">{error}</span>}
     <button
       onClick={toggle}
       disabled={loading}
@@ -60,5 +71,6 @@ export function UserFollowButton({ userId, initialFollowing = false, initialCoun
       )}
       {count > 0 && <span className="text-xs opacity-70">{count}</span>}
     </button>
+    </span>
   );
 }

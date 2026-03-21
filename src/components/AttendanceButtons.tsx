@@ -15,6 +15,7 @@ export function AttendanceButtons({ eventId }: Props) {
   const [interested, setInterested] = useState(0);
   const [userStatus, setUserStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/events/${eventId}/attendance`)
@@ -24,7 +25,9 @@ export function AttendanceButtons({ eventId }: Props) {
         setInterested(data.interested);
         setUserStatus(data.userStatus);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error('AttendanceButtons fetch failed:', err);
+      });
   }, [eventId]);
 
   async function handleClick(status: "going" | "interested") {
@@ -33,30 +36,37 @@ export function AttendanceButtons({ eventId }: Props) {
       return;
     }
     setLoading(true);
+    setError(null);
+    const prevGoing = going;
+    const prevInterested = interested;
+    const prevStatus = userStatus;
     try {
       const res = await fetch(`/api/events/${eventId}/attendance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        const wasStatus = userStatus;
-        setUserStatus(data.userStatus);
-        // Optimistic count update
-        if (data.userStatus === null) {
-          if (wasStatus === "going") setGoing((g) => Math.max(0, g - 1));
-          if (wasStatus === "interested") setInterested((i) => Math.max(0, i - 1));
-        } else if (data.userStatus === "going") {
-          setGoing((g) => g + 1);
-          if (wasStatus === "interested") setInterested((i) => Math.max(0, i - 1));
-        } else if (data.userStatus === "interested") {
-          setInterested((i) => i + 1);
-          if (wasStatus === "going") setGoing((g) => Math.max(0, g - 1));
-        }
+      if (!res.ok) throw new Error('Failed to update attendance');
+      const data = await res.json();
+      const wasStatus = userStatus;
+      setUserStatus(data.userStatus);
+      // Update counts based on server response
+      if (data.userStatus === null) {
+        if (wasStatus === "going") setGoing((g) => Math.max(0, g - 1));
+        if (wasStatus === "interested") setInterested((i) => Math.max(0, i - 1));
+      } else if (data.userStatus === "going") {
+        setGoing((g) => g + 1);
+        if (wasStatus === "interested") setInterested((i) => Math.max(0, i - 1));
+      } else if (data.userStatus === "interested") {
+        setInterested((i) => i + 1);
+        if (wasStatus === "going") setGoing((g) => Math.max(0, g - 1));
       }
-    } catch {
-      // Failed
+    } catch (err) {
+      console.error('AttendanceButtons handleClick failed:', err);
+      setGoing(prevGoing);
+      setInterested(prevInterested);
+      setUserStatus(prevStatus);
+      setError('Could not update attendance. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -101,6 +111,7 @@ export function AttendanceButtons({ eventId }: Props) {
           {interested > 0 && <><span className="text-zinc-300 font-medium">{interested}</span> interested</>}
         </p>
       )}
+      {error && <p className="text-xs text-red-400 text-center" role="alert">{error}</p>}
     </div>
   );
 }

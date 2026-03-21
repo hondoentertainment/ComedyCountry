@@ -10,6 +10,7 @@ export default function WaitlistButton({ eventId }: WaitlistButtonProps) {
   const [onWaitlist, setOnWaitlist] = useState(false);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/events/${eventId}/waitlist`)
@@ -18,18 +19,23 @@ export default function WaitlistButton({ eventId }: WaitlistButtonProps) {
         setOnWaitlist(data.onWaitlist || false);
         setCount(data.count || 0);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error('Waitlist fetch failed:', err);
+      });
   }, [eventId]);
 
   async function toggle() {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch(`/api/events/${eventId}/waitlist`, { method: "POST" });
+      if (!res.ok) throw new Error('Failed to update waitlist');
       const data = await res.json();
       setOnWaitlist(data.onWaitlist);
       setCount((c) => c + (data.onWaitlist ? 1 : -1));
-    } catch {
-      // Toggle failed silently
+    } catch (err) {
+      console.error('Waitlist toggle failed:', err);
+      setError('Could not update waitlist. Please try again.');
     } finally {
       setLoading(false);
     }

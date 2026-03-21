@@ -34,10 +34,10 @@ function formatDate(dateStr: string): string {
 
 export default function FestivalCard({ festival }: { festival: Festival }) {
   const categoryClass =
-    CATEGORY_COLORS[festival.category] || "bg-gray-700 text-gray-300";
+    CATEGORY_COLORS[festival.category] || "bg-zinc-700 text-zinc-300";
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 p-5 hover:border-amber-500 transition-colors">
+    <div className="bg-brand-surface rounded-xl border border-zinc-700 p-5 hover:border-amber-500 transition-colors">
       {festival.imageUrl && (
         <div
           className="h-32 rounded-lg bg-cover bg-center mb-4"
@@ -52,7 +52,7 @@ export default function FestivalCard({ festival }: { festival: Festival }) {
         </span>
       </div>
 
-      <p className="text-sm text-gray-400 mb-2">
+      <p className="text-sm text-zinc-400 mb-2">
         {festival.city}, {festival.country}
       </p>
 
@@ -65,19 +65,19 @@ export default function FestivalCard({ festival }: { festival: Festival }) {
       )}
 
       {festival.description && (
-        <p className="text-sm text-gray-300 mb-3 line-clamp-2">
+        <p className="text-sm text-zinc-300 mb-3 line-clamp-2">
           {festival.description}
         </p>
       )}
 
       <div className="flex flex-wrap gap-2 mb-4">
         {festival.showCount > 0 && (
-          <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded-full">
+          <span className="text-xs bg-zinc-700 text-zinc-300 px-2 py-1 rounded-full">
             {festival.showCount} shows
           </span>
         )}
         {festival.attendeeCapacity && (
-          <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded-full">
+          <span className="text-xs bg-zinc-700 text-zinc-300 px-2 py-1 rounded-full">
             {festival.attendeeCapacity.toLocaleString()} capacity
           </span>
         )}

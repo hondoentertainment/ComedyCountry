@@ -57,7 +57,9 @@ export function Nav() {
     fetch("/api/happening-tonight")
       .then((r) => r.json())
       .then((data) => setTonightCount((data.events ?? []).length))
-      .catch(() => {});
+      .catch((err) => {
+        console.error('Nav tonight count fetch failed:', err);
+      });
   }, []);
 
   useEffect(() => {
@@ -136,7 +138,7 @@ export function Nav() {
                 >
                   More
                 </button>
-                <div className="absolute right-0 top-full mt-1 w-48 py-2 bg-brand-surface border border-zinc-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="absolute right-0 top-full mt-1 w-48 py-2 bg-brand-surface border border-zinc-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all z-50">
                   {moreItems.map(({ href, label }) => (
                     <Link
                       key={href}

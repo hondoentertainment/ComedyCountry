@@ -39,7 +39,9 @@ export default function UserBadges({ userId }: { userId?: string }) {
     fetch(url)
       .then((r) => r.json())
       .then((data) => setBadges(data.badges || []))
-      .catch(() => {})
+      .catch((err) => {
+        console.error('UserBadges fetch failed:', err);
+      })
       .finally(() => setLoading(false));
   }, [userId]);
 
