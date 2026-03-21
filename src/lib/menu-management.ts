@@ -245,7 +245,7 @@ export async function getMenuItemsByCategory(
   categoryId: string
 ) {
   return prisma.menuItem.findMany({
-    where: { venueId, categoryId, isAvailable: true },
+    where: { venueId, category: categoryId, isAvailable: true },
     orderBy: { sortOrder: "asc" },
   });
 }
@@ -292,7 +292,6 @@ export async function createPreOrderWithValidation(data: PreOrderInput) {
       eventId: data.eventId,
       customerName: data.customerName,
       userId: data.customerId,
-      customerEmail: data.customerEmail ?? null,
       items: data.items,
       totalAmount,
       pickupTime: data.pickupTime ?? null,
@@ -390,7 +389,7 @@ export async function trackDrinkMinimumFulfillment(
   const currentSpend = (existing?.currentSpend ?? 0) + purchaseAmount;
   const currentCount = (existing?.currentCount ?? 0) + purchaseCount;
 
-  const minimumSpend = drinkMinimum.minimumSpend ?? null;
+  const minimumSpend = drinkMinimum.minimumSpend ? Number(drinkMinimum.minimumSpend) : null;
   const minimumCount = drinkMinimum.minimumCount;
 
   const spendFulfilled = minimumSpend === null || currentSpend >= minimumSpend;
@@ -453,7 +452,7 @@ export async function getDrinkMinimumStatus(
 
   const currentSpend = fulfillment?.currentSpend ?? 0;
   const currentCount = fulfillment?.currentCount ?? 0;
-  const minimumSpend = drinkMinimum.minimumSpend ?? null;
+  const minimumSpend = drinkMinimum.minimumSpend ? Number(drinkMinimum.minimumSpend) : null;
   const minimumCount = drinkMinimum.minimumCount;
 
   const spendFulfilled = minimumSpend === null || currentSpend >= minimumSpend;
@@ -481,10 +480,10 @@ export async function getEventFulfillmentSummary(eventId: string) {
   });
 
   const total = fulfillments.length;
-  const fulfilled = fulfillments.filter((f) => f.isFulfilled).length;
+  const fulfilled = fulfillments.filter((f: { isFulfilled: boolean }) => f.isFulfilled).length;
   const unfulfilled = total - fulfilled;
   const totalSpend = fulfillments.reduce(
-    (sum, f) => sum + f.currentSpend,
+    (sum: number, f: { currentSpend: number }) => sum + f.currentSpend,
     0
   );
 

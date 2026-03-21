@@ -19,7 +19,7 @@ import { getTalentListings, createTalentListing } from "@/lib/marketplace";
 import { getServerSession } from "next-auth";
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("GET /api/marketplace/listings", () => {
@@ -33,7 +33,7 @@ describe("GET /api/marketplace/listings", () => {
       total: 1,
       page: 1,
       pages: 1,
-    });
+    } as any);
 
     const req = createRequest("http://localhost/api/marketplace/listings");
     const res = await GET(req);
@@ -56,7 +56,7 @@ describe("GET /api/marketplace/listings", () => {
       total: 0,
       page: 1,
       pages: 0,
-    });
+    } as any);
 
     const req = createRequest(
       "http://localhost/api/marketplace/listings?city=Nashville&state=TN&genre=standup&showType=headliner&page=2"
@@ -117,7 +117,7 @@ describe("POST /api/marketplace/listings", () => {
       id: "tl1",
       venueId: "v1",
       showType: "showcase",
-    });
+    } as any);
 
     const req = createRequest("http://localhost/api/marketplace/listings", {
       method: "POST",

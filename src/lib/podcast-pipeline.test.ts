@@ -21,6 +21,7 @@ vi.mock("@/lib/prisma", () => ({
     podcastShow: {
       create: vi.fn(),
       findMany: vi.fn(),
+      findUnique: vi.fn(),
       update: vi.fn(),
       findFirst: vi.fn(),
     },
@@ -51,6 +52,7 @@ const mockPrisma = prisma as unknown as {
   podcastShow: {
     create: ReturnType<typeof vi.fn>;
     findMany: ReturnType<typeof vi.fn>;
+    findUnique: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
     findFirst: ReturnType<typeof vi.fn>;
   };

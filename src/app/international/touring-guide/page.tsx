@@ -17,16 +17,16 @@ interface TouringInfo {
   workPermitRequired: boolean;
   taxInfo: string | null;
   tips: string[];
-  resources: unknown;
+  resources: Array<{ name: string; url: string; description?: string }> | null;
 }
 
 export default async function TouringGuidePage() {
   let touringInfo: TouringInfo[] = [];
 
   try {
-    touringInfo = await prisma.touringInfo.findMany({
+    touringInfo = (await prisma.touringInfo.findMany({
       orderBy: { country: "asc" },
-    });
+    })) as unknown as TouringInfo[];
   } catch {
     // DB not configured
   }
@@ -59,7 +59,7 @@ export default async function TouringGuidePage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {touringInfo.map((info) => (
+          {touringInfo.map((info: { id: string; country: string; countryCode: string; visaRequired: boolean; visaType: string | null; processingTime: string | null; workPermitRequired: boolean; taxInfo: string | null; tips: string[]; resources: unknown }) => (
             <div
               key={info.id}
               className="bg-gray-800 rounded-xl border border-gray-700 p-6"
@@ -122,7 +122,7 @@ export default async function TouringGuidePage() {
                     Practical Tips
                   </h3>
                   <ul className="space-y-1">
-                    {info.tips.map((tip, i) => (
+                    {info.tips.map((tip: string, i: number) => (
                       <li
                         key={i}
                         className="text-sm text-gray-300 flex items-start gap-2"
@@ -136,7 +136,7 @@ export default async function TouringGuidePage() {
               )}
 
               {/* Resources */}
-              {info.resources &&
+              {info.resources != null &&
                 Array.isArray(info.resources) &&
                 (info.resources as Array<{ name: string; url: string; description?: string }>).length > 0 && (
                   <div>

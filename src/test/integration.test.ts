@@ -20,7 +20,7 @@ describe("cross-phase: venue ops + clips data shapes", () => {
   it("event factory links to venue for both venue-ops and clips", () => {
     const v = factories.venue();
     const e = factories.event({ venueId: v.id });
-    const clip = factories.shortClip({ eventId: e.id });
+    const clip = factories.shortClip({ eventId: e.id }) as any;
     const sale = factories.walkUpSale({ eventId: e.id });
 
     expect(clip.eventId).toBe(e.id);
@@ -38,7 +38,7 @@ describe("cross-phase: marketing + clips", () => {
 
   it("referral code can be associated with a clip challenge", () => {
     const challenge = factories.clipChallenge();
-    const refCode = factories.referralCode({ campaignId: challenge.id });
+    const refCode = factories.referralCode({ campaignId: challenge.id }) as any;
 
     expect(refCode.campaignId).toBe(challenge.id);
     expect(refCode.isActive).toBe(true);
@@ -85,7 +85,7 @@ describe("cross-phase: accessibility + venue ops", () => {
       guestName: "Jane Doe",
       reason: "accessibility-comp",
       notes: "Requires ASL interpreter",
-    });
+    }) as any;
 
     expect(entry.reason).toBe("accessibility-comp");
     expect(entry.notes).toContain("ASL");
@@ -104,7 +104,7 @@ describe("cross-phase: international + marketing", () => {
     const segment = factories.audienceSegment({
       name: "Melbourne Comedy Fans",
       criteria: { location: { country: "AU", city: "Melbourne" } },
-    });
+    }) as any;
 
     expect(segment.criteria.location.country).toBe(scene.country);
   });
@@ -132,7 +132,7 @@ describe("cross-phase: international + clips", () => {
     const clip = factories.shortClip({
       tags: ["pantomime", "physical"],
       styleId: style.id,
-    });
+    }) as any;
 
     expect(clip.styleId).toBe(style.id);
     expect(clip.tags).toContain("pantomime");

@@ -20,7 +20,9 @@ export function PromotedContent({ type, className }: { type: string; className?:
     fetch(`/api/promoted?type=${type}&limit=2`)
       .then((r) => r.json())
       .then((d) => setPromotions(d.promotions || []))
-      .catch(() => {});
+      .catch((err) => {
+        console.error('PromotedContent fetch failed:', err);
+      });
   }, [type]);
 
   if (promotions.length === 0) return null;

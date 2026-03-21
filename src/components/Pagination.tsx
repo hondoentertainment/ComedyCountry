@@ -54,12 +54,13 @@ export function Pagination({
             Previous
           </Link>
         ) : (
-          <span
-            className="px-4 py-2 rounded-md bg-zinc-800/50 text-zinc-600 text-sm font-medium cursor-not-allowed"
-            aria-disabled
+          <button
+            disabled
+            className="px-4 py-2 rounded-md bg-zinc-800/50 text-zinc-600 text-sm font-medium opacity-50 cursor-not-allowed"
+            aria-disabled="true"
           >
             Previous
-          </span>
+          </button>
         )}
         <span className="text-zinc-500 text-sm px-2">
           Page {currentPage} of {totalPages}
@@ -72,12 +73,13 @@ export function Pagination({
             Next
           </Link>
         ) : (
-          <span
-            className="px-4 py-2 rounded-md bg-zinc-800/50 text-zinc-600 text-sm font-medium cursor-not-allowed"
-            aria-disabled
+          <button
+            disabled
+            className="px-4 py-2 rounded-md bg-zinc-800/50 text-zinc-600 text-sm font-medium opacity-50 cursor-not-allowed"
+            aria-disabled="true"
           >
             Next
-          </span>
+          </button>
         )}
       </div>
     </nav>

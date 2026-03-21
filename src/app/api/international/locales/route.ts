@@ -6,7 +6,7 @@ export async function GET() {
     const locales = await getSupportedLocales();
 
     const completeness = await Promise.all(
-      locales.map((locale) => getLocaleCompleteness(locale)),
+      locales.map((locale: string) => getLocaleCompleteness(locale)),
     );
 
     return NextResponse.json({ locales: completeness });

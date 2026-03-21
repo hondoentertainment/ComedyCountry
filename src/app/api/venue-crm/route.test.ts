@@ -19,7 +19,7 @@ import { getVenueCRMData, updateCRMRecord } from "@/lib/marketplace";
 import { getServerSession } from "next-auth";
 
 function createRequest(url: string, options?: RequestInit) {
-  return new NextRequest(url, options);
+  return new NextRequest(url, options as any);
 }
 
 describe("GET /api/venue-crm", () => {
@@ -52,7 +52,7 @@ describe("GET /api/venue-crm", () => {
       total: 1,
       page: 1,
       pages: 1,
-    });
+    } as any);
 
     const req = createRequest("http://localhost/api/venue-crm?venueId=v1&page=1");
     const res = await GET(req);
@@ -95,7 +95,7 @@ describe("POST /api/venue-crm", () => {
 
   it("updates CRM record successfully", async () => {
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } });
-    vi.mocked(updateCRMRecord).mockResolvedValue({ id: "crm1", tags: "vip" });
+    vi.mocked(updateCRMRecord).mockResolvedValue({ id: "crm1", tags: "vip" } as any);
 
     const req = createRequest("http://localhost/api/venue-crm", {
       method: "POST",

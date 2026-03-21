@@ -241,7 +241,7 @@ export async function getComedianFestivalHistory(comedianId: string) {
       comedians: {
         some: { comedianId },
       },
-      tags: { has: "festival" },
+      title: { contains: "festival", mode: "insensitive" },
     },
     include: {
       venue: true,

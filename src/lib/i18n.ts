@@ -206,7 +206,7 @@ export async function translateBatch(
   });
 
   const result: Record<string, string> = {};
-  const foundKeys = new Set(translations.map((t) => t.key));
+  const foundKeys = new Set(translations.map((t: { key: string }) => t.key));
 
   for (const t of translations) {
     result[t.key] = t.value;
@@ -357,7 +357,7 @@ export async function getAvailableLocales(): Promise<string[]> {
     orderBy: { locale: "asc" },
   });
 
-  return results.map((r) => r.locale);
+  return results.map((r: { locale: string }) => r.locale);
 }
 
 /* ─── Locale completeness check ───────────────────────────────────────── */

@@ -207,9 +207,15 @@ export async function createTouringInfo(data: {
 }) {
   return prisma.touringInfo.create({
     data: {
-      ...data,
+      country: data.country,
+      countryCode: data.countryCode,
+      visaRequired: data.visaRequired,
+      visaType: data.visaType,
+      processingTime: data.processingTime,
+      workPermitRequired: data.workPermitRequired,
+      taxInfo: data.taxInfo,
       tips: data.tips ?? [],
-    },
+    } as Parameters<typeof prisma.touringInfo.create>[0]["data"],
   });
 }
 
@@ -295,7 +301,7 @@ export async function getSupportedLocales() {
     distinct: ["locale"],
     orderBy: { locale: "asc" },
   });
-  return results.map((r) => r.locale);
+  return results.map((r: { locale: string }) => r.locale);
 }
 
 export async function getLocaleCompleteness(locale: string) {

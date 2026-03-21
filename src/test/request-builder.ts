@@ -151,8 +151,8 @@ export async function parseResponse<T = unknown>(
  * Usage:
  *   const res = await GET(req, routeParams({ id: "abc" }));
  */
-export function routeParams(
-  params: Record<string, string>
-): { params: Promise<Record<string, string>> } {
-  return { params: Promise.resolve(params) };
+export function routeParams<T extends Record<string, string> = Record<string, string>>(
+  params: T
+): { params: Promise<T> } {
+  return { params: Promise.resolve(params) } as any;
 }

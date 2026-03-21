@@ -117,7 +117,7 @@ export default async function ComedianPage({ params }: PageProps) {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link
           href="/comedians"
-          className="text-sm text-zinc-400 hover:text-brand-gold mb-4 inline-block"
+          className="inline-flex items-center text-sm text-zinc-400 hover:text-brand-gold transition-colors mb-4"
         >
           ← Back to Comedians
         </Link>

@@ -61,20 +61,16 @@ export async function registerPOSConnection(
     update: {
       apiKey: config.apiKey,
       locationId: config.locationId ?? null,
-      merchantId: config.merchantId ?? null,
       webhookUrl: config.webhookUrl ?? null,
-      environment: config.environment ?? "production",
       isActive: true,
-      lastSyncAt: null,
+      lastSync: null,
     },
     create: {
       venueId,
       provider,
       apiKey: config.apiKey,
       locationId: config.locationId ?? null,
-      merchantId: config.merchantId ?? null,
       webhookUrl: config.webhookUrl ?? null,
-      environment: config.environment ?? "production",
       isActive: true,
     },
   });
@@ -171,7 +167,7 @@ export async function syncTransactions(
   // Update last sync timestamp
   await prisma.pOSIntegration.update({
     where: { venueId_provider: { venueId, provider } },
-    data: { lastSyncAt: new Date() },
+    data: { lastSync: new Date() },
   });
 
   return { synced: results.length, transactions: results };
@@ -259,7 +255,7 @@ export async function reconcileSales(
   for (const sale of localSales) {
     // Look for a POS transaction with matching amount that hasn't been matched
     const match = posTransactions.find(
-      (tx) =>
+      (tx: { externalId: string; amount: number }) =>
         !matchedExternalIds.has(tx.externalId) &&
         Math.abs(tx.amount - sale.amount) < 0.01
     );
@@ -282,8 +278,8 @@ export async function reconcileSales(
     }
   }
 
-  const totalPOS = posTransactions.reduce((sum, tx) => sum + tx.amount, 0);
-  const totalLocal = localSales.reduce((sum, s) => sum + s.amount, 0);
+  const totalPOS = posTransactions.reduce((sum: number, tx: { amount: number }) => sum + tx.amount, 0);
+  const totalLocal = localSales.reduce((sum: number, s: { amount: number }) => sum + s.amount, 0);
 
   return {
     matched: matchedCount,

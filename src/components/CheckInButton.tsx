@@ -19,8 +19,8 @@ export function CheckInButton({ venueId }: Props) {
         const data = await res.json();
         setCount(data.count);
       }
-    } catch {
-      // Silently fail
+    } catch (err) {
+      console.error('CheckIn count fetch failed:', err);
     }
   }, [venueId]);
 

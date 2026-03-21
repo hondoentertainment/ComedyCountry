@@ -37,8 +37,8 @@ let getServerSessionMock: ReturnType<typeof vi.fn> | null = null;
 export function setupAuthMocks(): ReturnType<typeof vi.fn> {
   // eslint-disable-next-line no-restricted-syntax -- dynamic require for mock
   const { getServerSession } = require("next-auth");
-  getServerSessionMock = vi.mocked(getServerSession);
-  return getServerSessionMock;
+  getServerSessionMock = vi.mocked(getServerSession) as any;
+  return getServerSessionMock!;
 }
 
 /**

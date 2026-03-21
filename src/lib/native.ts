@@ -14,7 +14,7 @@ export type NativePlatform = "ios" | "android" | "web";
 export function getPlatform(): NativePlatform {
   if (typeof window === "undefined") return "web";
 
-  const win = window as Record<string, unknown>;
+  const win = window as unknown as Record<string, unknown>;
 
   // Capacitor injects a global object
   if (win.Capacitor && typeof win.Capacitor === "object") {
@@ -39,7 +39,7 @@ export function getPlatform(): NativePlatform {
  */
 export function isNativeApp(): boolean {
   if (typeof window === "undefined") return false;
-  const win = window as Record<string, unknown>;
+  const win = window as unknown as Record<string, unknown>;
   if (!win.Capacitor || typeof win.Capacitor !== "object") return false;
   const cap = win.Capacitor as { isNativePlatform?: () => boolean };
   return typeof cap.isNativePlatform === "function"
@@ -65,7 +65,7 @@ export function isStandalone(): boolean {
   if (typeof window === "undefined") return false;
   return (
     window.matchMedia("(display-mode: standalone)").matches ||
-    (window.navigator as Record<string, unknown>).standalone === true
+    (window.navigator as unknown as Record<string, unknown>).standalone === true
   );
 }
 
@@ -80,7 +80,7 @@ export async function callNativePlugin<T>(
 ): Promise<T | null> {
   if (typeof window === "undefined") return null;
 
-  const win = window as Record<string, unknown>;
+  const win = window as unknown as Record<string, unknown>;
   const cap = win.Capacitor as Record<string, unknown> | undefined;
   if (!cap) return null;
 
@@ -237,7 +237,7 @@ export function registerDeepLinkHandler(
 ): (() => void) | null {
   if (!isNativeApp()) return null;
 
-  const win = window as Record<string, unknown>;
+  const win = window as unknown as Record<string, unknown>;
   const cap = win.Capacitor as Record<string, unknown> | undefined;
   if (!cap) return null;
 

@@ -28,6 +28,7 @@ export function AdminComedianForm({ comedian }: { comedian?: ComedianData }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [selectedGenres, setSelectedGenres] = useState<string[]>(
     comedian?.genres.map(g => g.genre) ?? []
   );
@@ -38,8 +39,22 @@ export function AdminComedianForm({ comedian }: { comedian?: ComedianData }) {
     );
   }
 
+  function validate(form: HTMLFormElement): boolean {
+    const errors: Record<string, string> = {};
+    const data = new FormData(form);
+    if (!data.get("name")?.toString().trim()) errors.name = "Name is required";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0];
+      form.querySelector<HTMLInputElement>(`[name="${firstKey}"]`)?.focus();
+      return false;
+    }
+    return true;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!validate(e.currentTarget)) return;
     setSaving(true);
     setError("");
 
@@ -98,8 +113,12 @@ export function AdminComedianForm({ comedian }: { comedian?: ComedianData }) {
             name="name"
             required
             defaultValue={comedian?.name}
+            aria-invalid={!!fieldErrors.name}
+            aria-describedby={fieldErrors.name ? "name-error" : undefined}
+            onChange={() => setFieldErrors(prev => ({ ...prev, name: "" }))}
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           />
+          {fieldErrors.name && <p id="name-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.name}</p>}
         </div>
 
         <div className="sm:col-span-2">

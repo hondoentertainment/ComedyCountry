@@ -370,22 +370,17 @@ export async function updatePassesForEvent(
     cancelled?: boolean;
   },
 ) {
-  // Find all wallet passes linked to tickets for this event
+  // Find all tickets for this event that have wallet passes
+  const eventTickets = await prisma.ticket.findMany({
+    where: { eventId },
+    select: { id: true },
+  });
+  const ticketIds = eventTickets.map((t) => t.id);
+
   const passes = await prisma.walletPass.findMany({
     where: {
-      ticket: {
-        eventId,
-      },
+      ticketId: { in: ticketIds },
       status: "active",
-    },
-    include: {
-      ticket: {
-        include: {
-          event: {
-            include: { venue: true },
-          },
-        },
-      },
     },
   });
 
@@ -393,11 +388,19 @@ export async function updatePassesForEvent(
     return { updated: 0, passes: [] };
   }
 
+  // Load the event and venue data
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    include: { venue: true },
+  });
+
+  if (!event) {
+    return { updated: 0, passes: [] };
+  }
+
   const updatedPasses = [];
 
   for (const pass of passes) {
-    const ticket = pass.ticket;
-    const event = ticket.event;
     const venue = event.venue;
 
     // Apply updates to event data for pass regeneration
@@ -418,9 +421,9 @@ export async function updatePassesForEvent(
       if (pass.platform === "apple") {
         const applePass = generateAppleWalletPassJSON(
           {
-            id: ticket.id,
+            id: pass.ticketId,
             userId: pass.userId,
-            purchasedAt: ticket.purchasedAt,
+            purchasedAt: pass.createdAt,
           },
           updatedEvent,
           venue,
@@ -432,9 +435,9 @@ export async function updatePassesForEvent(
       } else {
         const googleJWT = generateGoogleWalletPassJWT(
           {
-            id: ticket.id,
+            id: pass.ticketId,
             userId: pass.userId,
-            purchasedAt: ticket.purchasedAt,
+            purchasedAt: pass.createdAt,
           },
           updatedEvent,
           venue,
@@ -484,18 +487,22 @@ export async function batchGeneratePassesForEvent(
 ) {
   const tickets = await prisma.ticket.findMany({
     where: { eventId },
-    include: {
-      event: {
-        include: { venue: true },
-      },
-      user: true,
-    },
   });
 
   if (tickets.length === 0) {
     return { generated: 0, passes: [] };
   }
 
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    include: { venue: true },
+  });
+
+  if (!event) {
+    return { generated: 0, passes: [] };
+  }
+
+  const venue = event.venue;
   const generatedPasses = [];
 
   for (const ticket of tickets) {
@@ -512,9 +519,8 @@ export async function batchGeneratePassesForEvent(
       continue;
     }
 
-    const event = ticket.event;
-    const venue = event.venue;
     const serialNumber = `PASS-${randomBytes(12).toString("hex").toUpperCase()}`;
+    const user = await prisma.user.findUnique({ where: { id: ticket.userId } });
 
     let passPayload: unknown;
 
@@ -523,7 +529,7 @@ export async function batchGeneratePassesForEvent(
         {
           id: ticket.id,
           userId: ticket.userId,
-          purchasedAt: ticket.purchasedAt,
+          purchasedAt: ticket.createdAt,
         },
         {
           id: event.id,
@@ -538,7 +544,7 @@ export async function batchGeneratePassesForEvent(
         {
           id: ticket.id,
           userId: ticket.userId,
-          purchasedAt: ticket.purchasedAt,
+          purchasedAt: ticket.createdAt,
         },
         {
           id: event.id,
@@ -547,7 +553,7 @@ export async function batchGeneratePassesForEvent(
           showtime: event.showtime,
         },
         venue,
-        ticket.user?.name || undefined,
+        user?.name || undefined,
       );
       passPayload = jwt;
     }

@@ -263,12 +263,10 @@ export async function pushToEventAttendees(
       }),
     ]);
 
-    const userIds = [
-      ...new Set([
-        ...attendees.map((a) => a.userId),
-        ...ticketHolders.map((t) => t.userId),
-      ]),
-    ];
+    const userIds = Array.from(new Set([
+      ...attendees.map((a: { userId: string }) => a.userId),
+      ...ticketHolders.map((t: { userId: string }) => t.userId),
+    ]));
 
     return await sendPushToUsers(userIds, {
       ...payload,

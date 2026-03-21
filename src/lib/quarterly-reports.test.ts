@@ -132,18 +132,18 @@ describe("quarterly-reports", () => {
     it("returns top comedians sorted by show count", async () => {
       mockPrisma.event.findMany.mockResolvedValue([
         {
-          comedianId: "c1",
-          comedian: { id: "c1", name: "Alice Comic" },
+          id: "e1",
+          comedians: [{ comedian: { id: "c1", name: "Alice Comic" } }],
           reviews: [{ rating: 4 }, { rating: 5 }],
         },
         {
-          comedianId: "c1",
-          comedian: { id: "c1", name: "Alice Comic" },
+          id: "e2",
+          comedians: [{ comedian: { id: "c1", name: "Alice Comic" } }],
           reviews: [{ rating: 5 }],
         },
         {
-          comedianId: "c2",
-          comedian: { id: "c2", name: "Bob Funny" },
+          id: "e3",
+          comedians: [{ comedian: { id: "c2", name: "Bob Funny" } }],
           reviews: [{ rating: 3 }],
         },
       ]);
@@ -169,8 +169,8 @@ describe("quarterly-reports", () => {
     it("handles events without comedians", async () => {
       mockPrisma.event.findMany.mockResolvedValue([
         {
-          comedianId: null,
-          comedian: null,
+          id: "e1",
+          comedians: [],
           reviews: [],
         },
       ]);
@@ -186,9 +186,9 @@ describe("quarterly-reports", () => {
   describe("getAttendanceTrends", () => {
     it("calculates attendance trends correctly", async () => {
       mockPrisma.event.findMany.mockResolvedValue([
-        { id: "e1", capacity: 100, _count: { tickets: 100 } },
-        { id: "e2", capacity: 200, _count: { tickets: 150 } },
-        { id: "e3", capacity: 50, _count: { tickets: 50 } },
+        { id: "e1", venue: { capacity: 100 }, _count: { tickets: 100 } },
+        { id: "e2", venue: { capacity: 200 }, _count: { tickets: 150 } },
+        { id: "e3", venue: { capacity: 50 }, _count: { tickets: 50 } },
       ]);
 
       const result = await getAttendanceTrends("Austin", "TX", 1, 2026);
@@ -215,9 +215,9 @@ describe("quarterly-reports", () => {
   describe("getRevenueBenchmarks", () => {
     it("calculates revenue benchmarks correctly", async () => {
       mockPrisma.ticket.findMany.mockResolvedValue([
-        { price: 25, event: { id: "e1", venue: { id: "v1", name: "Club A" } } },
-        { price: 30, event: { id: "e1", venue: { id: "v1", name: "Club A" } } },
-        { price: 40, event: { id: "e2", venue: { id: "v2", name: "Club B" } } },
+        { purchasePrice: 25, event: { id: "e1", venue: { id: "v1", name: "Club A" } } },
+        { purchasePrice: 30, event: { id: "e1", venue: { id: "v1", name: "Club A" } } },
+        { purchasePrice: 40, event: { id: "e2", venue: { id: "v2", name: "Club B" } } },
       ]);
 
       const result = await getRevenueBenchmarks("Austin", "TX", 1, 2026);

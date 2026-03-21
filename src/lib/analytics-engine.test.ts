@@ -981,7 +981,7 @@ describe("analytics-engine", () => {
       );
 
       expect(showsTrend).toBeDefined();
-      expect(showsTrend.changePercent).toBe(10);
+      expect(showsTrend!.changePercent).toBe(10);
     });
   });
 

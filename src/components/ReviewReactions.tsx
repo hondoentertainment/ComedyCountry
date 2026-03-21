@@ -12,6 +12,7 @@ export default function ReviewReactions({ reviewType, reviewId }: ReviewReaction
   const [funny, setFunny] = useState(0);
   const [userReaction, setUserReaction] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/reviews/reactions?reviewType=${reviewType}&reviewId=${reviewId}`)
@@ -21,7 +22,9 @@ export default function ReviewReactions({ reviewType, reviewId }: ReviewReaction
         setFunny(data.funny || 0);
         setUserReaction(data.userReaction || null);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error('ReviewReactions fetch failed:', err);
+      });
   }, [reviewType, reviewId]);
 
   async function react(reactionType: string) {
@@ -54,14 +57,17 @@ export default function ReviewReactions({ reviewType, reviewId }: ReviewReaction
         if (reactionType === "helpful") setHelpful((h) => h + 1);
         else setFunny((f) => f + 1);
       }
-    } catch {
-      // Reaction failed silently
+    } catch (err) {
+      console.error('ReviewReactions react failed:', err);
+      setError('Could not save reaction. Please try again.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
+    <div className="space-y-1">
+    {error && <p className="text-xs text-red-400" role="alert">{error}</p>}
     <div className="flex items-center gap-3 mt-2">
       <button
         onClick={() => react("helpful")}
@@ -91,6 +97,7 @@ export default function ReviewReactions({ reviewType, reviewId }: ReviewReaction
         </svg>
         Funny{funny > 0 && ` (${funny})`}
       </button>
+    </div>
     </div>
   );
 }

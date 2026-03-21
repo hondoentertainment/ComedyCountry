@@ -158,7 +158,7 @@ export async function getEventReputationSummary(
   const feedbackAverages = Object.fromEntries(
     FEEDBACK_FIELDS.map((field) => {
       const values = feedbackRows
-        .map((row) => row[field])
+        .map((row) => (row as Record<string, unknown>)[field])
         .filter((value): value is number => typeof value === "number");
       const average =
         values.length > 0

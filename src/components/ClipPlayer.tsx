@@ -75,7 +75,9 @@ export function ClipPlayer({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "view" }),
-      }).catch(() => {});
+      }).catch((err) => {
+        console.error('ClipPlayer view tracking failed:', err);
+      });
     }, 3000);
     return () => clearTimeout(timer);
   }, [id]);

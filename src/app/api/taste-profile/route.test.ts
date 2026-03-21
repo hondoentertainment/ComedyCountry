@@ -20,7 +20,7 @@ const mockProfile = {
   topGenres: ["dark", "observational"],
   confidence: 0.8,
   lastComputed: new Date(),
-};
+} as any;
 
 describe("/api/taste-profile", () => {
   beforeEach(() => {

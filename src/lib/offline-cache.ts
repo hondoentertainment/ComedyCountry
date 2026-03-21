@@ -143,8 +143,8 @@ export async function getCacheStats(userId: string) {
   });
 
   const now = new Date();
-  const activeItems = items.filter((i) => i.expiresAt > now);
-  const expiredItems = items.filter((i) => i.expiresAt <= now);
+  const activeItems = items.filter((i: { expiresAt: Date }) => i.expiresAt > now);
+  const expiredItems = items.filter((i: { expiresAt: Date }) => i.expiresAt <= now);
 
   // Count by type
   const byType: Record<string, number> = {};
@@ -153,7 +153,7 @@ export async function getCacheStats(userId: string) {
   }
 
   // Estimate total size (rough JSON size)
-  const totalSizeBytes = items.reduce((sum, item) => {
+  const totalSizeBytes = items.reduce((sum: number, item: { data: unknown }) => {
     return sum + JSON.stringify(item.data).length;
   }, 0);
 

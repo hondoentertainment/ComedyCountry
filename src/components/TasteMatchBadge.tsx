@@ -25,7 +25,9 @@ export function TasteMatchBadge({ comedianId }: TasteMatchBadgeProps) {
           setStretchLabel(typeof data.stretchLabel === "string" ? data.stretchLabel : null);
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.error('TasteMatchBadge fetch failed:', err);
+      })
       .finally(() => setLoading(false));
   }, [comedianId]);
 

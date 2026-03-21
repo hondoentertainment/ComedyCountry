@@ -47,19 +47,19 @@ function seatKey(row: number, col: number): string {
 }
 
 const SEAT_TYPE_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  standard: { bg: "bg-blue-100", border: "border-blue-400", text: "text-blue-700" },
-  premium: { bg: "bg-purple-100", border: "border-purple-400", text: "text-purple-700" },
-  vip: { bg: "bg-amber-100", border: "border-amber-400", text: "text-amber-700" },
-  accessible: { bg: "bg-green-100", border: "border-green-400", text: "text-green-700" },
-  blocked: { bg: "bg-gray-200", border: "border-gray-300", text: "text-gray-400" },
-  stage: { bg: "bg-red-50", border: "border-red-300", text: "text-red-500" },
+  standard: { bg: "bg-blue-900/30", border: "border-blue-600", text: "text-blue-300" },
+  premium: { bg: "bg-purple-900/30", border: "border-purple-600", text: "text-purple-300" },
+  vip: { bg: "bg-amber-900/30", border: "border-amber-600", text: "text-amber-300" },
+  accessible: { bg: "bg-green-900/30", border: "border-green-600", text: "text-green-300" },
+  blocked: { bg: "bg-zinc-800", border: "border-zinc-700", text: "text-zinc-500" },
+  stage: { bg: "bg-red-900/20", border: "border-red-700", text: "text-red-400" },
 };
 
 const STATUS_OVERRIDES: Record<string, { bg: string; border: string; cursor: string }> = {
-  selected: { bg: "bg-emerald-500", border: "border-emerald-600", cursor: "cursor-pointer" },
-  sold: { bg: "bg-gray-300", border: "border-gray-400", cursor: "cursor-not-allowed" },
-  held: { bg: "bg-orange-200", border: "border-orange-400", cursor: "cursor-not-allowed" },
-  blocked: { bg: "bg-gray-200", border: "border-gray-300", cursor: "cursor-not-allowed" },
+  selected: { bg: "bg-emerald-600", border: "border-emerald-500", cursor: "cursor-pointer" },
+  sold: { bg: "bg-zinc-700", border: "border-zinc-600", cursor: "cursor-not-allowed" },
+  held: { bg: "bg-orange-900/40", border: "border-orange-600", cursor: "cursor-not-allowed" },
+  blocked: { bg: "bg-zinc-800", border: "border-zinc-700", cursor: "cursor-not-allowed" },
 };
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -156,7 +156,7 @@ export default function SeatPicker({
       </div>
 
       {/* Layout name */}
-      <p className="text-sm text-gray-500 font-medium">{layoutName}</p>
+      <p className="text-sm text-zinc-400 font-medium">{layoutName}</p>
 
       {/* Seat grid */}
       <div
@@ -210,22 +210,22 @@ export default function SeatPicker({
 
       {/* Legend */}
       {showLegend && (
-        <div className="flex flex-wrap gap-4 text-xs text-gray-600">
-          <LegendItem color="bg-blue-100 border-blue-400" label="Standard" />
-          <LegendItem color="bg-purple-100 border-purple-400" label="Premium" />
-          <LegendItem color="bg-amber-100 border-amber-400" label="VIP" />
-          <LegendItem color="bg-green-100 border-green-400" label="Accessible" />
-          <LegendItem color="bg-emerald-500 border-emerald-600" label="Selected" />
-          <LegendItem color="bg-gray-300 border-gray-400" label="Sold" />
-          <LegendItem color="bg-orange-200 border-orange-400" label="Held" />
+        <div className="flex flex-wrap gap-4 text-xs text-zinc-400">
+          <LegendItem color="bg-blue-900/30 border-blue-600" label="Standard" />
+          <LegendItem color="bg-purple-900/30 border-purple-600" label="Premium" />
+          <LegendItem color="bg-amber-900/30 border-amber-600" label="VIP" />
+          <LegendItem color="bg-green-900/30 border-green-600" label="Accessible" />
+          <LegendItem color="bg-emerald-600 border-emerald-500" label="Selected" />
+          <LegendItem color="bg-zinc-700 border-zinc-600" label="Sold" />
+          <LegendItem color="bg-orange-900/40 border-orange-600" label="Held" />
         </div>
       )}
 
       {/* Selection summary & checkout */}
       {selectedSeats.length > 0 && (
-        <div className="w-full max-w-md bg-white border border-gray-200 rounded-xl shadow-lg p-4">
+        <div className="w-full max-w-md bg-zinc-900 border border-zinc-700 rounded-xl shadow-lg p-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="font-semibold text-gray-900">
+            <h3 className="font-semibold text-white">
               {selectedSeats.length} Seat{selectedSeats.length > 1 ? "s" : ""} Selected
             </h3>
             <span className="text-lg font-bold text-emerald-600">
@@ -237,11 +237,11 @@ export default function SeatPicker({
             {selectedSeats.map((seat) => (
               <span
                 key={seatKey(seat.row, seat.col)}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-emerald-900/40 text-emerald-300"
               >
                 {seat.label ?? `${String.fromCharCode(65 + seat.row)}${seat.col + 1}`}
                 {seat.price && (
-                  <span className="text-emerald-500">
+                  <span className="text-emerald-400">
                     {currency}{seat.price}
                   </span>
                 )}
@@ -262,7 +262,7 @@ export default function SeatPicker({
                 setSelectedKeys(new Set());
                 onSelectionChange?.([]);
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-zinc-600 rounded-lg text-sm text-zinc-300 hover:bg-white/5"
             >
               Clear
             </button>
@@ -277,7 +277,7 @@ export default function SeatPicker({
       )}
 
       {/* Capacity info */}
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-zinc-500">
         Max {maxSelectable} seats per order
       </p>
     </div>

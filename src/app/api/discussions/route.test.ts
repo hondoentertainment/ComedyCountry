@@ -37,7 +37,7 @@ describe("/api/discussions", () => {
         threads: [{ id: "t1", title: "Great show!", body: "Loved it" }],
         total: 1,
       };
-      vi.mocked(getDiscussions).mockResolvedValue(mockDiscussions);
+      vi.mocked(getDiscussions).mockResolvedValue(mockDiscussions as any);
 
       const req = new Request(
         "http://test/api/discussions?entityType=comedian&entityId=c-1"
@@ -55,7 +55,7 @@ describe("/api/discussions", () => {
     });
 
     it("passes page parameter", async () => {
-      vi.mocked(getDiscussions).mockResolvedValue({ threads: [], total: 0 });
+      vi.mocked(getDiscussions).mockResolvedValue({ threads: [], total: 0 } as any);
 
       const req = new Request(
         "http://test/api/discussions?entityType=venue&entityId=v-1&page=3"
@@ -128,7 +128,7 @@ describe("/api/discussions", () => {
         title: "Great show!",
         body: "Really enjoyed it",
       };
-      vi.mocked(createThread).mockResolvedValue(mockThread);
+      vi.mocked(createThread).mockResolvedValue(mockThread as any);
 
       const req = new Request("http://test/api/discussions", {
         method: "POST",

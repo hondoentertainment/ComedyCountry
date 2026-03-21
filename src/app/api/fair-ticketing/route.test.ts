@@ -69,7 +69,7 @@ function createRequest(
     init.body = JSON.stringify(options.body);
     init.headers = { "Content-Type": "application/json" };
   }
-  return new NextRequest(url, init);
+  return new NextRequest(url, init as any);
 }
 
 describe("Fair Ticketing API Routes", () => {

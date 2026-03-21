@@ -31,7 +31,9 @@ export function FriendsGoingBadge({ eventId }: FriendsGoingBadgeProps) {
           setCount(data.count);
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.error('FriendsGoingBadge fetch failed:', err);
+      })
       .finally(() => setLoading(false));
   }, [eventId]);
 

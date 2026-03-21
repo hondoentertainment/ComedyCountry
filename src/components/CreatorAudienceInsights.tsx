@@ -73,7 +73,7 @@ function PlatformCard({
   );
 }
 
-export default function CreatorAudienceInsights() {
+export default function CreatorAudienceInsights({ comedianId }: { comedianId?: string }) {
   const [data, setData] = useState<AudienceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

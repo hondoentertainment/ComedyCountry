@@ -92,8 +92,8 @@ export function NotificationPreferences() {
 
         if (vapidKey) {
           const subscription = await registration.pushManager.subscribe({
-            userVisuallyIndicatesUserConsent: true,
-            applicationServerKey: urlBase64ToUint8Array(vapidKey),
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidKey) as unknown as BufferSource,
           });
 
           const subJson = subscription.toJSON();
