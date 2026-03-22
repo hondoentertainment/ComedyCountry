@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Phase 3: Season Pass — Individual Pass Operations
@@ -14,9 +15,14 @@ import { logger } from "@/lib/logger";
 // ── GET: Get season pass details with redemption history ──────────────
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`season-passes:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -127,6 +133,11 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`season-passes:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

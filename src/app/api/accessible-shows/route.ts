@@ -7,6 +7,7 @@ import {
   rankVenuesByAccessibility,
   getAccessibilityFeatureCoverage,
 } from "@/lib/accessibility-discovery";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET /api/accessible-shows
@@ -28,6 +29,11 @@ import {
  * - skip: offset for pagination
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`accessible-shows:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type") || "all";

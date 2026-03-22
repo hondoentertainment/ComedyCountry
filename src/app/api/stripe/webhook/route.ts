@@ -8,6 +8,7 @@ import type {
   StripeWebhookEventType,
   WebhookProcessingResult,
 } from "@/types/tickets";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Phase 3: Hardened Stripe Webhook Handler
@@ -22,7 +23,12 @@ import type {
 
 const MAX_RETRIES = 5;
 
-export async function POST(request: Request): Promise<NextResponse> {
+export async function POST(request: Request) {
+  const rl = await checkRateLimit(`stripe-webhook:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const rawBody = await request.text();
   const signature = request.headers.get("stripe-signature");
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, digestEmailHtml } from "@/lib/email";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * POST /api/email/digest
@@ -8,6 +9,11 @@ import { sendEmail, digestEmailHtml } from "@/lib/email";
  * Protected by CRON_SECRET to be called from a scheduled job.
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`email-digest:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 

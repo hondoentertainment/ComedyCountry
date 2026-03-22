@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { getChallengeClips } from "@/lib/short-clips";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const rl = await checkRateLimit(`clips-challenges:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { id } = await params;
 
   try {

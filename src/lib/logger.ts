@@ -4,6 +4,7 @@ interface LogEntry {
   level: LogLevel;
   message: string;
   timestamp: string;
+  requestId?: string;
   context?: Record<string, unknown>;
   error?: { message: string; stack?: string; name: string };
 }
@@ -29,11 +30,18 @@ function formatEntry(entry: LogEntry): string {
 function log(level: LogLevel, message: string, context?: Record<string, unknown>, err?: Error): void {
   if (!shouldLog(level)) return;
 
+  // Extract requestId from context so it appears as a top-level field
+  const requestId = context?.requestId as string | undefined;
+  const restContext = context
+    ? Object.fromEntries(Object.entries(context).filter(([k]) => k !== "requestId"))
+    : undefined;
+
   const entry: LogEntry = {
     level,
     message,
     timestamp: new Date().toISOString(),
-    ...(context && { context }),
+    ...(requestId && { requestId }),
+    ...(restContext && Object.keys(restContext).length > 0 && { context: restContext }),
     ...(err && { error: { message: err.message, stack: err.stack, name: err.name } }),
   };
 

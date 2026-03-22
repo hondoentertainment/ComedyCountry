@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 import type { ScanResponse } from "@/types/tickets";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Phase 3: QR Code Ticket Validation Endpoint
@@ -21,7 +22,12 @@ import type { ScanResponse } from "@/types/tickets";
 
 // ── POST: Validate and scan a ticket QR code ──────────────────────────
 
-export async function POST(request: Request): Promise<NextResponse<ScanResponse>> {
+export async function POST(request: Request) {
+  const rl = await checkRateLimit(`tickets-validate:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json(
@@ -214,6 +220,11 @@ export async function POST(request: Request): Promise<NextResponse<ScanResponse>
 // ── GET: Look up ticket info by QR code (no scan) ────────────────────
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`tickets-validate:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

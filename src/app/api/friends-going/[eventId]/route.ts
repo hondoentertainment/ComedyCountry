@@ -2,15 +2,21 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET - Get list of friends attending an event.
  * Returns friends who have RSVP'd (EventAttendance) or bought tickets (Ticket).
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ eventId: string }> }
 ) {
+  const rl = await checkRateLimit(`friends-going:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

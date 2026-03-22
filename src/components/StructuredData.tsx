@@ -1,8 +1,26 @@
+/**
+ * Generic reusable component for rendering JSON-LD structured data.
+ * Accepts any schema.org-compatible data object.
+ */
+export function StructuredData({ data }: { data: Record<string, any> }) {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Event
+// ---------------------------------------------------------------------------
+
 type EventStructuredDataProps = {
   event: {
     id: string;
     title: string | null;
     date: Date;
+    endDate?: Date | null;
     showtime: string | null;
     ticketUrl: string | null;
     venue: { name: string; address: string | null; city: string; state: string };
@@ -28,11 +46,14 @@ export function EventStructuredData({ event, baseUrl }: EventStructuredDataProps
   }));
   const image =
     event.comedians[0]?.comedian?.headshotUrl ?? undefined;
+  const description = `${name} at ${event.venue.name} in ${event.venue.city}, ${event.venue.state}.`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
     name,
+    description,
     startDate: new Date(event.date).toISOString(),
+    ...(event.endDate && { endDate: new Date(event.endDate).toISOString() }),
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     location: {
@@ -51,13 +72,12 @@ export function EventStructuredData({ event, baseUrl }: EventStructuredDataProps
     ...(event.ticketUrl && { offers: { "@type": "Offer" as const, url: event.ticketUrl } }),
     ...(event.showtime && { doorTime: event.showtime }),
   };
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
+  return <StructuredData data={jsonLd} />;
 }
+
+// ---------------------------------------------------------------------------
+// Comedian
+// ---------------------------------------------------------------------------
 
 type ComedianStructuredDataProps = {
   comedian: {
@@ -91,13 +111,12 @@ export function ComedianStructuredData({
     ...(comedian.headshotUrl && { image: comedian.headshotUrl }),
     ...(sameAs.length > 0 && { sameAs }),
   };
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
+  return <StructuredData data={jsonLd} />;
 }
+
+// ---------------------------------------------------------------------------
+// Venue
+// ---------------------------------------------------------------------------
 
 type VenueStructuredDataProps = {
   venue: {
@@ -108,15 +127,26 @@ type VenueStructuredDataProps = {
     state: string;
     website: string | null;
     capacity: number | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    description?: string | null;
+    phone?: string | null;
+    photos?: Array<{ url: string }>;
   };
   baseUrl: string;
 };
 
 export function VenueStructuredData({ venue, baseUrl }: VenueStructuredDataProps) {
+  const description =
+    venue.description ??
+    `Comedy venue ${venue.name} in ${venue.city}, ${venue.state}.`;
+  const imageUrl = venue.photos?.[0]?.url ?? undefined;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Place",
     name: venue.name,
+    description,
     address: {
       "@type": "PostalAddress",
       streetAddress: venue.address ?? undefined,
@@ -124,13 +154,18 @@ export function VenueStructuredData({ venue, baseUrl }: VenueStructuredDataProps
       addressRegion: venue.state,
     },
     url: `${baseUrl}/venues/${venue.id}`,
+    ...(venue.latitude != null &&
+      venue.longitude != null && {
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: venue.latitude,
+          longitude: venue.longitude,
+        },
+      }),
+    ...(imageUrl && { image: imageUrl }),
+    ...(venue.phone && { telephone: venue.phone }),
     ...(venue.website && { sameAs: venue.website }),
     ...(venue.capacity && { maximumAttendeeCapacity: venue.capacity }),
   };
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
+  return <StructuredData data={jsonLd} />;
 }

@@ -33,6 +33,10 @@ vi.mock("@/lib/auth", () => ({
 vi.mock("@/lib/prisma", () => ({
   prisma: {},
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import {
   addAccessibilityTag,
@@ -333,7 +337,7 @@ describe("Accessibility API Routes", () => {
         byType: {} as any,
       });
 
-      const res = await getStats();
+      const res = await getStats(new Request("http://localhost"));
       const data = await res.json();
 
       expect(res.status).toBe(200);

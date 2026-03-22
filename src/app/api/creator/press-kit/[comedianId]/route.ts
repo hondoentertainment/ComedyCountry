@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: { comedianId: string } },
 ) {
+  const rl = await checkRateLimit(`creator-press-kit:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const comedian = await prisma.comedian.findUnique({
       where: { id: params.comedianId },

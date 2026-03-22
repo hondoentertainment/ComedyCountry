@@ -2,12 +2,18 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Track analytics events for business intelligence.
  * Used for comedian/venue dashboards, ad performance, and affiliate tracking.
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`analytics-track:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   const body = await request.json();
   const { entityType, entityId, action, metadata } = body;

@@ -58,7 +58,21 @@ export default async function VenuePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen">
-      <VenueStructuredData venue={venue} baseUrl={siteUrl} />
+      <VenueStructuredData
+        venue={{
+          id: venue.id,
+          name: venue.name,
+          address: venue.address,
+          city: venue.city,
+          state: venue.state,
+          website: venue.website,
+          capacity: venue.capacity,
+          latitude: venue.latitude,
+          longitude: venue.longitude,
+          photos: venue.photos.map((p) => ({ url: p.url })),
+        }}
+        baseUrl={siteUrl}
+      />
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <Link
           href="/venues"

@@ -1,10 +1,30 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import {
+  StructuredData,
   EventStructuredData,
   VenueStructuredData,
   ComedianStructuredData,
 } from "./StructuredData";
+
+// ---------------------------------------------------------------------------
+// Generic StructuredData
+// ---------------------------------------------------------------------------
+
+describe("StructuredData", () => {
+  it("renders a JSON-LD script tag with the supplied data", () => {
+    const data = { "@context": "https://schema.org", "@type": "Thing", name: "Test" };
+    const { container } = render(<StructuredData data={data} />);
+    const script = container.querySelector('script[type="application/ld+json"]');
+    expect(script).toBeInTheDocument();
+    const json = JSON.parse(script!.textContent!);
+    expect(json).toEqual(data);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// EventStructuredData
+// ---------------------------------------------------------------------------
 
 describe("EventStructuredData", () => {
   it("renders JSON-LD script with event data", () => {
@@ -180,7 +200,72 @@ describe("EventStructuredData", () => {
     expect(Array.isArray(json.performer)).toBe(true);
     expect(json.performer).toHaveLength(2);
   });
+
+  it("includes description derived from name and venue", () => {
+    const event = {
+      id: "evt-8",
+      title: "Big Laughs",
+      date: new Date(),
+      showtime: null,
+      ticketUrl: null,
+      venue: { name: "Club", address: null, city: "NYC", state: "NY" },
+      comedians: [],
+    };
+
+    const { container } = render(
+      <EventStructuredData event={event} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json.description).toBe("Big Laughs at Club in NYC, NY.");
+  });
+
+  it("includes endDate when provided", () => {
+    const event = {
+      id: "evt-9",
+      title: "Weekend Show",
+      date: new Date("2025-06-01T19:00:00Z"),
+      endDate: new Date("2025-06-01T21:00:00Z"),
+      showtime: null,
+      ticketUrl: null,
+      venue: { name: "Club", address: null, city: "NYC", state: "NY" },
+      comedians: [],
+    };
+
+    const { container } = render(
+      <EventStructuredData event={event} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json.endDate).toBe("2025-06-01T21:00:00.000Z");
+  });
+
+  it("omits endDate when not provided", () => {
+    const event = {
+      id: "evt-10",
+      title: "Show",
+      date: new Date(),
+      showtime: null,
+      ticketUrl: null,
+      venue: { name: "Club", address: null, city: "NYC", state: "NY" },
+      comedians: [],
+    };
+
+    const { container } = render(
+      <EventStructuredData event={event} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json).not.toHaveProperty("endDate");
+  });
 });
+
+// ---------------------------------------------------------------------------
+// VenueStructuredData
+// ---------------------------------------------------------------------------
 
 describe("VenueStructuredData", () => {
   it("renders JSON-LD script with venue data", () => {
@@ -288,7 +373,161 @@ describe("VenueStructuredData", () => {
     expect(json.address.addressLocality).toBe("Nashville");
     expect(json.address.addressRegion).toBe("TN");
   });
+
+  it("includes geo coordinates when latitude and longitude are provided", () => {
+    const venue = {
+      id: "venue-6",
+      name: "Geo Club",
+      address: null,
+      city: "Denver",
+      state: "CO",
+      website: null,
+      capacity: null,
+      latitude: 39.7392,
+      longitude: -104.9903,
+    };
+
+    const { container } = render(
+      <VenueStructuredData venue={venue} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json.geo).toEqual({
+      "@type": "GeoCoordinates",
+      latitude: 39.7392,
+      longitude: -104.9903,
+    });
+  });
+
+  it("omits geo when coordinates are not provided", () => {
+    const venue = {
+      id: "venue-7",
+      name: "No Geo Club",
+      address: null,
+      city: "NYC",
+      state: "NY",
+      website: null,
+      capacity: null,
+    };
+
+    const { container } = render(
+      <VenueStructuredData venue={venue} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json).not.toHaveProperty("geo");
+  });
+
+  it("includes image from first photo", () => {
+    const venue = {
+      id: "venue-8",
+      name: "Photo Club",
+      address: null,
+      city: "NYC",
+      state: "NY",
+      website: null,
+      capacity: null,
+      photos: [{ url: "https://example.com/photo.jpg" }],
+    };
+
+    const { container } = render(
+      <VenueStructuredData venue={venue} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json.image).toBe("https://example.com/photo.jpg");
+  });
+
+  it("omits image when no photos", () => {
+    const venue = {
+      id: "venue-9",
+      name: "No Photo Club",
+      address: null,
+      city: "NYC",
+      state: "NY",
+      website: null,
+      capacity: null,
+      photos: [],
+    };
+
+    const { container } = render(
+      <VenueStructuredData venue={venue} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json).not.toHaveProperty("image");
+  });
+
+  it("includes telephone when phone is provided", () => {
+    const venue = {
+      id: "venue-10",
+      name: "Phone Club",
+      address: null,
+      city: "NYC",
+      state: "NY",
+      website: null,
+      capacity: null,
+      phone: "+1-212-555-0100",
+    };
+
+    const { container } = render(
+      <VenueStructuredData venue={venue} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json.telephone).toBe("+1-212-555-0100");
+  });
+
+  it("includes description with default when not provided", () => {
+    const venue = {
+      id: "venue-11",
+      name: "Funny Place",
+      address: null,
+      city: "Chicago",
+      state: "IL",
+      website: null,
+      capacity: null,
+    };
+
+    const { container } = render(
+      <VenueStructuredData venue={venue} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json.description).toBe("Comedy venue Funny Place in Chicago, IL.");
+  });
+
+  it("uses custom description when provided", () => {
+    const venue = {
+      id: "venue-12",
+      name: "Custom Desc Club",
+      address: null,
+      city: "NYC",
+      state: "NY",
+      website: null,
+      capacity: null,
+      description: "The best comedy in town.",
+    };
+
+    const { container } = render(
+      <VenueStructuredData venue={venue} baseUrl="https://example.com" />
+    );
+    const json = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!
+    );
+    expect(json.description).toBe("The best comedy in town.");
+  });
 });
+
+// ---------------------------------------------------------------------------
+// ComedianStructuredData
+// ---------------------------------------------------------------------------
 
 describe("ComedianStructuredData", () => {
   it("renders JSON-LD script with Person schema", () => {

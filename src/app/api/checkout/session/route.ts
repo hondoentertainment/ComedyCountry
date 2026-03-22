@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { Decimal } from "@prisma/client/runtime/library";
 import crypto from "crypto";
 import type { OrderConfirmation } from "@/types/tickets";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Phase 3: Checkout Flow — Multi-Ticket Cart Checkout
@@ -42,6 +43,11 @@ const STATE_TAX_RATES: Record<string, number> = {
 };
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`checkout-session:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || !session.user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

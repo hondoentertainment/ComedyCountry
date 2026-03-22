@@ -5,8 +5,14 @@ import {
   computeSocialPrice,
   getEventSocialPricing,
 } from "@/lib/social-pricing";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
+  const rl = await checkRateLimit(`pricing-social:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { session, error } = await requireAuth();
   if (error) return error;
 

@@ -2,11 +2,17 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET - List friends (accepted connections + pending requests).
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -107,6 +113,11 @@ export async function GET() {
  * Body: { friendId } or { username }
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

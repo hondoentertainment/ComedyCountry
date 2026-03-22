@@ -1,3 +1,7 @@
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
@@ -59,7 +63,6 @@ const nextConfig = {
       { protocol: "https", hostname: "cdn.comedycountry.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "api.qrserver.com", pathname: "/v1/create-qr-code/**" },
-      { protocol: "https", hostname: "**", pathname: "/**" },
     ],
     minimumCacheTTL: 60,
   },
@@ -114,7 +117,7 @@ const nextConfig = {
   },
 };
 
-let config = withPWA(nextConfig);
+let config = withBundleAnalyzer(withPWA(nextConfig));
 try {
   const { withSentryConfig } = require("@sentry/nextjs");
   config = withSentryConfig(config, {

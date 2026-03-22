@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { getFestivalCircuit, createFestival } from "@/lib/international";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`international-festivals:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const country = searchParams.get("country") || undefined;
@@ -18,6 +24,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`international-festivals:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const { name, city, country, countryCode } = body;

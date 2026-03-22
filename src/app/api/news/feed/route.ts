@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { listArticles, getCategories } from "@/lib/news";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 // ---------------------------------------------------------------------------
 // GET /api/news/feed — public curated editorial feed
@@ -10,6 +11,11 @@ import { listArticles, getCategories } from "@/lib/news";
 // ---------------------------------------------------------------------------
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`news-feed:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category") ?? undefined;

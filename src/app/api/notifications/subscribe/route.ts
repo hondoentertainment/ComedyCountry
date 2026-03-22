@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * POST /api/notifications/subscribe
@@ -11,6 +12,11 @@ import { prisma } from "@/lib/prisma";
  * creates a push subscription via the Push API.
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`notifications-subscribe:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -74,6 +80,11 @@ export async function POST(request: Request) {
  * Remove a push subscription (e.g., when user revokes permission).
  */
 export async function DELETE(request: Request) {
+  const rl = await checkRateLimit(`notifications-subscribe:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

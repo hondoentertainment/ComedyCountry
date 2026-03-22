@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { listArticles, createArticle } from "@/lib/news";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`news:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category") ?? undefined;
@@ -33,6 +39,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`news:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const admin = await requireAdmin();
     if (!admin.authorized) {

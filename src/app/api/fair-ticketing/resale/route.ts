@@ -2,8 +2,14 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { requestResale, getResaleListings } from "@/lib/fair-ticketing";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`fair-ticketing-resale:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const eventId = searchParams.get("eventId");
 
@@ -21,6 +27,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`fair-ticketing-resale:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

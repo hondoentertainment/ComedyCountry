@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { convertCurrency } from "@/lib/international";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`international-currency:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const amount = parseFloat(searchParams.get("amount") || "0");

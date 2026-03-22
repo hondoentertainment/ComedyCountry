@@ -9,8 +9,14 @@ import {
   syncMenuItemToPOS,
   getPOSMenuItems,
 } from "@/lib/pos-integration";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`venue-ops-pos:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const venueId = searchParams.get("venueId");
@@ -110,6 +116,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`venue-ops-pos:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const { action, venueId, provider } = body;

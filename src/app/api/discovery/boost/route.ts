@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { applyDiscoveryBoost, getActiveBoosts } from "@/lib/discovery-engine";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 const VALID_ENTITY_TYPES = ["EVENT", "COMEDIAN", "VENUE", "CLIP", "PODCAST"] as const;
 const VALID_BOOST_TYPES = [
@@ -13,6 +14,11 @@ const VALID_BOOST_TYPES = [
  * POST - Apply a discovery boost (admin only).
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`discovery-boost:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -76,7 +82,12 @@ export async function POST(request: Request) {
 /**
  * GET - List all active boosts.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const rl = await checkRateLimit(`discovery-boost:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

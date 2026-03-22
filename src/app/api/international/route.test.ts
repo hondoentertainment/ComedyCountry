@@ -30,6 +30,10 @@ vi.mock("@/lib/prisma", () => ({
     },
   },
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import {
   getInternationalScenes,
@@ -348,7 +352,7 @@ describe("GET /api/international/touring", () => {
     ] as never);
 
     const { GET } = await import("./touring/route");
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -496,7 +500,7 @@ describe("GET /api/international/locales", () => {
       });
 
     const { GET } = await import("./locales/route");
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(200);

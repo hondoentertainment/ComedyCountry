@@ -36,6 +36,10 @@ vi.mock("next-auth", () => ({
 vi.mock("@/lib/auth", () => ({
   authOptions: {},
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import {
@@ -226,7 +230,7 @@ describe("Marketing API Routes", () => {
         codes: [],
       });
 
-      const res = await getReferrals();
+      const res = await getReferrals(new Request("http://localhost:3000"));
       const data = await res.json();
       expect(res.status).toBe(200);
       expect(data.totalCodes).toBe(3);

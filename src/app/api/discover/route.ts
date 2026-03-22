@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Public discovery API for AI agents and search engines.
@@ -13,6 +14,11 @@ import { prisma } from "@/lib/prisma";
  * - limit: number of results (default: 20, max: 50)
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`discover:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type") ?? "all";
   const q = searchParams.get("q") ?? "";

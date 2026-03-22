@@ -18,6 +18,10 @@ vi.mock("@/lib/prisma", () => ({
     },
   },
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
@@ -27,14 +31,14 @@ describe("GET /api/subscriptions", () => {
 
   it("returns 401 when not authenticated", async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     expect(res.status).toBe(401);
   });
 
   it("returns free plan when no subscription", async () => {
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } } as never);
     vi.mocked(prisma.subscription.findUnique).mockResolvedValue(null);
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
     expect(data.plan).toBe("free");
     expect(data.features.adFree).toBe(false);
@@ -48,7 +52,7 @@ describe("GET /api/subscriptions", () => {
       currentPeriodEnd: new Date("2026-04-01"),
       cancelAtPeriodEnd: false,
     } as never);
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
     expect(data.plan).toBe("FAN_PRO");
     expect(data.features.adFree).toBe(true);

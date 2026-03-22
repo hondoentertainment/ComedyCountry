@@ -11,12 +11,18 @@ import {
   issueStrike,
   removeStrike,
 } from "@/lib/content-moderation";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 // ---------------------------------------------------------------------------
 // GET /api/moderation — get moderation queue or user strikes
 // ---------------------------------------------------------------------------
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`moderation:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -70,6 +76,11 @@ export async function GET(request: Request) {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`moderation:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

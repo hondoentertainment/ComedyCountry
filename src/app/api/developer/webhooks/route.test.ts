@@ -37,6 +37,10 @@ vi.mock("next-auth", () => ({
 vi.mock("@/lib/auth", () => ({
   authOptions: {},
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { registerWebhook } from "@/lib/webhooks";
 import { prisma } from "@/lib/prisma";
@@ -63,7 +67,7 @@ describe("GET /api/developer/webhooks", () => {
 
   it("returns 401 when not authenticated", async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     expect(res.status).toBe(401);
   });
 
@@ -80,7 +84,7 @@ describe("GET /api/developer/webhooks", () => {
       },
     ]);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -92,7 +96,7 @@ describe("GET /api/developer/webhooks", () => {
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } });
     mockPrisma.apiKey.findMany.mockResolvedValue([]);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(200);

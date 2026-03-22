@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { getAllTouringInfo, createTouringInfo } from "@/lib/international";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const rl = await checkRateLimit(`international-touring:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const info = await getAllTouringInfo();
     return NextResponse.json({ touringInfo: info });
@@ -14,6 +20,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`international-touring:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const { country, countryCode } = body;

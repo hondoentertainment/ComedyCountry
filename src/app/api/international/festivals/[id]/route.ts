@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { getFestivalById } from "@/lib/international";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const rl = await checkRateLimit(`international-festivals:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { id } = await params;
     const festival = await getFestivalById(id);

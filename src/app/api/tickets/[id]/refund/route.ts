@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/email";
 import { Decimal } from "@prisma/client/runtime/library";
 import type { RefundResult, RefundEligibility } from "@/types/tickets";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Phase 3: Refund Flow API
@@ -25,9 +26,14 @@ import type { RefundResult, RefundEligibility } from "@/types/tickets";
 // ── GET: Check refund eligibility ──────────────────────────────────────
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`tickets-refund:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -50,6 +56,11 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`tickets-refund:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

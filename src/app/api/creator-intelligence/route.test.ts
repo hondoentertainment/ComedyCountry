@@ -29,6 +29,10 @@ vi.mock("@/lib/creator-intelligence", () => ({
   getFinancialForecast: vi.fn(),
   getTopRevenueSources: vi.fn(),
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import { getComedianForUser } from "@/lib/creator";
@@ -162,7 +166,7 @@ describe("Creator Intelligence API Routes", () => {
         records: [],
       } as never);
 
-      const res = await audienceGET();
+      const res = await audienceGET(new Request("http://localhost"));
       const data = await res.json();
 
       expect(res.status).toBe(200);
@@ -206,7 +210,7 @@ describe("Creator Intelligence API Routes", () => {
         overlapping: [],
       } as never);
 
-      const res = await overlapGET();
+      const res = await overlapGET(new Request("http://localhost"));
       const data = await res.json();
 
       expect(res.status).toBe(200);

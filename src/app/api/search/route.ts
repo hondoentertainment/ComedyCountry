@@ -3,7 +3,7 @@ import { search, autocomplete, unifiedSearch, parseFilters } from "@/lib/search"
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
-  const rl = await checkRateLimit(getRateLimitKey(request), { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`search:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }

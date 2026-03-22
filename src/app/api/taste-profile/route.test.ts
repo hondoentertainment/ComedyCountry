@@ -9,6 +9,10 @@ vi.mock("@/lib/taste-profile", () => ({
   getTasteProfile: vi.fn(),
   computeTasteProfile: vi.fn(),
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import { getTasteProfile, computeTasteProfile } from "@/lib/taste-profile";
@@ -35,7 +39,7 @@ describe("/api/taste-profile", () => {
     it("returns 401 when not authenticated", async () => {
       vi.mocked(getServerSession).mockResolvedValue(null);
 
-      const res = await GET();
+      const res = await GET(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(401);
@@ -45,7 +49,7 @@ describe("/api/taste-profile", () => {
     it("returns existing fresh profile", async () => {
       vi.mocked(getTasteProfile).mockResolvedValue(mockProfile);
 
-      const res = await GET();
+      const res = await GET(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(200);
@@ -62,7 +66,7 @@ describe("/api/taste-profile", () => {
       });
       vi.mocked(computeTasteProfile).mockResolvedValue(mockProfile);
 
-      const res = await GET();
+      const res = await GET(new Request("http://localhost:3000"));
 
       expect(res.status).toBe(200);
       expect(vi.mocked(computeTasteProfile)).toHaveBeenCalledWith("user-1");
@@ -72,7 +76,7 @@ describe("/api/taste-profile", () => {
       vi.mocked(getTasteProfile).mockResolvedValue(null);
       vi.mocked(computeTasteProfile).mockResolvedValue(mockProfile);
 
-      const res = await GET();
+      const res = await GET(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(200);
@@ -84,7 +88,7 @@ describe("/api/taste-profile", () => {
     it("returns 401 when not authenticated", async () => {
       vi.mocked(getServerSession).mockResolvedValue(null);
 
-      const res = await POST();
+      const res = await POST(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(401);
@@ -94,7 +98,7 @@ describe("/api/taste-profile", () => {
     it("force recomputes and returns profile", async () => {
       vi.mocked(computeTasteProfile).mockResolvedValue(mockProfile);
 
-      const res = await POST();
+      const res = await POST(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(200);
