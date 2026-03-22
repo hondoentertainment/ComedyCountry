@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { recordSignal } from "@/lib/discovery-engine";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 const VALID_SIGNAL_TYPES = [
   "VIEW", "CLICK", "ATTEND", "FOLLOW", "CLIP_WATCH",
@@ -16,6 +17,11 @@ const VALID_ENTITY_TYPES = [
  * POST - Record an engagement signal for the discovery engine.
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`discovery-signal:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

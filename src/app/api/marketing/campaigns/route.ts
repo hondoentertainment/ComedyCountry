@@ -7,10 +7,16 @@ import {
   scheduleSMSCampaign,
   getSMSCampaignStats,
 } from "@/lib/marketing";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /* ─── GET - Fetch all campaigns (SMS + email) for a venue ─────────────── */
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`marketing-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -166,6 +172,11 @@ export async function GET(request: Request) {
 /* ─── POST - Create a new campaign ────────────────────────────────────── */
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`marketing-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -304,6 +315,11 @@ export async function POST(request: Request) {
 /* ─── PATCH - Update campaign status (schedule, pause, etc.) ──────────── */
 
 export async function PATCH(request: Request) {
+  const rl = await checkRateLimit(`marketing-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

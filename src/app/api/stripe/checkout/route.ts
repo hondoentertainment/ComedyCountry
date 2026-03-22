@@ -3,12 +3,18 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createCheckoutSession, createPortalSession, isStripeConfigured } from "@/lib/stripe";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * POST - Create a Stripe Checkout Session for subscription.
  * Returns checkout URL for client-side redirect.
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`stripe-checkout:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || !session.user.email) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -84,6 +90,11 @@ export async function POST(request: Request) {
  * GET - Create a Stripe billing portal session for managing subscription.
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`stripe-checkout:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

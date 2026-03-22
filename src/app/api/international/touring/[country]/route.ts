@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { getTouringInfo } from "@/lib/international";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ country: string }> },
 ) {
+  const rl = await checkRateLimit(`international-touring:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { country } = await params;
     const info = await getTouringInfo(decodeURIComponent(country));

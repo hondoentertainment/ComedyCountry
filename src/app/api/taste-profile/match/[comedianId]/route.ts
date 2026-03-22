@@ -2,14 +2,20 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getTasteMatchScore, computeTasteProfile, getTasteProfile } from "@/lib/taste-profile";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET - Get taste match percentage for a comedian.
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ comedianId: string }> }
 ) {
+  const rl = await checkRateLimit(`taste-profile-match:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserBadges, BADGE_DEFINITIONS } from "@/lib/badges.achievement";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET /api/badges - Get user's earned badges or all badge definitions.
@@ -10,6 +11,11 @@ import { getUserBadges, BADGE_DEFINITIONS } from "@/lib/badges.achievement";
  *   userId=X  — get badges for specific user (public profiles)
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`badges:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
 
   // All badge definitions

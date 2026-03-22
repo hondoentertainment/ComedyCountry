@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET - Fetch active promoted listings for a given placement type.
  * Used by frontend components to display promoted content.
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`promoted:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type"); // VENUE_FEATURED, EVENT_FEATURED, etc.
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "3", 10), 10);

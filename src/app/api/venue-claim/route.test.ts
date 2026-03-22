@@ -15,6 +15,10 @@ vi.mock("@/lib/prisma", () => ({
     },
   },
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
@@ -79,7 +83,7 @@ describe("GET /api/venue-claim", () => {
       { id: "c1", venueId: "v1", status: "PENDING" },
     ] as never);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
     expect(data).toHaveLength(1);
   });

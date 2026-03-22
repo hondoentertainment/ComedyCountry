@@ -38,7 +38,40 @@ function isProtected(pathname: string): boolean {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const response = NextResponse.next();
+
+  // ─── Request ID tracing ───────────────────────────────────────────
+  const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-request-id", requestId);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+  response.headers.set("x-request-id", requestId);
+
+  // ─── Security headers ──────────────────────────────────────────────
+  response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+  response.headers.set("X-DNS-Prefetch-Control", "off");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+  // Generate a nonce for inline scripts
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const csp = [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' https://maps.googleapis.com https://*.gstatic.com`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: https: blob:",
+    "font-src 'self' https://fonts.gstatic.com",
+    "connect-src 'self' https://maps.googleapis.com",
+    "frame-src 'self' https://maps.googleapis.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+  response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("x-nonce", nonce);
 
   // ─── Security headers for API responses ─────────────────────────────
   if (pathname.startsWith("/api/")) {

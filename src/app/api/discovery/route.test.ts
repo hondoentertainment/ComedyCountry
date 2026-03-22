@@ -18,6 +18,10 @@ vi.mock("@/lib/discovery-engine", () => ({
   applyDiscoveryBoost: vi.fn(),
   getActiveBoosts: vi.fn(),
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import {
@@ -277,7 +281,7 @@ describe("/api/discovery", () => {
         lastComputedAt: new Date(),
       } as never);
 
-      const res = await profileGET();
+      const res = await profileGET(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(200);
@@ -296,7 +300,7 @@ describe("/api/discovery", () => {
         lastComputedAt: new Date(),
       } as never);
 
-      const res = await profileGET();
+      const res = await profileGET(new Request("http://localhost:3000"));
       expect(res.status).toBe(200);
       expect(vi.mocked(computeDiscoveryProfile)).toHaveBeenCalled();
     });
@@ -312,7 +316,7 @@ describe("/api/discovery", () => {
         { entityId: "e1", entityType: "EVENT", reason: "Because you like dark comedy" },
       ] as never);
 
-      const res = await insightsGET();
+      const res = await insightsGET(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(200);
@@ -379,7 +383,7 @@ describe("/api/discovery", () => {
         { id: "boost-1", entityType: "EVENT", entityId: "e1", boostType: "TRENDING", boostMultiplier: 1.6, expiresAt: new Date() },
       ] as never);
 
-      const res = await boostGET();
+      const res = await boostGET(new Request("http://localhost:3000"));
       const data = await res.json();
 
       expect(res.status).toBe(200);

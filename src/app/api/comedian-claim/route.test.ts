@@ -21,6 +21,10 @@ vi.mock("@/lib/prisma", () => ({
     },
   },
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
@@ -98,7 +102,7 @@ describe("POST /api/comedian-claim", () => {
 describe("GET /api/comedian-claim", () => {
   it("returns 401 when not authenticated", async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     expect(res.status).toBe(401);
   });
 
@@ -107,7 +111,7 @@ describe("GET /api/comedian-claim", () => {
     vi.mocked(prisma.comedianClaim.findMany).mockResolvedValue([
       { id: "claim1", status: "PENDING" },
     ] as never);
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     const data = await res.json();
     expect(data).toHaveLength(1);
     expect(data[0].status).toBe("PENDING");

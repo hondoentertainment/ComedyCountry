@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { getFeeBreakdown, calculateTransparentPrice } from "@/lib/fair-ticketing";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`fair-ticketing-price:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const ticketTypeId = searchParams.get("ticketTypeId");
   const eventId = searchParams.get("eventId");
@@ -24,6 +30,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`fair-ticketing-price:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   let body: { ticketTypeId?: string; eventId?: string };
   try {
     body = await request.json();

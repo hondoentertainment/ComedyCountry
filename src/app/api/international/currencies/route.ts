@@ -6,6 +6,7 @@ import {
   formatCurrency,
   SUPPORTED_CURRENCIES,
 } from "@/lib/currency";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET /api/international/currencies
@@ -17,6 +18,11 @@ import {
  * - amount: amount to convert (for convert/table, default: 1)
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`international-currencies:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const view = searchParams.get("view") || "list";

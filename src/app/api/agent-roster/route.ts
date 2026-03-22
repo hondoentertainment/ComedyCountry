@@ -3,8 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAgentRoster } from "@/lib/marketplace";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -20,6 +26,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -50,6 +61,11 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

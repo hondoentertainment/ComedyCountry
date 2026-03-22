@@ -5,6 +5,7 @@ import {
   buildVenueDashboardSnapshot,
   createDashboardStream,
 } from "@/lib/venue-realtime";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Real-Time Venue Dashboard API
@@ -13,6 +14,11 @@ import {
  * GET without SSE header → single snapshot
  */
 export async function GET(request: NextRequest) {
+  const rl = await checkRateLimit(`venue-ops-live-dashboard:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

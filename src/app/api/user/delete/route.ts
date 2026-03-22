@@ -3,8 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { applyRateLimit, jsonError, jsonResponse, logError } from "@/lib/api";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function DELETE(request: Request) {
+  const rl = await checkRateLimit(`user-delete:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   const rateLimit = applyRateLimit(
     request,

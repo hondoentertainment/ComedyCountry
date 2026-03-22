@@ -2,13 +2,19 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { computeTasteProfile, getTasteProfile } from "@/lib/taste-profile";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 const STALE_DAYS = 7;
 
 /**
  * GET - Get current user's taste profile. Auto-computes if missing or stale (>7 days).
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const rl = await checkRateLimit(`taste-profile:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -35,7 +41,12 @@ export async function GET() {
 /**
  * POST - Force recompute the user's taste profile.
  */
-export async function POST() {
+export async function POST(request: Request) {
+  const rl = await checkRateLimit(`taste-profile:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

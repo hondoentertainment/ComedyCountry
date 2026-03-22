@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isValidCoordinates } from "@/lib/geo";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * POST /api/location/save
@@ -11,6 +12,11 @@ import { isValidCoordinates } from "@/lib/geo";
  * Users can save multiple locations with different radii.
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -75,7 +81,12 @@ export async function POST(request: Request) {
  *
  * Get all saved location alerts for the current user.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -103,6 +114,11 @@ export async function GET() {
  * Update a location alert (toggle active, change radius).
  */
 export async function PATCH(request: Request) {
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -158,6 +174,11 @@ export async function PATCH(request: Request) {
  * Delete a saved location alert.
  */
 export async function DELETE(request: Request) {
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

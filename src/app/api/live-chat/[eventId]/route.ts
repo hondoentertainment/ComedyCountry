@@ -2,11 +2,17 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ eventId: string }> },
 ) {
+  const rl = await checkRateLimit(`live-chat:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { eventId } = await params;
   const { searchParams } = new URL(request.url);
   const after = searchParams.get("after");
@@ -48,6 +54,11 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ eventId: string }> },
 ) {
+  const rl = await checkRateLimit(`live-chat:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

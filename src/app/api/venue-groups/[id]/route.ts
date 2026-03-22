@@ -3,10 +3,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getVenueGroup } from "@/lib/marketplace";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 type Ctx = { params: Promise<{ id: string }> };
 
-export async function GET(_request: Request, context: Ctx) {
+export async function GET(request: Request, context: Ctx) {
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -28,6 +34,11 @@ export async function GET(_request: Request, context: Ctx) {
 }
 
 export async function POST(request: Request, context: Ctx) {
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -71,7 +82,12 @@ export async function POST(request: Request, context: Ctx) {
   }
 }
 
-export async function DELETE(_request: Request, context: Ctx) {
+export async function DELETE(request: Request, context: Ctx) {
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

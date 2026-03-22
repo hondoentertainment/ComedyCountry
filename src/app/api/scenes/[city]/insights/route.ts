@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { getSceneIntelligenceBySlug } from "@/lib/scene-intelligence";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ city: string }> },
 ) {
+  const rl = await checkRateLimit(`scenes-insights:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { city } = await params;
     const insights = await getSceneIntelligenceBySlug(city);

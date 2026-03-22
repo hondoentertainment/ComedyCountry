@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { fetchChannelStats } from "@/lib/youtube";
 import { applyRateLimit, getClientAddress, jsonError, jsonResponse, logError, logInfo } from "@/lib/api";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * POST /api/youtube/sync
@@ -12,6 +13,11 @@ import { applyRateLimit, getClientAddress, jsonError, jsonResponse, logError, lo
  * or "X-API-Key: <key>" header. If unset, endpoint is unprotected (dev only).
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`youtube-sync:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const rateLimit = applyRateLimit(request, getClientAddress(request), {
     prefix: "youtube-sync",
     limit: 5,

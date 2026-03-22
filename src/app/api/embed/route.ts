@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Embeddable widget data endpoint.
@@ -12,6 +13,11 @@ import { prisma } from "@/lib/prisma";
  * Also supports ?format=html for a self-contained HTML embed.
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`embed:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type");
   const slug = searchParams.get("slug");

@@ -2,12 +2,18 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { generateTrendingNearYouFeed } from "@/lib/discovery-engine";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET - Get trending near you feed.
  * Query params: lat, lng, limit
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`discovery-trending-nearby:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

@@ -10,18 +10,24 @@ import {
   upsertEventExperienceFeedback,
   type EventExperienceInput,
 } from "@/lib/live-reputation";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 // GET: List reviews and rating stats for an event
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`events-reviews:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const { id: eventId } = await params;
   if (!eventId) {
     return NextResponse.json({ error: "Missing event ID" }, { status: 400 });
   }
 
-  const url = new URL(_request.url);
+  const url = new URL(request.url);
   const page = Math.max(1, parseInt(url.searchParams.get("page") ?? "1", 10));
   const take = 10;
   const skip = (page - 1) * take;
@@ -49,6 +55,11 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`events-reviews:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -23,6 +23,10 @@ vi.mock("@/lib/prisma", () => ({
     },
   },
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
@@ -209,7 +213,7 @@ describe("GET /api/tickets/transfer", () => {
   it("returns 401 when not authenticated", async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(401);
@@ -239,7 +243,7 @@ describe("GET /api/tickets/transfer", () => {
       .mockResolvedValueOnce([sentTransfer])
       .mockResolvedValueOnce([receivedTransfer]);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -252,7 +256,7 @@ describe("GET /api/tickets/transfer", () => {
   it("returns empty arrays when user has no transfers", async () => {
     mockPrisma.ticketTransfer.findMany.mockResolvedValue([]);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(200);

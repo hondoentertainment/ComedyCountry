@@ -8,6 +8,10 @@ vi.mock("@/lib/auth", () => ({ authOptions: {} }));
 vi.mock("@/lib/notifications", () => ({
   getUnreadCount: vi.fn(),
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getServerSession } from "next-auth";
 import { getUnreadCount } from "@/lib/notifications";
@@ -20,7 +24,7 @@ describe("GET /api/notifications/unread-count", () => {
   it("returns count 0 when not authenticated", async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -35,7 +39,7 @@ describe("GET /api/notifications/unread-count", () => {
     });
     vi.mocked(getUnreadCount).mockResolvedValue(5);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost:3000"));
     const data = await res.json();
 
     expect(res.status).toBe(200);

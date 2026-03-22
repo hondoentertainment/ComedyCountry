@@ -8,6 +8,7 @@ import {
   generateUserCalendarFeed,
   syncToProvider,
 } from "@/lib/calendar-sync";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET /api/calendar-sync
@@ -16,6 +17,11 @@ import {
  * If ?format=ical is passed, returns the iCal feed instead.
  */
 export async function GET(req: NextRequest) {
+  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -55,6 +61,11 @@ export async function GET(req: NextRequest) {
  * Or trigger a sync with: { action: "sync", syncId: string }
  */
 export async function POST(req: NextRequest) {
+  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -100,6 +111,11 @@ export async function POST(req: NextRequest) {
  * Delete a calendar sync.
  */
 export async function DELETE(req: NextRequest) {
+  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {

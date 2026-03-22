@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
 import { generateUserCalendarFeed } from "@/lib/calendar-sync";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 const TOKEN_SEPARATOR = ":";
 const DEFAULT_EXPIRY_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
@@ -49,6 +50,11 @@ function verifyCalendarFeedToken(token: string): { userId: string } | null {
  * Used by Google Calendar, Apple Calendar, etc. for subscription.
  */
 export async function GET(req: NextRequest) {
+  const rl = await checkRateLimit(`calendar-feed:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {
     return NextResponse.json({ error: "token required" }, { status: 400 });

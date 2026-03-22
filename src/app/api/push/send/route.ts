@@ -3,11 +3,17 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendPushToUser } from "@/lib/push";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * POST /api/push/send - Send a push notification (admin only, or system use)
  */
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`push-send:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   // Allow CRON_SECRET or admin auth
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;

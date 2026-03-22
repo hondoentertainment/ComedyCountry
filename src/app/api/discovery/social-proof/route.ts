@@ -2,12 +2,18 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSocialProof, computeSocialProof } from "@/lib/discovery-engine";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * GET - Get social proof for an entity.
  * Query params: entityType, entityId
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`discovery-social-proof:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;

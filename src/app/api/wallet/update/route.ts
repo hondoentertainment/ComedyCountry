@@ -8,6 +8,7 @@ import {
   generateApplePassPayload,
   generateGooglePassPayload,
 } from "@/lib/wallet-passes";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * PATCH /api/wallet/update
@@ -16,6 +17,11 @@ import {
  * or update pass status (void, expire).
  */
 export async function PATCH(request: NextRequest) {
+  const rl = await checkRateLimit(`wallet-update:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

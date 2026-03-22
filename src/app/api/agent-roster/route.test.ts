@@ -22,6 +22,10 @@ vi.mock("next-auth", () => ({
 vi.mock("@/lib/auth", () => ({
   authOptions: {},
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { getAgentRoster } from "@/lib/marketplace";
 import { prisma } from "@/lib/prisma";
@@ -45,7 +49,7 @@ describe("GET /api/agent-roster", () => {
 
   it("returns 401 when not authenticated", async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     expect(res.status).toBe(401);
   });
 
@@ -55,7 +59,7 @@ describe("GET /api/agent-roster", () => {
       { id: "ar1", comedian: { name: "Dave" } } as any,
     ]);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     const data = await res.json();
 
     expect(res.status).toBe(200);

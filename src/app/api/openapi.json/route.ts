@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const rl = await checkRateLimit(`openapi.json:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const spec = {
     openapi: "3.1.0",
     info: {

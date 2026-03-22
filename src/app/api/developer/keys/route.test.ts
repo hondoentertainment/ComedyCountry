@@ -22,6 +22,10 @@ vi.mock("next-auth", () => ({
 vi.mock("@/lib/auth", () => ({
   authOptions: {},
 }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 59 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 import { createApiKey } from "@/lib/marketplace";
 import { prisma } from "@/lib/prisma";
@@ -46,7 +50,7 @@ describe("GET /api/developer/keys", () => {
   it("returns 401 when not authenticated", async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
     const req = createRequest("http://localhost/api/developer/keys");
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     expect(res.status).toBe(401);
   });
 
@@ -56,7 +60,7 @@ describe("GET /api/developer/keys", () => {
       { id: "ak1", name: "My Key", key: "pa_free_abc", tier: "free", rateLimit: 100, isActive: true },
     ]);
 
-    const res = await GET();
+    const res = await GET(new Request("http://localhost"));
     const data = await res.json();
 
     expect(res.status).toBe(200);
