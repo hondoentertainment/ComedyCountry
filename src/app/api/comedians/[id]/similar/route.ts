@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(
   request: Request,
