@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    console.log("Skipping seed in production environment");
+    return;
+  }
+
   // Venues
   const venue1 = await prisma.venue.upsert({
     where: { id: "seed-venue-1" },
@@ -94,11 +99,15 @@ async function main() {
       bio: "Stand-up comedian, writer, and filmmaker.",
       yearsActiveFrom: 1984,
       touringStatus: "TOURING",
-      genres: {
-        create: [{ genre: "observational" }, { genre: "dark" }],
-      },
     },
   });
+  for (const genre of ["observational", "dark"]) {
+    await prisma.comedianGenre.upsert({
+      where: { id: `seed-genre-${comedian1.id}-${genre}` },
+      update: {},
+      create: { id: `seed-genre-${comedian1.id}-${genre}`, comedianId: comedian1.id, genre },
+    });
+  }
 
   const comedian2 = await prisma.comedian.upsert({
     where: { slug: "ali-wong" },
@@ -109,11 +118,15 @@ async function main() {
       bio: "Comedian, actress, and writer known for her Netflix specials.",
       yearsActiveFrom: 2005,
       touringStatus: "TOURING",
-      genres: {
-        create: [{ genre: "observational" }, { genre: "storyteller" }],
-      },
     },
   });
+  for (const genre of ["observational", "storyteller"]) {
+    await prisma.comedianGenre.upsert({
+      where: { id: `seed-genre-${comedian2.id}-${genre}` },
+      update: {},
+      create: { id: `seed-genre-${comedian2.id}-${genre}`, comedianId: comedian2.id, genre },
+    });
+  }
 
   const comedian3 = await prisma.comedian.upsert({
     where: { slug: "nate-bargatze" },
@@ -125,11 +138,15 @@ async function main() {
       yearsActiveFrom: 2002,
       touringStatus: "TOURING",
       website: "https://natebargatze.com",
-      genres: {
-        create: [{ genre: "observational" }, { genre: "absurdist" }],
-      },
     },
   });
+  for (const genre of ["observational", "absurdist"]) {
+    await prisma.comedianGenre.upsert({
+      where: { id: `seed-genre-${comedian3.id}-${genre}` },
+      update: {},
+      create: { id: `seed-genre-${comedian3.id}-${genre}`, comedianId: comedian3.id, genre },
+    });
+  }
 
   // YouTube channels (channelId can be handle for sync to resolve via forHandle)
   await prisma.youTubeChannel.upsert({
@@ -184,7 +201,6 @@ async function main() {
   const baseDate = new Date();
   baseDate.setHours(0, 0, 0, 0);
 
-  const eventDates = [1, 7, 14, 21, 3, 10, 17, 5, 12];
   const eventConfigs = [
     { venue: venue1, comedian: comedian1, dayOffset: 1 },
     { venue: venue1, comedian: comedian2, dayOffset: 7 },
@@ -205,22 +221,27 @@ async function main() {
     eventDate.setDate(eventDate.getDate() + dayOffset);
     eventDate.setHours(19, 30, 0, 0);
 
+    const eventId = `seed-event-${i + 1}`;
     await prisma.event.upsert({
-      where: { id: `seed-event-${i + 1}` },
+      where: { id: eventId },
       update: {},
       create: {
-        id: `seed-event-${i + 1}`,
+        id: eventId,
         venueId: venue.id,
         date: eventDate,
         showtime: "7:30 PM & 10:00 PM",
         ticketUrl: venue.website ? `${venue.website}/tickets` : null,
         showType: "HEADLINE",
-        comedians: {
-          create: {
-            comedianId: comedian.id,
-            role: "headline",
-          },
-        },
+      },
+    });
+    await prisma.eventComedian.upsert({
+      where: { id: `seed-ec-${i + 1}` },
+      update: {},
+      create: {
+        id: `seed-ec-${i + 1}`,
+        eventId,
+        comedianId: comedian.id,
+        role: "headline",
       },
     });
   }
