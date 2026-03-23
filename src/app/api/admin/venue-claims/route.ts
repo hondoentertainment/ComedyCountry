@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Admin endpoint for managing venue claims.
@@ -10,6 +11,11 @@ import { prisma } from "@/lib/prisma";
  * PATCH - Approve/reject a venue claim
  */
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`admin-venue-claims:${getRateLimitKey(request)}`, { limit: 120, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -64,6 +70,11 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const rl = await checkRateLimit(`admin-venue-claims:${getRateLimitKey(request)}`, { limit: 120, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

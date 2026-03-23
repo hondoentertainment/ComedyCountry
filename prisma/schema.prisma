@@ -499,6 +499,7 @@ model ComedyListSave {
   list      ComedyList @relation(fields: [listId], references: [id], onDelete: Cascade)
 
   @@unique([userId, listId])
+  @@index([listId])
 }
 
 // =============================================================================
@@ -920,6 +921,7 @@ model Ticket {
 
   @@index([eventId])
   @@index([userId])
+  @@index([ticketTypeId])
   @@index([qrCode])
 }
 
@@ -1334,6 +1336,7 @@ model SetlistEntry {
   comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
 
   @@index([comedianId, performedAt])
+  @@index([eventId])
 }
 
 // =============================================================================
@@ -1369,6 +1372,7 @@ model DiscussionReply {
   thread    DiscussionThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
 
   @@index([threadId, createdAt])
+  @@index([userId])
 }
 
 model VenueCheckIn {
@@ -1399,6 +1403,7 @@ model UserClip {
 
   votes       ClipVote[]
 
+  @@index([eventId])
   @@index([comedianId, status])
   @@index([venueId])
   @@index([userId])
@@ -1421,6 +1426,7 @@ model ClipVote {
   clip    UserClip @relation(fields: [clipId], references: [id], onDelete: Cascade)
 
   @@unique([clipId, userId])
+  @@index([userId])
 }
 
 model LiveChat {
@@ -1444,6 +1450,7 @@ model LiveChatMessage {
   chat      LiveChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@index([chatId, createdAt])
+  @@index([userId])
 }
 
 model FanClub {
@@ -1472,6 +1479,7 @@ model FanClubMember {
   club      FanClub  @relation(fields: [clubId], references: [id], onDelete: Cascade)
 
   @@unique([clubId, userId])
+  @@index([userId])
 }
 
 model Poll {
@@ -1487,6 +1495,7 @@ model Poll {
   votes       PollVote[]
 
   @@index([entityType, entityId])
+  @@index([userId])
 }
 
 model PollVote {
@@ -1499,6 +1508,7 @@ model PollVote {
   poll        Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
 
   @@unique([pollId, userId])
+  @@index([userId])
 }
 
 // =============================================================================
@@ -1594,6 +1604,7 @@ model EmailPurchaseToken {
   campaign       EmailCampaign? @relation(fields: [campaignId], references: [id])
 
   @@index([token])
+  @@index([ticketTypeId])
   @@index([campaignId, recipientEmail])
   @@index([eventId])
 }
@@ -1621,6 +1632,8 @@ model VenueGroup {
 
   venues      VenueGroupMember[]
   staff       VenueGroupStaff[]
+
+  @@index([ownerId])
 }
 
 model VenueGroupMember {
@@ -1632,6 +1645,7 @@ model VenueGroupMember {
   group     VenueGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([groupId, venueId])
+  @@index([venueId])
 }
 
 model VenueGroupStaff {
@@ -1644,6 +1658,7 @@ model VenueGroupStaff {
   group     VenueGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([groupId, userId])
+  @@index([userId])
 }
 
 model AgentRoster {
@@ -1659,6 +1674,7 @@ model AgentRoster {
   comedian    Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
 
   @@unique([userId, comedianId])
+  @@index([comedianId])
   @@index([userId])
 }
 
@@ -1677,6 +1693,8 @@ model Sponsorship {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@index([comedianId])
+  @@index([venueId])
   @@index([status])
   @@index([eventId])
 }
@@ -1753,6 +1771,7 @@ model NewsArticle {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@index([authorId])
   @@index([category])
   @@index([published, publishedAt])
   @@index([featured])
@@ -2711,6 +2730,7 @@ model ReferralCode {
   redemptions   ReferralRedemption[]
 
   @@index([referrerId])
+  @@index([eventId])
   @@index([venueId])
 }
 
@@ -2768,6 +2788,7 @@ model ABTest {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([eventId])
   @@index([venueId])
   @@index([status])
 }
