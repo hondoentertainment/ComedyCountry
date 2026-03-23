@@ -43,7 +43,9 @@ export async function GET(
         _count: { select: { followers: true } },
       },
     });
-    return NextResponse.json({ similar });
+    return NextResponse.json({ similar }, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   }
 
   // Find comedians who share the most genres
@@ -71,5 +73,7 @@ export async function GET(
 
   scored.sort((a, b) => b.score - a.score || b._count.followers - a._count.followers);
 
-  return NextResponse.json({ similar: scored.slice(0, 8) });
+  return NextResponse.json({ similar: scored.slice(0, 8) }, {
+    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+  });
 }

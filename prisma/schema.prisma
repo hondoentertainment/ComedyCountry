@@ -48,6 +48,8 @@ model VenuePhoto {
   caption   String?
   sortOrder Int      @default(0)
   venue     Venue   @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@index([venueId])
 }
 
 model VenueSocialLink {
@@ -56,6 +58,8 @@ model VenueSocialLink {
   platform  String   // instagram, twitter, facebook, youtube
   url       String
   venue     Venue   @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@index([venueId])
 }
 
 enum VenueType {
@@ -122,6 +126,8 @@ model ComedianGenre {
   comedianId String
   genre      String   // dark, observational, absurdist, storyteller, etc.
   comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId])
 }
 
 model ComedianSocialLink {
@@ -130,6 +136,8 @@ model ComedianSocialLink {
   platform   String
   url        String
   comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId])
 }
 
 model ComedianPodcastLink {
@@ -138,6 +146,8 @@ model ComedianPodcastLink {
   podcastName String
   episodeUrl  String?
   comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([comedianId])
 }
 
 model ComedianSpecial {
@@ -149,6 +159,8 @@ model ComedianSpecial {
   url        String?
   comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
   ratings    SpecialRating[]
+
+  @@index([comedianId])
 }
 
 model YouTubeChannel {
@@ -211,6 +223,7 @@ model EventReview {
 
   @@unique([eventId, userId])
   @@index([eventId])
+  @@index([userId])
 }
 
 model AccessibilityTag {
@@ -247,6 +260,9 @@ model EventComedian {
 
   event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([comedianId])
 }
 
 // =============================================================================
@@ -312,6 +328,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -319,6 +336,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -339,6 +358,7 @@ model ComedianFollow {
   comedian   Comedian @relation(fields: [comedianId], references: [id], onDelete: Cascade)
 
   @@unique([userId, comedianId])
+  @@index([comedianId])
 }
 
 model ComedianTierRating {
@@ -366,6 +386,7 @@ model VenueFollow {
   venue   Venue @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
   @@unique([userId, venueId])
+  @@index([venueId])
 }
 
 // =============================================================================
@@ -498,6 +519,7 @@ model VenueReview {
 
   @@unique([venueId, userId])
   @@index([venueId])
+  @@index([userId])
 }
 
 // =============================================================================
@@ -517,6 +539,7 @@ model SpecialRating {
 
   @@unique([specialId, userId])
   @@index([specialId])
+  @@index([userId])
 }
 
 // =============================================================================
@@ -535,6 +558,7 @@ model ShowGroup {
   members   ShowGroupMember[]
 
   @@index([eventId])
+  @@index([creatorId])
   @@index([code])
 }
 
@@ -549,6 +573,7 @@ model ShowGroupMember {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([groupId, userId])
+  @@index([userId])
 }
 
 // =============================================================================
@@ -612,6 +637,7 @@ model PromotedListing {
   @@index([type, status, startDate, endDate])
   @@index([venueId])
   @@index([eventId])
+  @@index([comedianId])
 }
 
 enum PromotionType {
@@ -668,6 +694,7 @@ model ComedianClaim {
   createdAt   DateTime @default(now())
 
   @@unique([userId, comedianId])
+  @@index([comedianId])
   @@index([status])
 }
 
@@ -816,6 +843,7 @@ model VenueClaim {
   createdAt   DateTime    @default(now())
 
   @@unique([userId, venueId])
+  @@index([venueId])
   @@index([status])
 }
 
@@ -1134,6 +1162,7 @@ model BookingRequest {
 
   @@index([comedianId, status])
   @@index([venueId])
+  @@index([requesterId])
 }
 
 enum BookingStatus {

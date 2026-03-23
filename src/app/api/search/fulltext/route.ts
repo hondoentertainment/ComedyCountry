@@ -23,12 +23,18 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Build tsquery from search terms
+    // Build tsquery from search terms — strip non-alphanumeric chars to prevent tsquery injection
     const tsquery = q
       .split(/\s+/)
       .filter(Boolean)
+      .map((w) => w.replace(/[^a-zA-Z0-9]/g, ""))
+      .filter((w) => w.length > 0)
       .map((w) => `${w}:*`)
       .join(" & ");
+
+    if (!tsquery) {
+      return NextResponse.json({ venues: [], comedians: [], events: [] });
+    }
 
     // Try full-text search with ts_rank
     const [comedians, venues, events] = await Promise.all([

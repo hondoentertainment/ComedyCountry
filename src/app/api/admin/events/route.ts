@@ -2,8 +2,14 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { generateEventNotifications } from "@/lib/notifications";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const rl = await checkRateLimit(`admin-events:${getRateLimitKey(request)}`, { limit: 120, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const auth = await requireAdmin();
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.reason }, { status: 401 });
@@ -44,6 +50,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(`admin-events:${getRateLimitKey(request)}`, { limit: 120, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const auth = await requireAdmin();
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.reason }, { status: 401 });

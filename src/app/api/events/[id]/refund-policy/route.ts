@@ -28,7 +28,9 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(policy);
+    return NextResponse.json(policy, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   } catch {
     return NextResponse.json(
       { error: "Failed to load refund policy" },

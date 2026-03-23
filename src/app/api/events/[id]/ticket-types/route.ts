@@ -19,7 +19,9 @@ export async function GET(
 
   try {
     const ticketTypes = await getTicketTypesForEvent(eventId);
-    return NextResponse.json(ticketTypes);
+    return NextResponse.json(ticketTypes, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   } catch {
     return NextResponse.json(
       { error: "Failed to load ticket types" },

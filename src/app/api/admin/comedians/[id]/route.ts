@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`admin-comedians-id:${getRateLimitKey(_request)}`, { limit: 120, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const auth = await requireAdmin();
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.reason }, { status: 401 });
@@ -35,6 +41,11 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`admin-comedians-id:${getRateLimitKey(request)}`, { limit: 120, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const auth = await requireAdmin();
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.reason }, { status: 401 });
@@ -77,6 +88,11 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const rl = await checkRateLimit(`admin-comedians-id:${getRateLimitKey(_request)}`, { limit: 120, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   const auth = await requireAdmin();
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.reason }, { status: 401 });

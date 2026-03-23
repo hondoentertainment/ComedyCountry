@@ -55,6 +55,7 @@ export async function GET(
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
       "Content-Disposition": `attachment; filename="${title.replace(/[^a-zA-Z0-9]/g, "-")}.ics"`,
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
     },
   });
 }

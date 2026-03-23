@@ -44,6 +44,8 @@ export async function GET(
       page,
       pages: Math.ceil(total / take),
       ...stats,
+    }, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
     });
   } catch {
     return NextResponse.json({ error: "Failed to load reviews" }, { status: 500 });

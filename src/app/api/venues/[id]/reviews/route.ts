@@ -42,6 +42,8 @@ export async function GET(
     count: stats._count,
     page,
     pages: Math.ceil(total / take),
+  }, {
+    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
   });
 }
 

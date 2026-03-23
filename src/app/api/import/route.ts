@@ -9,8 +9,8 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  *
  * Body: { venues?: VenueImportItem[], events?: EventImportItem[] }
  *
- * Security: Set BULK_IMPORT_API_KEY to require "Authorization: Bearer <key>" or
- * "X-API-Key: <key>" header. If unset, endpoint is unprotected (dev only).
+ * Security: Requires BULK_IMPORT_API_KEY env var. Provide key via
+ * "Authorization: Bearer <key>" or "X-API-Key: <key>" header.
  */
 export async function POST(request: Request) {
   const rl = await checkRateLimit(`import:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
@@ -26,21 +26,13 @@ export async function POST(request: Request) {
   if (rateLimit) return rateLimit;
 
   const apiKey = process.env.BULK_IMPORT_API_KEY;
-  const isProduction = process.env.NODE_ENV === "production";
-
-  if (isProduction && !apiKey) {
-    return jsonError(request, 503, "BULK_IMPORT_API_KEY required in production");
-  }
-
-  if (apiKey) {
-    const authHeader = request.headers.get("authorization");
-    const xApiKey = request.headers.get("x-api-key");
-    const provided = authHeader?.startsWith("Bearer ")
-      ? authHeader.slice(7)
-      : xApiKey;
-    if (provided !== apiKey) {
-      return jsonError(request, 401, "Unauthorized");
-    }
+  const authHeader = request.headers.get("authorization");
+  const xApiKey = request.headers.get("x-api-key");
+  const provided = authHeader?.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : xApiKey;
+  if (!apiKey || provided !== apiKey) {
+    return jsonError(request, 403, "Invalid or missing API key");
   }
 
   let payload: ImportPayload;

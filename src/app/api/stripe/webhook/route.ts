@@ -714,6 +714,15 @@ async function createNotificationSafe(
 // Email Templates
 // =============================================================================
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function orderConfirmationEmailHtml(
   userName: string,
   orderId: string,
@@ -727,7 +736,7 @@ function orderConfirmationEmailHtml(
 <body style="margin:0;padding:0;background:#111;color:#eee;font-family:sans-serif">
   <div style="max-width:600px;margin:0 auto;padding:24px">
     <h1 style="color:#d4a843;font-size:22px;margin-bottom:4px">Punchline Atlas</h1>
-    <p style="color:#ccc">Hey ${userName},</p>
+    <p style="color:#ccc">Hey ${escapeHtml(userName)},</p>
     <p style="color:#ccc">Your ticket order has been confirmed!</p>
     <div style="background:#1a1a1a;border-radius:8px;padding:16px;margin:16px 0">
       <p style="color:#aaa;margin:4px 0"><strong style="color:white">Order ID:</strong> #${orderId.slice(0, 8)}</p>
@@ -750,7 +759,7 @@ function paymentFailedEmailHtml(userName: string): string {
 <body style="margin:0;padding:0;background:#111;color:#eee;font-family:sans-serif">
   <div style="max-width:600px;margin:0 auto;padding:24px">
     <h1 style="color:#d4a843;font-size:22px;margin-bottom:4px">Punchline Atlas</h1>
-    <p style="color:#ccc">Hey ${userName},</p>
+    <p style="color:#ccc">Hey ${escapeHtml(userName)},</p>
     <p style="color:#ccc">We were unable to process your recent payment. Please update your payment method to keep your subscription active.</p>
     <a href="${process.env.NEXTAUTH_URL || "https://punchline-atlas.vercel.app"}/settings" style="display:inline-block;padding:12px 24px;background:#d4a843;color:#111;font-weight:bold;border-radius:8px;text-decoration:none;margin-top:12px">Update Payment Method</a>
     <p style="color:#666;font-size:12px;margin-top:24px">If you need help, contact support at support@punchlineatlas.com.</p>

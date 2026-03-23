@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+// Allowed CORS origins
+const ALLOWED_ORIGINS = [
+  process.env.NEXTAUTH_URL || "http://localhost:3000",
+  "https://punchline-atlas.vercel.app",
+].filter(Boolean);
+
 // Routes that require authentication
 const PROTECTED_PATTERNS = [
   /^\/api\/bookings/,
@@ -80,14 +86,18 @@ export async function middleware(request: NextRequest) {
 
     // CORS for embeddable checkout
     if (pathname.startsWith("/api/checkout/embed")) {
-      const origin = request.headers.get("origin") ?? "*";
-      response.headers.set("Access-Control-Allow-Origin", origin);
+      const origin = request.headers.get("origin");
+      if (origin && ALLOWED_ORIGINS.includes(origin)) {
+        response.headers.set("Access-Control-Allow-Origin", origin);
+        response.headers.set("Vary", "Origin");
+      }
       response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
       response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
       response.headers.set("Access-Control-Max-Age", "86400");
 
       if (request.method === "OPTIONS") {
-        return new NextResponse(null, { status: 204, headers: response.headers });
+        const preflightResponse = new NextResponse(null, { status: 204, headers: response.headers });
+        return preflightResponse;
       }
     }
   }

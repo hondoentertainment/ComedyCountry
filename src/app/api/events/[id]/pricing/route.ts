@@ -27,7 +27,9 @@ export async function GET(
     }
 
     const summary = await getEventPricingSummary(eventId);
-    return NextResponse.json(summary);
+    return NextResponse.json(summary, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   } catch {
     return NextResponse.json(
       { error: "Failed to load pricing" },

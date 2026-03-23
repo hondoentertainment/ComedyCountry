@@ -7,6 +7,7 @@ import {
   negotiateBooking,
 } from "@/lib/booking";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
@@ -27,6 +28,20 @@ export async function GET(
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
+
+    const userId = session.user.id;
+    const isAdmin = (session.user as { role?: string }).role === "admin";
+    const isRequester = booking.requesterId === userId;
+    const isComedian = !isAdmin && !isRequester
+      ? !!(await prisma.comedianClaim.findFirst({
+          where: { userId, comedianId: booking.comedianId, status: "APPROVED" },
+        }))
+      : false;
+
+    if (!isAdmin && !isRequester && !isComedian) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     return NextResponse.json(booking);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to get booking";

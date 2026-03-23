@@ -18,7 +18,9 @@ export async function GET(
 
   try {
     const stats = await getEventRatingStats(eventId);
-    return NextResponse.json(stats);
+    return NextResponse.json(stats, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   } catch {
     return NextResponse.json({ error: "Failed to load stats" }, { status: 500 });
   }

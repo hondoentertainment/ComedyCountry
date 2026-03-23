@@ -47,5 +47,7 @@ export async function GET(
     _count: comedian._count,
     specialCount: comedian.specialReleases.length,
     avgTier,
+  }, {
+    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
   });
 }
