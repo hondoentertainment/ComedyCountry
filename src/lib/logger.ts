@@ -5,6 +5,8 @@ interface LogEntry {
   message: string;
   timestamp: string;
   requestId?: string;
+  method?: string;
+  path?: string;
   context?: Record<string, unknown>;
   error?: { message: string; stack?: string; name: string };
 }
@@ -23,17 +25,27 @@ function shouldLog(level: LogLevel): boolean {
   return LOG_LEVELS[level] >= LOG_LEVELS[currentLevel];
 }
 
-function formatEntry(entry: LogEntry): string {
-  return JSON.stringify(entry);
+function normalizeError(error: unknown): LogEntry["error"] | undefined {
+  if (!error) return undefined;
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: process.env.NODE_ENV === "production" ? undefined : error.stack,
+    };
+  }
+  return { name: "UnknownError", message: String(error) };
 }
 
-function log(level: LogLevel, message: string, context?: Record<string, unknown>, err?: Error): void {
+function log(level: LogLevel, message: string, context?: Record<string, unknown>, err?: unknown): void {
   if (!shouldLog(level)) return;
 
-  // Extract requestId from context so it appears as a top-level field
+  // Extract well-known fields from context so they appear as top-level fields
   const requestId = context?.requestId as string | undefined;
+  const method = context?.method as string | undefined;
+  const path = context?.path as string | undefined;
   const restContext = context
-    ? Object.fromEntries(Object.entries(context).filter(([k]) => k !== "requestId"))
+    ? Object.fromEntries(Object.entries(context).filter(([k]) => !["requestId", "method", "path"].includes(k)))
     : undefined;
 
   const entry: LogEntry = {
@@ -41,11 +53,13 @@ function log(level: LogLevel, message: string, context?: Record<string, unknown>
     message,
     timestamp: new Date().toISOString(),
     ...(requestId && { requestId }),
+    ...(method && { method }),
+    ...(path && { path }),
     ...(restContext && Object.keys(restContext).length > 0 && { context: restContext }),
-    ...(err && { error: { message: err.message, stack: err.stack, name: err.name } }),
+    ...(err != null && { error: normalizeError(err) }),
   };
 
-  const output = formatEntry(entry);
+  const output = JSON.stringify(entry);
 
   switch (level) {
     case "error":
@@ -59,11 +73,27 @@ function log(level: LogLevel, message: string, context?: Record<string, unknown>
   }
 }
 
+/** Extract request metadata for structured logging */
+function requestContext(request: Request): Record<string, unknown> {
+  const requestId = request.headers.get("x-request-id") ?? undefined;
+  let pathname: string | undefined;
+  try {
+    pathname = new URL(request.url).pathname;
+  } catch {
+    // ignore invalid URLs in tests
+  }
+  return {
+    ...(requestId && { requestId }),
+    method: request.method,
+    ...(pathname && { path: pathname }),
+  };
+}
+
 export const logger = {
   debug: (message: string, context?: Record<string, unknown>) => log("debug", message, context),
   info: (message: string, context?: Record<string, unknown>) => log("info", message, context),
   warn: (message: string, context?: Record<string, unknown>) => log("warn", message, context),
-  error: (message: string, context?: Record<string, unknown>, err?: Error) => log("error", message, context, err),
+  error: (message: string, context?: Record<string, unknown>, err?: unknown) => log("error", message, context, err),
 
   /** Log an API request with standard fields */
   apiRequest: (method: string, path: string, status: number, durationMs: number, context?: Record<string, unknown>) => {
@@ -77,7 +107,22 @@ export const logger = {
   },
 
   /** Log an error with the Error object */
-  apiError: (method: string, path: string, err: Error, context?: Record<string, unknown>) => {
+  apiError: (method: string, path: string, err: unknown, context?: Record<string, unknown>) => {
     log("error", `${method} ${path} failed`, { method, path, ...context }, err);
+  },
+
+  /** Log an info message scoped to a request */
+  requestInfo: (request: Request, message: string, extra?: Record<string, unknown>) => {
+    log("info", message, { ...requestContext(request), ...extra });
+  },
+
+  /** Log a warning scoped to a request */
+  requestWarn: (request: Request, message: string, extra?: Record<string, unknown>) => {
+    log("warn", message, { ...requestContext(request), ...extra });
+  },
+
+  /** Log an error scoped to a request */
+  requestError: (request: Request, message: string, error: unknown, extra?: Record<string, unknown>) => {
+    log("error", message, { ...requestContext(request), ...extra }, error);
   },
 };

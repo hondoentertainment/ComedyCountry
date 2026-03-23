@@ -160,8 +160,8 @@ describe("jsonError", () => {
 });
 
 describe("logInfo", () => {
-  it("logs structured JSON to console.info", () => {
-    const spy = vi.spyOn(console, "info").mockImplementation(() => {});
+  it("logs structured JSON via logger", () => {
+    const spy = vi.spyOn(console, "log").mockImplementation(() => {});
     const request = createRequest("http://localhost/api/test", {
       "x-request-id": "log-1",
     });
@@ -175,14 +175,14 @@ describe("logInfo", () => {
     expect(logged.requestId).toBe("log-1");
     expect(logged.method).toBe("GET");
     expect(logged.path).toBe("/api/test");
-    expect(logged.extra).toBe("data");
+    expect(logged.context.extra).toBe("data");
 
     spy.mockRestore();
   });
 });
 
 describe("logError", () => {
-  it("logs structured error JSON to console.error", () => {
+  it("logs structured error JSON via logger", () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     const request = createRequest("http://localhost/api/test", {
       "x-request-id": "log-err",
@@ -197,7 +197,7 @@ describe("logError", () => {
     expect(logged.requestId).toBe("log-err");
     expect(logged.error.name).toBe("Error");
     expect(logged.error.message).toBe("boom");
-    expect(logged.userId).toBe("u1");
+    expect(logged.context.userId).toBe("u1");
 
     spy.mockRestore();
   });

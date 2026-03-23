@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 function generateCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -14,47 +15,52 @@ function generateCode(): string {
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
-  if (!rl.success) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
-  }
+  try {
+    const rl = await checkRateLimit(`groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+    if (!rl.success) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
 
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
 
-  const body = await request.json();
-  const { eventId, name } = body;
+    const body = await request.json();
+    const { eventId, name } = body;
 
-  if (!eventId) {
-    return NextResponse.json({ error: "Event is required" }, { status: 400 });
-  }
+    if (!eventId) {
+      return NextResponse.json({ error: "Event is required" }, { status: 400 });
+    }
 
-  // Generate unique code
-  let code = generateCode();
-  let attempts = 0;
-  while (attempts < 10) {
-    const existing = await prisma.showGroup.findUnique({ where: { code } });
-    if (!existing) break;
-    code = generateCode();
-    attempts++;
-  }
+    // Generate unique code
+    let code = generateCode();
+    let attempts = 0;
+    while (attempts < 10) {
+      const existing = await prisma.showGroup.findUnique({ where: { code } });
+      if (!existing) break;
+      code = generateCode();
+      attempts++;
+    }
 
-  const group = await prisma.showGroup.create({
-    data: {
-      eventId,
-      creatorId: session.user.id,
-      name: name?.trim() || null,
-      code,
-      members: {
-        create: { userId: session.user.id, status: "going" },
+    const group = await prisma.showGroup.create({
+      data: {
+        eventId,
+        creatorId: session.user.id,
+        name: name?.trim() || null,
+        code,
+        members: {
+          create: { userId: session.user.id, status: "going" },
+        },
       },
-    },
-    include: {
-      members: { include: { user: { select: { profileName: true, name: true, image: true } } } },
-    },
-  });
+      include: {
+        members: { include: { user: { select: { profileName: true, name: true, image: true } } } },
+      },
+    });
 
-  return NextResponse.json(group, { status: 201 });
+    return NextResponse.json(group, { status: 201 });
+  } catch (err) {
+    logger.requestError(request, "Failed to create group", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

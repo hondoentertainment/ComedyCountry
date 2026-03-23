@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 type RateLimitOptions = {
   limit: number;
@@ -66,49 +67,23 @@ export function jsonError(
   );
 }
 
+/** @deprecated Use logger.requestInfo() instead */
 export function logInfo(
   request: Request,
   message: string,
   extra?: Record<string, unknown>
 ) {
-  console.info(
-    JSON.stringify({
-      level: "info",
-      message,
-      requestId: getRequestId(request),
-      method: request.method,
-      path: new URL(request.url).pathname,
-      ...extra,
-    })
-  );
+  logger.requestInfo(request, message, extra);
 }
 
+/** @deprecated Use logger.requestError() instead */
 export function logError(
   request: Request,
   message: string,
   error: unknown,
   extra?: Record<string, unknown>
 ) {
-  const normalizedError =
-    error instanceof Error
-      ? {
-          name: error.name,
-          message: error.message,
-          stack: process.env.NODE_ENV === "production" ? undefined : error.stack,
-        }
-      : { message: String(error) };
-
-  console.error(
-    JSON.stringify({
-      level: "error",
-      message,
-      requestId: getRequestId(request),
-      method: request.method,
-      path: new URL(request.url).pathname,
-      error: normalizedError,
-      ...extra,
-    })
-  );
+  logger.requestError(request, message, error, extra);
 }
 
 export function applyRateLimit(

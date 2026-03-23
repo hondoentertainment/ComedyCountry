@@ -280,7 +280,8 @@ describe("withErrorHandler", () => {
       "GET",
       "/api/test",
       200,
-      expect.any(Number)
+      expect.any(Number),
+      expect.objectContaining({ requestId: expect.any(String) })
     );
   });
 
@@ -304,7 +305,12 @@ describe("withErrorHandler", () => {
 
     await wrapped(new Request("http://localhost/api/test", { method: "POST" }));
 
-    expect(logger.apiError).toHaveBeenCalledWith("POST", "/api/test", error);
+    expect(logger.apiError).toHaveBeenCalledWith(
+      "POST",
+      "/api/test",
+      error,
+      expect.objectContaining({ requestId: expect.any(String), durationMs: expect.any(Number) })
+    );
   });
 
   it("handles non-Error thrown values", async () => {
@@ -319,7 +325,8 @@ describe("withErrorHandler", () => {
     expect(logger.apiError).toHaveBeenCalledWith(
       "GET",
       "/api/test",
-      expect.any(Error)
+      expect.any(Error),
+      expect.objectContaining({ requestId: expect.any(String), durationMs: expect.any(Number) })
     );
   });
 

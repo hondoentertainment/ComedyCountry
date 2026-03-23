@@ -43,12 +43,15 @@ function isProtected(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+  const startTime = Date.now();
   const { pathname } = request.nextUrl;
 
   // ─── Request ID tracing ───────────────────────────────────────────
   const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID();
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-request-id", requestId);
+  // Pass start time so downstream can calculate total duration
+  requestHeaders.set("x-request-start", String(startTime));
 
   const response = NextResponse.next({
     request: { headers: requestHeaders },
@@ -83,6 +86,9 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith("/api/")) {
     response.headers.set("X-Content-Type-Options", "nosniff");
     response.headers.set("Cache-Control", "no-store");
+    // Server-Timing header for middleware duration (helpful for debugging)
+    const middlewareDuration = Date.now() - startTime;
+    response.headers.set("Server-Timing", `middleware;dur=${middlewareDuration}`);
 
     // CORS for embeddable checkout
     if (pathname.startsWith("/api/checkout/embed")) {

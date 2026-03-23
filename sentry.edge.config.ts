@@ -8,5 +8,7 @@ if (dsn) {
     sendDefaultPii: false,
     tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
     environment: process.env.NODE_ENV,
+    release: process.env.VERCEL_GIT_COMMIT_SHA ?? "dev",
+    ignoreErrors: ["NEXT_NOT_FOUND", "NEXT_REDIRECT"],
   });
 }

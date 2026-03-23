@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { logger } from "@/lib/logger";
+import { getRequestId } from "@/lib/api";
 import { z } from "zod";
+import * as Sentry from "@sentry/nextjs";
 
 // ─── Standardized API Error Responses ───────────────────────────────────────
 
@@ -109,15 +111,34 @@ export function withErrorHandler(handler: RouteHandler): RouteHandler {
   return async (request: Request, context?: unknown) => {
     const start = Date.now();
     const url = new URL(request.url);
+    const requestId = getRequestId(request);
 
     try {
       const response = await handler(request, context);
-      logger.apiRequest(request.method, url.pathname, response.status, Date.now() - start);
+      logger.apiRequest(request.method, url.pathname, response.status, Date.now() - start, { requestId });
       return response;
     } catch (err) {
+      const durationMs = Date.now() - start;
       const error = err instanceof Error ? err : new Error(String(err));
-      logger.apiError(request.method, url.pathname, error);
-      return serverError();
+
+      // Structured log with request context
+      logger.apiError(request.method, url.pathname, error, { requestId, durationMs });
+
+      // Report to Sentry with request context
+      Sentry.withScope((scope) => {
+        scope.setTag("request_id", requestId);
+        scope.setTag("api_route", url.pathname);
+        scope.setContext("request", {
+          method: request.method,
+          url: request.url,
+          durationMs,
+        });
+        Sentry.captureException(error);
+      });
+
+      const res = serverError();
+      res.headers.set("x-request-id", requestId);
+      return res;
     }
   };
 }
