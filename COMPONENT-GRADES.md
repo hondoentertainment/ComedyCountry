@@ -10,13 +10,14 @@
 
 | Grade | Count | % |
 |-------|-------|---|
-| A     | 22    | 21% |
+| A     | 22    | 22% |
 | A-    | 14    | 14% |
 | B+    | 10    | 10% |
-| B     | 18    | 17% |
+| B     | 18    | 18% |
 | B-    | 5     | 5%  |
-| C+    | 5     | 5%  |
+| C+    | 4     | 4%  |
 | C     | 4     | 4%  |
+| D+    | 1     | 1%  |
 
 **Overall GPA: 3.3 / 4.0 (B+)**
 
@@ -120,7 +121,7 @@
 | 92 | VenueFloorPlan | **B+** | Interactive grid editor; selectedLayout in fetch deps causes unnecessary refetches, silent errors |
 | 93 | VenueLiveDashboard | **B** | SSE-based live data; no reconnect backoff/max retry, light theme inconsistent with brand |
 | 94 | VenueMap | **A** | Excellent cookie consent integration, proper Google Maps handling, good fallback states |
-| 95 | VenueOpsPanel | **C+** | Entirely static/hardcoded placeholder panels, zero data fetching, light theme inconsistent |
+| 95 | VenueOpsPanel | **D+** | Entirely static/hardcoded placeholder panels, zero data fetching, no venueId prop, light theme inconsistent |
 | 96 | VenuePOSDashboard | **A-** | Clean POS summary with revenue breakdown; no refresh mechanism for live updates |
 | 97 | VenueReviews | **A-** | Full review CRUD with star rating, pagination, reactions; silent error swallowing |
 | 98 | VideoPlayer | **A** | Comprehensive multi-source player (YouTube, TikTok, native), proper a11y labels |
@@ -191,7 +192,7 @@ AdminDeleteButton, AdminVenueActions, and SubscriptionManager use browser `alert
 | AdminVenueActions | C | Replace alert/confirm, use Next.js Link |
 | BookingManager | C | Add error states, remove silent catches |
 | CurrencyConverter | C | Add debounce, fix label associations |
-| VenueOpsPanel | C+ | Implement actual data fetching or remove |
+| VenueOpsPanel | D+ | Implement actual data fetching or remove -- entirely non-functional |
 | SubscriptionManager | C+ | Replace alert, implement real cancel flow |
 | SpecialRating | C+ | Add error feedback, fix star a11y |
 | PromotedContent | C+ | Add loading state, a11y disclosure |
