@@ -11,7 +11,11 @@ interface Review {
   rating: number;
   comment: string | null;
   createdAt: string;
-  user: { profileName: string | null; name: string | null; image: string | null };
+  user: {
+    profileName: string | null;
+    name: string | null;
+    image: string | null;
+  };
 }
 
 export function VenueReviews({ venueId }: { venueId: string }) {
@@ -25,6 +29,7 @@ export function VenueReviews({ venueId }: { venueId: string }) {
   const [myComment, setMyComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchReviews = useCallback(async () => {
     try {
@@ -41,28 +46,46 @@ export function VenueReviews({ venueId }: { venueId: string }) {
     }
   }, [venueId, page]);
 
-  useEffect(() => { fetchReviews(); }, [fetchReviews]);
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!myRating) return;
     setSubmitting(true);
+    setError(null);
     try {
       const res = await fetch(`/api/venues/${venueId}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating: myRating, comment: myComment.trim() || null }),
+        body: JSON.stringify({
+          rating: myRating,
+          comment: myComment.trim() || null,
+        }),
       });
-      if (res.ok) {
-        setShowForm(false);
-        setMyRating(0);
-        setMyComment("");
-        await fetchReviews();
-      }
+      if (!res.ok) throw new Error("Failed to submit review");
+      setShowForm(false);
+      setMyRating(0);
+      setMyComment("");
+      await fetchReviews();
     } catch {
-      // ignore
+      setError("Failed to submit review. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleDeleteReview(reviewId: string) {
+    setError(null);
+    try {
+      const res = await fetch(`/api/venues/${venueId}/reviews`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to remove review");
+      await fetchReviews();
+    } catch {
+      setError("Failed to remove review. Please try again.");
     }
   }
 
@@ -73,7 +96,8 @@ export function VenueReviews({ venueId }: { venueId: string }) {
           <h2 className="text-lg font-bold text-white">Reviews</h2>
           {avgRating !== null && count > 0 && (
             <p className="text-zinc-500 text-sm">
-              {avgRating.toFixed(1)} avg &middot; {count} review{count !== 1 ? "s" : ""}
+              {avgRating.toFixed(1)} avg &middot; {count} review
+              {count !== 1 ? "s" : ""}
             </p>
           )}
         </div>
@@ -87,9 +111,18 @@ export function VenueReviews({ venueId }: { venueId: string }) {
         )}
       </div>
 
+      {error && (
+        <p className="text-sm text-red-400 mb-4" role="alert">
+          {error}
+        </p>
+      )}
+
       {/* Review Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="p-4 rounded-lg bg-brand-surface border border-zinc-800 mb-4">
+        <form
+          onSubmit={handleSubmit}
+          className="p-4 rounded-lg bg-brand-surface border border-zinc-800 mb-4"
+        >
           <div className="flex gap-1 mb-3">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -131,23 +164,49 @@ export function VenueReviews({ venueId }: { venueId: string }) {
       {/* Reviews List */}
       <div className="space-y-3">
         {reviews.map((r) => (
-          <div key={r.id} className="p-4 rounded-lg bg-brand-surface border border-zinc-800">
+          <div
+            key={r.id}
+            className="p-4 rounded-lg bg-brand-surface border border-zinc-800"
+          >
             <div className="flex items-center gap-3 mb-2">
               {r.user.image ? (
-                <Image src={r.user.image} alt="" width={28} height={28} className="rounded-full" />
+                <Image
+                  src={r.user.image}
+                  alt=""
+                  width={28}
+                  height={28}
+                  className="rounded-full"
+                />
               ) : (
                 <div className="w-7 h-7 rounded-full bg-brand-charcoal flex items-center justify-center text-zinc-600 text-xs">
                   {(r.user.profileName || r.user.name || "?").charAt(0)}
                 </div>
               )}
-              <span className="text-zinc-300 text-sm font-medium">{r.user.profileName || r.user.name || "Anonymous"}</span>
-              <span className="text-brand-gold text-sm">{"★".repeat(r.rating)}</span>
-              <span className="text-zinc-600 text-xs ml-auto">{new Date(r.createdAt).toLocaleDateString()}</span>
+              <span className="text-zinc-300 text-sm font-medium">
+                {r.user.profileName || r.user.name || "Anonymous"}
+              </span>
+              <span className="text-brand-gold text-sm">
+                {"★".repeat(r.rating)}
+              </span>
+              <span className="text-zinc-600 text-xs ml-auto">
+                {new Date(r.createdAt).toLocaleDateString()}
+              </span>
             </div>
             {r.comment && <p className="text-zinc-400 text-sm">{r.comment}</p>}
             <div className="mt-3 flex items-center gap-3">
               <ReviewReactions reviewType="venue_review" reviewId={r.id} />
               <ReportButton entityType="venue_review" entityId={r.id} />
+              {session?.user &&
+                (r.user.profileName === session.user.name ||
+                  r.user.name === session.user.name) && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteReview(r.id)}
+                    className="text-xs text-zinc-500 hover:text-red-400 underline"
+                  >
+                    Delete
+                  </button>
+                )}
             </div>
           </div>
         ))}
@@ -163,7 +222,9 @@ export function VenueReviews({ venueId }: { venueId: string }) {
           >
             Prev
           </button>
-          <span className="text-zinc-500 text-sm py-1">{page} / {pages}</span>
+          <span className="text-zinc-500 text-sm py-1">
+            {page} / {pages}
+          </span>
           <button
             onClick={() => setPage((p) => Math.min(pages, p + 1))}
             disabled={page === pages}

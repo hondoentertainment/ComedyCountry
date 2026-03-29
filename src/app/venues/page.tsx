@@ -8,7 +8,8 @@ import { VenueFilterBar } from "@/components/VenueFilterBar";
 
 export const metadata = {
   title: "Venues | Punchline Atlas",
-  description: "Browse comedy venues nationwide. Filter by state, city, venue type, capacity, and sort by popularity.",
+  description:
+    "Browse comedy venues nationwide. Filter by state, city, venue type, capacity, and sort by popularity.",
 };
 
 type PageProps = {
@@ -28,7 +29,8 @@ export const revalidate = 60;
 
 export default async function VenuesPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const { state, city, type, search, page, sort, capacityMin, capacityMax } = params;
+  const { state, city, type, search, page, sort, capacityMin, capacityMax } =
+    params;
   const currentPage = Math.max(1, parseInt(page ?? "1", 10) || 1);
   const skip = (currentPage - 1) * PAGE_SIZE;
 
@@ -46,7 +48,13 @@ export default async function VenuesPage({ searchParams }: PageProps) {
       listVenues({
         state: state || undefined,
         city: city || undefined,
-        type: type as "CLUB" | "THEATER" | "BAR" | "FESTIVAL" | "OPEN_MIC" | undefined,
+        type: type as
+          | "CLUB"
+          | "THEATER"
+          | "BAR"
+          | "FESTIVAL"
+          | "OPEN_MIC"
+          | undefined,
         search: search || undefined,
         capacityMin: parsedCapacityMin,
         capacityMax: parsedCapacityMax,
@@ -65,20 +73,34 @@ export default async function VenuesPage({ searchParams }: PageProps) {
     } else if (sort === "popularity") {
       // Sort by follower count - need to fetch follower counts
       // Since listVenues doesn't return followers, we sort by upcoming events as a proxy
-      venues.sort((a, b) => (b.upcomingEventCount ?? 0) - (a.upcomingEventCount ?? 0));
+      venues.sort(
+        (a, b) => (b.upcomingEventCount ?? 0) - (a.upcomingEventCount ?? 0),
+      );
     } else if (sort === "recently_added") {
-      venues.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      venues.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
     } else if (sort === "capacity_asc") {
       venues.sort((a, b) => (a.capacity ?? 0) - (b.capacity ?? 0));
     } else if (sort === "capacity_desc") {
       venues.sort((a, b) => (b.capacity ?? 0) - (a.capacity ?? 0));
+    } else if (sort === "rating") {
+      venues.sort((a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0));
     }
   } catch {
     dataUnavailable = true;
   }
 
   // Count active filters
-  const activeFilterCount = [state, city, type, search, sort, capacityMin].filter(Boolean).length;
+  const activeFilterCount = [
+    state,
+    city,
+    type,
+    search,
+    sort,
+    capacityMin,
+  ].filter(Boolean).length;
 
   return (
     <div className="min-h-screen">
@@ -92,10 +114,12 @@ export default async function VenuesPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-3xl font-bold text-white mb-1">Venues</h1>
             <p className="text-zinc-400 text-sm">
-              {total} venue{total !== 1 ? "s" : ""} -- clubs, theaters, and comedy spots
+              {total} venue{total !== 1 ? "s" : ""} -- clubs, theaters, and
+              comedy spots
               {activeFilterCount > 0 && (
                 <span className="text-brand-gold ml-1">
-                  ({activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""} active)
+                  ({activeFilterCount} filter
+                  {activeFilterCount !== 1 ? "s" : ""} active)
                 </span>
               )}
             </p>
@@ -104,11 +128,19 @@ export default async function VenuesPage({ searchParams }: PageProps) {
             <p className="text-xs text-zinc-500">
               Sorted by:{" "}
               <span className="text-zinc-400">
-                {sort === "name" ? "Name" :
-                 sort === "popularity" ? "Popularity" :
-                 sort === "recently_added" ? "Recently added" :
-                 sort === "capacity_asc" ? "Capacity (low)" :
-                 sort === "capacity_desc" ? "Capacity (high)" : sort}
+                {sort === "name"
+                  ? "Name"
+                  : sort === "popularity"
+                    ? "Popularity"
+                    : sort === "recently_added"
+                      ? "Recently added"
+                      : sort === "capacity_asc"
+                        ? "Capacity (low)"
+                        : sort === "capacity_desc"
+                          ? "Capacity (high)"
+                          : sort === "rating"
+                            ? "Rating"
+                            : sort}
               </span>
             </p>
           )}
@@ -139,14 +171,30 @@ export default async function VenuesPage({ searchParams }: PageProps) {
                   {photo ? (
                     <Image
                       src={photo.url}
-                      alt={photo.caption ? `Photo of ${venue.name}: ${photo.caption}` : `Photo of ${venue.name}`}
+                      alt={
+                        photo.caption
+                          ? `Photo of ${venue.name}: ${photo.caption}`
+                          : `Photo of ${venue.name}`
+                      }
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-5xl text-zinc-600 bg-gradient-to-br from-zinc-800 to-zinc-900">
-                      <svg className="w-12 h-12 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                      <svg
+                        className="w-12 h-12 text-zinc-700"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        />
+                      </svg>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
@@ -157,7 +205,8 @@ export default async function VenuesPage({ searchParams }: PageProps) {
                   </div>
                   <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
                     <span className="inline-block px-2 py-0.5 rounded-md bg-black/50 text-zinc-300 text-xs">
-                      {(venue.upcomingEventCount ?? 0)} upcoming show{(venue.upcomingEventCount ?? 0) !== 1 ? "s" : ""}
+                      {venue.upcomingEventCount ?? 0} upcoming show
+                      {(venue.upcomingEventCount ?? 0) !== 1 ? "s" : ""}
                     </span>
                     {venue.capacity && (
                       <span className="text-xs text-zinc-400">
@@ -168,9 +217,20 @@ export default async function VenuesPage({ searchParams }: PageProps) {
                 </div>
                 <div className="p-4">
                   <h2 className="font-semibold text-white">{venue.name}</h2>
-                  <p className="text-zinc-400 text-sm mt-0.5">
-                    {venue.city}, {venue.state}
-                  </p>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <p className="text-zinc-400 text-sm">
+                      {venue.city}, {venue.state}
+                    </p>
+                    {venue.avgRating !== null && venue.reviewCount > 0 && (
+                      <span className="text-xs text-zinc-400">
+                        <span className="text-brand-gold">★</span>{" "}
+                        {venue.avgRating.toFixed(1)}{" "}
+                        <span className="text-zinc-500">
+                          ({venue.reviewCount})
+                        </span>
+                      </span>
+                    )}
+                  </div>
                 </div>
               </Link>
             );
@@ -179,7 +239,9 @@ export default async function VenuesPage({ searchParams }: PageProps) {
 
         {venues.length === 0 && (
           <div className="py-20 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
-            <p className="text-zinc-400 text-lg font-medium mb-2">No venues found</p>
+            <p className="text-zinc-400 text-lg font-medium mb-2">
+              No venues found
+            </p>
             <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
               Try adjusting your search, state, city, or venue type.
             </p>
@@ -191,7 +253,15 @@ export default async function VenuesPage({ searchParams }: PageProps) {
           total={total}
           currentPage={currentPage}
           basePath="/venues"
-          searchParams={{ state, city, type, search, sort, capacityMin, capacityMax }}
+          searchParams={{
+            state,
+            city,
+            type,
+            search,
+            sort,
+            capacityMin,
+            capacityMax,
+          }}
         />
       </div>
     </div>

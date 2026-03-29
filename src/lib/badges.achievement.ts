@@ -17,28 +17,124 @@ interface BadgeDefinition {
 
 export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   // Social badges
-  { id: "first_follow", name: "First Fan", description: "Follow your first comedian", icon: "star", category: "social" },
-  { id: "five_follows", name: "Comedy Buff", description: "Follow 5 comedians", icon: "fire", category: "social" },
-  { id: "twenty_follows", name: "Super Fan", description: "Follow 20 comedians", icon: "trophy", category: "social" },
-  { id: "venue_follower", name: "Regular", description: "Follow your first venue", icon: "home", category: "social" },
+  {
+    id: "first_follow",
+    name: "First Fan",
+    description: "Follow your first comedian",
+    icon: "star",
+    category: "social",
+  },
+  {
+    id: "five_follows",
+    name: "Comedy Buff",
+    description: "Follow 5 comedians",
+    icon: "fire",
+    category: "social",
+  },
+  {
+    id: "twenty_follows",
+    name: "Super Fan",
+    description: "Follow 20 comedians",
+    icon: "trophy",
+    category: "social",
+  },
+  {
+    id: "venue_follower",
+    name: "Regular",
+    description: "Follow your first venue",
+    icon: "home",
+    category: "social",
+  },
 
   // Content badges
-  { id: "first_review", name: "Critic", description: "Write your first event review", icon: "pen", category: "content" },
-  { id: "five_reviews", name: "Film at 11", description: "Write 5 event reviews", icon: "pencil", category: "content" },
-  { id: "twenty_reviews", name: "Roger Ebert", description: "Write 20 event reviews", icon: "award", category: "content" },
-  { id: "first_rating", name: "Tier Judge", description: "Rate your first comedian", icon: "scale", category: "content" },
-  { id: "list_creator", name: "Curator", description: "Create your first comedy list", icon: "list", category: "content" },
+  {
+    id: "first_review",
+    name: "Critic",
+    description: "Write your first event review",
+    icon: "pen",
+    category: "content",
+  },
+  {
+    id: "five_reviews",
+    name: "Film at 11",
+    description: "Write 5 event reviews",
+    icon: "pencil",
+    category: "content",
+  },
+  {
+    id: "twenty_reviews",
+    name: "Roger Ebert",
+    description: "Write 20 event reviews",
+    icon: "award",
+    category: "content",
+  },
+  {
+    id: "first_rating",
+    name: "Tier Judge",
+    description: "Rate your first comedian",
+    icon: "scale",
+    category: "content",
+  },
+  {
+    id: "list_creator",
+    name: "Curator",
+    description: "Create your first comedy list",
+    icon: "list",
+    category: "content",
+  },
 
   // Engagement badges
-  { id: "first_rsvp", name: "Show Goer", description: "RSVP to your first event", icon: "ticket", category: "engagement" },
-  { id: "five_rsvps", name: "Night Owl", description: "RSVP to 5 events", icon: "moon", category: "engagement" },
-  { id: "group_creator", name: "Party Planner", description: "Create a show group", icon: "users", category: "engagement" },
-  { id: "share_event", name: "Word of Mouth", description: "Share an event", icon: "share", category: "engagement" },
+  {
+    id: "first_rsvp",
+    name: "Show Goer",
+    description: "RSVP to your first event",
+    icon: "ticket",
+    category: "engagement",
+  },
+  {
+    id: "five_rsvps",
+    name: "Night Owl",
+    description: "RSVP to 5 events",
+    icon: "moon",
+    category: "engagement",
+  },
+  {
+    id: "group_creator",
+    name: "Party Planner",
+    description: "Create a show group",
+    icon: "users",
+    category: "engagement",
+  },
+  {
+    id: "share_event",
+    name: "Word of Mouth",
+    description: "Share an event",
+    icon: "share",
+    category: "engagement",
+  },
 
   // Milestone badges
-  { id: "early_adopter", name: "Early Adopter", description: "Joined during beta", icon: "rocket", category: "milestone" },
-  { id: "year_one", name: "One Year", description: "Been a member for one year", icon: "cake", category: "milestone" },
-  { id: "profile_complete", name: "The Real Deal", description: "Complete your profile", icon: "check", category: "milestone" },
+  {
+    id: "early_adopter",
+    name: "Early Adopter",
+    description: "Joined during beta",
+    icon: "rocket",
+    category: "milestone",
+  },
+  {
+    id: "year_one",
+    name: "One Year",
+    description: "Been a member for one year",
+    icon: "cake",
+    category: "milestone",
+  },
+  {
+    id: "profile_complete",
+    name: "The Real Deal",
+    description: "Complete your profile",
+    icon: "check",
+    category: "milestone",
+  },
 ];
 
 /**
@@ -47,7 +143,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
  */
 export async function checkAndAwardBadges(
   userId: string,
-  action: string
+  action: string,
 ): Promise<string[]> {
   const awarded: string[] = [];
 
@@ -100,6 +196,7 @@ function getBadgesForAction(action: string): string[] {
     case "follow_venue":
       return ["venue_follower"];
     case "review_event":
+    case "review_venue":
       return ["first_review", "five_reviews", "twenty_reviews"];
     case "rate_comedian":
       return ["first_rating"];
@@ -116,7 +213,10 @@ function getBadgesForAction(action: string): string[] {
   }
 }
 
-async function checkBadgeCondition(userId: string, badgeId: string): Promise<boolean> {
+async function checkBadgeCondition(
+  userId: string,
+  badgeId: string,
+): Promise<boolean> {
   switch (badgeId) {
     case "first_follow":
       return (await prisma.comedianFollow.count({ where: { userId } })) >= 1;
@@ -133,7 +233,9 @@ async function checkBadgeCondition(userId: string, badgeId: string): Promise<boo
     case "twenty_reviews":
       return (await prisma.eventReview.count({ where: { userId } })) >= 20;
     case "first_rating":
-      return (await prisma.comedianTierRating.count({ where: { userId } })) >= 1;
+      return (
+        (await prisma.comedianTierRating.count({ where: { userId } })) >= 1
+      );
     case "list_creator":
       return (await prisma.comedyList.count({ where: { userId } })) >= 1;
     case "first_rsvp":
@@ -141,7 +243,9 @@ async function checkBadgeCondition(userId: string, badgeId: string): Promise<boo
     case "five_rsvps":
       return (await prisma.eventAttendance.count({ where: { userId } })) >= 5;
     case "group_creator":
-      return (await prisma.showGroup.count({ where: { creatorId: userId } })) >= 1;
+      return (
+        (await prisma.showGroup.count({ where: { creatorId: userId } })) >= 1
+      );
     case "profile_complete": {
       const user = await prisma.user.findUnique({
         where: { id: userId },

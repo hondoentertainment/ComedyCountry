@@ -15,9 +15,12 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 // GET: List reviews and rating stats for an event
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const rl = await checkRateLimit(`events-reviews:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `events-reviews:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -46,16 +49,22 @@ export async function GET(
       ...stats,
     });
   } catch {
-    return NextResponse.json({ error: "Failed to load reviews" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load reviews" },
+      { status: 500 },
+    );
   }
 }
 
 // POST: Create or update current user's review
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const rl = await checkRateLimit(`events-reviews:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `events-reviews:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -75,7 +84,11 @@ export async function POST(
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
 
-  let body: { rating?: number; comment?: string; experience?: EventExperienceInput };
+  let body: {
+    rating?: number;
+    comment?: string;
+    experience?: EventExperienceInput;
+  };
   try {
     body = await request.json();
   } catch {
@@ -83,25 +96,29 @@ export async function POST(
   }
 
   const rating = typeof body.rating === "number" ? body.rating : undefined;
-  const comment = typeof body.comment === "string" ? body.comment.trim() || null : undefined;
+  const comment =
+    typeof body.comment === "string" ? body.comment.trim() || null : undefined;
   const experience = normalizeExperienceInput(body.experience);
 
   if (rating !== undefined && (rating < 1 || rating > 5)) {
     return NextResponse.json(
       { error: "Rating must be between 1 and 5" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (rating === undefined && comment === undefined && !experience) {
     return NextResponse.json(
       { error: "Provide rating, comment, or crowd feedback" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   try {
-    const verifiedAttendance = await hasVerifiedAttendance(eventId, session.user.id);
+    const verifiedAttendance = await hasVerifiedAttendance(
+      eventId,
+      session.user.id,
+    );
     const review = await prisma.eventReview.upsert({
       where: {
         eventId_userId: { eventId, userId: session.user.id },
@@ -132,6 +149,45 @@ export async function POST(
     checkAndAwardBadges(session.user.id, "review_event").catch(() => {});
     return NextResponse.json(review);
   } catch {
-    return NextResponse.json({ error: "Failed to save review" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save review" },
+      { status: 500 },
+    );
+  }
+}
+
+// DELETE: Remove current user's review
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const rl = await checkRateLimit(
+    `events-reviews:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id: eventId } = await params;
+  if (!eventId) {
+    return NextResponse.json({ error: "Missing event ID" }, { status: 400 });
+  }
+
+  try {
+    await prisma.eventReview.deleteMany({
+      where: { eventId, userId: session.user.id },
+    });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to remove review" },
+      { status: 500 },
+    );
   }
 }

@@ -511,6 +511,7 @@ model SpecialRating {
   rating     Int      // 1-5
   comment    String?
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   special    ComedianSpecial @relation(fields: [specialId], references: [id], onDelete: Cascade)
   user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -10,6 +10,7 @@ export function SpecialRating({ specialId }: { specialId: string }) {
   const [userRating, setUserRating] = useState<number | null>(null);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchRating = useCallback(async () => {
     try {
@@ -25,21 +26,43 @@ export function SpecialRating({ specialId }: { specialId: string }) {
     }
   }, [specialId]);
 
-  useEffect(() => { fetchRating(); }, [fetchRating]);
+  useEffect(() => {
+    fetchRating();
+  }, [fetchRating]);
 
   async function rate(rating: number) {
     if (!session) return;
     setSubmitting(true);
+    setError(null);
     setUserRating(rating);
     try {
-      await fetch(`/api/specials/${specialId}/rate`, {
+      const res = await fetch(`/api/specials/${specialId}/rate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rating }),
       });
+      if (!res.ok) throw new Error("Failed to save rating");
       await fetchRating();
     } catch {
-      // ignore
+      setError("Failed to save rating. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function removeRating() {
+    if (!session) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/specials/${specialId}/rate`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to remove rating");
+      setUserRating(null);
+      await fetchRating();
+    } catch {
+      setError("Failed to remove rating. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -56,7 +79,9 @@ export function SpecialRating({ specialId }: { specialId: string }) {
             onClick={() => rate(star)}
             onMouseEnter={() => setHoveredStar(star)}
             className={`text-lg transition-colors disabled:cursor-default ${
-              star <= (hoveredStar || userRating || 0) ? "text-brand-gold" : "text-zinc-700 hover:text-zinc-500"
+              star <= (hoveredStar || userRating || 0)
+                ? "text-brand-gold"
+                : "text-zinc-700 hover:text-zinc-500"
             }`}
           >
             ★
@@ -68,7 +93,20 @@ export function SpecialRating({ specialId }: { specialId: string }) {
           {avgRating.toFixed(1)} ({count})
         </span>
       )}
-      {userRating && <span className="text-brand-gold text-xs">Your: {userRating}</span>}
+      {userRating && (
+        <>
+          <span className="text-brand-gold text-xs">Your: {userRating}</span>
+          <button
+            type="button"
+            onClick={removeRating}
+            disabled={submitting}
+            className="text-zinc-500 hover:text-zinc-400 text-xs underline disabled:opacity-50"
+          >
+            Clear
+          </button>
+        </>
+      )}
+      {error && <span className="text-red-400 text-xs">{error}</span>}
     </div>
   );
 }

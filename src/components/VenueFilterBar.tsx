@@ -22,6 +22,7 @@ const SORT_OPTIONS = [
   { value: "recently_added", label: "Recently added" },
   { value: "capacity_asc", label: "Capacity (low to high)" },
   { value: "capacity_desc", label: "Capacity (high to low)" },
+  { value: "rating", label: "Highest rated" },
 ] as const;
 
 const CAPACITY_RANGES = [
@@ -49,9 +50,12 @@ export function VenueFilterBar({
   // Derive capacity range from min/max
   const getCapacityRange = () => {
     if (!defaultCapacityMin && !defaultCapacityMax) return "";
-    if (defaultCapacityMin === "0" && defaultCapacityMax === "100") return "0-100";
-    if (defaultCapacityMin === "100" && defaultCapacityMax === "300") return "100-300";
-    if (defaultCapacityMin === "300" && defaultCapacityMax === "500") return "300-500";
+    if (defaultCapacityMin === "0" && defaultCapacityMax === "100")
+      return "0-100";
+    if (defaultCapacityMin === "100" && defaultCapacityMax === "300")
+      return "100-300";
+    if (defaultCapacityMin === "300" && defaultCapacityMax === "500")
+      return "300-500";
     if (defaultCapacityMin === "500" && !defaultCapacityMax) return "500-";
     return "";
   };
@@ -62,7 +66,14 @@ export function VenueFilterBar({
     setCapacityRange(value);
   };
 
-  const hasActiveFilters = defaultState || defaultCity || defaultType || defaultSearch || defaultSort || defaultCapacityMin || defaultCapacityMax;
+  const hasActiveFilters =
+    defaultState ||
+    defaultCity ||
+    defaultType ||
+    defaultSearch ||
+    defaultSort ||
+    defaultCapacityMin ||
+    defaultCapacityMax;
 
   return (
     <form
@@ -81,7 +92,9 @@ export function VenueFilterBar({
           />
         </div>
         <div>
-          <label htmlFor="state" className="sr-only">State</label>
+          <label htmlFor="state" className="sr-only">
+            State
+          </label>
           <select
             id="state"
             name="state"
@@ -90,12 +103,16 @@ export function VenueFilterBar({
           >
             <option value="">All states</option>
             {states.map((s) => (
-              <option key={s.state} value={s.state}>{s.state}</option>
+              <option key={s.state} value={s.state}>
+                {s.state}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <label htmlFor="city" className="sr-only">City</label>
+          <label htmlFor="city" className="sr-only">
+            City
+          </label>
           <input
             id="city"
             name="city"
@@ -106,7 +123,9 @@ export function VenueFilterBar({
           />
         </div>
         <div>
-          <label htmlFor="type" className="sr-only">Type</label>
+          <label htmlFor="type" className="sr-only">
+            Type
+          </label>
           <select
             id="type"
             name="type"
@@ -115,7 +134,9 @@ export function VenueFilterBar({
           >
             <option value="">All types</option>
             {Object.entries(VENUE_TYPE_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
         </div>
@@ -135,7 +156,11 @@ export function VenueFilterBar({
             stroke="currentColor"
             strokeWidth={2}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
           {showAdvanced ? "Hide" : "Show"} advanced filters
         </button>
@@ -162,7 +187,9 @@ export function VenueFilterBar({
       {showAdvanced && (
         <div className="flex flex-wrap gap-3 pt-3 border-t border-zinc-800/60">
           <div>
-            <label htmlFor="sort" className="text-xs text-zinc-500 block mb-1">Sort by</label>
+            <label htmlFor="sort" className="text-xs text-zinc-500 block mb-1">
+              Sort by
+            </label>
             <select
               id="sort"
               name="sort"
@@ -170,12 +197,19 @@ export function VenueFilterBar({
               className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/50 min-w-[160px]"
             >
               {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </select>
           </div>
           <div>
-            <label htmlFor="capacity" className="text-xs text-zinc-500 block mb-1">Capacity</label>
+            <label
+              htmlFor="capacity"
+              className="text-xs text-zinc-500 block mb-1"
+            >
+              Capacity
+            </label>
             <select
               id="capacity"
               value={capacityRange}
@@ -183,14 +217,24 @@ export function VenueFilterBar({
               className="px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/50 min-w-[140px]"
             >
               {CAPACITY_RANGES.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </select>
             {/* Hidden inputs for capacity min/max from selected range */}
             {capacityRange && (
               <>
-                <input type="hidden" name="capacityMin" value={capacityRange.split("-")[0] || ""} />
-                <input type="hidden" name="capacityMax" value={capacityRange.split("-")[1] || ""} />
+                <input
+                  type="hidden"
+                  name="capacityMin"
+                  value={capacityRange.split("-")[0] || ""}
+                />
+                <input
+                  type="hidden"
+                  name="capacityMax"
+                  value={capacityRange.split("-")[1] || ""}
+                />
               </>
             )}
           </div>
