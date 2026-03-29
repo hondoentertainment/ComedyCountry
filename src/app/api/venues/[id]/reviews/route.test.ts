@@ -26,6 +26,10 @@ vi.mock("@/lib/badges.achievement", () => ({
   checkAndAwardBadges: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock("@/lib/content-moderation", () => ({
+  moderateContent: vi.fn().mockResolvedValue({ allowed: true }),
+}));
+
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 

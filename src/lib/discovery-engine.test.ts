@@ -15,7 +15,11 @@ import {
   computeBuzzLevel,
   getDiscoveryInsights,
 } from "./discovery-engine";
-import type { FeedItem, DiscoveryProfile, SocialProofData } from "./discovery-engine";
+import type {
+  FeedItem,
+  DiscoveryProfile,
+  SocialProofData,
+} from "./discovery-engine";
 
 vi.mock("./prisma", () => ({
   prisma: {
@@ -29,6 +33,7 @@ vi.mock("./prisma", () => ({
       findUnique: vi.fn(),
     },
     event: { findMany: vi.fn() },
+    eventReview: { groupBy: vi.fn() },
     eventAttendance: {
       findMany: vi.fn(),
       count: vi.fn(),
@@ -64,6 +69,7 @@ const mockPrisma = prisma as unknown as {
     findUnique: ReturnType<typeof vi.fn>;
   };
   event: { findMany: ReturnType<typeof vi.fn> };
+  eventReview: { groupBy: ReturnType<typeof vi.fn> };
   eventAttendance: {
     findMany: ReturnType<typeof vi.fn>;
     count: ReturnType<typeof vi.fn>;
@@ -88,6 +94,8 @@ const mockPrisma = prisma as unknown as {
 describe("discovery-engine", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default mock for event rating stats batch (used by feed generators)
+    mockPrisma.eventReview.groupBy.mockResolvedValue([]);
   });
 
   /* ------------------------------------------------------------------------ */
@@ -295,8 +303,22 @@ describe("discovery-engine", () => {
   describe("computeDiscoveryProfile", () => {
     it("computes genre preferences from past event attendance signals", async () => {
       mockPrisma.discoverySignal.findMany.mockResolvedValue([
-        { userId: "user-1", signalType: "ATTEND", entityType: "EVENT", entityId: "event-1", weight: 5.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "ATTEND", entityType: "EVENT", entityId: "event-2", weight: 5.0, createdAt: new Date() },
+        {
+          userId: "user-1",
+          signalType: "ATTEND",
+          entityType: "EVENT",
+          entityId: "event-1",
+          weight: 5.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "ATTEND",
+          entityType: "EVENT",
+          entityId: "event-2",
+          weight: 5.0,
+          createdAt: new Date(),
+        },
       ]);
 
       mockPrisma.event.findMany.mockResolvedValue([
@@ -309,7 +331,13 @@ describe("discovery-engine", () => {
         {
           id: "event-2",
           date: new Date("2025-01-15"),
-          comedians: [{ comedian: { genres: [{ genre: "dark" }, { genre: "observational" }] } }],
+          comedians: [
+            {
+              comedian: {
+                genres: [{ genre: "dark" }, { genre: "observational" }],
+              },
+            },
+          ],
           venue: { id: "v1" },
         },
       ]);
@@ -325,9 +353,30 @@ describe("discovery-engine", () => {
 
     it("computes venue preferences from venue signals", async () => {
       mockPrisma.discoverySignal.findMany.mockResolvedValue([
-        { userId: "user-1", signalType: "CHECKIN", entityType: "VENUE", entityId: "venue-a", weight: 5.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "CHECKIN", entityType: "VENUE", entityId: "venue-a", weight: 5.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "CHECKIN", entityType: "VENUE", entityId: "venue-b", weight: 5.0, createdAt: new Date() },
+        {
+          userId: "user-1",
+          signalType: "CHECKIN",
+          entityType: "VENUE",
+          entityId: "venue-a",
+          weight: 5.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "CHECKIN",
+          entityType: "VENUE",
+          entityId: "venue-a",
+          weight: 5.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "CHECKIN",
+          entityType: "VENUE",
+          entityId: "venue-b",
+          weight: 5.0,
+          createdAt: new Date(),
+        },
       ]);
 
       mockPrisma.event.findMany.mockResolvedValue([]);
@@ -344,8 +393,22 @@ describe("discovery-engine", () => {
       const friday = new Date("2025-01-10"); // Friday
 
       mockPrisma.discoverySignal.findMany.mockResolvedValue([
-        { userId: "user-1", signalType: "ATTEND", entityType: "EVENT", entityId: "event-1", weight: 5.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "ATTEND", entityType: "EVENT", entityId: "event-2", weight: 5.0, createdAt: new Date() },
+        {
+          userId: "user-1",
+          signalType: "ATTEND",
+          entityType: "EVENT",
+          entityId: "event-1",
+          weight: 5.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "ATTEND",
+          entityType: "EVENT",
+          entityId: "event-2",
+          weight: 5.0,
+          createdAt: new Date(),
+        },
       ]);
 
       mockPrisma.event.findMany.mockResolvedValue([
@@ -373,10 +436,38 @@ describe("discovery-engine", () => {
     it("computes discovery openness from signal diversity", async () => {
       // Many signals, all different entities = high openness
       mockPrisma.discoverySignal.findMany.mockResolvedValue([
-        { userId: "user-1", signalType: "VIEW", entityType: "EVENT", entityId: "e1", weight: 1.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "VIEW", entityType: "EVENT", entityId: "e2", weight: 1.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "VIEW", entityType: "EVENT", entityId: "e3", weight: 1.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "VIEW", entityType: "EVENT", entityId: "e4", weight: 1.0, createdAt: new Date() },
+        {
+          userId: "user-1",
+          signalType: "VIEW",
+          entityType: "EVENT",
+          entityId: "e1",
+          weight: 1.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "VIEW",
+          entityType: "EVENT",
+          entityId: "e2",
+          weight: 1.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "VIEW",
+          entityType: "EVENT",
+          entityId: "e3",
+          weight: 1.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "VIEW",
+          entityType: "EVENT",
+          entityId: "e4",
+          weight: 1.0,
+          createdAt: new Date(),
+        },
       ]);
 
       mockPrisma.event.findMany.mockResolvedValue([]);
@@ -391,10 +482,38 @@ describe("discovery-engine", () => {
     it("computes low openness for repeated interactions", async () => {
       // Many signals, same entity = low openness
       mockPrisma.discoverySignal.findMany.mockResolvedValue([
-        { userId: "user-1", signalType: "VIEW", entityType: "EVENT", entityId: "e1", weight: 1.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "CLICK", entityType: "EVENT", entityId: "e1", weight: 2.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "SHARE", entityType: "EVENT", entityId: "e1", weight: 3.0, createdAt: new Date() },
-        { userId: "user-1", signalType: "REVIEW", entityType: "EVENT", entityId: "e1", weight: 4.5, createdAt: new Date() },
+        {
+          userId: "user-1",
+          signalType: "VIEW",
+          entityType: "EVENT",
+          entityId: "e1",
+          weight: 1.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "CLICK",
+          entityType: "EVENT",
+          entityId: "e1",
+          weight: 2.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "SHARE",
+          entityType: "EVENT",
+          entityId: "e1",
+          weight: 3.0,
+          createdAt: new Date(),
+        },
+        {
+          userId: "user-1",
+          signalType: "REVIEW",
+          entityType: "EVENT",
+          entityId: "e1",
+          weight: 4.5,
+          createdAt: new Date(),
+        },
       ]);
 
       mockPrisma.event.findMany.mockResolvedValue([]);
@@ -486,7 +605,9 @@ describe("discovery-engine", () => {
           title: "Random Show",
           date: futureDate,
           venue: { id: "v2", name: "Club B", latitude: null, longitude: null },
-          comedians: [{ comedian: { id: "c2", genres: [{ genre: "improv" }] } }],
+          comedians: [
+            { comedian: { id: "c2", genres: [{ genre: "improv" }] } },
+          ],
         },
       ]);
 
@@ -517,14 +638,18 @@ describe("discovery-engine", () => {
           title: "Social Show",
           date: futureDate,
           venue: { id: "v1", name: "Club A", latitude: null, longitude: null },
-          comedians: [{ comedian: { id: "c1", genres: [{ genre: "standup" }] } }],
+          comedians: [
+            { comedian: { id: "c1", genres: [{ genre: "standup" }] } },
+          ],
         },
         {
           id: "event-solo",
           title: "Solo Show",
           date: futureDate,
           venue: { id: "v2", name: "Club B", latitude: null, longitude: null },
-          comedians: [{ comedian: { id: "c2", genres: [{ genre: "standup" }] } }],
+          comedians: [
+            { comedian: { id: "c2", genres: [{ genre: "standup" }] } },
+          ],
         },
       ]);
 
@@ -562,7 +687,12 @@ describe("discovery-engine", () => {
           id: `event-${i}`,
           title: `Show ${i}`,
           date: futureDate,
-          venue: { id: `v${i}`, name: `Club ${i}`, latitude: null, longitude: null },
+          venue: {
+            id: `v${i}`,
+            name: `Club ${i}`,
+            latitude: null,
+            longitude: null,
+          },
           comedians: [{ comedian: { id: `c${i}`, genres: [] } }],
         })),
       );
@@ -599,7 +729,11 @@ describe("discovery-engine", () => {
       // Boosted event
       mockPrisma.discoveryBoost.findMany
         .mockResolvedValueOnce([
-          { boostMultiplier: 2.5, boostType: "EDITORIAL_PICK", expiresAt: new Date(Date.now() + 3600000) },
+          {
+            boostMultiplier: 2.5,
+            boostType: "EDITORIAL_PICK",
+            expiresAt: new Date(Date.now() + 3600000),
+          },
         ])
         .mockResolvedValueOnce([]);
 
@@ -664,7 +798,9 @@ describe("discovery-engine", () => {
           title: "Improv Night",
           date: new Date(),
           venue: { id: "v2", name: "Club B", latitude: null, longitude: null },
-          comedians: [{ comedian: { id: "c2", genres: [{ genre: "improv" }] } }],
+          comedians: [
+            { comedian: { id: "c2", genres: [{ genre: "improv" }] } },
+          ],
         },
       ]);
 
@@ -695,8 +831,22 @@ describe("discovery-engine", () => {
       mockPrisma.userDiscoveryProfile.findUnique.mockResolvedValue(null);
 
       mockPrisma.socialProof.findMany.mockResolvedValue([
-        { entityType: "EVENT", entityId: "event-near", trendingScore: 50, friendsAttending: 0, totalAttending: 10, buzzLevel: "HIGH" },
-        { entityType: "EVENT", entityId: "event-far", trendingScore: 50, friendsAttending: 0, totalAttending: 10, buzzLevel: "HIGH" },
+        {
+          entityType: "EVENT",
+          entityId: "event-near",
+          trendingScore: 50,
+          friendsAttending: 0,
+          totalAttending: 10,
+          buzzLevel: "HIGH",
+        },
+        {
+          entityType: "EVENT",
+          entityId: "event-far",
+          trendingScore: 50,
+          friendsAttending: 0,
+          totalAttending: 10,
+          buzzLevel: "HIGH",
+        },
       ]);
 
       mockPrisma.event.findMany.mockResolvedValue([
@@ -704,23 +854,33 @@ describe("discovery-engine", () => {
           id: "event-near",
           title: "Near Show",
           date: new Date(Date.now() + 86400000),
-          venue: { id: "v1", name: "Nearby Club", latitude: 36.16, longitude: -86.78 },
+          venue: {
+            id: "v1",
+            name: "Nearby Club",
+            latitude: 36.16,
+            longitude: -86.78,
+          },
           comedians: [{ comedian: { id: "c1", genres: [] } }],
         },
         {
           id: "event-far",
           title: "Far Show",
           date: new Date(Date.now() + 86400000),
-          venue: { id: "v2", name: "Far Club", latitude: 40.71, longitude: -74.01 },
+          venue: {
+            id: "v2",
+            name: "Far Club",
+            latitude: 40.71,
+            longitude: -74.01,
+          },
           comedians: [{ comedian: { id: "c2", genres: [] } }],
         },
       ]);
 
       // Nashville location
-      const feed = await generateTrendingNearYouFeed(
-        "user-1",
-        { lat: 36.16, lng: -86.78 },
-      );
+      const feed = await generateTrendingNearYouFeed("user-1", {
+        lat: 36.16,
+        lng: -86.78,
+      });
 
       expect(feed[0].entityId).toBe("event-near");
       expect(feed[0].score).toBeGreaterThan(feed[1].score);
@@ -730,7 +890,14 @@ describe("discovery-engine", () => {
       mockPrisma.userDiscoveryProfile.findUnique.mockResolvedValue(null);
 
       mockPrisma.socialProof.findMany.mockResolvedValue([
-        { entityType: "EVENT", entityId: "event-1", trendingScore: 120, friendsAttending: 0, totalAttending: 100, buzzLevel: "VIRAL" },
+        {
+          entityType: "EVENT",
+          entityId: "event-1",
+          trendingScore: 120,
+          friendsAttending: 0,
+          totalAttending: 100,
+          buzzLevel: "VIRAL",
+        },
       ]);
 
       mockPrisma.event.findMany.mockResolvedValue([
@@ -743,10 +910,10 @@ describe("discovery-engine", () => {
         },
       ]);
 
-      const feed = await generateTrendingNearYouFeed(
-        "user-1",
-        { lat: 36.16, lng: -86.78 },
-      );
+      const feed = await generateTrendingNearYouFeed("user-1", {
+        lat: 36.16,
+        lng: -86.78,
+      });
 
       expect(feed[0].socialProof!.buzzLevel).toBe("VIRAL");
     });
@@ -756,10 +923,10 @@ describe("discovery-engine", () => {
       mockPrisma.socialProof.findMany.mockResolvedValue([]);
       mockPrisma.event.findMany.mockResolvedValue([]);
 
-      const feed = await generateTrendingNearYouFeed(
-        "user-1",
-        { lat: 36.16, lng: -86.78 },
-      );
+      const feed = await generateTrendingNearYouFeed("user-1", {
+        lat: 36.16,
+        lng: -86.78,
+      });
 
       expect(feed).toEqual([]);
     });
@@ -820,19 +987,43 @@ describe("discovery-engine", () => {
       mockPrisma.eventAttendance.findMany.mockResolvedValue([
         {
           userId: "friend-1",
-          event: { id: "event-many", title: "Popular Show", date: futureDate, venue: { id: "v1", name: "Club A" }, comedians: [] },
+          event: {
+            id: "event-many",
+            title: "Popular Show",
+            date: futureDate,
+            venue: { id: "v1", name: "Club A" },
+            comedians: [],
+          },
         },
         {
           userId: "friend-2",
-          event: { id: "event-many", title: "Popular Show", date: futureDate, venue: { id: "v1", name: "Club A" }, comedians: [] },
+          event: {
+            id: "event-many",
+            title: "Popular Show",
+            date: futureDate,
+            venue: { id: "v1", name: "Club A" },
+            comedians: [],
+          },
         },
         {
           userId: "friend-3",
-          event: { id: "event-many", title: "Popular Show", date: futureDate, venue: { id: "v1", name: "Club A" }, comedians: [] },
+          event: {
+            id: "event-many",
+            title: "Popular Show",
+            date: futureDate,
+            venue: { id: "v1", name: "Club A" },
+            comedians: [],
+          },
         },
         {
           userId: "friend-1",
-          event: { id: "event-few", title: "Small Show", date: futureDate, venue: { id: "v2", name: "Club B" }, comedians: [] },
+          event: {
+            id: "event-few",
+            title: "Small Show",
+            date: futureDate,
+            venue: { id: "v2", name: "Club B" },
+            comedians: [],
+          },
         },
       ]);
 
@@ -961,7 +1152,9 @@ describe("discovery-engine", () => {
 
       expect(mockPrisma.socialProof.upsert).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { entityType_entityId: { entityType: "EVENT", entityId: "event-x" } },
+          where: {
+            entityType_entityId: { entityType: "EVENT", entityId: "event-x" },
+          },
         }),
       );
     });
@@ -1034,7 +1227,12 @@ describe("discovery-engine", () => {
         expiresAt: expect.any(Date),
       });
 
-      const result = await applyDiscoveryBoost("COMEDIAN", "com-1", "NEW_COMEDIAN", 24);
+      const result = await applyDiscoveryBoost(
+        "COMEDIAN",
+        "com-1",
+        "NEW_COMEDIAN",
+        24,
+      );
 
       expect(mockPrisma.discoveryBoost.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
@@ -1065,9 +1263,11 @@ describe("discovery-engine", () => {
 
     it("sets expiration based on duration hours", async () => {
       const beforeCall = Date.now();
-      mockPrisma.discoveryBoost.create.mockImplementation(({ data }: { data: { expiresAt: Date } }) => {
-        return Promise.resolve({ id: "boost-3", ...data });
-      });
+      mockPrisma.discoveryBoost.create.mockImplementation(
+        ({ data }: { data: { expiresAt: Date } }) => {
+          return Promise.resolve({ id: "boost-3", ...data });
+        },
+      );
 
       await applyDiscoveryBoost("EVENT", "event-1", "TRENDING", 12);
 
@@ -1088,7 +1288,14 @@ describe("discovery-engine", () => {
     it("returns only non-expired boosts", async () => {
       const futureDate = new Date(Date.now() + 3600000);
       mockPrisma.discoveryBoost.findMany.mockResolvedValue([
-        { id: "boost-1", entityType: "EVENT", entityId: "e1", boostType: "TRENDING", boostMultiplier: 1.6, expiresAt: futureDate },
+        {
+          id: "boost-1",
+          entityType: "EVENT",
+          entityId: "e1",
+          boostType: "TRENDING",
+          boostMultiplier: 1.6,
+          expiresAt: futureDate,
+        },
       ]);
 
       const boosts = await getActiveBoosts();
@@ -1135,13 +1342,7 @@ describe("discovery-engine", () => {
     };
 
     it("scores higher for genre match", () => {
-      const score = scoreFeedItem(
-        baseItem,
-        baseProfile,
-        null,
-        ["dark"],
-        [],
-      );
+      const score = scoreFeedItem(baseItem, baseProfile, null, ["dark"], []);
 
       const noMatchScore = scoreFeedItem(
         baseItem,
@@ -1158,7 +1359,15 @@ describe("discovery-engine", () => {
       const withSocial = scoreFeedItem(
         baseItem,
         baseProfile,
-        { entityType: "EVENT", entityId: "event-1", friendsAttending: 5, totalAttending: 100, trendingScore: 50, buzzLevel: "HIGH", trustScore: 50 },
+        {
+          entityType: "EVENT",
+          entityId: "event-1",
+          friendsAttending: 5,
+          totalAttending: 100,
+          trendingScore: 50,
+          buzzLevel: "HIGH",
+          trustScore: 50,
+        },
         ["dark"],
         [],
       );
@@ -1198,7 +1407,15 @@ describe("discovery-engine", () => {
       const extremeScore = scoreFeedItem(
         baseItem,
         baseProfile,
-        { entityType: "EVENT", entityId: "event-1", friendsAttending: 1000, totalAttending: 10000, trendingScore: 1000, buzzLevel: "VIRAL", trustScore: 100 },
+        {
+          entityType: "EVENT",
+          entityId: "event-1",
+          friendsAttending: 1000,
+          totalAttending: 10000,
+          trendingScore: 1000,
+          buzzLevel: "VIRAL",
+          trustScore: 100,
+        },
         ["dark", "observational"],
         [{ boostMultiplier: 10 }],
       );
@@ -1208,13 +1425,7 @@ describe("discovery-engine", () => {
     });
 
     it("gives neutral taste score when no genres specified", () => {
-      const score = scoreFeedItem(
-        baseItem,
-        baseProfile,
-        null,
-        [],
-        [],
-      );
+      const score = scoreFeedItem(baseItem, baseProfile, null, [], []);
 
       // Should get 30% of taste weight for unknown genres
       expect(score).toBeGreaterThan(0);
@@ -1271,9 +1482,27 @@ describe("discovery-engine", () => {
       });
 
       mockPrisma.discoverySignal.findMany.mockResolvedValue([
-        { entityType: "COMEDIAN", entityId: "com-1", signalType: "ATTEND", weight: 5, createdAt: new Date() },
-        { entityType: "COMEDIAN", entityId: "com-1", signalType: "ATTEND", weight: 5, createdAt: new Date() },
-        { entityType: "COMEDIAN", entityId: "com-1", signalType: "ATTEND", weight: 5, createdAt: new Date() },
+        {
+          entityType: "COMEDIAN",
+          entityId: "com-1",
+          signalType: "ATTEND",
+          weight: 5,
+          createdAt: new Date(),
+        },
+        {
+          entityType: "COMEDIAN",
+          entityId: "com-1",
+          signalType: "ATTEND",
+          weight: 5,
+          createdAt: new Date(),
+        },
+        {
+          entityType: "COMEDIAN",
+          entityId: "com-1",
+          signalType: "ATTEND",
+          weight: 5,
+          createdAt: new Date(),
+        },
       ]);
 
       mockPrisma.comedian.findMany.mockResolvedValue([
@@ -1307,7 +1536,13 @@ describe("discovery-engine", () => {
       });
 
       mockPrisma.discoverySignal.findMany.mockResolvedValue([
-        { entityType: "EVENT", entityId: "e1", signalType: "VIEW", weight: 1, createdAt: new Date() },
+        {
+          entityType: "EVENT",
+          entityId: "e1",
+          signalType: "VIEW",
+          weight: 1,
+          createdAt: new Date(),
+        },
       ]);
 
       mockPrisma.comedian.findMany.mockResolvedValue([]);
@@ -1316,7 +1551,9 @@ describe("discovery-engine", () => {
         {
           id: "event-1",
           comedians: [
-            { comedian: { id: "com-new", genres: [{ genre: "observational" }] } },
+            {
+              comedian: { id: "com-new", genres: [{ genre: "observational" }] },
+            },
           ],
         },
       ]);
@@ -1366,7 +1603,9 @@ describe("discovery-engine", () => {
           title: "Popular Show",
           date: futureDate,
           venue: { id: "v1", name: "Club A", latitude: null, longitude: null },
-          comedians: [{ comedian: { id: "c1", genres: [{ genre: "standup" }] } }],
+          comedians: [
+            { comedian: { id: "c1", genres: [{ genre: "standup" }] } },
+          ],
         },
       ]);
 

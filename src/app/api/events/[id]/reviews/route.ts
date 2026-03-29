@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getEventReviews, getEventRatingStats } from "@/lib/event-reviews";
+import {
+  getEventReviewsSorted,
+  getEventRatingStats,
+} from "@/lib/event-reviews";
 import { checkAndAwardBadges } from "@/lib/badges.achievement";
 import {
   hasVerifiedAttendance,
@@ -11,6 +14,7 @@ import {
   type EventExperienceInput,
 } from "@/lib/live-reputation";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { moderateContent } from "@/lib/content-moderation";
 
 // GET: List reviews and rating stats for an event
 export async function GET(
@@ -32,13 +36,24 @@ export async function GET(
 
   const url = new URL(request.url);
   const page = Math.max(1, parseInt(url.searchParams.get("page") ?? "1", 10));
+  const sortParam = url.searchParams.get("sort") as
+    | "recent"
+    | "helpful"
+    | "rating_high"
+    | "rating_low"
+    | null;
+  const sort =
+    sortParam &&
+    ["recent", "helpful", "rating_high", "rating_low"].includes(sortParam)
+      ? sortParam
+      : "recent";
   const take = 10;
   const skip = (page - 1) * take;
 
   try {
     const [stats, { reviews, total }] = await Promise.all([
       getEventRatingStats(eventId),
-      getEventReviews(eventId, take, skip),
+      getEventReviewsSorted(eventId, take, skip, sort),
     ]);
 
     return NextResponse.json({
@@ -112,6 +127,30 @@ export async function POST(
       { error: "Provide rating, comment, or crowd feedback" },
       { status: 400 },
     );
+  }
+
+  // Moderate comment text if provided
+  if (comment) {
+    try {
+      const modResult = await moderateContent({
+        text: comment,
+        userId: session.user.id,
+        contentType: "event_review",
+        contentId: eventId,
+      });
+      if (!modResult.allowed) {
+        const reason =
+          modResult.textResult?.categories
+            ?.filter((c) => c !== "clean")
+            .join(", ") || "content policy violation";
+        return NextResponse.json(
+          { error: `Review rejected: ${reason}` },
+          { status: 422 },
+        );
+      }
+    } catch {
+      // Moderation service failure should not block reviews
+    }
   }
 
   try {

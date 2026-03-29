@@ -28,7 +28,9 @@ export async function getEventRatingStats(eventId: string) {
 
   return {
     count: result._count,
-    avgRating: result._avg.rating ? Math.round(result._avg.rating * 10) / 10 : null,
+    avgRating: result._avg.rating
+      ? Math.round(result._avg.rating * 10) / 10
+      : null,
   };
 }
 
@@ -45,8 +47,82 @@ export async function getUserReview(eventId: string, userId: string) {
   });
 }
 
+export async function getTopRatedEventIds(limit = 10, minReviews = 2) {
+  const results = await prisma.eventReview.groupBy({
+    by: ["eventId"],
+    _avg: { rating: true },
+    _count: true,
+    having: { eventId: { _count: { gte: minReviews } } },
+    orderBy: { _avg: { rating: "desc" } },
+    take: limit * 2, // fetch extra to filter for upcoming events
+  });
+
+  return results.map((r) => ({
+    eventId: r.eventId,
+    avgRating: r._avg.rating ? Math.round(r._avg.rating * 10) / 10 : null,
+    count: r._count,
+  }));
+}
+
+export async function getEventReviewsSorted(
+  eventId: string,
+  take = 10,
+  skip = 0,
+  sort: "recent" | "helpful" | "rating_high" | "rating_low" = "recent",
+) {
+  let orderBy: Record<string, string> = { createdAt: "desc" };
+  if (sort === "rating_high") orderBy = { rating: "desc" };
+  else if (sort === "rating_low") orderBy = { rating: "asc" };
+
+  if (sort === "helpful") {
+    // For helpful sort, we fetch all reviews then sort by reaction count
+    const [reviews, total] = await Promise.all([
+      prisma.eventReview.findMany({
+        where: { eventId },
+        include: {
+          user: { select: { name: true, profileName: true, image: true } },
+        },
+      }),
+      prisma.eventReview.count({ where: { eventId } }),
+    ]);
+
+    // Batch fetch helpful reaction counts
+    const reactions = await prisma.reviewReaction.groupBy({
+      by: ["reviewId"],
+      where: {
+        reviewType: "event_review",
+        reviewId: { in: reviews.map((r) => r.id) },
+        reactionType: "helpful",
+      },
+      _count: true,
+    });
+    const helpfulMap = new Map(reactions.map((r) => [r.reviewId, r._count]));
+
+    reviews.sort(
+      (a, b) => (helpfulMap.get(b.id) ?? 0) - (helpfulMap.get(a.id) ?? 0),
+    );
+    return { reviews: reviews.slice(skip, skip + take), total };
+  }
+
+  const [reviews, total] = await Promise.all([
+    prisma.eventReview.findMany({
+      where: { eventId },
+      take,
+      skip,
+      orderBy,
+      include: {
+        user: { select: { name: true, profileName: true, image: true } },
+      },
+    }),
+    prisma.eventReview.count({ where: { eventId } }),
+  ]);
+
+  return { reviews, total };
+}
+
 export async function getEventRatingStatsBatch(eventIds: string[]) {
-  if (eventIds.length === 0) return new Map<string, { count: number; avgRating: number | null }>();
+  if (eventIds.length === 0)
+    return new Map<string, { count: number; avgRating: number | null }>();
 
   const results = await prisma.eventReview.groupBy({
     by: ["eventId"],
@@ -59,9 +135,7 @@ export async function getEventRatingStatsBatch(eventIds: string[]) {
   for (const r of results) {
     map.set(r.eventId, {
       count: r._count,
-      avgRating: r._avg.rating
-        ? Math.round(r._avg.rating * 10) / 10
-        : null,
+      avgRating: r._avg.rating ? Math.round(r._avg.rating * 10) / 10 : null,
     });
   }
   return map;

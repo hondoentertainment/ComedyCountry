@@ -3,7 +3,10 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { listVenues } from "@/lib/venues";
 import { listEvents, getEventsForUser } from "@/lib/events";
-import { getEventRatingStatsBatch } from "@/lib/event-reviews";
+import {
+  getEventRatingStatsBatch,
+  getTopRatedEventIds,
+} from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
 import { authOptions } from "@/lib/auth";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
@@ -11,22 +14,60 @@ import { PromotedContent } from "@/components/PromotedContent";
 import { FriendsGoingBadge } from "@/components/FriendsGoingBadge";
 import { getTasteProfile, getHappeningTonight } from "@/lib/taste-profile";
 
-function StarRating({ rating, count }: { rating: number | null; count: number }) {
-  if (count === 0) return <span className="text-zinc-500 text-sm">No reviews yet</span>;
+function StarRating({
+  rating,
+  count,
+}: {
+  rating: number | null;
+  count: number;
+}) {
+  if (count === 0)
+    return <span className="text-zinc-500 text-sm">No reviews yet</span>;
   return (
     <span className="rating-badge">
-      ★ {rating?.toFixed(1) ?? "—"} <span className="text-zinc-400">({count})</span>
+      ★ {rating?.toFixed(1) ?? "—"}{" "}
+      <span className="text-zinc-400">({count})</span>
     </span>
   );
 }
 
 const DISCOVER_LINKS = [
-  { href: "/trending", label: "Trending", icon: "🔥", description: "What's hot right now" },
-  { href: "/comedians", label: "Comedians", icon: "🎤", description: "Browse 1,800+ comedians" },
-  { href: "/venues", label: "Venues", icon: "🏛️", description: "Clubs & theaters nationwide" },
-  { href: "/open-mics", label: "Open Mics", icon: "🎙️", description: "Find your local open mic" },
-  { href: "/festivals", label: "Festivals", icon: "🎪", description: "Comedy festivals coast to coast" },
-  { href: "/specials", label: "Specials", icon: "📺", description: "Rate and discover specials" },
+  {
+    href: "/trending",
+    label: "Trending",
+    icon: "🔥",
+    description: "What's hot right now",
+  },
+  {
+    href: "/comedians",
+    label: "Comedians",
+    icon: "🎤",
+    description: "Browse 1,800+ comedians",
+  },
+  {
+    href: "/venues",
+    label: "Venues",
+    icon: "🏛️",
+    description: "Clubs & theaters nationwide",
+  },
+  {
+    href: "/open-mics",
+    label: "Open Mics",
+    icon: "🎙️",
+    description: "Find your local open mic",
+  },
+  {
+    href: "/festivals",
+    label: "Festivals",
+    icon: "🎪",
+    description: "Comedy festivals coast to coast",
+  },
+  {
+    href: "/specials",
+    label: "Specials",
+    icon: "📺",
+    description: "Rate and discover specials",
+  },
 ];
 
 const FEATURED_SCENES = [
@@ -46,21 +87,27 @@ export async function HomeSections() {
   let events: Awaited<ReturnType<typeof listEvents>>["events"] = [];
   let forYouEvents: Awaited<ReturnType<typeof getEventsForUser>>["events"] = [];
   let tasteProfile: Awaited<ReturnType<typeof getTasteProfile>> = null;
-  let ratingStats = new Map<string, { count: number; avgRating: number | null }>();
+  let ratingStats = new Map<
+    string,
+    { count: number; avgRating: number | null }
+  >();
   let dataUnavailable = false;
   let dbAvailable = false;
   let tonightEvents: Awaited<ReturnType<typeof getHappeningTonight>> = [];
 
   try {
-    const [profile, venueResult, eventResult, forYouResult, tonight] = await Promise.all([
-      session?.user?.id ? getTasteProfile(session.user.id) : Promise.resolve(null),
-      listVenues({ take: 6 }),
-      listEvents({ take: 8 }),
-      session?.user?.id
-        ? getEventsForUser(session.user.id, 6)
-        : Promise.resolve({ events: [], total: 0 }),
-      getHappeningTonight(),
-    ]);
+    const [profile, venueResult, eventResult, forYouResult, tonight] =
+      await Promise.all([
+        session?.user?.id
+          ? getTasteProfile(session.user.id)
+          : Promise.resolve(null),
+        listVenues({ take: 6 }),
+        listEvents({ take: 8 }),
+        session?.user?.id
+          ? getEventsForUser(session.user.id, 6)
+          : Promise.resolve({ events: [], total: 0 }),
+        getHappeningTonight(),
+      ]);
     tasteProfile = profile;
     venues = venueResult.venues;
     events = eventResult.events;
@@ -68,7 +115,10 @@ export async function HomeSections() {
     tonightEvents = tonight;
     dbAvailable = true;
     if (events.length > 0 || forYouEvents.length > 0) {
-      const allIds = [...events.map((x) => x.id), ...forYouEvents.map((x) => x.id)];
+      const allIds = [
+        ...events.map((x) => x.id),
+        ...forYouEvents.map((x) => x.id),
+      ];
       ratingStats = await getEventRatingStatsBatch(Array.from(new Set(allIds)));
     }
   } catch {
@@ -76,7 +126,11 @@ export async function HomeSections() {
   }
 
   const formatDate = (d: Date) =>
-    new Date(d).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    new Date(d).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
@@ -103,7 +157,9 @@ export async function HomeSections() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {tonightEvents.slice(0, 6).map((event) => {
-              const comedianNames = event.comedians.map((c) => c.name).join(", ");
+              const comedianNames = event.comedians
+                .map((c) => c.name)
+                .join(", ");
               const displayTitle = event.title ?? comedianNames;
               return (
                 <Link
@@ -115,13 +171,18 @@ export async function HomeSections() {
                     🎤
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-white truncate">{displayTitle}</h3>
+                    <h3 className="font-semibold text-white truncate">
+                      {displayTitle}
+                    </h3>
                     <p className="text-zinc-400 text-sm truncate">
-                      {event.venue.name} · {event.venue.city}, {event.venue.state}
+                      {event.venue.name} · {event.venue.city},{" "}
+                      {event.venue.state}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       {event.showtime && (
-                        <span className="text-xs text-brand-gold font-medium">{event.showtime}</span>
+                        <span className="text-xs text-brand-gold font-medium">
+                          {event.showtime}
+                        </span>
                       )}
                       <FriendsGoingBadge eventId={event.id} />
                     </div>
@@ -136,7 +197,9 @@ export async function HomeSections() {
       {/* Discover section — always visible */}
       <section className="mb-14">
         <h2 className="text-2xl font-bold text-white mb-2">Discover</h2>
-        <p className="text-zinc-400 text-sm mb-6">Explore everything comedy has to offer.</p>
+        <p className="text-zinc-400 text-sm mb-6">
+          Explore everything comedy has to offer.
+        </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {DISCOVER_LINKS.map((item) => (
             <Link
@@ -162,7 +225,9 @@ export async function HomeSections() {
           {tasteProfile?.topAttributes?.length ? (
             <div className="mb-6 p-4 rounded-card bg-brand-surface border border-zinc-800">
               <p className="text-white font-medium mb-1">Your comedy DNA</p>
-              <p className="text-zinc-400 text-sm mb-3">{tasteProfile.profileSummary}</p>
+              <p className="text-zinc-400 text-sm mb-3">
+                {tasteProfile.profileSummary}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {tasteProfile.topAttributes.slice(0, 4).map((attribute) => (
                   <span
@@ -176,66 +241,75 @@ export async function HomeSections() {
             </div>
           ) : null}
           {forYouEvents.length > 0 ? (
-          <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {forYouEvents.map((e) => {
-              const stats = ratingStats.get(e.id);
-              const comedianNames = e.comedians.map((ec) => ec.comedian.name).join(", ");
-              const img = e.comedians[0]?.comedian?.headshotUrl;
-              return (
-                <Link
-                  key={e.id}
-                  href={`/events/${e.id}`}
-                  className="card-interactive overflow-hidden group block"
-                >
-                  <div className="aspect-[4/3] bg-brand-charcoal relative overflow-hidden">
-                    {img ? (
-                      <Image
-                        src={img}
-                        alt={`Event photo featuring ${comedianNames}`}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-4xl text-zinc-600">
-                        🎤
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {forYouEvents.map((e) => {
+                  const stats = ratingStats.get(e.id);
+                  const comedianNames = e.comedians
+                    .map((ec) => ec.comedian.name)
+                    .join(", ");
+                  const img = e.comedians[0]?.comedian?.headshotUrl;
+                  return (
+                    <Link
+                      key={e.id}
+                      href={`/events/${e.id}`}
+                      className="card-interactive overflow-hidden group block"
+                    >
+                      <div className="aspect-[4/3] bg-brand-charcoal relative overflow-hidden">
+                        {img ? (
+                          <Image
+                            src={img}
+                            alt={`Event photo featuring ${comedianNames}`}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-4xl text-zinc-600">
+                            🎤
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-2">
+                          <StarRating
+                            rating={stats?.avgRating ?? null}
+                            count={stats?.count ?? 0}
+                          />
+                          <FriendsGoingBadge eventId={e.id} />
+                          <span className="text-xs px-2 py-0.5 rounded bg-black/40 text-zinc-300">
+                            {SHOW_TYPE_LABELS[e.showType] ?? e.showType}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-2">
-                      <StarRating rating={stats?.avgRating ?? null} count={stats?.count ?? 0} />
-                      <FriendsGoingBadge eventId={e.id} />
-                      <span className="text-xs px-2 py-0.5 rounded bg-black/40 text-zinc-300">
-                        {SHOW_TYPE_LABELS[e.showType] ?? e.showType}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-white truncate">{e.title ?? comedianNames}</h3>
-                    <p className="text-zinc-400 text-sm truncate">
-                      {e.venue.name} — {e.venue.city}, {e.venue.state}
-                    </p>
-                    <p className="text-zinc-500 text-sm mt-1">
-                      {formatDate(e.date)}
-                      {formatEventPrice(e.priceMin, e.priceMax) &&
-                        ` • ${formatEventPrice(e.priceMin, e.priceMax)}`}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          <Link
-            href="/following"
-            className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium"
-          >
-            View all following →
-          </Link>
-          </>
+                      <div className="p-4">
+                        <h3 className="font-semibold text-white truncate">
+                          {e.title ?? comedianNames}
+                        </h3>
+                        <p className="text-zinc-400 text-sm truncate">
+                          {e.venue.name} — {e.venue.city}, {e.venue.state}
+                        </p>
+                        <p className="text-zinc-500 text-sm mt-1">
+                          {formatDate(e.date)}
+                          {formatEventPrice(e.priceMin, e.priceMax) &&
+                            ` • ${formatEventPrice(e.priceMin, e.priceMax)}`}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              <Link
+                href="/following"
+                className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium"
+              >
+                View all following →
+              </Link>
+            </>
           ) : (
             <div className="py-12 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
-              <p className="text-zinc-400 font-medium mb-2">No personalized events yet</p>
+              <p className="text-zinc-400 font-medium mb-2">
+                No personalized events yet
+              </p>
               <p className="text-zinc-500 text-sm mb-4 max-w-md mx-auto">
                 Follow comedians and venues to see shows tailored to you here.
               </p>
@@ -261,12 +335,16 @@ export async function HomeSections() {
       {/* Upcoming shows */}
       <section className="mb-14">
         <h2 className="text-2xl font-bold text-white mb-6">Upcoming shows</h2>
-        <p className="text-zinc-400 text-sm mb-6">Top picks from the national calendar.</p>
+        <p className="text-zinc-400 text-sm mb-6">
+          Top picks from the national calendar.
+        </p>
         {events.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {events.map((e) => {
               const stats = ratingStats.get(e.id);
-              const comedianNames = e.comedians.map((ec) => ec.comedian.name).join(", ");
+              const comedianNames = e.comedians
+                .map((ec) => ec.comedian.name)
+                .join(", ");
               const img = e.comedians[0]?.comedian?.headshotUrl;
               return (
                 <Link
@@ -290,7 +368,10 @@ export async function HomeSections() {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-2">
-                      <StarRating rating={stats?.avgRating ?? null} count={stats?.count ?? 0} />
+                      <StarRating
+                        rating={stats?.avgRating ?? null}
+                        count={stats?.count ?? 0}
+                      />
                       <FriendsGoingBadge eventId={e.id} />
                     </div>
                   </div>
@@ -309,31 +390,46 @@ export async function HomeSections() {
         ) : (
           <div className="py-10 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
             <p className="text-zinc-400 mb-1">No upcoming shows yet.</p>
-            <p className="text-zinc-500 text-sm mb-3">Browse comedians and venues to find shows near you.</p>
+            <p className="text-zinc-500 text-sm mb-3">
+              Browse comedians and venues to find shows near you.
+            </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/comedians" className="inline-block text-brand-gold hover:underline font-medium">
+              <Link
+                href="/comedians"
+                className="inline-block text-brand-gold hover:underline font-medium"
+              >
                 Browse comedians →
               </Link>
-              <Link href="/schedule" className="inline-block text-brand-gold hover:underline font-medium">
+              <Link
+                href="/schedule"
+                className="inline-block text-brand-gold hover:underline font-medium"
+              >
                 View schedule →
               </Link>
             </div>
           </div>
         )}
         {events.length > 0 && (
-          <Link href="/schedule" className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium">
+          <Link
+            href="/schedule"
+            className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium"
+          >
             View full schedule →
           </Link>
         )}
       </section>
 
       {/* Promoted Events */}
-      {dbAvailable && <PromotedContent type="EVENT_FEATURED" className="mb-6 space-y-3" />}
+      {dbAvailable && (
+        <PromotedContent type="EVENT_FEATURED" className="mb-6 space-y-3" />
+      )}
 
       {/* Comedy Scenes — always visible */}
       <section className="mb-14">
         <h2 className="text-2xl font-bold text-white mb-2">Comedy scenes</h2>
-        <p className="text-zinc-400 text-sm mb-6">Explore the best comedy cities in America.</p>
+        <p className="text-zinc-400 text-sm mb-6">
+          Explore the best comedy cities in America.
+        </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {FEATURED_SCENES.map((scene) => (
             <Link
@@ -368,7 +464,11 @@ export async function HomeSections() {
                     {photo ? (
                       <Image
                         src={photo.url}
-                        alt={photo.caption ? `Photo of ${v.name}: ${photo.caption}` : `Photo of ${v.name}`}
+                        alt={
+                          photo.caption
+                            ? `Photo of ${v.name}: ${photo.caption}`
+                            : `Photo of ${v.name}`
+                        }
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -381,7 +481,8 @@ export async function HomeSections() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2">
                       <span className="inline-block px-2 py-0.5 rounded bg-black/50 text-zinc-300 text-xs">
-                        {(v.upcomingEventCount ?? 0)} upcoming show{(v.upcomingEventCount ?? 0) !== 1 ? "s" : ""}
+                        {v.upcomingEventCount ?? 0} upcoming show
+                        {(v.upcomingEventCount ?? 0) !== 1 ? "s" : ""}
                       </span>
                     </div>
                   </div>
@@ -398,14 +499,22 @@ export async function HomeSections() {
         ) : (
           <div className="py-10 px-6 rounded-card bg-brand-surface border border-zinc-800 border-dashed text-center">
             <p className="text-zinc-400 mb-1">No venues loaded yet.</p>
-            <p className="text-zinc-500 text-sm mb-3">Check out comedy scenes by city or browse all venues.</p>
-            <Link href="/venues" className="inline-block text-brand-gold hover:underline font-medium">
+            <p className="text-zinc-500 text-sm mb-3">
+              Check out comedy scenes by city or browse all venues.
+            </p>
+            <Link
+              href="/venues"
+              className="inline-block text-brand-gold hover:underline font-medium"
+            >
               Browse venues →
             </Link>
           </div>
         )}
         {venues.length > 0 && (
-          <Link href="/venues" className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium">
+          <Link
+            href="/venues"
+            className="inline-block mt-4 text-sm text-brand-gold hover:underline font-medium"
+          >
             View all venues →
           </Link>
         )}

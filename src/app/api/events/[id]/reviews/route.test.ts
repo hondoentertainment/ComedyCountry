@@ -18,7 +18,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 
 vi.mock("@/lib/event-reviews", () => ({
-  getEventReviews: vi.fn(),
+  getEventReviewsSorted: vi.fn(),
   getEventRatingStats: vi.fn(),
 }));
 
@@ -32,9 +32,16 @@ vi.mock("@/lib/live-reputation", () => ({
   upsertEventExperienceFeedback: vi.fn(),
 }));
 
+vi.mock("@/lib/content-moderation", () => ({
+  moderateContent: vi.fn().mockResolvedValue({ allowed: true }),
+}));
+
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { getEventReviews, getEventRatingStats } from "@/lib/event-reviews";
+import {
+  getEventReviewsSorted,
+  getEventRatingStats,
+} from "@/lib/event-reviews";
 import { hasVerifiedAttendance } from "@/lib/live-reputation";
 
 function makeParams(id: string) {
@@ -51,7 +58,7 @@ describe("GET /api/events/[id]/reviews", () => {
       averageRating: 4.2,
       totalRatings: 10,
     } as any);
-    vi.mocked(getEventReviews).mockResolvedValue({
+    vi.mocked(getEventReviewsSorted).mockResolvedValue({
       reviews: [{ id: "r1", rating: 5 }],
       total: 1,
     } as any);
@@ -70,12 +77,17 @@ describe("GET /api/events/[id]/reviews", () => {
 
   it("passes page parameter", async () => {
     vi.mocked(getEventRatingStats).mockResolvedValue({} as any);
-    vi.mocked(getEventReviews).mockResolvedValue({ reviews: [], total: 25 } as any);
+    vi.mocked(getEventReviewsSorted).mockResolvedValue({
+      reviews: [],
+      total: 25,
+    } as any);
 
-    const req = new NextRequest("http://localhost/api/events/e1/reviews?page=3");
+    const req = new NextRequest(
+      "http://localhost/api/events/e1/reviews?page=3",
+    );
     await GET(req, makeParams("e1"));
 
-    expect(getEventReviews).toHaveBeenCalledWith("e1", 10, 20);
+    expect(getEventReviewsSorted).toHaveBeenCalledWith("e1", 10, 20, "recent");
   });
 
   it("returns 500 on error", async () => {
