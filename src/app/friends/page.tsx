@@ -4,10 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { FriendActivityFeed } from "@/components/FriendActivityFeed";
 
 export const metadata = {
   title: "Friends | Punchline Atlas",
-  description: "Manage your comedy crew. Find friends, send requests, and see who's going to shows.",
+  description:
+    "Manage your comedy crew. Find friends, send requests, and see who's going to shows.",
 };
 
 export const dynamic = "force-dynamic";
@@ -74,17 +76,14 @@ export default async function FriendsPage() {
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <h1 className="text-3xl font-bold text-brand-gold mb-2">Friends</h1>
         <p className="text-zinc-400 mb-8">
-          Your comedy crew. See who&apos;s going to shows and discover comedy together.
+          Your comedy crew. See who&apos;s going to shows and discover comedy
+          together.
         </p>
 
         {/* Add Friend Form */}
         <div className="mb-8 p-4 rounded-lg bg-brand-surface border border-zinc-800">
           <h2 className="text-white font-semibold mb-3">Add a friend</h2>
-          <form
-            action="/api/friends"
-            method="POST"
-            className="flex gap-2"
-          >
+          <form action="/api/friends" method="POST" className="flex gap-2">
             <input
               type="text"
               name="username"
@@ -142,11 +141,7 @@ export default async function FriendsPage() {
                         action={`/api/friends/${item.connectionId}`}
                         method="POST"
                       >
-                        <input
-                          type="hidden"
-                          name="action"
-                          value="accept"
-                        />
+                        <input type="hidden" name="action" value="accept" />
                         <button
                           type="submit"
                           className="px-3 py-1.5 rounded-md bg-brand-gold text-brand-dark text-sm font-medium hover:bg-brand-gold/90 transition-colors"
@@ -158,11 +153,7 @@ export default async function FriendsPage() {
                         action={`/api/friends/${item.connectionId}`}
                         method="POST"
                       >
-                        <input
-                          type="hidden"
-                          name="action"
-                          value="decline"
-                        />
+                        <input type="hidden" name="action" value="decline" />
                         <button
                           type="submit"
                           className="px-3 py-1.5 rounded-md bg-zinc-800 text-zinc-400 text-sm hover:bg-zinc-700 hover:text-white transition-colors"
@@ -241,9 +232,7 @@ export default async function FriendsPage() {
             </div>
           ) : (
             <div className="py-12 px-6 rounded-lg bg-brand-surface border border-zinc-800 border-dashed text-center">
-              <p className="text-zinc-400 font-medium mb-2">
-                No friends yet
-              </p>
+              <p className="text-zinc-400 font-medium mb-2">No friends yet</p>
               <p className="text-zinc-500 text-sm max-w-sm mx-auto">
                 Search for other comedy fans by username to add them as friends.
               </p>
@@ -291,6 +280,11 @@ export default async function FriendsPage() {
             </div>
           </section>
         )}
+        {/* Activity Feed */}
+        <section className="mt-10">
+          <h2 className="text-white font-semibold mb-4">Friend Activity</h2>
+          <FriendActivityFeed />
+        </section>
       </div>
     </div>
   );

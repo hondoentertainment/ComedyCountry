@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { ComedianTierRatingForm } from "./ComedianTierRatingForm";
+import { TierDistribution } from "./RatingDistribution";
 
 type TabId = "info" | "rate";
 
@@ -12,6 +13,8 @@ type ComedianPageTabsProps = {
   userTierRating: string | null;
   isSignedIn: boolean;
   infoContent: React.ReactNode;
+  tierDistribution?: Record<string, number>;
+  tierTotal?: number;
 };
 
 export function ComedianPageTabs({
@@ -21,6 +24,8 @@ export function ComedianPageTabs({
   userTierRating,
   isSignedIn,
   infoContent,
+  tierDistribution,
+  tierTotal,
 }: ComedianPageTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>("info");
   const infoRef = useRef<HTMLButtonElement>(null);
@@ -51,7 +56,7 @@ export function ComedianPageTabs({
         focusTab(nextTab);
       }
     },
-    [focusTab]
+    [focusTab],
   );
 
   return (
@@ -119,9 +124,7 @@ export function ComedianPageTabs({
         className={activeTab !== "rate" ? "sr-only" : ""}
       >
         <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Tier rating
-          </h2>
+          <h2 className="text-lg font-semibold text-white mb-4">Tier rating</h2>
           {isSignedIn ? (
             <ComedianTierRatingForm
               comedianId={comedianId}
@@ -141,6 +144,17 @@ export function ComedianPageTabs({
                 Sign in
               </a>
             </>
+          )}
+          {tierDistribution && tierTotal != null && tierTotal > 0 && (
+            <div className="mt-6 pt-6 border-t border-zinc-800">
+              <h3 className="text-sm font-medium text-zinc-300 mb-3">
+                Community ratings ({tierTotal} total)
+              </h3>
+              <TierDistribution
+                distribution={tierDistribution}
+                total={tierTotal}
+              />
+            </div>
           )}
         </div>
       </div>

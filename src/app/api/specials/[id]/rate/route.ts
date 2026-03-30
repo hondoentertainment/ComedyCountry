@@ -38,6 +38,7 @@ export async function GET(
     avgRating: stats._avg.rating,
     count: stats._count,
     userRating: userRating?.rating ?? null,
+    userComment: userRating?.comment ?? null,
   });
 }
 
@@ -60,16 +61,27 @@ export async function POST(
 
   const { id } = await params;
   const body = await request.json();
-  const { rating } = body;
+  const { rating, comment } = body;
 
   if (!rating || rating < 1 || rating > 5) {
     return NextResponse.json({ error: "Rating must be 1-5" }, { status: 400 });
   }
 
+  const trimmedComment =
+    typeof comment === "string" ? comment.trim() || null : undefined;
+
   const result = await prisma.specialRating.upsert({
     where: { specialId_userId: { specialId: id, userId: session.user.id } },
-    update: { rating },
-    create: { specialId: id, userId: session.user.id, rating },
+    update: {
+      rating,
+      ...(trimmedComment !== undefined && { comment: trimmedComment }),
+    },
+    create: {
+      specialId: id,
+      userId: session.user.id,
+      rating,
+      comment: trimmedComment ?? null,
+    },
   });
 
   return NextResponse.json(result);

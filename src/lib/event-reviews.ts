@@ -34,6 +34,19 @@ export async function getEventRatingStats(eventId: string) {
   };
 }
 
+export async function getEventRatingDistribution(eventId: string) {
+  const results = await prisma.eventReview.groupBy({
+    by: ["rating"],
+    where: { eventId },
+    _count: true,
+  });
+  const distribution: Record<number, number> = {};
+  for (const r of results) {
+    distribution[r.rating] = r._count;
+  }
+  return distribution;
+}
+
 export async function getUserReview(eventId: string, userId: string) {
   return prisma.eventReview.findUnique({
     where: {
@@ -118,6 +131,32 @@ export async function getEventReviewsSorted(
   ]);
 
   return { reviews, total };
+}
+
+export async function getTopRatedUpcomingEvents(limit = 6, minReviews = 2) {
+  const topIds = await getTopRatedEventIds(limit * 2, minReviews);
+  if (topIds.length === 0) return [];
+
+  const events = await prisma.event.findMany({
+    where: {
+      id: { in: topIds.map((t) => t.eventId) },
+      date: { gte: new Date() },
+    },
+    include: {
+      venue: true,
+      comedians: { include: { comedian: true } },
+    },
+    take: limit,
+  });
+
+  // Attach rating info and sort by avgRating desc
+  const ratingMap = new Map(topIds.map((t) => [t.eventId, t]));
+  return events
+    .map((e) => ({ ...e, ratingInfo: ratingMap.get(e.id) }))
+    .sort(
+      (a, b) => (b.ratingInfo?.avgRating ?? 0) - (a.ratingInfo?.avgRating ?? 0),
+    )
+    .slice(0, limit);
 }
 
 export async function getEventRatingStatsBatch(eventIds: string[]) {

@@ -135,6 +135,13 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     icon: "check",
     category: "milestone",
   },
+  {
+    id: "trusted_critic",
+    name: "Trusted Critic",
+    description: "Write 20+ reviews with high helpful ratio",
+    icon: "award",
+    category: "milestone",
+  },
 ];
 
 /**
@@ -197,7 +204,12 @@ function getBadgesForAction(action: string): string[] {
       return ["venue_follower"];
     case "review_event":
     case "review_venue":
-      return ["first_review", "five_reviews", "twenty_reviews"];
+      return [
+        "first_review",
+        "five_reviews",
+        "twenty_reviews",
+        "trusted_critic",
+      ];
     case "rate_comedian":
       return ["first_rating"];
     case "create_list":
@@ -262,6 +274,23 @@ async function checkBadgeCondition(
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
       return user.createdAt <= oneYearAgo;
+    }
+    case "trusted_critic": {
+      const reviewCount = await prisma.eventReview.count({ where: { userId } });
+      if (reviewCount < 20) return false;
+      // Check helpful ratio: user has at least some helpful reactions
+      const userReviews = await prisma.eventReview.findMany({
+        where: { userId },
+        select: { id: true },
+      });
+      const helpfulCount = await prisma.reviewReaction.count({
+        where: {
+          reviewType: "event_review",
+          reviewId: { in: userReviews.map((r) => r.id) },
+          reactionType: "helpful",
+        },
+      });
+      return helpfulCount >= 10;
     }
     default:
       return false;

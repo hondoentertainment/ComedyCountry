@@ -4,7 +4,11 @@ import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getEventById } from "@/lib/events";
-import { getUserReview, getEventRatingStats } from "@/lib/event-reviews";
+import {
+  getUserReview,
+  getEventRatingStats,
+  getEventRatingDistribution,
+} from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
 import { EventReviewsSection } from "@/components/EventReviewsSection";
@@ -22,19 +26,23 @@ import { getSimilarEvents } from "@/lib/similar-events";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const event = await getEventById(id);
   if (!event) return { title: "Event | Punchline Atlas" };
-  const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
-  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+  const title =
+    event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
+  const siteUrl =
+    process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
   const description = `Rate and review ${title} at ${event.venue.name}`;
   // Use first comedian headshot or placeholder
   const img =
     event.comedians[0]?.comedian?.headshotUrl ?? `${siteUrl}/og-default.png`;
-  const images = [
-    { url: img, width: 1200, height: 630, alt: title },
-  ];
+  const images = [{ url: img, width: 1200, height: 630, alt: title }];
   return {
     title: `${title} | Punchline Atlas`,
     description,
@@ -69,19 +77,27 @@ export default async function EventPage({ params }: PageProps) {
 
   if (!event) notFound();
 
-  const ticketTypes = "ticketTypes" in event ? (event.ticketTypes as { capacity: number; sold: number }[]) ?? [] : [];
+  const ticketTypes =
+    "ticketTypes" in event
+      ? ((event.ticketTypes as { capacity: number; sold: number }[]) ?? [])
+      : [];
   const totalCapacity = ticketTypes.reduce((s, t) => s + t.capacity, 0);
   const totalSold = ticketTypes.reduce((s, t) => s + t.sold, 0);
   const isSoldOut = ticketTypes.length > 0 && totalSold >= totalCapacity;
 
   const similarEvents = await getSimilarEvents(id, 4).catch(() => []);
 
-  const userReview = session?.user?.id
-    ? await getUserReview(id, session.user.id).catch(() => null)
-    : null;
+  const [userReview, ratingDistribution] = await Promise.all([
+    session?.user?.id
+      ? getUserReview(id, session.user.id).catch(() => null)
+      : Promise.resolve(null),
+    getEventRatingDistribution(id).catch(() => ({})),
+  ]);
   const [reputation, passport, recommendation] = await Promise.all([
     getEventReputationSummary(id).catch(() => null),
-    session?.user?.id ? getComedyPassportSummary(session.user.id).catch(() => null) : Promise.resolve(null),
+    session?.user?.id
+      ? getComedyPassportSummary(session.user.id).catch(() => null)
+      : Promise.resolve(null),
     session?.user?.id
       ? getEventRecommendationInsight(session.user.id, id).catch(() => null)
       : Promise.resolve(null),
@@ -95,9 +111,11 @@ export default async function EventPage({ params }: PageProps) {
       year: "numeric",
     });
 
-  const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
+  const title =
+    event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
   const img = event.comedians[0]?.comedian?.headshotUrl;
-  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+  const siteUrl =
+    process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
     <div className="min-h-screen">
@@ -123,7 +141,8 @@ export default async function EventPage({ params }: PageProps) {
           <div className="mx-auto max-w-3xl">
             {stats.count > 0 && (
               <span className="rating-badge mb-3 inline-block">
-                ★ {stats.avgRating?.toFixed(1)} ({stats.count} review{stats.count !== 1 ? "s" : ""})
+                ★ {stats.avgRating?.toFixed(1)} ({stats.count} review
+                {stats.count !== 1 ? "s" : ""})
               </span>
             )}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
@@ -190,7 +209,9 @@ export default async function EventPage({ params }: PageProps) {
             <span className="flex-1" />
             {isSoldOut ? (
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-amber-400 font-medium">Sold out</span>
+                <span className="text-sm text-amber-400 font-medium">
+                  Sold out
+                </span>
                 <WaitlistButton eventId={id} />
                 <span className="text-zinc-600">·</span>
                 <EventShareButtons
@@ -227,21 +248,27 @@ export default async function EventPage({ params }: PageProps) {
 
         {recommendation && (
           <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
-            <h2 className="text-lg font-semibold text-white mb-2">Why this show fits you</h2>
+            <h2 className="text-lg font-semibold text-white mb-2">
+              Why this show fits you
+            </h2>
             <p className="text-zinc-400 text-sm">{recommendation.reason}</p>
             <div className="flex flex-wrap gap-2 mt-3">
-              {typeof recommendation.matchPct === "number" && recommendation.matchPct > 0 && (
-                <span className="px-2 py-1 rounded-full bg-brand-gold/10 text-brand-gold text-xs">
-                  {recommendation.matchPct}% match
-                </span>
-              )}
+              {typeof recommendation.matchPct === "number" &&
+                recommendation.matchPct > 0 && (
+                  <span className="px-2 py-1 rounded-full bg-brand-gold/10 text-brand-gold text-xs">
+                    {recommendation.matchPct}% match
+                  </span>
+                )}
               {recommendation.stretchLabel && (
                 <span className="px-2 py-1 rounded-full bg-zinc-800 text-zinc-300 text-xs capitalize">
                   {recommendation.stretchLabel} pick
                 </span>
               )}
               {(recommendation.tags ?? []).slice(0, 3).map((tag) => (
-                <span key={tag} className="px-2 py-1 rounded-full bg-zinc-800 text-zinc-400 text-xs">
+                <span
+                  key={tag}
+                  className="px-2 py-1 rounded-full bg-zinc-800 text-zinc-400 text-xs"
+                >
                   {tag}
                 </span>
               ))}
@@ -251,24 +278,33 @@ export default async function EventPage({ params }: PageProps) {
 
         {reputation && (
           <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
-            <h2 className="text-lg font-semibold text-white mb-2">Verified crowd take</h2>
+            <h2 className="text-lg font-semibold text-white mb-2">
+              Verified crowd take
+            </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
               <div>
-                <p className="text-brand-gold text-xl font-bold">{reputation.trustScore}</p>
+                <p className="text-brand-gold text-xl font-bold">
+                  {reputation.trustScore}
+                </p>
                 <p className="text-zinc-500 text-xs">Trust score</p>
               </div>
               <div>
-                <p className="text-white text-xl font-bold">{reputation.verifiedSignalRate}%</p>
+                <p className="text-white text-xl font-bold">
+                  {reputation.verifiedSignalRate}%
+                </p>
                 <p className="text-zinc-500 text-xs">Verified signals</p>
               </div>
               <div>
                 <p className="text-white text-xl font-bold">
-                  {reputation.wouldRecommendRate ?? "—"}{reputation.wouldRecommendRate !== null ? "%" : ""}
+                  {reputation.wouldRecommendRate ?? "—"}
+                  {reputation.wouldRecommendRate !== null ? "%" : ""}
                 </p>
                 <p className="text-zinc-500 text-xs">Would recommend</p>
               </div>
               <div>
-                <p className="text-white text-xl font-bold">{reputation.verifiedReviewCount}</p>
+                <p className="text-white text-xl font-bold">
+                  {reputation.verifiedReviewCount}
+                </p>
                 <p className="text-zinc-500 text-xs">Verified reviews</p>
               </div>
             </div>
@@ -289,10 +325,14 @@ export default async function EventPage({ params }: PageProps) {
 
         {similarEvents.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-lg font-semibold text-white mb-4">More like this</h2>
+            <h2 className="text-lg font-semibold text-white mb-4">
+              More like this
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {similarEvents.map((ev) => {
-                const evTitle = ev.title ?? ev.comedians.map((ec) => ec.comedian.name).join(", ");
+                const evTitle =
+                  ev.title ??
+                  ev.comedians.map((ec) => ec.comedian.name).join(", ");
                 const evImg = ev.comedians[0]?.comedian?.headshotUrl;
                 return (
                   <Link
@@ -316,9 +356,16 @@ export default async function EventPage({ params }: PageProps) {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-white truncate">{evTitle}</p>
+                      <p className="font-medium text-white truncate">
+                        {evTitle}
+                      </p>
                       <p className="text-sm text-zinc-400">
-                        {ev.venue.name} · {new Date(ev.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        {ev.venue.name} ·{" "}
+                        {new Date(ev.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
                       </p>
                     </div>
                   </Link>
@@ -330,22 +377,32 @@ export default async function EventPage({ params }: PageProps) {
 
         {passport && (
           <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
-            <h2 className="text-lg font-semibold text-white mb-2">Your comedy passport</h2>
+            <h2 className="text-lg font-semibold text-white mb-2">
+              Your comedy passport
+            </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
               <div>
-                <p className="text-brand-gold text-xl font-bold">{passport.showsAttended}</p>
+                <p className="text-brand-gold text-xl font-bold">
+                  {passport.showsAttended}
+                </p>
                 <p className="text-zinc-500 text-xs">Shows attended</p>
               </div>
               <div>
-                <p className="text-white text-xl font-bold">{passport.scenesExplored}</p>
+                <p className="text-white text-xl font-bold">
+                  {passport.scenesExplored}
+                </p>
                 <p className="text-zinc-500 text-xs">Scenes explored</p>
               </div>
               <div>
-                <p className="text-white text-xl font-bold">{passport.comediansSeen}</p>
+                <p className="text-white text-xl font-bold">
+                  {passport.comediansSeen}
+                </p>
                 <p className="text-zinc-500 text-xs">Comedians seen</p>
               </div>
               <div>
-                <p className="text-white text-xl font-bold">{passport.currentStreak}</p>
+                <p className="text-white text-xl font-bold">
+                  {passport.currentStreak}
+                </p>
                 <p className="text-zinc-500 text-xs">Current streak</p>
               </div>
             </div>
@@ -365,6 +422,7 @@ export default async function EventPage({ params }: PageProps) {
               : null
           }
           initialStats={stats}
+          ratingDistribution={ratingDistribution}
           isSignedIn={!!session?.user}
         />
       </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { EventRatingForm } from "./EventRatingForm";
 import { EventReviews } from "./EventReviews";
+import { RatingDistribution } from "./RatingDistribution";
 
 type UserReview = {
   id: string;
@@ -14,6 +15,7 @@ type EventReviewsSectionProps = {
   eventId: string;
   initialReview?: UserReview | null;
   initialStats?: { count: number; avgRating: number | null } | null;
+  ratingDistribution?: Record<number, number>;
   isSignedIn: boolean;
 };
 
@@ -21,6 +23,7 @@ export function EventReviewsSection({
   eventId,
   initialReview,
   initialStats,
+  ratingDistribution,
   isSignedIn,
 }: EventReviewsSectionProps) {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -33,7 +36,8 @@ export function EventReviewsSection({
         </h2>
         <div className="p-4 rounded-card bg-brand-surface border border-zinc-800/80">
           <p className="text-xs text-zinc-500 mb-4">
-            Add a quick live-quality read so Punchline Atlas can learn what rooms and lineups actually fit your taste.
+            Add a quick live-quality read so Punchline Atlas can learn what
+            rooms and lineups actually fit your taste.
           </p>
           {isSignedIn ? (
             <EventRatingForm
@@ -57,6 +61,20 @@ export function EventReviewsSection({
           )}
         </div>
       </section>
+
+      {ratingDistribution && initialStats && initialStats.count > 0 && (
+        <section className="mb-10">
+          <h2 className="text-lg font-semibold text-white mb-4">
+            Rating breakdown
+          </h2>
+          <div className="p-4 rounded-card bg-brand-surface border border-zinc-800/80 max-w-sm">
+            <RatingDistribution
+              distribution={ratingDistribution}
+              total={initialStats.count}
+            />
+          </div>
+        </section>
+      )}
 
       <section>
         <h2 className="text-lg font-semibold text-white mb-4">Reviews</h2>

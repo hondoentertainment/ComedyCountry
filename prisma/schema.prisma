@@ -837,6 +837,23 @@ model ReviewReaction {
 }
 
 // =============================================================================
+// Review Replies (creator responses to reviews)
+// =============================================================================
+
+model ReviewReply {
+  id         String   @id @default(cuid())
+  reviewType String   // event_review, venue_review
+  reviewId   String
+  userId     String
+  comment    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([reviewType, reviewId, userId])
+  @@index([reviewType, reviewId])
+}
+
+// =============================================================================
 // Event Waitlist (sold-out notification signup)
 // =============================================================================
 

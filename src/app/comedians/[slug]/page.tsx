@@ -21,13 +21,22 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const comedian = await getComedian(slug);
   if (!comedian) return { title: "Comedian | Punchline Atlas" };
-  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+  const siteUrl =
+    process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
   const description = comedian.bio
     ? `${comedian.bio.slice(0, 155)}${comedian.bio.length > 155 ? "…" : ""}`
     : `Comedian profile and upcoming shows for ${comedian.name}.`;
-  const ogImageUrl = comedian.headshotUrl
-    || `${siteUrl}/api/og?title=${encodeURIComponent(comedian.name)}&subtitle=${encodeURIComponent(description.slice(0, 80))}&type=comedian`;
-  const images = [{ url: ogImageUrl, width: comedian.headshotUrl ? 400 : 1200, height: comedian.headshotUrl ? 400 : 630, alt: `${comedian.name}` }];
+  const ogImageUrl =
+    comedian.headshotUrl ||
+    `${siteUrl}/api/og?title=${encodeURIComponent(comedian.name)}&subtitle=${encodeURIComponent(description.slice(0, 80))}&type=comedian`;
+  const images = [
+    {
+      url: ogImageUrl,
+      width: comedian.headshotUrl ? 400 : 1200,
+      height: comedian.headshotUrl ? 400 : 630,
+      alt: `${comedian.name}`,
+    },
+  ];
   return {
     title: `${comedian.name} | Punchline Atlas`,
     description,
@@ -83,6 +92,21 @@ export default async function ComedianPage({ params }: PageProps) {
     userTierRating = tierRating?.tier ?? null;
   }
 
+  // Fetch tier distribution (public)
+  const tierRatings = await prisma.comedianTierRating
+    .groupBy({
+      by: ["tier"],
+      where: { comedianId: comedian.id },
+      _count: true,
+    })
+    .catch(() => []);
+  const tierDistribution: Record<string, number> = {};
+  let tierTotal = 0;
+  for (const r of tierRatings) {
+    tierDistribution[r.tier] = r._count;
+    tierTotal += r._count;
+  }
+
   const formatDate = (d: Date) =>
     new Date(d).toLocaleDateString("en-US", {
       weekday: "short",
@@ -95,7 +119,8 @@ export default async function ComedianPage({ params }: PageProps) {
     .map((ec) => ec.event)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+  const siteUrl =
+    process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
 
   return (
     <div className="min-h-screen">
@@ -139,9 +164,7 @@ export default async function ComedianPage({ params }: PageProps) {
           )}
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-white">
-                {comedian.name}
-              </h1>
+              <h1 className="text-3xl font-bold text-white">{comedian.name}</h1>
               <FollowButton
                 type="comedian"
                 id={comedian.id}
@@ -228,137 +251,169 @@ export default async function ComedianPage({ params }: PageProps) {
           comedianSlug={comedian.slug}
           userTierRating={userTierRating}
           isSignedIn={!!session?.user}
+          tierDistribution={tierDistribution}
+          tierTotal={tierTotal}
           infoContent={
             <>
-        {comedian.podcastLinks.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold text-white mb-4">Podcasts</h2>
-            <ul className="space-y-2">
-              {comedian.podcastLinks.map((link) => (
-                <li key={link.id} className="flex items-center gap-2">
-                  <span className="text-white">{link.podcastName}</span>
-                  {link.episodeUrl ? (
-                    <a
-                      href={link.episodeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-brand-gold hover:underline text-sm"
-                    >
-                      Listen →
-                    </a>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+              {comedian.podcastLinks.length > 0 && (
+                <section className="mb-8">
+                  <h2 className="text-xl font-semibold text-white mb-4">
+                    Podcasts
+                  </h2>
+                  <ul className="space-y-2">
+                    {comedian.podcastLinks.map((link) => (
+                      <li key={link.id} className="flex items-center gap-2">
+                        <span className="text-white">{link.podcastName}</span>
+                        {link.episodeUrl ? (
+                          <a
+                            href={link.episodeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-brand-gold hover:underline text-sm"
+                          >
+                            Listen →
+                          </a>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
-        {comedian.genres.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-sm font-medium text-zinc-400 mb-2">Genres</h2>
-            <div className="flex flex-wrap gap-2">
-              {comedian.genres.map((g) => (
-                <span
-                  key={g.id}
-                  className="px-3 py-1 rounded-full bg-zinc-700 text-zinc-300 text-sm capitalize"
-                >
-                  {g.genre}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {comedian.specialReleases.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold text-white mb-4">
-              Specials & Releases
-            </h2>
-            <ul className="space-y-2">
-              {comedian.specialReleases.map((special) => (
-                <li key={special.id} className="flex flex-wrap gap-2 items-center">
-                  <span className="text-white font-medium">{special.title}</span>
-                  {special.releaseYear && (
-                    <span className="text-zinc-500 text-sm">
-                      ({special.releaseYear})
-                    </span>
-                  )}
-                  {special.platform && (
-                    <span className="text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-400">
-                      {special.platform}
-                    </span>
-                  )}
-                  {special.url && (
-                    <a
-                      href={special.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-brand-gold hover:underline text-sm"
-                    >
-                      Watch
-                    </a>
-                  )}
-                  <SpecialRating specialId={special.id} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <section>
-          <h2 className="text-xl font-semibold text-white mb-4">
-            Upcoming Shows ({upcomingShows.length})
-          </h2>
-          {upcomingShows.length > 0 ? (
-            <ul className="space-y-4">
-              {upcomingShows.map((event) => (
-                <li
-                  key={event.id}
-                  className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800"
-                >
-                  <div className="flex flex-wrap justify-between items-start gap-2">
-                    <div>
-                      <Link
-                        href={`/events/${event.id}`}
-                        className="font-medium text-white hover:text-brand-gold"
+              {comedian.genres.length > 0 && (
+                <section className="mb-8">
+                  <h2 className="text-sm font-medium text-zinc-400 mb-2">
+                    Genres
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {comedian.genres.map((g) => (
+                      <span
+                        key={g.id}
+                        className="px-3 py-1 rounded-full bg-zinc-700 text-zinc-300 text-sm capitalize"
                       >
-                        {event.title ?? `${comedian.name} at ${event.venue.name}`}
-                      </Link>
-                      <p className="text-zinc-400 text-sm">
-                        {event.venue.city}, {event.venue.state} •{" "}
-                        {formatDate(event.date)}
-                        {event.showtime && ` • ${event.showtime}`}
-                        {formatEventPrice(event.priceMin, event.priceMax) && (
-                          <> • {formatEventPrice(event.priceMin, event.priceMax)}</>
-                        )}
-                      </p>
-                      <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-300">
-                        {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
+                        {g.genre}
                       </span>
-                    </div>
-                    {event.ticketUrl && (
-                      <a
-                        href={event.ticketUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-3 py-1.5 rounded-md bg-brand-gold text-brand-dark text-sm font-medium hover:bg-brand-gold/90"
-                      >
-                        Get tickets
-                      </a>
-                    )}
+                    ))}
                   </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="py-12 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
-              <p className="text-zinc-400 font-medium mb-1">No upcoming shows</p>
-              <p className="text-zinc-500 text-sm">
-                Check back later or <Link href="/schedule" className="text-brand-gold hover:underline">browse the schedule</Link> for other comedians.
-              </p>
-            </div>
-          )}
-        </section>
+                </section>
+              )}
+
+              {comedian.specialReleases.length > 0 && (
+                <section className="mb-8">
+                  <h2 className="text-xl font-semibold text-white mb-4">
+                    Specials & Releases
+                  </h2>
+                  <ul className="space-y-2">
+                    {comedian.specialReleases.map((special) => (
+                      <li
+                        key={special.id}
+                        className="flex flex-wrap gap-2 items-center"
+                      >
+                        <span className="text-white font-medium">
+                          {special.title}
+                        </span>
+                        {special.releaseYear && (
+                          <span className="text-zinc-500 text-sm">
+                            ({special.releaseYear})
+                          </span>
+                        )}
+                        {special.platform && (
+                          <span className="text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-400">
+                            {special.platform}
+                          </span>
+                        )}
+                        {special.url && (
+                          <a
+                            href={special.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-brand-gold hover:underline text-sm"
+                          >
+                            Watch
+                          </a>
+                        )}
+                        <SpecialRating specialId={special.id} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              <section>
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  Upcoming Shows ({upcomingShows.length})
+                </h2>
+                {upcomingShows.length > 0 ? (
+                  <ul className="space-y-4">
+                    {upcomingShows.map((event) => (
+                      <li
+                        key={event.id}
+                        className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800"
+                      >
+                        <div className="flex flex-wrap justify-between items-start gap-2">
+                          <div>
+                            <Link
+                              href={`/events/${event.id}`}
+                              className="font-medium text-white hover:text-brand-gold"
+                            >
+                              {event.title ??
+                                `${comedian.name} at ${event.venue.name}`}
+                            </Link>
+                            <p className="text-zinc-400 text-sm">
+                              {event.venue.city}, {event.venue.state} •{" "}
+                              {formatDate(event.date)}
+                              {event.showtime && ` • ${event.showtime}`}
+                              {formatEventPrice(
+                                event.priceMin,
+                                event.priceMax,
+                              ) && (
+                                <>
+                                  {" "}
+                                  •{" "}
+                                  {formatEventPrice(
+                                    event.priceMin,
+                                    event.priceMax,
+                                  )}
+                                </>
+                              )}
+                            </p>
+                            <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-300">
+                              {SHOW_TYPE_LABELS[event.showType] ??
+                                event.showType}
+                            </span>
+                          </div>
+                          {event.ticketUrl && (
+                            <a
+                              href={event.ticketUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-1.5 rounded-md bg-brand-gold text-brand-dark text-sm font-medium hover:bg-brand-gold/90"
+                            >
+                              Get tickets
+                            </a>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="py-12 px-6 rounded-lg bg-brand-charcoal/30 border border-zinc-800 border-dashed text-center">
+                    <p className="text-zinc-400 font-medium mb-1">
+                      No upcoming shows
+                    </p>
+                    <p className="text-zinc-500 text-sm">
+                      Check back later or{" "}
+                      <Link
+                        href="/schedule"
+                        className="text-brand-gold hover:underline"
+                      >
+                        browse the schedule
+                      </Link>{" "}
+                      for other comedians.
+                    </p>
+                  </div>
+                )}
+              </section>
             </>
           }
         />

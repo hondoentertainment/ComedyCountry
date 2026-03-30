@@ -5,7 +5,7 @@ import { listVenues } from "@/lib/venues";
 import { listEvents, getEventsForUser } from "@/lib/events";
 import {
   getEventRatingStatsBatch,
-  getTopRatedEventIds,
+  getTopRatedUpcomingEvents,
 } from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
 import { authOptions } from "@/lib/auth";
@@ -94,6 +94,8 @@ export async function HomeSections() {
   let dataUnavailable = false;
   let dbAvailable = false;
   let tonightEvents: Awaited<ReturnType<typeof getHappeningTonight>> = [];
+  let topRatedEvents: Awaited<ReturnType<typeof getTopRatedUpcomingEvents>> =
+    [];
 
   try {
     const [profile, venueResult, eventResult, forYouResult, tonight] =
@@ -113,6 +115,7 @@ export async function HomeSections() {
     events = eventResult.events;
     forYouEvents = forYouResult.events;
     tonightEvents = tonight;
+    topRatedEvents = await getTopRatedUpcomingEvents(6).catch(() => []);
     dbAvailable = true;
     if (events.length > 0 || forYouEvents.length > 0) {
       const allIds = [
@@ -418,6 +421,70 @@ export async function HomeSections() {
           </Link>
         )}
       </section>
+
+      {/* Top Rated Shows */}
+      {topRatedEvents.length > 0 && (
+        <section className="mb-14">
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Top rated shows
+          </h2>
+          <p className="text-zinc-400 text-sm mb-6">
+            Highest rated upcoming shows by the community.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {topRatedEvents.map((e) => {
+              const comedianNames = e.comedians
+                .map((ec) => ec.comedian.name)
+                .join(", ");
+              const img = e.comedians[0]?.comedian?.headshotUrl;
+              return (
+                <Link
+                  key={e.id}
+                  href={`/events/${e.id}`}
+                  className="card-interactive overflow-hidden group block"
+                >
+                  <div className="aspect-[16/10] bg-brand-charcoal relative overflow-hidden">
+                    {img ? (
+                      <Image
+                        src={img}
+                        alt={`Event photo featuring ${comedianNames}`}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-4xl text-zinc-600">
+                        🎤
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 left-2">
+                      {e.ratingInfo && (
+                        <span className="rating-badge">
+                          ★ {e.ratingInfo.avgRating?.toFixed(1)} (
+                          {e.ratingInfo.count} review
+                          {e.ratingInfo.count !== 1 ? "s" : ""})
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-white truncate">
+                      {e.title ?? comedianNames}
+                    </h3>
+                    <p className="text-zinc-400 text-sm truncate">
+                      {e.venue.name} — {e.venue.city}, {e.venue.state}
+                    </p>
+                    <p className="text-zinc-500 text-sm mt-1">
+                      {formatDate(e.date)}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Promoted Events */}
       {dbAvailable && (
