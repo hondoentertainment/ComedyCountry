@@ -14,7 +14,16 @@ type ListVenuesParams = {
 };
 
 export async function listVenues(params: ListVenuesParams = {}) {
-  const { state, city, type, capacityMin, capacityMax, search, take = 50, skip = 0 } = params;
+  const {
+    state,
+    city,
+    type,
+    capacityMin,
+    capacityMax,
+    search,
+    take = 50,
+    skip = 0,
+  } = params;
 
   const where: Prisma.VenueWhereInput = {};
 
@@ -23,8 +32,10 @@ export async function listVenues(params: ListVenuesParams = {}) {
   if (type) where.type = type;
   if (capacityMin != null || capacityMax != null) {
     where.capacity = {};
-    if (capacityMin != null) (where.capacity as { gte?: number }).gte = capacityMin;
-    if (capacityMax != null) (where.capacity as { lte?: number }).lte = capacityMax;
+    if (capacityMin != null)
+      (where.capacity as { gte?: number }).gte = capacityMin;
+    if (capacityMax != null)
+      (where.capacity as { lte?: number }).lte = capacityMax;
   }
   if (search)
     where.OR = [
@@ -57,11 +68,28 @@ export async function listVenues(params: ListVenuesParams = {}) {
     },
     _count: { id: true },
   });
-  const countByVenue = Object.fromEntries(upcomingCounts.map((r) => [r.venueId, r._count.id]));
+  const countByVenue = Object.fromEntries(
+    upcomingCounts.map((r) => [r.venueId, r._count.id]),
+  );
+
+  const reviewStats = await prisma.venueReview.groupBy({
+    by: ["venueId"],
+    where: { venueId: { in: venues.map((v) => v.id) } },
+    _avg: { rating: true },
+    _count: { id: true },
+  });
+  const reviewsByVenue = Object.fromEntries(
+    reviewStats.map((r) => [
+      r.venueId,
+      { avgRating: r._avg.rating, reviewCount: r._count.id },
+    ]),
+  );
 
   const venuesWithCounts = venues.map((v) => ({
     ...v,
     upcomingEventCount: countByVenue[v.id] ?? 0,
+    avgRating: reviewsByVenue[v.id]?.avgRating ?? null,
+    reviewCount: reviewsByVenue[v.id]?.reviewCount ?? 0,
   }));
 
   return { venues: venuesWithCounts, total };
@@ -97,11 +125,9 @@ async function getVenueStatesUncached() {
 }
 
 export async function getVenueStates() {
-  return unstable_cache(
-    getVenueStatesUncached,
-    ["venue-states"],
-    { revalidate: 300 }
-  )();
+  return unstable_cache(getVenueStatesUncached, ["venue-states"], {
+    revalidate: 300,
+  })();
 }
 
 type ListVenuesWithCoordinatesParams = {
@@ -112,7 +138,7 @@ type ListVenuesWithCoordinatesParams = {
 };
 
 export async function listVenuesWithCoordinates(
-  options?: ListVenuesWithCoordinatesParams
+  options?: ListVenuesWithCoordinatesParams,
 ) {
   const { take = 500, state, city, search } = options ?? {};
   const where: Prisma.VenueWhereInput = {
@@ -148,6 +174,6 @@ export async function getVenueStatesWithCoordinates() {
         orderBy: { state: "asc" },
       }),
     ["venue-states-with-coords"],
-    { revalidate: 300 }
+    { revalidate: 300 },
   )();
 }
