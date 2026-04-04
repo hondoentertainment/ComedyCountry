@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { requireAdmin } from "@/lib/admin";
 import { listArticles, createArticle } from "@/lib/news";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`news:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`news:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -30,7 +34,11 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("GET /api/news error:", error);
+    logger.error(
+      "GET /api/news error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch articles" },
       { status: 500 },
@@ -39,7 +47,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`news:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`news:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -71,7 +82,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json(article, { status: 201 });
   } catch (error) {
-    console.error("POST /api/news error:", error);
+    logger.error(
+      "POST /api/news error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to create article" },
       { status: 500 },

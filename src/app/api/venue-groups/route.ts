@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,7 +7,10 @@ import { createVenueGroup } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -30,13 +34,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ groups });
   } catch (error) {
-    console.error("GET /api/venue-groups error:", error);
-    return NextResponse.json({ error: "Failed to fetch venue groups" }, { status: 500 });
+    logger.error(
+      "GET /api/venue-groups error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch venue groups" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -57,7 +71,14 @@ export async function POST(request: Request) {
     const group = await createVenueGroup(session.user.id, name);
     return NextResponse.json(group, { status: 201 });
   } catch (error) {
-    console.error("POST /api/venue-groups error:", error);
-    return NextResponse.json({ error: "Failed to create venue group" }, { status: 500 });
+    logger.error(
+      "POST /api/venue-groups error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create venue group" },
+      { status: 500 },
+    );
   }
 }

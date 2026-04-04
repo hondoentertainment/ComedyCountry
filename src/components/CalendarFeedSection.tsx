@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
+import { logger } from "@/lib/logger";
 
 export function CalendarFeedSection() {
   const [url, setUrl] = useState<string | null>(null);
@@ -41,7 +42,11 @@ export function CalendarFeedSection() {
       setUrl(data.url);
     } catch (err) {
       setUrl("error");
-      console.error(err);
+      logger.error(
+        "CalendarFeedSection generate failed",
+        {},
+        err instanceof Error ? err : undefined,
+      );
     } finally {
       setLoading(false);
     }
@@ -58,9 +63,12 @@ export function CalendarFeedSection() {
 
   return (
     <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
-      <h3 className="text-lg font-semibold text-white mb-1">Calendar subscription</h3>
+      <h3 className="text-lg font-semibold text-white mb-1">
+        Calendar subscription
+      </h3>
       <p className="text-zinc-400 text-sm mb-4">
-        Subscribe to your RSVPs and tickets in Google Calendar, Apple Calendar, or Outlook.
+        Subscribe to your RSVPs and tickets in Google Calendar, Apple Calendar,
+        or Outlook.
       </p>
 
       {isProGated && (
@@ -108,8 +116,8 @@ export function CalendarFeedSection() {
             </button>
           </div>
           <p className="text-zinc-500 text-xs">
-            Add this URL in Google Calendar (Settings → Add calendar → From URL), Apple Calendar
-            (File → New Calendar Subscription), or Outlook.
+            Add this URL in Google Calendar (Settings → Add calendar → From
+            URL), Apple Calendar (File → New Calendar Subscription), or Outlook.
           </p>
           <button
             type="button"

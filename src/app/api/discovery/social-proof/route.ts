@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSocialProof, computeSocialProof } from "@/lib/discovery-engine";
@@ -9,7 +10,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Query params: entityType, entityId
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`discovery-social-proof:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `discovery-social-proof:${getRateLimitKey(request)}`,
+    { limit: 30, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -33,7 +37,9 @@ export async function GET(request: Request) {
     const validTypes = ["EVENT", "COMEDIAN", "VENUE", "CLIP", "PODCAST"];
     if (!validTypes.includes(entityType)) {
       return NextResponse.json(
-        { error: `Invalid entityType. Must be one of: ${validTypes.join(", ")}` },
+        {
+          error: `Invalid entityType. Must be one of: ${validTypes.join(", ")}`,
+        },
         { status: 400 },
       );
     }
@@ -61,7 +67,11 @@ export async function GET(request: Request) {
 
     return NextResponse.json(proof);
   } catch (err) {
-    console.error("Discovery social-proof GET error:", err);
+    logger.error(
+      "Discovery social-proof GET error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch social proof" },
       { status: 500 },

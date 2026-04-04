@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createCheckoutSession, createPortalSession, isStripeConfigured } from "@/lib/stripe";
+import {
+  createCheckoutSession,
+  createPortalSession,
+  isStripeConfigured,
+} from "@/lib/stripe";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
@@ -10,7 +15,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Returns checkout URL for client-side redirect.
  */
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`stripe-checkout:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `stripe-checkout:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -22,7 +30,13 @@ export async function POST(request: Request) {
 
   const { plan } = await request.json();
 
-  const validPlans = ["FAN_PRO", "COMEDIAN_PRO", "COMEDIAN_PREMIUM", "VENUE_PRO", "VENUE_PREMIUM"];
+  const validPlans = [
+    "FAN_PRO",
+    "COMEDIAN_PRO",
+    "COMEDIAN_PREMIUM",
+    "VENUE_PRO",
+    "VENUE_PREMIUM",
+  ];
   if (!plan || !validPlans.includes(plan)) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
@@ -36,7 +50,12 @@ export async function POST(request: Request) {
     try {
       await prisma.subscription.upsert({
         where: { userId: session.user.id },
-        update: { plan, status: "ACTIVE", currentPeriodStart: now, currentPeriodEnd: periodEnd },
+        update: {
+          plan,
+          status: "ACTIVE",
+          currentPeriodStart: now,
+          currentPeriodEnd: periodEnd,
+        },
         create: {
           userId: session.user.id,
           plan,
@@ -46,12 +65,16 @@ export async function POST(request: Request) {
         },
       });
     } catch {
-      return NextResponse.json({ error: "Subscription service unavailable" }, { status: 503 });
+      return NextResponse.json(
+        { error: "Subscription service unavailable" },
+        { status: 503 },
+      );
     }
 
     return NextResponse.json({
       mode: "demo",
-      message: "Demo subscription activated. Configure STRIPE_SECRET_KEY for real payments.",
+      message:
+        "Demo subscription activated. Configure STRIPE_SECRET_KEY for real payments.",
     });
   }
 
@@ -81,8 +104,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url });
   } catch (err) {
-    console.error("Stripe checkout error:", err);
-    return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
+    logger.error(
+      "Stripe checkout error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create checkout session" },
+      { status: 500 },
+    );
   }
 }
 
@@ -90,7 +120,10 @@ export async function POST(request: Request) {
  * GET - Create a Stripe billing portal session for managing subscription.
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`stripe-checkout:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `stripe-checkout:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -101,7 +134,10 @@ export async function GET(request: Request) {
   }
 
   if (!isStripeConfigured()) {
-    return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
+    return NextResponse.json(
+      { error: "Stripe not configured" },
+      { status: 503 },
+    );
   }
 
   try {
@@ -111,15 +147,28 @@ export async function GET(request: Request) {
     });
 
     if (!sub?.stripeCustId) {
-      return NextResponse.json({ error: "No active subscription" }, { status: 404 });
+      return NextResponse.json(
+        { error: "No active subscription" },
+        { status: 404 },
+      );
     }
 
     const origin = new URL(request.url).origin;
-    const portalUrl = await createPortalSession(sub.stripeCustId, `${origin}/settings`);
+    const portalUrl = await createPortalSession(
+      sub.stripeCustId,
+      `${origin}/settings`,
+    );
 
     return NextResponse.json({ url: portalUrl });
   } catch (err) {
-    console.error("Stripe portal error:", err);
-    return NextResponse.json({ error: "Failed to create portal session" }, { status: 500 });
+    logger.error(
+      "Stripe portal error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create portal session" },
+      { status: 500 },
+    );
   }
 }

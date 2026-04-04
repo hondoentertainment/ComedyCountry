@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { generateTrendingNearYouFeed } from "@/lib/discovery-engine";
@@ -9,7 +10,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Query params: lat, lng, limit
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`discovery-trending-nearby:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `discovery-trending-nearby:${getRateLimitKey(request)}`,
+    { limit: 30, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -40,7 +44,11 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ items: feed, count: feed.length });
   } catch (err) {
-    console.error("Discovery trending-nearby GET error:", err);
+    logger.error(
+      "Discovery trending-nearby GET error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to generate trending feed" },
       { status: 500 },

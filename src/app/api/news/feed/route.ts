@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { listArticles, getCategories } from "@/lib/news";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
@@ -11,7 +12,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 // ---------------------------------------------------------------------------
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`news-feed:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`news-feed:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -48,9 +52,7 @@ export async function GET(request: Request) {
 
     // Deduplicate: remove featured articles from the main list
     const featuredIds = new Set(featuredResult.articles.map((a) => a.id));
-    const articles = mainResult.articles.filter(
-      (a) => !featuredIds.has(a.id),
-    );
+    const articles = mainResult.articles.filter((a) => !featuredIds.has(a.id));
 
     // Build curated sections
     const sections: Array<{
@@ -106,7 +108,11 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("GET /api/news/feed error:", error);
+    logger.error(
+      "GET /api/news/feed error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to generate news feed" },
       { status: 500 },

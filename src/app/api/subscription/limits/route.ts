@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { canUseLocationAlerts, canUseCalendarFeed } from "@/lib/subscription-gates";
+import {
+  canUseLocationAlerts,
+  canUseCalendarFeed,
+} from "@/lib/subscription-gates";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 /**
@@ -9,7 +13,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Returns feature gates for the authenticated user.
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`subscription-limits:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `subscription-limits:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -30,10 +37,14 @@ export async function GET(request: Request) {
       canUseCalendarFeed: canUseCalendar,
     });
   } catch (err) {
-    console.error("Subscription limits error:", err);
+    logger.error(
+      "Subscription limits error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch limits" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

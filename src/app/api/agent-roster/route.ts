@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,7 +7,10 @@ import { getAgentRoster } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -20,13 +24,23 @@ export async function GET(request: Request) {
     const roster = await getAgentRoster(session.user.id);
     return NextResponse.json({ roster });
   } catch (error) {
-    console.error("GET /api/agent-roster error:", error);
-    return NextResponse.json({ error: "Failed to fetch roster" }, { status: 500 });
+    logger.error(
+      "GET /api/agent-roster error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch roster" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -41,7 +55,10 @@ export async function POST(request: Request) {
     const { comedianId, commission } = body;
 
     if (!comedianId) {
-      return NextResponse.json({ error: "comedianId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "comedianId is required" },
+        { status: 400 },
+      );
     }
 
     const entry = await prisma.agentRoster.create({
@@ -55,13 +72,23 @@ export async function POST(request: Request) {
 
     return NextResponse.json(entry, { status: 201 });
   } catch (error) {
-    console.error("POST /api/agent-roster error:", error);
-    return NextResponse.json({ error: "Failed to add to roster" }, { status: 500 });
+    logger.error(
+      "POST /api/agent-roster error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to add to roster" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(request: Request) {
-  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -76,7 +103,10 @@ export async function DELETE(request: Request) {
     const comedianId = searchParams.get("comedianId");
 
     if (!comedianId) {
-      return NextResponse.json({ error: "comedianId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "comedianId is required" },
+        { status: 400 },
+      );
     }
 
     await prisma.agentRoster.delete({
@@ -87,7 +117,14 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/agent-roster error:", error);
-    return NextResponse.json({ error: "Failed to remove from roster" }, { status: 500 });
+    logger.error(
+      "DELETE /api/agent-roster error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to remove from roster" },
+      { status: 500 },
+    );
   }
 }

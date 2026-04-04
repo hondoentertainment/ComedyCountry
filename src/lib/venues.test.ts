@@ -16,6 +16,9 @@ vi.mock("./prisma", () => ({
     event: {
       groupBy: vi.fn(),
     },
+    venueReview: {
+      groupBy: vi.fn(),
+    },
   },
 }));
 
@@ -34,6 +37,9 @@ const mockPrisma = prisma as unknown as {
   event: {
     groupBy: ReturnType<typeof vi.fn>;
   };
+  venueReview: {
+    groupBy: ReturnType<typeof vi.fn>;
+  };
 };
 
 describe("venues", () => {
@@ -47,18 +53,24 @@ describe("venues", () => {
       mockPrisma.venue.findMany.mockResolvedValue(mockVenues);
       mockPrisma.venue.count.mockResolvedValue(1);
       mockPrisma.event.groupBy.mockResolvedValue([]);
+      mockPrisma.venueReview.groupBy.mockResolvedValue([]);
 
       const result = await listVenues();
 
       expect(result.venues).toHaveLength(1);
-      expect(result.venues[0]).toMatchObject({ id: "v1", name: "Comedy Club", state: "CA", upcomingEventCount: 0 });
+      expect(result.venues[0]).toMatchObject({
+        id: "v1",
+        name: "Comedy Club",
+        state: "CA",
+        upcomingEventCount: 0,
+      });
       expect(result.total).toBe(1);
       expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {},
           take: 50,
           skip: 0,
-        })
+        }),
       );
     });
 
@@ -73,18 +85,28 @@ describe("venues", () => {
     });
 
     it("merges upcomingEventCount from groupBy", async () => {
-      const mockVenues = [{ id: "v1", name: "Club A", state: "CA" }, { id: "v2", name: "Club B", state: "NY" }];
+      const mockVenues = [
+        { id: "v1", name: "Club A", state: "CA" },
+        { id: "v2", name: "Club B", state: "NY" },
+      ];
       mockPrisma.venue.findMany.mockResolvedValue(mockVenues);
       mockPrisma.venue.count.mockResolvedValue(2);
       mockPrisma.event.groupBy.mockResolvedValue([
         { venueId: "v1", _count: { id: 5 } },
         { venueId: "v2", _count: { id: 2 } },
       ]);
+      mockPrisma.venueReview.groupBy.mockResolvedValue([]);
 
       const result = await listVenues();
 
-      expect(result.venues[0]).toMatchObject({ id: "v1", upcomingEventCount: 5 });
-      expect(result.venues[1]).toMatchObject({ id: "v2", upcomingEventCount: 2 });
+      expect(result.venues[0]).toMatchObject({
+        id: "v1",
+        upcomingEventCount: 5,
+      });
+      expect(result.venues[1]).toMatchObject({
+        id: "v2",
+        upcomingEventCount: 2,
+      });
     });
 
     it("filters by state when provided", async () => {
@@ -98,7 +120,7 @@ describe("venues", () => {
           where: expect.objectContaining({
             state: { equals: "CA", mode: "insensitive" },
           }),
-        })
+        }),
       );
     });
 
@@ -113,7 +135,7 @@ describe("venues", () => {
           where: expect.objectContaining({
             city: { contains: "Los Angeles", mode: "insensitive" },
           }),
-        })
+        }),
       );
     });
 
@@ -131,7 +153,7 @@ describe("venues", () => {
               { city: { contains: "comedy", mode: "insensitive" } },
             ],
           }),
-        })
+        }),
       );
     });
   });
@@ -197,7 +219,7 @@ describe("venues", () => {
             latitude: { not: null },
             longitude: { not: null },
           },
-        })
+        }),
       );
     });
 
@@ -207,7 +229,7 @@ describe("venues", () => {
       await listVenuesWithCoordinates();
 
       expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ take: 500 })
+        expect.objectContaining({ take: 500 }),
       );
     });
 
@@ -217,7 +239,7 @@ describe("venues", () => {
       await listVenuesWithCoordinates({ take: 100 });
 
       expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ take: 100 })
+        expect.objectContaining({ take: 100 }),
       );
     });
 
@@ -231,7 +253,7 @@ describe("venues", () => {
           where: expect.objectContaining({
             state: { equals: "CA", mode: "insensitive" },
           }),
-        })
+        }),
       );
     });
 
@@ -245,7 +267,7 @@ describe("venues", () => {
           where: expect.objectContaining({
             city: { contains: "LA", mode: "insensitive" },
           }),
-        })
+        }),
       );
     });
 
@@ -263,7 +285,7 @@ describe("venues", () => {
               { state: { contains: "comedy", mode: "insensitive" } },
             ],
           }),
-        })
+        }),
       );
     });
 
@@ -286,7 +308,7 @@ describe("venues", () => {
       expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ type: "THEATER" }),
-        })
+        }),
       );
     });
 
@@ -301,7 +323,7 @@ describe("venues", () => {
           where: expect.objectContaining({
             capacity: { gte: 100, lte: 500 },
           }),
-        })
+        }),
       );
     });
 
@@ -316,7 +338,7 @@ describe("venues", () => {
           where: expect.objectContaining({
             capacity: { gte: 100 },
           }),
-        })
+        }),
       );
     });
 
@@ -331,7 +353,7 @@ describe("venues", () => {
           where: expect.objectContaining({
             capacity: { lte: 500 },
           }),
-        })
+        }),
       );
     });
 
@@ -344,7 +366,7 @@ describe("venues", () => {
       expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: [{ state: "asc" }, { city: "asc" }, { name: "asc" }],
-        })
+        }),
       );
     });
 
@@ -359,16 +381,15 @@ describe("venues", () => {
           include: {
             photos: { orderBy: { sortOrder: "asc" }, take: 1 },
           },
-        })
+        }),
       );
     });
 
     it("defaults upcomingEventCount to 0 when no events", async () => {
-      mockPrisma.venue.findMany.mockResolvedValue([
-        { id: "v1", name: "Club" },
-      ]);
+      mockPrisma.venue.findMany.mockResolvedValue([{ id: "v1", name: "Club" }]);
       mockPrisma.venue.count.mockResolvedValue(1);
       mockPrisma.event.groupBy.mockResolvedValue([]);
+      mockPrisma.venueReview.groupBy.mockResolvedValue([]);
 
       const result = await listVenues();
       expect(result.venues[0]).toMatchObject({ upcomingEventCount: 0 });
@@ -387,7 +408,7 @@ describe("venues", () => {
             socialLinks: true,
             _count: { select: { events: true } },
           }),
-        })
+        }),
       );
     });
 
@@ -414,7 +435,7 @@ describe("venues", () => {
           include: expect.objectContaining({
             events: expect.objectContaining({ take: 10 }),
           }),
-        })
+        }),
       );
     });
   });

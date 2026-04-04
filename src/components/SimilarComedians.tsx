@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { logger } from "@/lib/logger";
 
 type SimilarComedian = {
   id: string;
@@ -22,7 +23,11 @@ export function SimilarComedians({ comedianId }: { comedianId: string }) {
       .then((r) => r.json())
       .then((data) => setComedians(data.similar ?? []))
       .catch((err) => {
-        console.error('SimilarComedians fetch failed:', err);
+        logger.error(
+          "SimilarComedians fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        );
       })
       .finally(() => setLoading(false));
   }, [comedianId]);
@@ -41,7 +46,9 @@ export function SimilarComedians({ comedianId }: { comedianId: string }) {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold text-white mb-4">Similar comedians</h3>
+      <h3 className="text-lg font-semibold text-white mb-4">
+        Similar comedians
+      </h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {comedians.map((c) => (
           <Link
@@ -65,9 +72,12 @@ export function SimilarComedians({ comedianId }: { comedianId: string }) {
               )}
             </div>
             <div className="p-3">
-              <p className="text-white text-sm font-medium truncate">{c.name}</p>
+              <p className="text-white text-sm font-medium truncate">
+                {c.name}
+              </p>
               <p className="text-zinc-500 text-xs mt-0.5">
-                {c._count.followers} follower{c._count.followers !== 1 ? "s" : ""}
+                {c._count.followers} follower
+                {c._count.followers !== 1 ? "s" : ""}
               </p>
               {c.genres.length > 0 && (
                 <p className="text-zinc-600 text-xs mt-1 truncate">

@@ -1,20 +1,33 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { applyDiscoveryBoost, getActiveBoosts } from "@/lib/discovery-engine";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
-const VALID_ENTITY_TYPES = ["EVENT", "COMEDIAN", "VENUE", "CLIP", "PODCAST"] as const;
+const VALID_ENTITY_TYPES = [
+  "EVENT",
+  "COMEDIAN",
+  "VENUE",
+  "CLIP",
+  "PODCAST",
+] as const;
 const VALID_BOOST_TYPES = [
-  "NEW_COMEDIAN", "RETURNING_FAVORITE", "FRIEND_RECOMMENDED",
-  "TRENDING", "EDITORIAL_PICK",
+  "NEW_COMEDIAN",
+  "RETURNING_FAVORITE",
+  "FRIEND_RECOMMENDED",
+  "TRENDING",
+  "EDITORIAL_PICK",
 ] as const;
 
 /**
  * POST - Apply a discovery boost (admin only).
  */
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`discovery-boost:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `discovery-boost:${getRateLimitKey(request)}`,
+    { limit: 30, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -28,7 +41,10 @@ export async function POST(request: Request) {
     // Check admin role
     const user = session.user as { id: string; role?: string };
     if (user.role !== "admin") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Admin access required" },
+        { status: 403 },
+      );
     }
 
     const body = await request.json();
@@ -36,21 +52,28 @@ export async function POST(request: Request) {
 
     if (!entityType || !entityId || !boostType || !durationHours) {
       return NextResponse.json(
-        { error: "Missing required fields: entityType, entityId, boostType, durationHours" },
+        {
+          error:
+            "Missing required fields: entityType, entityId, boostType, durationHours",
+        },
         { status: 400 },
       );
     }
 
     if (!VALID_ENTITY_TYPES.includes(entityType)) {
       return NextResponse.json(
-        { error: `Invalid entityType. Must be one of: ${VALID_ENTITY_TYPES.join(", ")}` },
+        {
+          error: `Invalid entityType. Must be one of: ${VALID_ENTITY_TYPES.join(", ")}`,
+        },
         { status: 400 },
       );
     }
 
     if (!VALID_BOOST_TYPES.includes(boostType)) {
       return NextResponse.json(
-        { error: `Invalid boostType. Must be one of: ${VALID_BOOST_TYPES.join(", ")}` },
+        {
+          error: `Invalid boostType. Must be one of: ${VALID_BOOST_TYPES.join(", ")}`,
+        },
         { status: 400 },
       );
     }
@@ -71,7 +94,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json(boost, { status: 201 });
   } catch (err) {
-    console.error("Discovery boost POST error:", err);
+    logger.error(
+      "Discovery boost POST error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to apply boost" },
       { status: 500 },
@@ -83,7 +110,10 @@ export async function POST(request: Request) {
  * GET - List all active boosts.
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`discovery-boost:${getRateLimitKey(request)}`, { limit: 30, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `discovery-boost:${getRateLimitKey(request)}`,
+    { limit: 30, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -98,7 +128,11 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ boosts, count: boosts.length });
   } catch (err) {
-    console.error("Discovery boost GET error:", err);
+    logger.error(
+      "Discovery boost GET error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch boosts" },
       { status: 500 },

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getRecommendedComedians, getRecommendedEvents } from "@/lib/recommendations";
+import {
+  getRecommendedComedians,
+  getRecommendedEvents,
+} from "@/lib/recommendations";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import {
@@ -66,7 +70,11 @@ export async function GET(request: NextRequest) {
       headers: { "Cache-Control": "private, max-age=300" },
     });
   } catch (err) {
-    console.error("Recommendations error:", err);
+    logger.error(
+      "Recommendations error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json({ comedians: [], events: [] });
   }
 }

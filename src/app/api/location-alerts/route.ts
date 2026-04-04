@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -22,10 +23,14 @@ export async function GET() {
 
     return NextResponse.json({ alerts });
   } catch (err) {
-    console.error("Location alerts GET error:", err);
+    logger.error(
+      "Location alerts GET error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch location alerts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -42,7 +47,12 @@ export async function POST(request: Request) {
   if (!rl.success) {
     return NextResponse.json(
       { error: "Too many requests" },
-      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+        },
+      },
     );
   }
 
@@ -58,17 +68,21 @@ export async function POST(request: Request) {
     if (typeof latitude !== "number" || typeof longitude !== "number") {
       return NextResponse.json(
         { error: "latitude and longitude are required numbers" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const radius = typeof radiusMi === "number" ? Math.max(1, Math.min(radiusMi, 500)) : 50;
+    const radius =
+      typeof radiusMi === "number" ? Math.max(1, Math.min(radiusMi, 500)) : 50;
 
     const allowed = await canUseLocationAlerts(session.user.id);
     if (!allowed) {
       return NextResponse.json(
-        { error: "Free accounts can have 1 location alert. Upgrade to Pro for unlimited." },
-        { status: 403 }
+        {
+          error:
+            "Free accounts can have 1 location alert. Upgrade to Pro for unlimited.",
+        },
+        { status: 403 },
       );
     }
 
@@ -83,10 +97,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ alert }, { status: 201 });
   } catch (err) {
-    console.error("Location alerts POST error:", err);
+    logger.error(
+      "Location alerts POST error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to create location alert" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -106,7 +124,10 @@ export async function DELETE(request: Request) {
     const { alertId } = body;
 
     if (!alertId) {
-      return NextResponse.json({ error: "alertId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "alertId is required" },
+        { status: 400 },
+      );
     }
 
     // Verify ownership
@@ -122,10 +143,14 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Location alerts DELETE error:", err);
+    logger.error(
+      "Location alerts DELETE error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to delete location alert" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

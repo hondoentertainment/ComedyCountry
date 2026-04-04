@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import {
@@ -18,7 +19,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 // ---------------------------------------------------------------------------
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`moderation:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`moderation:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -31,7 +35,10 @@ export async function GET(request: Request) {
   // Only admins can view moderation queue
   const user = session.user as { id: string; role?: string };
   if (user.role !== "admin") {
-    return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Admin access required" },
+      { status: 403 },
+    );
   }
 
   const { searchParams } = new URL(request.url);
@@ -42,7 +49,10 @@ export async function GET(request: Request) {
     if (action === "strikes") {
       const userId = searchParams.get("userId");
       if (!userId) {
-        return NextResponse.json({ error: "userId is required" }, { status: 400 });
+        return NextResponse.json(
+          { error: "userId is required" },
+          { status: 400 },
+        );
       }
       const strikes = await getUserStrikes(userId);
       return NextResponse.json(strikes);
@@ -63,7 +73,11 @@ export async function GET(request: Request) {
     const queue = await getModerationQueue(status ?? undefined, limit);
     return NextResponse.json({ items: queue, count: queue.length });
   } catch (error) {
-    console.error("GET /api/moderation error:", error);
+    logger.error(
+      "GET /api/moderation error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch moderation data" },
       { status: 500 },
@@ -76,7 +90,10 @@ export async function GET(request: Request) {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`moderation:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`moderation:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -116,7 +133,10 @@ export async function POST(request: Request) {
     if (action === "check-text") {
       const { text } = body;
       if (!text || typeof text !== "string") {
-        return NextResponse.json({ error: "text is required" }, { status: 400 });
+        return NextResponse.json(
+          { error: "text is required" },
+          { status: 400 },
+        );
       }
 
       const result = moderateText(text);
@@ -155,7 +175,12 @@ export async function POST(request: Request) {
         );
       }
 
-      const validDecisions = ["APPROVED", "FLAGGED", "REJECTED", "PENDING_REVIEW"];
+      const validDecisions = [
+        "APPROVED",
+        "FLAGGED",
+        "REJECTED",
+        "PENDING_REVIEW",
+      ];
       if (!validDecisions.includes(decision)) {
         return NextResponse.json(
           { error: `decision must be one of: ${validDecisions.join(", ")}` },
@@ -163,7 +188,11 @@ export async function POST(request: Request) {
         );
       }
 
-      const result = await reviewModerationItem(itemId, decision, session.user.id);
+      const result = await reviewModerationItem(
+        itemId,
+        decision,
+        session.user.id,
+      );
       return NextResponse.json(result);
     }
 
@@ -213,7 +242,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ error: "Unknown action" }, { status: 400 });
   } catch (error) {
-    console.error("POST /api/moderation error:", error);
+    logger.error(
+      "POST /api/moderation error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Moderation action failed" },
       { status: 500 },

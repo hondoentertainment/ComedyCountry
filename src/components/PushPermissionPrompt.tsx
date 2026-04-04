@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { logger } from "@/lib/logger";
 
 type PermissionState = "default" | "granted" | "denied" | "unsupported";
 
@@ -60,7 +61,9 @@ export function PushPermissionPrompt() {
         if (vapidKey) {
           const subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(vapidKey) as unknown as BufferSource,
+            applicationServerKey: urlBase64ToUint8Array(
+              vapidKey,
+            ) as unknown as BufferSource,
           });
 
           const subJson = subscription.toJSON();
@@ -81,7 +84,11 @@ export function PushPermissionPrompt() {
         setShowPrompt(false);
       }
     } catch (err) {
-      console.error("[Push] Subscription failed:", err);
+      logger.error(
+        "Push subscription failed",
+        {},
+        err instanceof Error ? err : undefined,
+      );
     } finally {
       setSubscribing(false);
     }
@@ -127,8 +134,8 @@ export function PushPermissionPrompt() {
               Stay in the Loop
             </h3>
             <p className="text-zinc-400 text-xs mt-1 leading-relaxed">
-              Get notified about new shows near you, event reminders, and updates
-              from comedians you follow.
+              Get notified about new shows near you, event reminders, and
+              updates from comedians you follow.
             </p>
           </div>
         </div>
@@ -192,9 +199,7 @@ function NotifFeature({ text }: { text: string }) {
  */
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; ++i) {

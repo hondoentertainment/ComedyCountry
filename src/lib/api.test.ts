@@ -12,7 +12,7 @@ import {
 
 function createRequest(
   url = "http://localhost/api/test",
-  headers: Record<string, string> = {}
+  headers: Record<string, string> = {},
 ): Request {
   return new Request(url, {
     method: "GET",
@@ -197,7 +197,7 @@ describe("logError", () => {
     expect(logged.requestId).toBe("log-err");
     expect(logged.error.name).toBe("Error");
     expect(logged.error.message).toBe("boom");
-    expect(logged.userId).toBe("u1");
+    expect(logged.context.userId).toBe("u1");
 
     spy.mockRestore();
   });
@@ -211,7 +211,7 @@ describe("logError", () => {
     logError(request, "String error", "just a string");
 
     const logged = JSON.parse(spy.mock.calls[0][0] as string);
-    expect(logged.error.message).toBe("just a string");
+    expect(logged.context.error.message).toBe("just a string");
 
     spy.mockRestore();
   });

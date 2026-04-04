@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -17,7 +18,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * or update pass status (void, expire).
  */
 export async function PATCH(request: NextRequest) {
-  const rl = await checkRateLimit(`wallet-update:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`wallet-update:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -34,7 +38,7 @@ export async function PATCH(request: NextRequest) {
     if (!serialNumber || typeof serialNumber !== "string") {
       return NextResponse.json(
         { error: "serialNumber is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -46,7 +50,7 @@ export async function PATCH(request: NextRequest) {
     if (!pass) {
       return NextResponse.json(
         { error: "Wallet pass not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -57,10 +61,7 @@ export async function PATCH(request: NextRequest) {
         select: { role: true },
       });
       if (user?.role !== "admin") {
-        return NextResponse.json(
-          { error: "Not authorized" },
-          { status: 403 }
-        );
+        return NextResponse.json({ error: "Not authorized" }, { status: 403 });
       }
     }
 
@@ -83,7 +84,7 @@ export async function PATCH(request: NextRequest) {
       if (!ticket) {
         return NextResponse.json(
           { error: "Associated ticket not found" },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -107,17 +108,13 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(
       {
-        error:
-          "Invalid action. Must be 'void', 'refresh', or 'update_status'",
+        error: "Invalid action. Must be 'void', 'refresh', or 'update_status'",
       },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     if (error instanceof Error) {
-      const clientErrors = [
-        "Wallet pass not found",
-        "Pass is already voided",
-      ];
+      const clientErrors = ["Wallet pass not found", "Pass is already voided"];
       if (clientErrors.includes(error.message)) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
@@ -125,10 +122,14 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
     }
-    console.error("PATCH /api/wallet/update error:", error);
+    logger.error(
+      "PATCH /api/wallet/update error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to update wallet pass" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

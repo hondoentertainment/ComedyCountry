@@ -56,6 +56,9 @@ jobs:
       - name: Unit tests
         run: npm run test:run
 
+      - name: Security audit
+        run: npm audit --audit-level=critical || echo "::warning::npm audit found high-severity vulnerabilities — review before production"
+
   e2e:
     needs: quality
     runs-on: ubuntu-latest

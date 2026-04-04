@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { logger } from "@/lib/logger";
 
 interface FriendInfo {
   id: string;
@@ -32,7 +33,11 @@ export function FriendsGoingBadge({ eventId }: FriendsGoingBadgeProps) {
         }
       })
       .catch((err) => {
-        console.error('FriendsGoingBadge fetch failed:', err);
+        logger.error(
+          "FriendsGoingBadge fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        );
       })
       .finally(() => setLoading(false));
   }, [eventId]);
@@ -42,9 +47,7 @@ export function FriendsGoingBadge({ eventId }: FriendsGoingBadgeProps) {
   return (
     <span
       className="inline-flex items-center gap-1.5"
-      title={friends
-        .map((f) => f.profileName || f.name || "Friend")
-        .join(", ")}
+      title={friends.map((f) => f.profileName || f.name || "Friend").join(", ")}
     >
       <span className="flex -space-x-1.5">
         {friends.slice(0, 3).map((f) =>
@@ -64,7 +67,7 @@ export function FriendsGoingBadge({ eventId }: FriendsGoingBadgeProps) {
             >
               {(f.profileName || f.name || "?")[0]?.toUpperCase()}
             </span>
-          )
+          ),
         )}
       </span>
       <span className="text-xs text-brand-gold font-medium">

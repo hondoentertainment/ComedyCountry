@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createAudienceSegment, getAudienceSegments } from "@/lib/marketing";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketing-segments:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-segments:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -20,19 +24,32 @@ export async function GET(request: Request) {
     const venueId = searchParams.get("venueId");
 
     if (!venueId) {
-      return NextResponse.json({ error: "venueId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "venueId is required" },
+        { status: 400 },
+      );
     }
 
     const segments = await getAudienceSegments(venueId);
     return NextResponse.json({ segments });
   } catch (error) {
-    console.error("GET /api/marketing/segments error:", error);
-    return NextResponse.json({ error: "Failed to fetch segments" }, { status: 500 });
+    logger.error(
+      "GET /api/marketing/segments error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch segments" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`marketing-segments:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-segments:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -53,10 +70,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const segment = await createAudienceSegment({ venueId, name, description, criteria });
+    const segment = await createAudienceSegment({
+      venueId,
+      name,
+      description,
+      criteria,
+    });
     return NextResponse.json(segment, { status: 201 });
   } catch (error) {
-    console.error("POST /api/marketing/segments error:", error);
-    return NextResponse.json({ error: "Failed to create segment" }, { status: 500 });
+    logger.error(
+      "POST /api/marketing/segments error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create segment" },
+      { status: 500 },
+    );
   }
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getHappeningTonight } from "@/lib/taste-profile";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
@@ -7,7 +8,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Query params: latitude, longitude, radiusMi (all optional).
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`happening-tonight:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `happening-tonight:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -26,17 +30,24 @@ export async function GET(request: Request) {
       undefined,
       latitude,
       longitude,
-      radiusMi
+      radiusMi,
     );
 
-    return NextResponse.json({ events }, {
-      headers: { "Cache-Control": "public, max-age=120" },
-    });
+    return NextResponse.json(
+      { events },
+      {
+        headers: { "Cache-Control": "public, max-age=120" },
+      },
+    );
   } catch (err) {
-    console.error("Happening tonight error:", err);
+    logger.error(
+      "Happening tonight error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch tonight's events" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

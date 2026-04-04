@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getWalletPass, voidWalletPass, updatePassStatus } from "@/lib/wallet-passes";
+import {
+  getWalletPass,
+  voidWalletPass,
+  updatePassStatus,
+} from "@/lib/wallet-passes";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ serial: string }> },
 ) {
-  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -27,7 +35,11 @@ export async function GET(
     if (error instanceof Error && error.message === "Wallet pass not found") {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
-    console.error("GET /api/wallet/passes/[serial] error:", error);
+    logger.error(
+      "GET /api/wallet/passes/[serial] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch wallet pass" },
       { status: 500 },
@@ -39,7 +51,10 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ serial: string }> },
 ) {
-  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -79,7 +94,11 @@ export async function PATCH(
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
     }
-    console.error("PATCH /api/wallet/passes/[serial] error:", error);
+    logger.error(
+      "PATCH /api/wallet/passes/[serial] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to update wallet pass" },
       { status: 500 },

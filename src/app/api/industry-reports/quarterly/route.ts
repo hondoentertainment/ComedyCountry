@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import {
@@ -9,7 +10,10 @@ import {
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`industry-reports-quarterly:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `industry-reports-quarterly:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -26,16 +30,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ reports });
   } catch (error) {
-    console.error("GET /api/industry-reports/quarterly error:", error);
+    logger.error(
+      "GET /api/industry-reports/quarterly error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch quarterly reports" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`industry-reports-quarterly:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `industry-reports-quarterly:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -43,10 +54,7 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Not authenticated" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -55,7 +63,7 @@ export async function POST(request: Request) {
     if (!city || !state || !quarter || !year) {
       return NextResponse.json(
         { error: "city, state, quarter, and year are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,7 +71,7 @@ export async function POST(request: Request) {
     if (isNaN(quarterNum) || quarterNum < 1 || quarterNum > 4) {
       return NextResponse.json(
         { error: "quarter must be 1, 2, 3, or 4" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -71,7 +79,7 @@ export async function POST(request: Request) {
     if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
       return NextResponse.json(
         { error: "year must be between 2000 and 2100" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -86,13 +94,17 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { report: { ...report, id: saved.id } },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error("POST /api/industry-reports/quarterly error:", error);
+    logger.error(
+      "POST /api/industry-reports/quarterly error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to generate quarterly report" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

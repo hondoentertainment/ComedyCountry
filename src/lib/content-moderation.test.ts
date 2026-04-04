@@ -244,7 +244,9 @@ describe("content-moderation", () => {
       const removed = removeAutoModerationRule(ruleId);
 
       expect(removed).toBe(true);
-      expect(getAutoModerationRules().find((r) => r.id === ruleId)).toBeUndefined();
+      expect(
+        getAutoModerationRules().find((r) => r.id === ruleId),
+      ).toBeUndefined();
     });
 
     it("returns false when removing non-existent rule", () => {
@@ -350,7 +352,7 @@ describe("content-moderation", () => {
       expect(mockPrisma.analyticsEvent.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            eventType: "moderation_queue",
+            action: "moderation_queue",
             metadata: { path: ["status"], equals: "FLAGGED" },
           }),
         }),
@@ -427,7 +429,7 @@ describe("content-moderation", () => {
       expect(mockPrisma.analyticsEvent.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            eventType: "moderation_strike",
+            action: "moderation_strike",
             userId: "u1",
           }),
         }),
@@ -437,9 +439,15 @@ describe("content-moderation", () => {
     it("auto-bans user at 3 strikes", async () => {
       mockPrisma.analyticsEvent.create.mockResolvedValue({ id: "s3" });
       mockPrisma.analyticsEvent.findMany.mockResolvedValue([
-        { metadata: { reason: "r1", category: "profanity" }, createdAt: new Date() },
+        {
+          metadata: { reason: "r1", category: "profanity" },
+          createdAt: new Date(),
+        },
         { metadata: { reason: "r2", category: "spam" }, createdAt: new Date() },
-        { metadata: { reason: "r3", category: "hate_speech" }, createdAt: new Date() },
+        {
+          metadata: { reason: "r3", category: "hate_speech" },
+          createdAt: new Date(),
+        },
       ]);
       mockPrisma.user.update.mockResolvedValue({});
 
@@ -488,9 +496,15 @@ describe("content-moderation", () => {
 
     it("rejects content from banned user", async () => {
       mockPrisma.analyticsEvent.findMany.mockResolvedValue([
-        { metadata: { reason: "r1", category: "profanity" }, createdAt: new Date() },
+        {
+          metadata: { reason: "r1", category: "profanity" },
+          createdAt: new Date(),
+        },
         { metadata: { reason: "r2", category: "spam" }, createdAt: new Date() },
-        { metadata: { reason: "r3", category: "hate_speech" }, createdAt: new Date() },
+        {
+          metadata: { reason: "r3", category: "hate_speech" },
+          createdAt: new Date(),
+        },
       ]);
 
       const result = await moderateContent({

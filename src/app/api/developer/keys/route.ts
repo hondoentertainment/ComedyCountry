@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,7 +7,10 @@ import { createApiKey } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`developer-keys:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `developer-keys:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -34,13 +38,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ keys });
   } catch (error) {
-    console.error("GET /api/developer/keys error:", error);
-    return NextResponse.json({ error: "Failed to fetch API keys" }, { status: 500 });
+    logger.error(
+      "GET /api/developer/keys error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch API keys" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`developer-keys:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `developer-keys:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -61,13 +75,23 @@ export async function POST(request: Request) {
     const apiKey = await createApiKey(session.user.id, name);
     return NextResponse.json(apiKey, { status: 201 });
   } catch (error) {
-    console.error("POST /api/developer/keys error:", error);
-    return NextResponse.json({ error: "Failed to create API key" }, { status: 500 });
+    logger.error(
+      "POST /api/developer/keys error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create API key" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(request: Request) {
-  const rl = await checkRateLimit(`developer-keys:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `developer-keys:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -92,7 +116,14 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/developer/keys error:", error);
-    return NextResponse.json({ error: "Failed to revoke API key" }, { status: 500 });
+    logger.error(
+      "DELETE /api/developer/keys error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to revoke API key" },
+      { status: 500 },
+    );
   }
 }

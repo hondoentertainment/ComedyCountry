@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { matchInfluencers } from "@/lib/marketing";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketing-influencers:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-influencers:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -20,7 +24,10 @@ export async function GET(request: Request) {
     const venueId = searchParams.get("venueId");
 
     if (!venueId) {
-      return NextResponse.json({ error: "venueId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "venueId is required" },
+        { status: 400 },
+      );
     }
 
     const platform = searchParams.get("platform") ?? undefined;
@@ -43,7 +50,14 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ influencers });
   } catch (error) {
-    console.error("GET /api/marketing/influencers error:", error);
-    return NextResponse.json({ error: "Failed to fetch influencers" }, { status: 500 });
+    logger.error(
+      "GET /api/marketing/influencers error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch influencers" },
+      { status: 500 },
+    );
   }
 }

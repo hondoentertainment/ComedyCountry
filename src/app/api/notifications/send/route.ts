@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -32,7 +33,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * }
  */
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`notifications-send:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `notifications-send:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -69,7 +73,7 @@ export async function POST(request: Request) {
     if (!type || !title || !message) {
       return NextResponse.json(
         { error: "type, title, and message are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -88,7 +92,7 @@ export async function POST(request: Request) {
     if (!validTypes.includes(type)) {
       return NextResponse.json(
         { error: `Invalid type. Must be one of: ${validTypes.join(", ")}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -199,10 +203,9 @@ export async function POST(request: Request) {
     } else {
       return NextResponse.json(
         {
-          error:
-            "Must specify userId, comedianId, or broadcast: true",
+          error: "Must specify userId, comedianId, or broadcast: true",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -212,10 +215,14 @@ export async function POST(request: Request) {
       pushesSent,
     });
   } catch (err) {
-    console.error("POST /api/notifications/send error:", err);
+    logger.error(
+      "POST /api/notifications/send error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to send notifications" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

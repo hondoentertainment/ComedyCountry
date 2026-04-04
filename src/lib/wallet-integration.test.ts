@@ -19,6 +19,12 @@ vi.mock("./prisma", () => ({
     ticket: {
       findMany: vi.fn(),
     },
+    event: {
+      findUnique: vi.fn(),
+    },
+    user: {
+      findUnique: vi.fn(),
+    },
   },
 }));
 
@@ -33,6 +39,12 @@ const mockPrisma = prisma as unknown as {
   };
   ticket: {
     findMany: ReturnType<typeof vi.fn>;
+  };
+  event: {
+    findUnique: ReturnType<typeof vi.fn>;
+  };
+  user: {
+    findUnique: ReturnType<typeof vi.fn>;
   };
 };
 
@@ -68,7 +80,11 @@ describe("wallet-integration", () => {
 
   describe("generateAppleWalletPassJSON", () => {
     it("generates a valid Apple PKPass JSON structure", () => {
-      const pass = generateAppleWalletPassJSON(mockTicket, mockEvent, mockVenue);
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        mockEvent,
+        mockVenue,
+      );
 
       expect(pass.formatVersion).toBe(1);
       expect(pass.passTypeIdentifier).toBe("pass.com.punchlineatlas.ticket");
@@ -81,16 +97,26 @@ describe("wallet-integration", () => {
     });
 
     it("includes event ticket fields", () => {
-      const pass = generateAppleWalletPassJSON(mockTicket, mockEvent, mockVenue);
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        mockEvent,
+        mockVenue,
+      );
 
       expect(pass.eventTicket.primaryFields[0].value).toBe("Comedy Night Live");
       expect(pass.eventTicket.secondaryFields[1].value).toBe("8:00 PM");
-      expect(pass.eventTicket.auxiliaryFields[0].value).toBe("The Laugh Factory");
+      expect(pass.eventTicket.auxiliaryFields[0].value).toBe(
+        "The Laugh Factory",
+      );
       expect(pass.eventTicket.auxiliaryFields[1].value).toBe("Chicago, IL");
     });
 
     it("includes barcode with ticket ID", () => {
-      const pass = generateAppleWalletPassJSON(mockTicket, mockEvent, mockVenue);
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        mockEvent,
+        mockVenue,
+      );
 
       expect(pass.barcode.format).toBe("PKBarcodeFormatQR");
       expect(pass.barcode.message).toBe("PUNCHLINE:ticket1");
@@ -98,7 +124,11 @@ describe("wallet-integration", () => {
     });
 
     it("includes location data when venue has coordinates", () => {
-      const pass = generateAppleWalletPassJSON(mockTicket, mockEvent, mockVenue);
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        mockEvent,
+        mockVenue,
+      );
 
       expect(pass.locations).toBeDefined();
       expect(pass.locations).toHaveLength(1);
@@ -108,23 +138,50 @@ describe("wallet-integration", () => {
 
     it("omits location data when venue has no coordinates", () => {
       const venueNoCoords = { ...mockVenue, latitude: null, longitude: null };
-      const pass = generateAppleWalletPassJSON(mockTicket, mockEvent, venueNoCoords);
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        mockEvent,
+        venueNoCoords,
+      );
 
       expect(pass.locations).toBeUndefined();
     });
 
     it("includes seat info when available", () => {
-      const ticketWithSeat = { ...mockTicket, seatNumber: "A12", seatSection: "Floor" };
-      const pass = generateAppleWalletPassJSON(ticketWithSeat, mockEvent, mockVenue);
+      const ticketWithSeat = {
+        ...mockTicket,
+        seatNumber: "A12",
+        seatSection: "Floor",
+      };
+      const pass = generateAppleWalletPassJSON(
+        ticketWithSeat,
+        mockEvent,
+        mockVenue,
+      );
 
-      const seatField = pass.eventTicket.auxiliaryFields.find((f) => f.key === "seat");
+      const seatField = pass.eventTicket.auxiliaryFields.find(
+        (f) => f.key === "seat",
+      );
       expect(seatField).toBeDefined();
       expect(seatField!.value).toBe("Floor - A12");
     });
 
     it("handles missing optional event fields", () => {
-      const minEvent = { id: "e2", date: new Date("2026-05-01"), showtime: null, endDate: null, title: null };
-      const minVenue = { name: "Club", city: "NYC", state: "NY", address: null, latitude: null, longitude: null };
+      const minEvent = {
+        id: "e2",
+        date: new Date("2026-05-01"),
+        showtime: null,
+        endDate: null,
+        title: null,
+      };
+      const minVenue = {
+        name: "Club",
+        city: "NYC",
+        state: "NY",
+        address: null,
+        latitude: null,
+        longitude: null,
+      };
       const pass = generateAppleWalletPassJSON(mockTicket, minEvent, minVenue);
 
       expect(pass.eventTicket.primaryFields[0].value).toBe("Comedy Show");
@@ -133,7 +190,11 @@ describe("wallet-integration", () => {
     });
 
     it("sets expiration to day after event when no endDate", () => {
-      const pass = generateAppleWalletPassJSON(mockTicket, mockEvent, mockVenue);
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        mockEvent,
+        mockVenue,
+      );
 
       const expiry = new Date(mockEvent.date);
       expiry.setDate(expiry.getDate() + 1);
@@ -141,14 +202,25 @@ describe("wallet-integration", () => {
     });
 
     it("sets expiration to endDate when available", () => {
-      const eventWithEnd = { ...mockEvent, endDate: new Date("2026-04-16T01:00:00Z") };
-      const pass = generateAppleWalletPassJSON(mockTicket, eventWithEnd, mockVenue);
+      const eventWithEnd = {
+        ...mockEvent,
+        endDate: new Date("2026-04-16T01:00:00Z"),
+      };
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        eventWithEnd,
+        mockVenue,
+      );
 
       expect(pass.expirationDate).toBe("2026-04-16T01:00:00.000Z");
     });
 
     it("includes authentication token", () => {
-      const pass = generateAppleWalletPassJSON(mockTicket, mockEvent, mockVenue);
+      const pass = generateAppleWalletPassJSON(
+        mockTicket,
+        mockEvent,
+        mockVenue,
+      );
 
       expect(pass.authenticationToken).toBeDefined();
       expect(typeof pass.authenticationToken).toBe("string");
@@ -188,14 +260,23 @@ describe("wallet-integration", () => {
 
     it("falls back to city/state when no address", () => {
       const venueNoAddr = { ...mockVenue, address: null };
-      const jwt = generateGoogleWalletPassJWT(mockTicket, mockEvent, venueNoAddr);
+      const jwt = generateGoogleWalletPassJWT(
+        mockTicket,
+        mockEvent,
+        venueNoAddr,
+      );
       const obj = jwt.payload.eventTicketObjects[0];
 
       expect(obj.venue.address.defaultValue.value).toBe("Chicago, IL");
     });
 
     it("includes ticket holder name when provided", () => {
-      const jwt = generateGoogleWalletPassJWT(mockTicket, mockEvent, mockVenue, "John Doe");
+      const jwt = generateGoogleWalletPassJWT(
+        mockTicket,
+        mockEvent,
+        mockVenue,
+        "John Doe",
+      );
       const obj = jwt.payload.eventTicketObjects[0];
 
       expect(obj.ticketHolderName).toBe("John Doe");
@@ -209,8 +290,16 @@ describe("wallet-integration", () => {
     });
 
     it("includes seat info when available", () => {
-      const ticketWithSeat = { ...mockTicket, seatNumber: "B7", seatSection: "Balcony" };
-      const jwt = generateGoogleWalletPassJWT(ticketWithSeat, mockEvent, mockVenue);
+      const ticketWithSeat = {
+        ...mockTicket,
+        seatNumber: "B7",
+        seatSection: "Balcony",
+      };
+      const jwt = generateGoogleWalletPassJWT(
+        ticketWithSeat,
+        mockEvent,
+        mockVenue,
+      );
       const obj = jwt.payload.eventTicketObjects[0];
 
       expect(obj.seatInfo).toBeDefined();
@@ -219,8 +308,16 @@ describe("wallet-integration", () => {
     });
 
     it("uses General for section when seatSection is missing", () => {
-      const ticketWithSeat = { ...mockTicket, seatNumber: "C3", seatSection: null };
-      const jwt = generateGoogleWalletPassJWT(ticketWithSeat, mockEvent, mockVenue);
+      const ticketWithSeat = {
+        ...mockTicket,
+        seatNumber: "C3",
+        seatSection: null,
+      };
+      const jwt = generateGoogleWalletPassJWT(
+        ticketWithSeat,
+        mockEvent,
+        mockVenue,
+      );
       const obj = jwt.payload.eventTicketObjects[0];
 
       expect(obj.seatInfo!.section.defaultValue.value).toBe("General");
@@ -248,7 +345,9 @@ describe("wallet-integration", () => {
       const jwt = generateGoogleWalletPassJWT(mockTicket, mockEvent, mockVenue);
       const signed = signGoogleWalletJWT(jwt);
 
-      const header = JSON.parse(Buffer.from(signed.split(".")[0], "base64url").toString());
+      const header = JSON.parse(
+        Buffer.from(signed.split(".")[0], "base64url").toString(),
+      );
       expect(header.alg).toBe("HS256");
       expect(header.typ).toBe("JWT");
     });
@@ -257,7 +356,9 @@ describe("wallet-integration", () => {
       const jwt = generateGoogleWalletPassJWT(mockTicket, mockEvent, mockVenue);
       const signed = signGoogleWalletJWT(jwt);
 
-      const payload = JSON.parse(Buffer.from(signed.split(".")[1], "base64url").toString());
+      const payload = JSON.parse(
+        Buffer.from(signed.split(".")[1], "base64url").toString(),
+      );
       expect(payload.aud).toBe("google");
       expect(payload.payload.eventTicketObjects).toHaveLength(1);
     });
@@ -303,28 +404,31 @@ describe("wallet-integration", () => {
       const mockPass = {
         id: "wp1",
         userId: "user1",
+        ticketId: "ticket1",
         platform: "apple",
         status: "active",
-        ticket: {
-          id: "ticket1",
-          purchasedAt: new Date(),
-          event: {
-            id: "event1",
-            title: "Old Title",
-            date: new Date("2026-04-15"),
-            showtime: "8:00 PM",
-            venue: mockVenue,
-          },
-        },
+        createdAt: new Date(),
       };
 
+      mockPrisma.ticket.findMany.mockResolvedValue([{ id: "ticket1" }]);
       mockPrisma.walletPass.findMany.mockResolvedValue([mockPass]);
-      mockPrisma.walletPass.update.mockImplementation(async ({ data }: any) => ({
-        ...mockPass,
-        ...data,
-      }));
+      mockPrisma.event.findUnique.mockResolvedValue({
+        id: "event1",
+        title: "Old Title",
+        date: new Date("2026-04-15"),
+        showtime: "8:00 PM",
+        venue: mockVenue,
+      });
+      mockPrisma.walletPass.update.mockImplementation(
+        async ({ data }: any) => ({
+          ...mockPass,
+          ...data,
+        }),
+      );
 
-      const result = await updatePassesForEvent("event1", { title: "New Title" });
+      const result = await updatePassesForEvent("event1", {
+        title: "New Title",
+      });
 
       expect(result.updated).toBe(1);
       expect(result.passes).toHaveLength(1);
@@ -335,26 +439,27 @@ describe("wallet-integration", () => {
       const mockPass = {
         id: "wp1",
         userId: "user1",
+        ticketId: "ticket1",
         platform: "google",
         status: "active",
-        ticket: {
-          id: "ticket1",
-          purchasedAt: new Date(),
-          event: {
-            id: "event1",
-            title: "Show",
-            date: new Date("2026-04-15"),
-            showtime: "9:00 PM",
-            venue: mockVenue,
-          },
-        },
+        createdAt: new Date(),
       };
 
+      mockPrisma.ticket.findMany.mockResolvedValue([{ id: "ticket1" }]);
       mockPrisma.walletPass.findMany.mockResolvedValue([mockPass]);
-      mockPrisma.walletPass.update.mockImplementation(async ({ data }: any) => ({
-        ...mockPass,
-        ...data,
-      }));
+      mockPrisma.event.findUnique.mockResolvedValue({
+        id: "event1",
+        title: "Show",
+        date: new Date("2026-04-15"),
+        showtime: "9:00 PM",
+        venue: mockVenue,
+      });
+      mockPrisma.walletPass.update.mockImplementation(
+        async ({ data }: any) => ({
+          ...mockPass,
+          ...data,
+        }),
+      );
 
       const result = await updatePassesForEvent("event1", { cancelled: true });
 
@@ -367,9 +472,12 @@ describe("wallet-integration", () => {
     });
 
     it("returns zero when no passes exist for the event", async () => {
+      mockPrisma.ticket.findMany.mockResolvedValue([]);
       mockPrisma.walletPass.findMany.mockResolvedValue([]);
 
-      const result = await updatePassesForEvent("event-no-passes", { title: "New Title" });
+      const result = await updatePassesForEvent("event-no-passes", {
+        title: "New Title",
+      });
 
       expect(result.updated).toBe(0);
       expect(result.passes).toEqual([]);
@@ -379,42 +487,28 @@ describe("wallet-integration", () => {
   describe("batchGeneratePassesForEvent", () => {
     it("generates passes for all tickets", async () => {
       const tickets = [
-        {
-          id: "t1",
-          userId: "u1",
-          eventId: "e1",
-          purchasedAt: new Date(),
-          event: {
-            id: "e1",
-            title: "Show",
-            date: new Date("2026-05-01"),
-            showtime: "7:00 PM",
-            venue: mockVenue,
-          },
-          user: { name: "Alice" },
-        },
-        {
-          id: "t2",
-          userId: "u2",
-          eventId: "e1",
-          purchasedAt: new Date(),
-          event: {
-            id: "e1",
-            title: "Show",
-            date: new Date("2026-05-01"),
-            showtime: "7:00 PM",
-            venue: mockVenue,
-          },
-          user: { name: "Bob" },
-        },
+        { id: "t1", userId: "u1", eventId: "e1", createdAt: new Date() },
+        { id: "t2", userId: "u2", eventId: "e1", createdAt: new Date() },
       ];
 
       mockPrisma.ticket.findMany.mockResolvedValue(tickets);
+      mockPrisma.event.findUnique.mockResolvedValue({
+        id: "e1",
+        title: "Show",
+        date: new Date("2026-05-01"),
+        showtime: "7:00 PM",
+        venue: mockVenue,
+      });
       mockPrisma.walletPass.findFirst.mockResolvedValue(null);
-      mockPrisma.walletPass.create.mockImplementation(async ({ data }: any) => ({
-        id: `wp-${data.ticketId}`,
-        ...data,
-      }));
+      mockPrisma.user.findUnique
+        .mockResolvedValueOnce({ name: "Alice" })
+        .mockResolvedValueOnce({ name: "Bob" });
+      mockPrisma.walletPass.create.mockImplementation(
+        async ({ data }: any) => ({
+          id: `wp-${data.ticketId}`,
+          ...data,
+        }),
+      );
 
       const result = await batchGeneratePassesForEvent("e1", "apple");
 
@@ -425,23 +519,17 @@ describe("wallet-integration", () => {
 
     it("skips tickets that already have passes", async () => {
       const tickets = [
-        {
-          id: "t1",
-          userId: "u1",
-          eventId: "e1",
-          purchasedAt: new Date(),
-          event: {
-            id: "e1",
-            title: "Show",
-            date: new Date("2026-05-01"),
-            showtime: "7:00 PM",
-            venue: mockVenue,
-          },
-          user: { name: "Alice" },
-        },
+        { id: "t1", userId: "u1", eventId: "e1", createdAt: new Date() },
       ];
 
       mockPrisma.ticket.findMany.mockResolvedValue(tickets);
+      mockPrisma.event.findUnique.mockResolvedValue({
+        id: "e1",
+        title: "Show",
+        date: new Date("2026-05-01"),
+        showtime: "7:00 PM",
+        venue: mockVenue,
+      });
       mockPrisma.walletPass.findFirst.mockResolvedValue({
         id: "existing-pass",
         ticketId: "t1",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { logger } from "@/lib/logger";
 
 export function PushNotificationToggle() {
   const [supported, setSupported] = useState(false);
@@ -42,7 +43,7 @@ export function PushNotificationToggle() {
         // Subscribe
         const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
         if (!vapidKey) {
-          console.warn("VAPID public key not configured");
+          logger.warn("VAPID public key not configured");
           setLoading(false);
           return;
         }
@@ -65,7 +66,11 @@ export function PushNotificationToggle() {
         setSubscribed(true);
       }
     } catch (err) {
-      console.error("Push toggle failed:", err);
+      logger.error(
+        "Push toggle failed",
+        {},
+        err instanceof Error ? err : undefined,
+      );
     }
 
     setLoading(false);
@@ -83,7 +88,12 @@ export function PushNotificationToggle() {
           : "bg-brand-surface border-zinc-700 text-zinc-300 hover:border-zinc-500"
       }`}
     >
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        className="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -91,7 +101,11 @@ export function PushNotificationToggle() {
           d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
         />
       </svg>
-      {loading ? "..." : subscribed ? "Push notifications on" : "Enable push notifications"}
+      {loading
+        ? "..."
+        : subscribed
+          ? "Push notifications on"
+          : "Enable push notifications"}
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -8,7 +9,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * GET - List friends (accepted connections + pending requests).
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -100,10 +104,14 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ accepted, pendingSent, pendingReceived });
   } catch (err) {
-    console.error("Friends GET error:", err);
+    logger.error(
+      "Friends GET error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch friends" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -113,7 +121,10 @@ export async function GET(request: Request) {
  * Body: { friendId } or { username }
  */
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -142,14 +153,14 @@ export async function POST(request: Request) {
     if (!targetId) {
       return NextResponse.json(
         { error: "friendId or username is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (targetId === session.user.id) {
       return NextResponse.json(
         { error: "Cannot send a friend request to yourself" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -165,11 +176,14 @@ export async function POST(request: Request) {
 
     if (existing) {
       if (existing.status === "blocked") {
-        return NextResponse.json({ error: "Cannot connect with this user" }, { status: 403 });
+        return NextResponse.json(
+          { error: "Cannot connect with this user" },
+          { status: 403 },
+        );
       }
       return NextResponse.json(
         { error: "Friend request already exists", status: existing.status },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -183,10 +197,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ connection }, { status: 201 });
   } catch (err) {
-    console.error("Friends POST error:", err);
+    logger.error(
+      "Friends POST error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to send friend request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

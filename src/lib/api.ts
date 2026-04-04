@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 type RateLimitOptions = {
   limit: number;
@@ -42,7 +43,7 @@ export function getClientAddress(request: Request) {
 export function jsonResponse(
   request: Request,
   body: Record<string, unknown>,
-  init?: ResponseInit
+  init?: ResponseInit,
 ) {
   const response = NextResponse.json(body, init);
   response.headers.set("x-request-id", getRequestId(request));
@@ -53,7 +54,7 @@ export function jsonError(
   request: Request,
   status: number,
   error: string,
-  extras?: Record<string, unknown>
+  extras?: Record<string, unknown>,
 ) {
   return jsonResponse(
     request,
@@ -62,14 +63,14 @@ export function jsonError(
       requestId: getRequestId(request),
       ...extras,
     },
-    { status }
+    { status },
   );
 }
 
 export function logInfo(
   request: Request,
   message: string,
-  extra?: Record<string, unknown>
+  extra?: Record<string, unknown>,
 ) {
   console.info(
     JSON.stringify({
@@ -79,7 +80,7 @@ export function logInfo(
       method: request.method,
       path: new URL(request.url).pathname,
       ...extra,
-    })
+    }),
   );
 }
 
@@ -87,34 +88,35 @@ export function logError(
   request: Request,
   message: string,
   error: unknown,
-  extra?: Record<string, unknown>
+  extra?: Record<string, unknown>,
 ) {
   const normalizedError =
     error instanceof Error
       ? {
           name: error.name,
           message: error.message,
-          stack: process.env.NODE_ENV === "production" ? undefined : error.stack,
+          stack:
+            process.env.NODE_ENV === "production" ? undefined : error.stack,
         }
       : { message: String(error) };
 
-  console.error(
-    JSON.stringify({
-      level: "error",
-      message,
+  logger.error(
+    message,
+    {
       requestId: getRequestId(request),
       method: request.method,
       path: new URL(request.url).pathname,
       error: normalizedError,
       ...extra,
-    })
+    },
+    error instanceof Error ? error : undefined,
   );
 }
 
 export function applyRateLimit(
   request: Request,
   key: string,
-  options: RateLimitOptions
+  options: RateLimitOptions,
 ) {
   const store = getRateLimitStore();
   const now = Date.now();
@@ -132,7 +134,7 @@ export function applyRateLimit(
   if (current.count >= options.limit) {
     const retryAfterSeconds = Math.max(
       1,
-      Math.ceil((current.resetAt - now) / 1000)
+      Math.ceil((current.resetAt - now) / 1000),
     );
     return jsonError(request, 429, "Too many requests", {
       retryAfterSeconds,

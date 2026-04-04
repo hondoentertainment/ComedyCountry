@@ -1,10 +1,8 @@
 /** Validate required environment variables at startup */
 
-const required = [
-  "DATABASE_URL",
-  "NEXTAUTH_SECRET",
-  "NEXTAUTH_URL",
-] as const;
+import { logger } from "@/lib/logger";
+
+const required = ["DATABASE_URL", "NEXTAUTH_SECRET", "NEXTAUTH_URL"] as const;
 
 const optional = [
   "GOOGLE_CLIENT_ID",
@@ -25,7 +23,11 @@ const optional = [
   "LOG_LEVEL",
 ] as const;
 
-export function validateEnv(): { valid: boolean; missing: string[]; warnings: string[] } {
+export function validateEnv(): {
+  valid: boolean;
+  missing: string[];
+  warnings: string[];
+} {
   const missing: string[] = [];
   const warnings: string[] = [];
 
@@ -37,12 +39,16 @@ export function validateEnv(): { valid: boolean; missing: string[]; warnings: st
 
   // Warn if NEXTAUTH_SECRET is the default placeholder
   if (process.env.NEXTAUTH_SECRET === "change-me-in-production") {
-    warnings.push("NEXTAUTH_SECRET is set to the default placeholder — change this in production");
+    warnings.push(
+      "NEXTAUTH_SECRET is set to the default placeholder — change this in production",
+    );
   }
 
   // Warn about missing optional vars that enable key features
   if (!process.env.STRIPE_SECRET_KEY) {
-    warnings.push("STRIPE_SECRET_KEY not set — payment processing will be disabled");
+    warnings.push(
+      "STRIPE_SECRET_KEY not set — payment processing will be disabled",
+    );
   }
 
   if (!process.env.SMTP_HOST) {
@@ -63,13 +69,17 @@ export function assertEnv(): void {
   const { valid, missing, warnings } = validateEnv();
 
   for (const w of warnings) {
-    console.warn(`⚠ ENV: ${w}`);
+    logger.warn(`ENV: ${w}`);
   }
 
   if (!valid) {
-    console.error(`✗ Missing required environment variables: ${missing.join(", ")}`);
+    logger.error(
+      `Missing required environment variables: ${missing.join(", ")}`,
+    );
     if (process.env.NODE_ENV === "production") {
-      throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+      throw new Error(
+        `Missing required environment variables: ${missing.join(", ")}`,
+      );
     }
   }
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, digestEmailHtml } from "@/lib/email";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
@@ -9,7 +10,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Protected by CRON_SECRET to be called from a scheduled job.
  */
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`email-digest:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`email-digest:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -29,7 +33,10 @@ export async function POST(request: Request) {
     });
 
     if (prefs.length === 0) {
-      return NextResponse.json({ sent: 0, message: "No users with digest enabled" });
+      return NextResponse.json({
+        sent: 0,
+        message: "No users with digest enabled",
+      });
     }
 
     const userIds = prefs.map((p) => p.userId);
@@ -45,7 +52,8 @@ export async function POST(request: Request) {
     weekAgo.setDate(weekAgo.getDate() - 7);
 
     let sent = 0;
-    const baseUrl = process.env.NEXTAUTH_URL || "https://punchline-atlas.vercel.app";
+    const baseUrl =
+      process.env.NEXTAUTH_URL || "https://punchline-atlas.vercel.app";
 
     for (const user of users) {
       if (!user.email) continue;
@@ -79,7 +87,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ sent, total: users.length });
   } catch (err) {
-    console.error("[DIGEST]", err);
-    return NextResponse.json({ error: "Failed to send digests" }, { status: 500 });
+    logger.error(
+      "Digest send failed",
+      {},
+      err instanceof Error ? err : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to send digests" },
+      { status: 500 },
+    );
   }
 }

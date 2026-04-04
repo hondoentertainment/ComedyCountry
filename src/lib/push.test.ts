@@ -1,11 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { sendPushToUser, pushToComedianFollowers } from "./push";
 
+vi.mock("web-push", () => {
+  throw new Error("not available");
+});
+
 vi.mock("./prisma", () => ({
   prisma: {
     pushSubscription: {
       findMany: vi.fn(),
       delete: vi.fn(),
+      deleteMany: vi.fn(),
     },
     comedianFollow: {
       findMany: vi.fn(),
@@ -19,6 +24,7 @@ const mockPrisma = prisma as unknown as {
   pushSubscription: {
     findMany: ReturnType<typeof vi.fn>;
     delete: ReturnType<typeof vi.fn>;
+    deleteMany: ReturnType<typeof vi.fn>;
   };
   comedianFollow: {
     findMany: ReturnType<typeof vi.fn>;
@@ -57,8 +63,18 @@ describe("sendPushToUser", () => {
 
   it("sends push to subscriptions and returns count", async () => {
     mockPrisma.pushSubscription.findMany.mockResolvedValue([
-      { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
-      { id: "sub-2", endpoint: "https://push.example.com/2", p256dh: "key2", auth: "auth2" },
+      {
+        id: "sub-1",
+        endpoint: "https://push.example.com/1",
+        p256dh: "key1",
+        auth: "auth1",
+      },
+      {
+        id: "sub-2",
+        endpoint: "https://push.example.com/2",
+        p256dh: "key2",
+        auth: "auth2",
+      },
     ]);
     mockFetch.mockResolvedValue({ ok: true, status: 200 });
 
@@ -70,37 +86,52 @@ describe("sendPushToUser", () => {
 
   it("deletes expired subscriptions (410 Gone)", async () => {
     mockPrisma.pushSubscription.findMany.mockResolvedValue([
-      { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
+      {
+        id: "sub-1",
+        endpoint: "https://push.example.com/1",
+        p256dh: "key1",
+        auth: "auth1",
+      },
     ]);
     mockFetch.mockResolvedValue({ ok: false, status: 410 });
-    mockPrisma.pushSubscription.delete.mockResolvedValue({});
+    mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 1 });
 
     const result = await sendPushToUser("user-1", payload);
 
     expect(result).toBe(0);
-    expect(mockPrisma.pushSubscription.delete).toHaveBeenCalledWith({
-      where: { id: "sub-1" },
+    expect(mockPrisma.pushSubscription.deleteMany).toHaveBeenCalledWith({
+      where: { id: { in: ["sub-1"] } },
     });
   });
 
   it("deletes not-found subscriptions (404)", async () => {
     mockPrisma.pushSubscription.findMany.mockResolvedValue([
-      { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
+      {
+        id: "sub-1",
+        endpoint: "https://push.example.com/1",
+        p256dh: "key1",
+        auth: "auth1",
+      },
     ]);
     mockFetch.mockResolvedValue({ ok: false, status: 404 });
-    mockPrisma.pushSubscription.delete.mockResolvedValue({});
+    mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 1 });
 
     const result = await sendPushToUser("user-1", payload);
 
     expect(result).toBe(0);
-    expect(mockPrisma.pushSubscription.delete).toHaveBeenCalledWith({
-      where: { id: "sub-1" },
+    expect(mockPrisma.pushSubscription.deleteMany).toHaveBeenCalledWith({
+      where: { id: { in: ["sub-1"] } },
     });
   });
 
   it("counts 201 status as successful", async () => {
     mockPrisma.pushSubscription.findMany.mockResolvedValue([
-      { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
+      {
+        id: "sub-1",
+        endpoint: "https://push.example.com/1",
+        p256dh: "key1",
+        auth: "auth1",
+      },
     ]);
     mockFetch.mockResolvedValue({ ok: false, status: 201 });
 
@@ -110,7 +141,9 @@ describe("sendPushToUser", () => {
   });
 
   it("returns 0 when prisma query fails", async () => {
-    mockPrisma.pushSubscription.findMany.mockRejectedValue(new Error("DB error"));
+    mockPrisma.pushSubscription.findMany.mockRejectedValue(
+      new Error("DB error"),
+    );
 
     const result = await sendPushToUser("user-1", payload);
 
@@ -132,12 +165,23 @@ describe("pushToComedianFollowers", () => {
     ]);
     mockPrisma.pushSubscription.findMany
       .mockResolvedValueOnce([
-        { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "k", auth: "a" },
+        {
+          id: "sub-1",
+          endpoint: "https://push.example.com/1",
+          p256dh: "k",
+          auth: "a",
+        },
       ])
       .mockResolvedValueOnce([
-        { id: "sub-2", endpoint: "https://push.example.com/2", p256dh: "k", auth: "a" },
+        {
+          id: "sub-2",
+          endpoint: "https://push.example.com/2",
+          p256dh: "k",
+          auth: "a",
+        },
       ]);
     mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 0 });
 
     const result = await pushToComedianFollowers("comedian-1", payload);
 

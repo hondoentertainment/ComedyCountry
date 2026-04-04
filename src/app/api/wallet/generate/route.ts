@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { generateWalletPass } from "@/lib/wallet-passes";
@@ -12,7 +13,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Verifies ticket ownership before generating.
  */
 export async function POST(request: NextRequest) {
-  const rl = await checkRateLimit(`wallet-generate:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `wallet-generate:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -29,14 +33,14 @@ export async function POST(request: NextRequest) {
     if (!ticketId || typeof ticketId !== "string") {
       return NextResponse.json(
         { error: "ticketId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!platform || !["apple", "google"].includes(platform)) {
       return NextResponse.json(
         { error: "platform must be 'apple' or 'google'" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,23 +51,22 @@ export async function POST(request: NextRequest) {
     });
 
     if (!ticket) {
-      return NextResponse.json(
-        { error: "Ticket not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Ticket not found" }, { status: 404 });
     }
 
     if (ticket.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Not authorized to generate pass for this ticket" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (ticket.status !== "VALID") {
       return NextResponse.json(
-        { error: `Cannot generate pass for ticket with status: ${ticket.status}` },
-        { status: 400 }
+        {
+          error: `Cannot generate pass for ticket with status: ${ticket.status}`,
+        },
+        { status: 400 },
       );
     }
 
@@ -91,10 +94,14 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.message === "Ticket not found") {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
-    console.error("POST /api/wallet/generate error:", error);
+    logger.error(
+      "POST /api/wallet/generate error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to generate wallet pass" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

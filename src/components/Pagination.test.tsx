@@ -15,14 +15,24 @@ vi.mock("next/link", () => ({
 describe("Pagination", () => {
   it("returns null when totalPages <= 1", () => {
     const { container } = render(
-      <Pagination total={10} currentPage={1} basePath="/events" searchParams={{}} />
+      <Pagination
+        total={10}
+        currentPage={1}
+        basePath="/events"
+        searchParams={{}}
+      />,
     );
     expect(container.firstChild).toBeNull();
   });
 
   it("returns null when total is 0 (ceil gives 1)", () => {
     const { container } = render(
-      <Pagination total={0} currentPage={1} basePath="/events" searchParams={{}} />
+      <Pagination
+        total={0}
+        currentPage={1}
+        basePath="/events"
+        searchParams={{}}
+      />,
     );
     expect(container.firstChild).toBeNull();
   });
@@ -34,7 +44,7 @@ describe("Pagination", () => {
         currentPage={1}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
     const nav = screen.getByRole("navigation");
     expect(nav).toHaveTextContent("Showing 1–20 of 50");
@@ -50,10 +60,11 @@ describe("Pagination", () => {
         currentPage={1}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
-    const prevSpan = screen.getByText("Previous").closest("span");
-    expect(prevSpan).toHaveAttribute("aria-disabled");
+    const prevButton = screen.getByText("Previous").closest("button");
+    expect(prevButton).toBeDisabled();
+    expect(prevButton).toHaveAttribute("aria-disabled", "true");
   });
 
   it("disables Next on last page", () => {
@@ -63,10 +74,11 @@ describe("Pagination", () => {
         currentPage={3}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
-    const nextSpan = screen.getByText("Next").closest("span");
-    expect(nextSpan).toHaveAttribute("aria-disabled");
+    const nextButton = screen.getByText("Next").closest("button");
+    expect(nextButton).toBeDisabled();
+    expect(nextButton).toHaveAttribute("aria-disabled", "true");
   });
 
   it("builds correct URLs with search params", () => {
@@ -76,12 +88,12 @@ describe("Pagination", () => {
         currentPage={2}
         basePath="/comedians"
         searchParams={{ search: "chappelle", state: "CA" }}
-      />
+      />,
     );
     const nextLink = screen.getByRole("link", { name: "Next" });
     expect(nextLink).toHaveAttribute(
       "href",
-      "/comedians?search=chappelle&state=CA&page=3"
+      "/comedians?search=chappelle&state=CA&page=3",
     );
   });
 
@@ -92,7 +104,7 @@ describe("Pagination", () => {
         currentPage={2}
         basePath="/events"
         searchParams={{ city: "LA" }}
-      />
+      />,
     );
     const prevLink = screen.getByRole("link", { name: "Previous" });
     expect(prevLink).toHaveAttribute("href", "/events?city=LA");
@@ -105,9 +117,11 @@ describe("Pagination", () => {
         currentPage={3}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
-    expect(screen.getByRole("navigation")).toHaveTextContent("Showing 41–60 of 100");
+    expect(screen.getByRole("navigation")).toHaveTextContent(
+      "Showing 41–60 of 100",
+    );
   });
 
   it("shows correct end on last page with partial results", () => {
@@ -117,9 +131,11 @@ describe("Pagination", () => {
         currentPage={3}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
-    expect(screen.getByRole("navigation")).toHaveTextContent("Showing 41–45 of 45");
+    expect(screen.getByRole("navigation")).toHaveTextContent(
+      "Showing 41–45 of 45",
+    );
   });
 
   it("enables both Previous and Next on middle page", () => {
@@ -129,7 +145,7 @@ describe("Pagination", () => {
         currentPage={3}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
 
     const prevLink = screen.getByRole("link", { name: "Previous" });
@@ -145,7 +161,7 @@ describe("Pagination", () => {
         currentPage={1}
         basePath="/events"
         searchParams={{ search: "", city: undefined }}
-      />
+      />,
     );
     const nextLink = screen.getByRole("link", { name: "Next" });
     expect(nextLink).toHaveAttribute("href", "/events?page=2");
@@ -158,7 +174,7 @@ describe("Pagination", () => {
         currentPage={2}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
     const prevLink = screen.getByRole("link", { name: "Previous" });
     expect(prevLink).toHaveAttribute("href", "/events");
@@ -171,9 +187,11 @@ describe("Pagination", () => {
         currentPage={1}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
-    expect(screen.getByRole("navigation", { name: "Pagination" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("navigation", { name: "Pagination" }),
+    ).toBeInTheDocument();
   });
 
   it("shows Page X of Y text", () => {
@@ -183,7 +201,7 @@ describe("Pagination", () => {
         currentPage={2}
         basePath="/events"
         searchParams={{}}
-      />
+      />,
     );
     expect(screen.getByText("Page 2 of 5")).toBeInTheDocument();
   });

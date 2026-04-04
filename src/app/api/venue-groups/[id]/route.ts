@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -8,7 +9,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function GET(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -28,13 +32,23 @@ export async function GET(request: Request, context: Ctx) {
 
     return NextResponse.json(group);
   } catch (error) {
-    console.error("GET /api/venue-groups/[id] error:", error);
-    return NextResponse.json({ error: "Failed to fetch group" }, { status: 500 });
+    logger.error(
+      "GET /api/venue-groups/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch group" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -52,13 +66,16 @@ export async function POST(request: Request, context: Ctx) {
     if (!action || !["add_venue", "add_staff"].includes(action)) {
       return NextResponse.json(
         { error: "action must be 'add_venue' or 'add_staff'" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (action === "add_venue") {
       if (!venueId) {
-        return NextResponse.json({ error: "venueId is required" }, { status: 400 });
+        return NextResponse.json(
+          { error: "venueId is required" },
+          { status: 400 },
+        );
       }
 
       const member = await prisma.venueGroupMember.create({
@@ -69,7 +86,10 @@ export async function POST(request: Request, context: Ctx) {
 
     // add_staff
     if (!userId) {
-      return NextResponse.json({ error: "userId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "userId is required" },
+        { status: 400 },
+      );
     }
 
     const staff = await prisma.venueGroupStaff.create({
@@ -77,13 +97,23 @@ export async function POST(request: Request, context: Ctx) {
     });
     return NextResponse.json(staff, { status: 201 });
   } catch (error) {
-    console.error("POST /api/venue-groups/[id] error:", error);
-    return NextResponse.json({ error: "Failed to modify group" }, { status: 500 });
+    logger.error(
+      "POST /api/venue-groups/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to modify group" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-groups:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -99,7 +129,14 @@ export async function DELETE(request: Request, context: Ctx) {
     await prisma.venueGroup.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/venue-groups/[id] error:", error);
-    return NextResponse.json({ error: "Failed to delete group" }, { status: 500 });
+    logger.error(
+      "DELETE /api/venue-groups/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to delete group" },
+      { status: 500 },
+    );
   }
 }

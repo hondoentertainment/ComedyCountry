@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { createHmac, timingSafeEqual } from "crypto";
 import { generateUserCalendarFeed } from "@/lib/calendar-sync";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
@@ -7,8 +8,10 @@ const TOKEN_SEPARATOR = ":";
 const DEFAULT_EXPIRY_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
 
 function getSecret(): string {
-  const secret = process.env.CALENDAR_FEED_SECRET || process.env.NEXTAUTH_SECRET;
-  if (!secret) throw new Error("CALENDAR_FEED_SECRET or NEXTAUTH_SECRET required");
+  const secret =
+    process.env.CALENDAR_FEED_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret)
+    throw new Error("CALENDAR_FEED_SECRET or NEXTAUTH_SECRET required");
   return secret;
 }
 
@@ -19,8 +22,12 @@ function getSecret(): string {
 export function createCalendarFeedToken(userId: string): string {
   const expiry = Date.now() + DEFAULT_EXPIRY_MS;
   const payload = `${userId}${TOKEN_SEPARATOR}${expiry}`;
-  const sig = createHmac("sha256", getSecret()).update(payload).digest("base64url");
-  return Buffer.from(`${payload}${TOKEN_SEPARATOR}${sig}`).toString("base64url");
+  const sig = createHmac("sha256", getSecret())
+    .update(payload)
+    .digest("base64url");
+  return Buffer.from(`${payload}${TOKEN_SEPARATOR}${sig}`).toString(
+    "base64url",
+  );
 }
 
 function verifyCalendarFeedToken(token: string): { userId: string } | null {
@@ -33,10 +40,13 @@ function verifyCalendarFeedToken(token: string): { userId: string } | null {
     if (isNaN(expiry) || Date.now() > expiry) return null;
 
     const payload = `${userId}${TOKEN_SEPARATOR}${expiry}`;
-    const expected = createHmac("sha256", getSecret()).update(payload).digest("base64url");
+    const expected = createHmac("sha256", getSecret())
+      .update(payload)
+      .digest("base64url");
     const sigBuf = Buffer.from(sig, "base64url");
     const expBuf = Buffer.from(expected, "base64url");
-    if (sigBuf.length !== expBuf.length || !timingSafeEqual(sigBuf, expBuf)) return null;
+    if (sigBuf.length !== expBuf.length || !timingSafeEqual(sigBuf, expBuf))
+      return null;
 
     return { userId };
   } catch {
@@ -50,7 +60,10 @@ function verifyCalendarFeedToken(token: string): { userId: string } | null {
  * Used by Google Calendar, Apple Calendar, etc. for subscription.
  */
 export async function GET(req: NextRequest) {
-  const rl = await checkRateLimit(`calendar-feed:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`calendar-feed:${getRateLimitKey(req)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -62,7 +75,10 @@ export async function GET(req: NextRequest) {
 
   const parsed = verifyCalendarFeedToken(token);
   if (!parsed) {
-    return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Invalid or expired token" },
+      { status: 401 },
+    );
   }
 
   try {
@@ -76,7 +92,14 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (err) {
-    console.error("Calendar feed error:", err);
-    return NextResponse.json({ error: "Failed to generate feed" }, { status: 500 });
+    logger.error(
+      "Calendar feed error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to generate feed" },
+      { status: 500 },
+    );
   }
 }

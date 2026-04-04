@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -12,7 +13,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * creates a push subscription via the Push API.
  */
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`notifications-subscribe:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `notifications-subscribe:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -29,19 +33,19 @@ export async function POST(request: Request) {
     if (!endpoint || typeof endpoint !== "string") {
       return NextResponse.json(
         { error: "endpoint is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (!p256dh || typeof p256dh !== "string") {
       return NextResponse.json(
         { error: "p256dh key is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (!auth || typeof auth !== "string") {
       return NextResponse.json(
         { error: "auth secret is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,13 +67,17 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { id: subscription.id, endpoint: subscription.endpoint },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
-    console.error("POST /api/notifications/subscribe error:", err);
+    logger.error(
+      "POST /api/notifications/subscribe error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to save subscription" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -80,7 +88,10 @@ export async function POST(request: Request) {
  * Remove a push subscription (e.g., when user revokes permission).
  */
 export async function DELETE(request: Request) {
-  const rl = await checkRateLimit(`notifications-subscribe:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `notifications-subscribe:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -97,7 +108,7 @@ export async function DELETE(request: Request) {
     if (!endpoint || typeof endpoint !== "string") {
       return NextResponse.json(
         { error: "endpoint is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,10 +121,14 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("DELETE /api/notifications/subscribe error:", err);
+    logger.error(
+      "DELETE /api/notifications/subscribe error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to remove subscription" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

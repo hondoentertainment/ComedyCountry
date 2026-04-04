@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { processLocationAlerts } from "@/lib/location-alert-notify";
 
 /**
@@ -25,10 +26,14 @@ export async function POST(request: Request) {
       ...result,
     });
   } catch (err) {
-    console.error("Location alerts cron error:", err);
+    logger.error(
+      "Location alerts cron error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to process location alerts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

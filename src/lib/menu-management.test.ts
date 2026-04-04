@@ -120,9 +120,9 @@ describe("menu-management", () => {
     });
 
     it("rejects empty category name", async () => {
-      await expect(
-        createMenuCategory("v1", { name: "" })
-      ).rejects.toThrow("Category name is required");
+      await expect(createMenuCategory("v1", { name: "" })).rejects.toThrow(
+        "Category name is required",
+      );
     });
 
     it("rejects duplicate category name", async () => {
@@ -132,7 +132,7 @@ describe("menu-management", () => {
       });
 
       await expect(
-        createMenuCategory("v1", { name: "Cocktails" })
+        createMenuCategory("v1", { name: "Cocktails" }),
       ).rejects.toThrow('Category "Cocktails" already exists');
     });
   });
@@ -190,7 +190,7 @@ describe("menu-management", () => {
       mockPrisma.menuCategory.findUnique.mockResolvedValue(null);
 
       await expect(
-        updateMenuCategory("nonexistent", "v1", { name: "test" })
+        updateMenuCategory("nonexistent", "v1", { name: "test" }),
       ).rejects.toThrow("Category not found");
     });
 
@@ -201,7 +201,7 @@ describe("menu-management", () => {
       });
 
       await expect(
-        updateMenuCategory("mc1", "v1", { name: "test" })
+        updateMenuCategory("mc1", "v1", { name: "test" }),
       ).rejects.toThrow("Category does not belong to this venue");
     });
   });
@@ -229,9 +229,9 @@ describe("menu-management", () => {
         _count: { items: 3 },
       });
 
-      await expect(
-        deleteMenuCategory("mc1", "v1")
-      ).rejects.toThrow("Cannot delete category with existing items");
+      await expect(deleteMenuCategory("mc1", "v1")).rejects.toThrow(
+        "Cannot delete category with existing items",
+      );
     });
   });
 
@@ -272,13 +272,13 @@ describe("menu-management", () => {
 
     it("rejects empty item name", async () => {
       await expect(
-        addMenuItem("v1", { categoryId: "mc1", name: "", price: 5 })
+        addMenuItem("v1", { categoryId: "mc1", name: "", price: 5 }),
       ).rejects.toThrow("Item name is required");
     });
 
     it("rejects negative price", async () => {
       await expect(
-        addMenuItem("v1", { categoryId: "mc1", name: "Beer", price: -5 })
+        addMenuItem("v1", { categoryId: "mc1", name: "Beer", price: -5 }),
       ).rejects.toThrow("Price cannot be negative");
     });
 
@@ -286,7 +286,7 @@ describe("menu-management", () => {
       mockPrisma.menuCategory.findUnique.mockResolvedValue(null);
 
       await expect(
-        addMenuItem("v1", { categoryId: "mc1", name: "Beer", price: 5 })
+        addMenuItem("v1", { categoryId: "mc1", name: "Beer", price: 5 }),
       ).rejects.toThrow("Category not found");
     });
 
@@ -297,7 +297,7 @@ describe("menu-management", () => {
       });
 
       await expect(
-        addMenuItem("v1", { categoryId: "mc1", name: "Beer", price: 5 })
+        addMenuItem("v1", { categoryId: "mc1", name: "Beer", price: 5 }),
       ).rejects.toThrow("Category does not belong to this venue");
     });
   });
@@ -326,17 +326,17 @@ describe("menu-management", () => {
         venueId: "v1",
       });
 
-      await expect(
-        updateMenuItem("mi1", "v1", { price: -3 })
-      ).rejects.toThrow("Price cannot be negative");
+      await expect(updateMenuItem("mi1", "v1", { price: -3 })).rejects.toThrow(
+        "Price cannot be negative",
+      );
     });
 
     it("throws when item not found", async () => {
       mockPrisma.menuItem.findUnique.mockResolvedValue(null);
 
-      await expect(
-        updateMenuItem("mi1", "v1", { price: 10 })
-      ).rejects.toThrow("Menu item not found");
+      await expect(updateMenuItem("mi1", "v1", { price: 10 })).rejects.toThrow(
+        "Menu item not found",
+      );
     });
   });
 
@@ -362,7 +362,7 @@ describe("menu-management", () => {
       });
 
       await expect(deleteMenuItem("mi1", "v1")).rejects.toThrow(
-        "Menu item does not belong to this venue"
+        "Menu item does not belong to this venue",
       );
     });
   });
@@ -380,7 +380,7 @@ describe("menu-management", () => {
 
       expect(result).toHaveLength(2);
       expect(mockPrisma.menuItem.findMany).toHaveBeenCalledWith({
-        where: { venueId: "v1", categoryId: "mc1", isAvailable: true },
+        where: { venueId: "v1", category: "mc1", isAvailable: true },
         orderBy: { sortOrder: "asc" },
       });
     });
@@ -429,7 +429,7 @@ describe("menu-management", () => {
           customerId: "u1",
           customerName: "Jane",
           items: [],
-        })
+        }),
       ).rejects.toThrow("Pre-order must contain at least one item");
     });
 
@@ -442,7 +442,7 @@ describe("menu-management", () => {
           customerId: "u1",
           customerName: "Jane",
           items: [{ menuItemId: "mi999", quantity: 1 }],
-        })
+        }),
       ).rejects.toThrow("Menu items not found: mi999");
     });
 
@@ -457,7 +457,7 @@ describe("menu-management", () => {
           customerId: "u1",
           customerName: "Jane",
           items: [{ menuItemId: "mi1", quantity: 1 }],
-        })
+        }),
       ).rejects.toThrow("Items not available for pre-order: Draft Beer");
     });
   });
@@ -481,9 +481,9 @@ describe("menu-management", () => {
     });
 
     it("rejects invalid status", async () => {
-      await expect(
-        updatePreOrderStatus("po1", "invalid")
-      ).rejects.toThrow("Invalid status: invalid");
+      await expect(updatePreOrderStatus("po1", "invalid")).rejects.toThrow(
+        "Invalid status: invalid",
+      );
     });
 
     it("rejects invalid transitions", async () => {
@@ -492,17 +492,17 @@ describe("menu-management", () => {
         status: "picked_up",
       });
 
-      await expect(
-        updatePreOrderStatus("po1", "pending")
-      ).rejects.toThrow("Cannot transition from picked_up to pending");
+      await expect(updatePreOrderStatus("po1", "pending")).rejects.toThrow(
+        "Cannot transition from picked_up to pending",
+      );
     });
 
     it("throws when pre-order not found", async () => {
       mockPrisma.preOrder.findUnique.mockResolvedValue(null);
 
-      await expect(
-        updatePreOrderStatus("po1", "confirmed")
-      ).rejects.toThrow("Pre-order not found");
+      await expect(updatePreOrderStatus("po1", "confirmed")).rejects.toThrow(
+        "Pre-order not found",
+      );
     });
   });
 
@@ -585,7 +585,7 @@ describe("menu-management", () => {
       mockPrisma.drinkMinimum.findFirst.mockResolvedValue(null);
 
       await expect(
-        trackDrinkMinimumFulfillment("e1", "u1", 10)
+        trackDrinkMinimumFulfillment("e1", "u1", 10),
       ).rejects.toThrow("No drink minimum set for this event");
     });
   });

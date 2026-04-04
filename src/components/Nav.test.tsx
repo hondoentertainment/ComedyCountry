@@ -20,6 +20,14 @@ vi.mock("./SearchBar", () => ({
   SearchBar: () => <div data-testid="search-bar" />,
 }));
 
+vi.mock("./NotificationBell", () => ({
+  NotificationBell: () => null,
+}));
+
+vi.mock("@/hooks/useFocusTrap", () => ({
+  useFocusTrap: () => ({ current: null }),
+}));
+
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -31,6 +39,13 @@ describe("Nav", () => {
       status: "unauthenticated",
       update: vi.fn(),
     } as ReturnType<typeof useSession>);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ events: [] }),
+      }),
+    );
     vi.clearAllMocks();
   });
 
@@ -54,7 +69,9 @@ describe("Nav", () => {
   it("renders Sign in when not authenticated", () => {
     render(<Nav />);
     expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Profile" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Profile" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders Profile and Sign out when authenticated", () => {
@@ -70,8 +87,12 @@ describe("Nav", () => {
     render(<Nav />);
     expect(screen.getByRole("link", { name: "Profile" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Settings" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Sign out" })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Sign out" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Sign in" }),
+    ).not.toBeInTheDocument();
   });
 
   it("opens mobile menu on burger click", async () => {
@@ -79,12 +100,18 @@ describe("Nav", () => {
     const menuButton = screen.getByRole("button", { name: "Open menu" });
     await userEvent.click(menuButton);
 
-    expect(screen.getByRole("button", { name: "Close menu" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Close menu" }),
+    ).toBeInTheDocument();
   });
 
   it("has Search link on mobile", () => {
     render(<Nav />);
-    expect(screen.getByRole("link", { name: "Search" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", {
+        name: "Search venues, comedians, and events",
+      }),
+    ).toBeInTheDocument();
   });
 
   it("Profile link has aria-current='page' when pathname is /profile", () => {

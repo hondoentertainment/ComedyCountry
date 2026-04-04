@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface Report {
   id: string;
@@ -26,11 +27,21 @@ export default function AdminReportsPage() {
     fetch(`/api/reports?status=${filter}`)
       .then((r) => r.json())
       .then((data) => setReports(data.reports || []))
-      .catch(console.error)
+      .catch((err: unknown) =>
+        logger.error(
+          "Admin reports fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        ),
+      )
       .finally(() => setLoading(false));
   }, [filter]);
 
-  async function handleAction(reportId: string, status: string, action?: string) {
+  async function handleAction(
+    reportId: string,
+    status: string,
+    action?: string,
+  ) {
     const res = await fetch("/api/reports", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -46,8 +57,12 @@ export default function AdminReportsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-brand-gold">Content Moderation</h1>
-          <p className="text-zinc-400 text-sm mt-1">Review reported content and take action.</p>
+          <h1 className="text-2xl font-bold text-brand-gold">
+            Content Moderation
+          </h1>
+          <p className="text-zinc-400 text-sm mt-1">
+            Review reported content and take action.
+          </p>
         </div>
         <div className="flex gap-2">
           {["pending", "reviewed", "resolved", "dismissed", "all"].map((f) => (
@@ -69,12 +84,17 @@ export default function AdminReportsPage() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 rounded-lg bg-brand-surface animate-pulse" />
+            <div
+              key={i}
+              className="h-24 rounded-lg bg-brand-surface animate-pulse"
+            />
           ))}
         </div>
       ) : reports.length === 0 ? (
         <div className="py-12 text-center rounded-lg bg-brand-surface border border-zinc-800">
-          <p className="text-zinc-500">No {filter === "all" ? "" : filter} reports.</p>
+          <p className="text-zinc-500">
+            No {filter === "all" ? "" : filter} reports.
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -86,30 +106,41 @@ export default function AdminReportsPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      report.reason === "harassment"
-                        ? "bg-red-900/30 text-red-400"
-                        : report.reason === "spam"
-                          ? "bg-yellow-900/30 text-yellow-400"
-                          : "bg-zinc-800 text-zinc-400"
-                    }`}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        report.reason === "harassment"
+                          ? "bg-red-900/30 text-red-400"
+                          : report.reason === "spam"
+                            ? "bg-yellow-900/30 text-yellow-400"
+                            : "bg-zinc-800 text-zinc-400"
+                      }`}
+                    >
                       {report.reason}
                     </span>
-                    <span className="text-zinc-500 text-xs capitalize">{report.entityType.replace("_", " ")}</span>
-                    <span className="text-zinc-700 text-xs">{report.entityId}</span>
+                    <span className="text-zinc-500 text-xs capitalize">
+                      {report.entityType.replace("_", " ")}
+                    </span>
+                    <span className="text-zinc-700 text-xs">
+                      {report.entityId}
+                    </span>
                   </div>
                   {report.details && (
-                    <p className="text-zinc-400 text-sm mt-2">{report.details}</p>
+                    <p className="text-zinc-400 text-sm mt-2">
+                      {report.details}
+                    </p>
                   )}
                   <p className="text-zinc-600 text-xs mt-2">
-                    Reported {new Date(report.createdAt).toLocaleDateString()} by {report.reporterId}
+                    Reported {new Date(report.createdAt).toLocaleDateString()}{" "}
+                    by {report.reporterId}
                   </p>
                 </div>
 
                 {report.status === "pending" && (
                   <div className="flex gap-2 shrink-0 ml-4">
                     <button
-                      onClick={() => handleAction(report.id, "resolved", "content_removed")}
+                      onClick={() =>
+                        handleAction(report.id, "resolved", "content_removed")
+                      }
                       className="px-3 py-1 rounded bg-red-600 text-white text-xs hover:bg-red-700"
                     >
                       Remove

@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { EventRatingForm } from "./EventRatingForm";
 
+vi.mock("./Toast", () => ({
+  useToast: () => ({ toast: vi.fn() }),
+}));
+
 describe("EventRatingForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -10,9 +14,15 @@ describe("EventRatingForm", () => {
 
   it("renders with initial empty state", () => {
     render(<EventRatingForm eventId="event-1" />);
-    expect(screen.getByRole("group", { name: "Rate this show" })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Share your experience...")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Submit review" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "Rate this show" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Share your experience..."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Submit review" }),
+    ).toBeInTheDocument();
   });
 
   it("renders with initial review data", () => {
@@ -24,11 +34,13 @@ describe("EventRatingForm", () => {
           rating: 4,
           comment: "Great show!",
         }}
-      />
+      />,
     );
     const textarea = screen.getByPlaceholderText("Share your experience...");
     expect(textarea).toHaveValue("Great show!");
-    expect(screen.getByRole("button", { name: "Rate 4 out of 5" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Rate 4 out of 5" }),
+    ).toBeInTheDocument();
   });
 
   it("disables submit when no rating and no comment", () => {
@@ -39,7 +51,9 @@ describe("EventRatingForm", () => {
 
   it("enables submit when rating is selected", async () => {
     render(<EventRatingForm eventId="event-1" />);
-    await userEvent.click(screen.getByRole("button", { name: "Rate 4 out of 5" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Rate 4 out of 5" }),
+    );
     const submitBtn = screen.getByRole("button", { name: "Submit review" });
     expect(submitBtn).not.toBeDisabled();
   });
@@ -48,7 +62,7 @@ describe("EventRatingForm", () => {
     render(<EventRatingForm eventId="event-1" />);
     await userEvent.type(
       screen.getByPlaceholderText("Share your experience..."),
-      "Had a blast"
+      "Had a blast",
     );
     const submitBtn = screen.getByRole("button", { name: "Submit review" });
     expect(submitBtn).not.toBeDisabled();
@@ -63,40 +77,58 @@ describe("EventRatingForm", () => {
 
     const onSuccess = vi.fn();
 
-    render(
-      <EventRatingForm
-        eventId="event-123"
-        onSuccess={onSuccess}
-      />
-    );
+    render(<EventRatingForm eventId="event-123" onSuccess={onSuccess} />);
 
-    await userEvent.click(screen.getByRole("button", { name: "Rate 5 out of 5" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Rate 5 out of 5" }),
+    );
     await userEvent.type(
       screen.getByPlaceholderText("Share your experience..."),
-      "Amazing!"
+      "Amazing!",
     );
-    await userEvent.click(screen.getByRole("button", { name: "Submit review" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Submit review" }),
+    );
 
     expect(fetchMock).toHaveBeenCalledWith("/api/events/event-123/reviews", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rating: 5, comment: "Amazing!" }),
+      body: JSON.stringify({
+        rating: 5,
+        comment: "Amazing!",
+        experience: {
+          setQuality: undefined,
+          crowdFit: undefined,
+          roomVibe: undefined,
+          pacing: undefined,
+          valueForPrice: undefined,
+          openerStrength: undefined,
+          wouldRecommend: undefined,
+        },
+      }),
     });
     expect(onSuccess).toHaveBeenCalled();
     expect(screen.getByRole("button", { name: /Saved/i })).toBeInTheDocument();
   });
 
   it("shows error on API failure", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({ error: "Failed to save" }),
-    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: () => Promise.resolve({ error: "Failed to save" }),
+      }),
+    );
 
     render(<EventRatingForm eventId="event-1" />);
 
-    await userEvent.click(screen.getByRole("button", { name: "Rate 3 out of 5" }));
-    await userEvent.click(screen.getByRole("button", { name: "Submit review" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Rate 3 out of 5" }),
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Submit review" }),
+    );
 
     expect(screen.getByRole("alert")).toHaveTextContent("Failed to save");
   });
@@ -105,20 +137,22 @@ describe("EventRatingForm", () => {
     const locationMock = { href: "", pathname: "/events/event-1" };
     vi.stubGlobal("location", locationMock);
 
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-      ok: false,
-      status: 401,
-    }));
-
-    render(
-      <EventRatingForm
-        eventId="event-1"
-        signInUrl="/auth/signin"
-      />
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+      }),
     );
 
-    await userEvent.click(screen.getByRole("button", { name: "Rate 2 out of 5" }));
-    await userEvent.click(screen.getByRole("button", { name: "Submit review" }));
+    render(<EventRatingForm eventId="event-1" signInUrl="/auth/signin" />);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Rate 2 out of 5" }),
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Submit review" }),
+    );
 
     expect(locationMock.href).toMatch(/^\/auth\/signin\?callbackUrl=/);
     expect(locationMock.href).toContain(encodeURIComponent("/events/event-1"));

@@ -42,6 +42,7 @@ describe("WaitlistButton", () => {
         json: async () => ({ onWaitlist: false, count: 5 }),
       })
       .mockResolvedValueOnce({
+        ok: true,
         json: async () => ({ onWaitlist: true }),
       });
 
