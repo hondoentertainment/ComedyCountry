@@ -55,7 +55,12 @@ const authedSession = {
 };
 
 const adminSession = {
-  user: { id: "admin-1", email: "admin@example.com", name: "Admin", role: "ADMIN" },
+  user: {
+    id: "admin-1",
+    email: "admin@example.com",
+    name: "Admin",
+    role: "admin",
+  },
   expires: "",
 };
 
@@ -75,7 +80,11 @@ describe("/api/discovery", () => {
 
       const req = new Request("http://localhost/api/discovery/signal", {
         method: "POST",
-        body: JSON.stringify({ signalType: "VIEW", entityType: "EVENT", entityId: "e1" }),
+        body: JSON.stringify({
+          signalType: "VIEW",
+          entityType: "EVENT",
+          entityId: "e1",
+        }),
       });
 
       const res = await signalPOST(req);
@@ -95,7 +104,11 @@ describe("/api/discovery", () => {
 
       const req = new Request("http://localhost/api/discovery/signal", {
         method: "POST",
-        body: JSON.stringify({ signalType: "VIEW", entityType: "EVENT", entityId: "e1" }),
+        body: JSON.stringify({
+          signalType: "VIEW",
+          entityType: "EVENT",
+          entityId: "e1",
+        }),
       });
 
       const res = await signalPOST(req);
@@ -118,7 +131,11 @@ describe("/api/discovery", () => {
     it("returns 400 for invalid signalType", async () => {
       const req = new Request("http://localhost/api/discovery/signal", {
         method: "POST",
-        body: JSON.stringify({ signalType: "INVALID", entityType: "EVENT", entityId: "e1" }),
+        body: JSON.stringify({
+          signalType: "INVALID",
+          entityType: "EVENT",
+          entityId: "e1",
+        }),
       });
 
       const res = await signalPOST(req);
@@ -128,7 +145,11 @@ describe("/api/discovery", () => {
     it("returns 400 for invalid entityType", async () => {
       const req = new Request("http://localhost/api/discovery/signal", {
         method: "POST",
-        body: JSON.stringify({ signalType: "VIEW", entityType: "INVALID", entityId: "e1" }),
+        body: JSON.stringify({
+          signalType: "VIEW",
+          entityType: "INVALID",
+          entityId: "e1",
+        }),
       });
 
       const res = await signalPOST(req);
@@ -171,7 +192,12 @@ describe("/api/discovery", () => {
   describe("GET /tonight", () => {
     it("returns tonight's feed", async () => {
       vi.mocked(generateHappeningTonightFeed).mockResolvedValue([
-        { entityType: "EVENT", entityId: "e1", score: 70, title: "Tonight Show" },
+        {
+          entityType: "EVENT",
+          entityId: "e1",
+          score: 70,
+          title: "Tonight Show",
+        },
       ] as never);
 
       const req = new Request("http://localhost/api/discovery/tonight");
@@ -199,7 +225,9 @@ describe("/api/discovery", () => {
         { entityType: "EVENT", entityId: "e1", score: 90, title: "Viral Show" },
       ] as never);
 
-      const req = new Request("http://localhost/api/discovery/trending-nearby?lat=36.16&lng=-86.78");
+      const req = new Request(
+        "http://localhost/api/discovery/trending-nearby?lat=36.16&lng=-86.78",
+      );
       const res = await trendingGET(req);
       const data = await res.json();
 
@@ -215,7 +243,18 @@ describe("/api/discovery", () => {
   describe("GET /friends-going", () => {
     it("returns friends attending feed", async () => {
       vi.mocked(generateFriendsAttendingFeed).mockResolvedValue([
-        { entityType: "EVENT", entityId: "e1", score: 60, title: "Group Show", socialProof: { friendsAttending: 3, totalAttending: 50, trendingScore: 10, buzzLevel: "MEDIUM" } },
+        {
+          entityType: "EVENT",
+          entityId: "e1",
+          score: 60,
+          title: "Group Show",
+          socialProof: {
+            friendsAttending: 3,
+            totalAttending: 50,
+            trendingScore: 10,
+            buzzLevel: "MEDIUM",
+          },
+        },
       ] as never);
 
       const req = new Request("http://localhost/api/discovery/friends-going");
@@ -248,7 +287,9 @@ describe("/api/discovery", () => {
         buzzLevel: "HIGH",
       } as never);
 
-      const req = new Request("http://localhost/api/discovery/social-proof?entityType=EVENT&entityId=e1");
+      const req = new Request(
+        "http://localhost/api/discovery/social-proof?entityType=EVENT&entityId=e1",
+      );
       const res = await socialProofGET(req);
       const data = await res.json();
 
@@ -259,7 +300,9 @@ describe("/api/discovery", () => {
     it("returns 404 when no social proof exists", async () => {
       vi.mocked(getSocialProof).mockResolvedValue(null as never);
 
-      const req = new Request("http://localhost/api/discovery/social-proof?entityType=EVENT&entityId=e-none");
+      const req = new Request(
+        "http://localhost/api/discovery/social-proof?entityType=EVENT&entityId=e-none",
+      );
       const res = await socialProofGET(req);
       expect(res.status).toBe(404);
     });
@@ -313,7 +356,11 @@ describe("/api/discovery", () => {
   describe("GET /insights", () => {
     it("returns insights for user", async () => {
       vi.mocked(getDiscoveryInsights).mockResolvedValue([
-        { entityId: "e1", entityType: "EVENT", reason: "Because you like dark comedy" },
+        {
+          entityId: "e1",
+          entityType: "EVENT",
+          reason: "Because you like dark comedy",
+        },
       ] as never);
 
       const res = await insightsGET(new Request("http://localhost:3000"));
@@ -333,7 +380,12 @@ describe("/api/discovery", () => {
     it("returns 403 for non-admin users", async () => {
       const req = new Request("http://localhost/api/discovery/boost", {
         method: "POST",
-        body: JSON.stringify({ entityType: "EVENT", entityId: "e1", boostType: "TRENDING", durationHours: 24 }),
+        body: JSON.stringify({
+          entityType: "EVENT",
+          entityId: "e1",
+          boostType: "TRENDING",
+          durationHours: 24,
+        }),
       });
 
       const res = await boostPOST(req);
@@ -353,7 +405,12 @@ describe("/api/discovery", () => {
 
       const req = new Request("http://localhost/api/discovery/boost", {
         method: "POST",
-        body: JSON.stringify({ entityType: "EVENT", entityId: "e1", boostType: "TRENDING", durationHours: 24 }),
+        body: JSON.stringify({
+          entityType: "EVENT",
+          entityId: "e1",
+          boostType: "TRENDING",
+          durationHours: 24,
+        }),
       });
 
       const res = await boostPOST(req);
@@ -380,7 +437,14 @@ describe("/api/discovery", () => {
   describe("GET /boost", () => {
     it("returns active boosts", async () => {
       vi.mocked(getActiveBoosts).mockResolvedValue([
-        { id: "boost-1", entityType: "EVENT", entityId: "e1", boostType: "TRENDING", boostMultiplier: 1.6, expiresAt: new Date() },
+        {
+          id: "boost-1",
+          entityType: "EVENT",
+          entityId: "e1",
+          boostType: "TRENDING",
+          boostMultiplier: 1.6,
+          expiresAt: new Date(),
+        },
       ] as never);
 
       const res = await boostGET(new Request("http://localhost:3000"));
