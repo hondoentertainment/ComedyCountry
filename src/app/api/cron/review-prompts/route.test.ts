@@ -33,22 +33,17 @@ describe("POST /api/cron/review-prompts", () => {
     }
   });
 
-  it("allows request when CRON_API_KEY is not set", async () => {
+  it("returns 401 when CRON_API_KEY is not set", async () => {
     const original = process.env.CRON_API_KEY;
     delete process.env.CRON_API_KEY;
 
     try {
-      vi.mocked(processReviewPrompts).mockResolvedValue({
-        eventsProcessed: 0,
-        promptsSent: 0,
-      });
-
       const res = await POST(
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
         })
       );
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(401);
     } finally {
       if (original !== undefined) {
         process.env.CRON_API_KEY = original;
@@ -58,7 +53,7 @@ describe("POST /api/cron/review-prompts", () => {
 
   it("calls processReviewPrompts and returns count", async () => {
     const original = process.env.CRON_API_KEY;
-    delete process.env.CRON_API_KEY;
+    process.env.CRON_API_KEY = "test-cron-key";
 
     try {
       vi.mocked(processReviewPrompts).mockResolvedValue({
@@ -69,6 +64,7 @@ describe("POST /api/cron/review-prompts", () => {
       const res = await POST(
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
+          headers: { "x-api-key": "test-cron-key" },
         })
       );
 
@@ -80,7 +76,9 @@ describe("POST /api/cron/review-prompts", () => {
       });
       expect(processReviewPrompts).toHaveBeenCalledTimes(1);
     } finally {
-      if (original !== undefined) {
+      if (original === undefined) {
+        delete process.env.CRON_API_KEY;
+      } else {
         process.env.CRON_API_KEY = original;
       }
     }
@@ -88,7 +86,7 @@ describe("POST /api/cron/review-prompts", () => {
 
   it("returns 500 on error", async () => {
     const original = process.env.CRON_API_KEY;
-    delete process.env.CRON_API_KEY;
+    process.env.CRON_API_KEY = "test-cron-key";
 
     try {
       vi.mocked(processReviewPrompts).mockRejectedValue(
@@ -98,6 +96,7 @@ describe("POST /api/cron/review-prompts", () => {
       const res = await POST(
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
+          headers: { "x-api-key": "test-cron-key" },
         })
       );
 
@@ -105,7 +104,9 @@ describe("POST /api/cron/review-prompts", () => {
       const data = await res.json();
       expect(data.error).toBe("Failed to process review prompts");
     } finally {
-      if (original !== undefined) {
+      if (original === undefined) {
+        delete process.env.CRON_API_KEY;
+      } else {
         process.env.CRON_API_KEY = original;
       }
     }
