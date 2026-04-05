@@ -220,7 +220,7 @@ describe("pos-integration", () => {
       });
       expect(mockPrisma.pOSIntegration.update).toHaveBeenCalledWith({
         where: { venueId_provider: { venueId: "v1", provider: "square" } },
-        data: { lastSyncAt: expect.any(Date) },
+        data: { lastSync: expect.any(Date) },
       });
     });
 

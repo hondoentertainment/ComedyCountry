@@ -1,12 +1,16 @@
-/** Validate required environment variables at startup */
+import { logger } from "@/lib/logger";
 
-const required = [
+/** Validate required environment variables at startup and provide typed access. */
+
+const requiredKeys = [
   "DATABASE_URL",
   "NEXTAUTH_SECRET",
   "NEXTAUTH_URL",
 ] as const;
 
-const optional = [
+type RequiredKey = (typeof requiredKeys)[number];
+
+const optionalKeys = [
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
   "STRIPE_SECRET_KEY",
@@ -23,13 +27,24 @@ const optional = [
   "VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
   "LOG_LEVEL",
+  "CRON_SECRET",
+  "SENTRY_DSN",
 ] as const;
 
-export function validateEnv(): { valid: boolean; missing: string[]; warnings: string[] } {
+type OptionalKey = (typeof optionalKeys)[number];
+
+type EnvVars = Record<RequiredKey, string> &
+  Record<OptionalKey, string | undefined>;
+
+export function validateEnv(): {
+  valid: boolean;
+  missing: string[];
+  warnings: string[];
+} {
   const missing: string[] = [];
   const warnings: string[] = [];
 
-  for (const key of required) {
+  for (const key of requiredKeys) {
     if (!process.env[key]) {
       missing.push(key);
     }
@@ -37,12 +52,16 @@ export function validateEnv(): { valid: boolean; missing: string[]; warnings: st
 
   // Warn if NEXTAUTH_SECRET is the default placeholder
   if (process.env.NEXTAUTH_SECRET === "change-me-in-production") {
-    warnings.push("NEXTAUTH_SECRET is set to the default placeholder — change this in production");
+    warnings.push(
+      "NEXTAUTH_SECRET is set to the default placeholder — change this in production",
+    );
   }
 
   // Warn about missing optional vars that enable key features
   if (!process.env.STRIPE_SECRET_KEY) {
-    warnings.push("STRIPE_SECRET_KEY not set — payment processing will be disabled");
+    warnings.push(
+      "STRIPE_SECRET_KEY not set — payment processing will be disabled",
+    );
   }
 
   if (!process.env.SMTP_HOST) {
@@ -67,9 +86,38 @@ export function assertEnv(): void {
   }
 
   if (!valid) {
-    console.error(`✗ Missing required environment variables: ${missing.join(", ")}`);
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
-    }
+    logger.error(
+      `Missing required environment variables: ${missing.join(", ")}`,
+    );
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}. ` +
+        "Set them in your .env file or deployment environment.",
+    );
   }
 }
+
+/**
+ * Build a typed env object. Required keys are guaranteed to be strings;
+ * optional keys may be undefined.
+ */
+function buildEnv(): EnvVars {
+  // In non-test environments, validate immediately on import
+  if (process.env.NODE_ENV !== "test") {
+    assertEnv();
+  }
+
+  const env = {} as Record<string, string | undefined>;
+
+  for (const key of requiredKeys) {
+    env[key] = process.env[key];
+  }
+  for (const key of optionalKeys) {
+    env[key] = process.env[key];
+  }
+
+  return env as EnvVars;
+}
+
+/** Typed, validated environment variables. Importing this module in non-test
+ *  environments will throw immediately if any required variable is missing. */
+export const env: EnvVars = buildEnv();

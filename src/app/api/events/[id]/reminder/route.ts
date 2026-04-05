@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateICSEvent, icsResponse } from "@/lib/calendar";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/events/[id]/reminder
@@ -13,9 +14,12 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  */
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const rl = await checkRateLimit(`events-reminder:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `events-reminder:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -120,10 +124,14 @@ export async function POST(
       },
     });
   } catch (err) {
-    console.error("POST /api/events/[id]/reminder error:", err);
+    logger.error(
+      "POST /api/events/[id]/reminder error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to set reminder" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,9 +143,12 @@ export async function POST(
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const rl = await checkRateLimit(`events-reminder:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `events-reminder:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -162,10 +173,14 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, reminderRemoved: true });
   } catch (err) {
-    console.error("DELETE /api/events/[id]/reminder error:", err);
+    logger.error(
+      "DELETE /api/events/[id]/reminder error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to remove reminder" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -177,9 +192,12 @@ export async function DELETE(
  */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const rl = await checkRateLimit(`events-reminder:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `events-reminder:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -212,10 +230,14 @@ export async function GET(
       })),
     });
   } catch (err) {
-    console.error("GET /api/events/[id]/reminder error:", err);
+    logger.error(
+      "GET /api/events/[id]/reminder error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to check reminder" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

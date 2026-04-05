@@ -9,6 +9,7 @@ import {
   syncToProvider,
 } from "@/lib/calendar-sync";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/calendar-sync
@@ -17,7 +18,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * If ?format=ical is passed, returns the iCal feed instead.
  */
 export async function GET(req: NextRequest) {
-  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -44,10 +48,14 @@ export async function GET(req: NextRequest) {
     const syncs = await listCalendarSyncs(session.user.id);
     return NextResponse.json({ syncs });
   } catch (err) {
-    console.error("Calendar sync GET error:", err);
+    logger.error(
+      "Calendar sync GET error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch calendar syncs" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -61,7 +69,10 @@ export async function GET(req: NextRequest) {
  * Or trigger a sync with: { action: "sync", syncId: string }
  */
 export async function POST(req: NextRequest) {
-  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -86,7 +97,7 @@ export async function POST(req: NextRequest) {
     if (!provider) {
       return NextResponse.json(
         { error: "provider is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -111,7 +122,10 @@ export async function POST(req: NextRequest) {
  * Delete a calendar sync.
  */
 export async function DELETE(req: NextRequest) {
-  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`calendar-sync:${getRateLimitKey(req)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -126,7 +140,7 @@ export async function DELETE(req: NextRequest) {
     if (!syncId) {
       return NextResponse.json(
         { error: "id query parameter is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 

@@ -8,11 +8,15 @@ import {
   getSMSCampaignStats,
 } from "@/lib/marketing";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /* ─── GET - Fetch all campaigns (SMS + email) for a venue ─────────────── */
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketing-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -149,10 +153,9 @@ export async function GET(request: Request) {
     );
 
     // Paginate unified list if not filtering by type
-    const paginated =
-      !type
-        ? allCampaigns.slice(skip, skip + pageSize)
-        : allCampaigns;
+    const paginated = !type
+      ? allCampaigns.slice(skip, skip + pageSize)
+      : allCampaigns;
 
     return NextResponse.json({
       campaigns: paginated,
@@ -161,7 +164,11 @@ export async function GET(request: Request) {
       pageSize,
     });
   } catch (error) {
-    console.error("GET /api/marketing/campaigns error:", error);
+    logger.error(
+      "GET /api/marketing/campaigns error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch campaigns" },
       { status: 500 },
@@ -172,7 +179,10 @@ export async function GET(request: Request) {
 /* ─── POST - Create a new campaign ────────────────────────────────────── */
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`marketing-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -209,10 +219,7 @@ export async function POST(request: Request) {
       );
     }
     if (!name?.trim()) {
-      return NextResponse.json(
-        { error: "name is required" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "name is required" }, { status: 400 });
     }
 
     if (channel === "sms") {
@@ -250,8 +257,7 @@ export async function POST(request: Request) {
           );
         } catch (err) {
           // Return created campaign even if scheduling fails
-          const msg =
-            err instanceof Error ? err.message : "Failed to schedule";
+          const msg = err instanceof Error ? err.message : "Failed to schedule";
           return NextResponse.json(
             { ...campaign, channel: "sms", schedulingError: msg },
             { status: 201 },
@@ -281,9 +287,7 @@ export async function POST(request: Request) {
             subject: subject.trim(),
             body: htmlBody ?? "",
             segment: segmentId ?? null,
-            scheduledAt: body.scheduledAt
-              ? new Date(body.scheduledAt)
-              : null,
+            scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
           },
         });
 
@@ -315,7 +319,10 @@ export async function POST(request: Request) {
 /* ─── PATCH - Update campaign status (schedule, pause, etc.) ──────────── */
 
 export async function PATCH(request: Request) {
-  const rl = await checkRateLimit(`marketing-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -442,9 +449,7 @@ export async function PATCH(request: Request) {
     const msg =
       error instanceof Error ? error.message : "Failed to update campaign";
     const status =
-      msg.includes("not found") || msg.includes("Only draft")
-        ? 400
-        : 500;
+      msg.includes("not found") || msg.includes("Only draft") ? 400 : 500;
     return NextResponse.json({ error: msg }, { status });
   }
 }

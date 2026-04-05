@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * POST - Accept, decline, or block a friend request.
@@ -10,9 +11,12 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  */
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -30,7 +34,7 @@ export async function POST(
     if (!["accept", "decline", "block"].includes(action)) {
       return NextResponse.json(
         { error: "action must be accept, decline, or block" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +49,7 @@ export async function POST(
     if (!connection) {
       return NextResponse.json(
         { error: "Friend request not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -63,10 +67,14 @@ export async function POST(
 
     return NextResponse.json({ success: true, action, status: newStatus });
   } catch (err) {
-    console.error("Friends action error:", err);
+    logger.error(
+      "Friends action error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to process friend request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -76,9 +84,12 @@ export async function POST(
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`friends:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -95,17 +106,14 @@ export async function DELETE(
     const connection = await prisma.friendConnection.findFirst({
       where: {
         id: connectionId,
-        OR: [
-          { userId: session.user.id },
-          { friendId: session.user.id },
-        ],
+        OR: [{ userId: session.user.id }, { friendId: session.user.id }],
       },
     });
 
     if (!connection) {
       return NextResponse.json(
         { error: "Friend connection not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -113,10 +121,14 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Friends DELETE error:", err);
+    logger.error(
+      "Friends DELETE error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to remove friend" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,11 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { sendPushToUser, pushToComedianFollowers } from "./push";
+
+const mockSendNotification = vi.fn();
+const mockSetVapidDetails = vi.fn();
+
+vi.mock("web-push", () => ({
+  setVapidDetails: mockSetVapidDetails,
+  sendNotification: mockSendNotification,
+}));
 
 vi.mock("./prisma", () => ({
   prisma: {
     pushSubscription: {
       findMany: vi.fn(),
-      delete: vi.fn(),
+      deleteMany: vi.fn(),
     },
     comedianFollow: {
       findMany: vi.fn(),
@@ -13,20 +20,18 @@ vi.mock("./prisma", () => ({
   },
 }));
 
+import { sendPushToUser, pushToComedianFollowers } from "./push";
 import { prisma } from "./prisma";
 
 const mockPrisma = prisma as unknown as {
   pushSubscription: {
     findMany: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
+    deleteMany: ReturnType<typeof vi.fn>;
   };
   comedianFollow: {
     findMany: ReturnType<typeof vi.fn>;
   };
 };
-
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
 
 const payload = { title: "Test", body: "Test body" };
 
@@ -35,6 +40,7 @@ describe("sendPushToUser", () => {
     vi.clearAllMocks();
     vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "test-public-key");
     vi.stubEnv("VAPID_PRIVATE_KEY", "test-private-key");
+    mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 0 });
   });
 
   it("returns 0 when VAPID keys are not configured", async () => {
@@ -60,26 +66,25 @@ describe("sendPushToUser", () => {
       { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
       { id: "sub-2", endpoint: "https://push.example.com/2", p256dh: "key2", auth: "auth2" },
     ]);
-    mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    mockSendNotification.mockResolvedValue({});
 
     const result = await sendPushToUser("user-1", payload);
 
     expect(result).toBe(2);
-    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockSendNotification).toHaveBeenCalledTimes(2);
   });
 
   it("deletes expired subscriptions (410 Gone)", async () => {
     mockPrisma.pushSubscription.findMany.mockResolvedValue([
       { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
     ]);
-    mockFetch.mockResolvedValue({ ok: false, status: 410 });
-    mockPrisma.pushSubscription.delete.mockResolvedValue({});
+    mockSendNotification.mockRejectedValue({ statusCode: 410 });
 
     const result = await sendPushToUser("user-1", payload);
 
     expect(result).toBe(0);
-    expect(mockPrisma.pushSubscription.delete).toHaveBeenCalledWith({
-      where: { id: "sub-1" },
+    expect(mockPrisma.pushSubscription.deleteMany).toHaveBeenCalledWith({
+      where: { id: { in: ["sub-1"] } },
     });
   });
 
@@ -87,14 +92,13 @@ describe("sendPushToUser", () => {
     mockPrisma.pushSubscription.findMany.mockResolvedValue([
       { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
     ]);
-    mockFetch.mockResolvedValue({ ok: false, status: 404 });
-    mockPrisma.pushSubscription.delete.mockResolvedValue({});
+    mockSendNotification.mockRejectedValue({ statusCode: 404 });
 
     const result = await sendPushToUser("user-1", payload);
 
     expect(result).toBe(0);
-    expect(mockPrisma.pushSubscription.delete).toHaveBeenCalledWith({
-      where: { id: "sub-1" },
+    expect(mockPrisma.pushSubscription.deleteMany).toHaveBeenCalledWith({
+      where: { id: { in: ["sub-1"] } },
     });
   });
 
@@ -102,7 +106,7 @@ describe("sendPushToUser", () => {
     mockPrisma.pushSubscription.findMany.mockResolvedValue([
       { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
     ]);
-    mockFetch.mockResolvedValue({ ok: false, status: 201 });
+    mockSendNotification.mockResolvedValue({});
 
     const result = await sendPushToUser("user-1", payload);
 
@@ -123,6 +127,7 @@ describe("pushToComedianFollowers", () => {
     vi.clearAllMocks();
     vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "test-public-key");
     vi.stubEnv("VAPID_PRIVATE_KEY", "test-private-key");
+    mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 0 });
   });
 
   it("sends push to all followers", async () => {
@@ -137,7 +142,7 @@ describe("pushToComedianFollowers", () => {
       .mockResolvedValueOnce([
         { id: "sub-2", endpoint: "https://push.example.com/2", p256dh: "k", auth: "a" },
       ]);
-    mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    mockSendNotification.mockResolvedValue({});
 
     const result = await pushToComedianFollowers("comedian-1", payload);
 

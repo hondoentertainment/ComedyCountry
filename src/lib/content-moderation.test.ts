@@ -350,7 +350,7 @@ describe("content-moderation", () => {
       expect(mockPrisma.analyticsEvent.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            eventType: "moderation_queue",
+            action: "moderation_queue",
             metadata: { path: ["status"], equals: "FLAGGED" },
           }),
         }),
@@ -427,7 +427,7 @@ describe("content-moderation", () => {
       expect(mockPrisma.analyticsEvent.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            eventType: "moderation_strike",
+            action: "moderation_strike",
             userId: "u1",
           }),
         }),

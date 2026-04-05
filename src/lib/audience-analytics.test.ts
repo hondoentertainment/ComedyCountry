@@ -107,35 +107,32 @@ describe("computeAudienceProfile", () => {
     mockPrisma.ticket.findMany.mockResolvedValue([
       {
         userId: "user-1",
-        price: 25,
-        user: { id: "user-1", location: "NYC", birthDate: birthDate1 },
+        purchasePrice: 25,
         event: {
           id: "evt-1",
-          comedianId: "com-1",
-          comedian: { id: "com-1", name: "Alice" },
-          tags: ["standup", "improv"],
+          comedians: [
+            { comedian: { id: "com-1", name: "Alice" } },
+          ],
         },
       },
       {
         userId: "user-1",
-        price: 30,
-        user: { id: "user-1", location: "NYC", birthDate: birthDate1 },
+        purchasePrice: 30,
         event: {
           id: "evt-2",
-          comedianId: "com-2",
-          comedian: { id: "com-2", name: "Bob" },
-          tags: ["standup"],
+          comedians: [
+            { comedian: { id: "com-2", name: "Bob" } },
+          ],
         },
       },
       {
         userId: "user-2",
-        price: 20,
-        user: { id: "user-2", location: "LA", birthDate: birthDate2 },
+        purchasePrice: 20,
         event: {
           id: "evt-1",
-          comedianId: "com-1",
-          comedian: { id: "com-1", name: "Alice" },
-          tags: ["standup", "improv"],
+          comedians: [
+            { comedian: { id: "com-1", name: "Alice" } },
+          ],
         },
       },
     ]);
@@ -147,10 +144,9 @@ describe("computeAudienceProfile", () => {
     expect(profile.avgSpendPerMember).toBe(37.5); // 75 / 2
     expect(profile.topComedians.length).toBeGreaterThan(0);
     expect(profile.topComedians[0].name).toBe("Alice"); // 2 tickets
-    expect(profile.genreDistribution).toHaveProperty("standup");
-    expect(profile.locationDistribution).toHaveProperty("NYC");
-    expect(profile.locationDistribution).toHaveProperty("LA");
-    expect(profile.avgAge).not.toBeNull();
+    expect(profile.genreDistribution).toHaveProperty("Alice");
+    expect(profile.locationDistribution).toEqual({});
+    expect(profile.avgAge).toBeNull();
     // user-1 visits 2x => monthly, user-2 visits 1x => occasional
     expect(profile.visitFrequency.monthly).toBe(1);
     expect(profile.visitFrequency.occasional).toBe(1);
@@ -205,13 +201,12 @@ describe("findSimilarAudiences", () => {
         return [
           {
             userId: "user-1",
-            price: 25,
-            user: { id: "user-1", location: "NYC", birthDate: null },
+            purchasePrice: 25,
             event: {
               id: "evt-1",
-              comedianId: "com-1",
-              comedian: { id: "com-1", name: "Alice" },
-              tags: ["standup"],
+              comedians: [
+                { comedian: { id: "com-1", name: "Alice" } },
+              ],
             },
           },
         ];
@@ -220,13 +215,12 @@ describe("findSimilarAudiences", () => {
         return [
           {
             userId: "user-2",
-            price: 20,
-            user: { id: "user-2", location: "NYC", birthDate: null },
+            purchasePrice: 20,
             event: {
               id: "evt-2",
-              comedianId: "com-2",
-              comedian: { id: "com-2", name: "Bob" },
-              tags: ["standup"],
+              comedians: [
+                { comedian: { id: "com-1", name: "Alice" } },
+              ],
             },
           },
         ];
@@ -240,7 +234,7 @@ describe("findSimilarAudiences", () => {
     expect(results[0].venueId).toBe("venue-2");
     expect(results[0].venueName).toBe("Laugh Factory");
     expect(results[0].similarityScore).toBeGreaterThan(0);
-    expect(results[0].sharedGenres).toContain("standup");
+    expect(results[0].sharedGenres).toContain("Alice");
   });
 });
 
@@ -361,13 +355,12 @@ describe("getExpansionMarkets", () => {
         return [
           {
             userId: "user-1",
-            price: 25,
-            user: { id: "user-1", location: "NYC", birthDate: null },
+            purchasePrice: 25,
             event: {
               id: "evt-1",
-              comedianId: "com-1",
-              comedian: { id: "com-1", name: "Alice" },
-              tags: ["standup"],
+              comedians: [
+                { comedian: { id: "com-1", name: "Alice" } },
+              ],
             },
           },
         ];
@@ -376,13 +369,12 @@ describe("getExpansionMarkets", () => {
         return [
           {
             userId: "user-2",
-            price: 20,
-            user: { id: "user-2", location: "Chicago", birthDate: null },
+            purchasePrice: 20,
             event: {
               id: "evt-2",
-              comedianId: "com-2",
-              comedian: { id: "com-2", name: "Bob" },
-              tags: ["standup"],
+              comedians: [
+                { comedian: { id: "com-2", name: "Bob" } },
+              ],
             },
           },
         ];

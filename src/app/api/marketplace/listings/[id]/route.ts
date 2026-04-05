@@ -3,11 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function GET(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`marketplace-listings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketplace-listings:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -25,13 +29,23 @@ export async function GET(request: Request, context: Ctx) {
 
     return NextResponse.json(listing);
   } catch (error) {
-    console.error("GET /api/marketplace/listings/[id] error:", error);
-    return NextResponse.json({ error: "Failed to fetch listing" }, { status: 500 });
+    logger.error(
+      "GET /api/marketplace/listings/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch listing" },
+      { status: 500 },
+    );
   }
 }
 
 export async function PUT(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`marketplace-listings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketplace-listings:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -44,7 +58,8 @@ export async function PUT(request: Request, context: Ctx) {
 
     const { id } = await context.params;
     const body = await request.json();
-    const { date, showType, genre, budgetMin, budgetMax, description, status } = body;
+    const { date, showType, genre, budgetMin, budgetMax, description, status } =
+      body;
 
     const listing = await prisma.talentListing.update({
       where: { id },
@@ -61,13 +76,23 @@ export async function PUT(request: Request, context: Ctx) {
 
     return NextResponse.json(listing);
   } catch (error) {
-    console.error("PUT /api/marketplace/listings/[id] error:", error);
-    return NextResponse.json({ error: "Failed to update listing" }, { status: 500 });
+    logger.error(
+      "PUT /api/marketplace/listings/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to update listing" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`marketplace-listings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketplace-listings:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -87,7 +112,14 @@ export async function DELETE(request: Request, context: Ctx) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/marketplace/listings/[id] error:", error);
-    return NextResponse.json({ error: "Failed to cancel listing" }, { status: 500 });
+    logger.error(
+      "DELETE /api/marketplace/listings/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to cancel listing" },
+      { status: 500 },
+    );
   }
 }

@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`email-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `email-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -20,7 +24,10 @@ export async function GET(request: Request) {
     const venueId = searchParams.get("venueId");
 
     if (!venueId) {
-      return NextResponse.json({ error: "venueId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "venueId is required" },
+        { status: 400 },
+      );
     }
 
     const campaigns = await prisma.emailCampaign.findMany({
@@ -30,13 +37,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ campaigns });
   } catch (error) {
-    console.error("GET /api/email-campaigns error:", error);
-    return NextResponse.json({ error: "Failed to fetch campaigns" }, { status: 500 });
+    logger.error(
+      "GET /api/email-campaigns error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch campaigns" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`email-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `email-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -53,7 +70,7 @@ export async function POST(request: Request) {
     if (!venueId || !subject || !emailBody) {
       return NextResponse.json(
         { error: "venueId, subject, and body are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,7 +87,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(campaign, { status: 201 });
   } catch (error) {
-    console.error("POST /api/email-campaigns error:", error);
-    return NextResponse.json({ error: "Failed to create campaign" }, { status: 500 });
+    logger.error(
+      "POST /api/email-campaigns error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create campaign" },
+      { status: 500 },
+    );
   }
 }

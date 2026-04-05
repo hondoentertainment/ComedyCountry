@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { generateReferralCode, getReferralStats } from "@/lib/marketing";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketing-referrals:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-referrals:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -19,13 +23,23 @@ export async function GET(request: Request) {
     const stats = await getReferralStats(session.user.id);
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("GET /api/marketing/referrals error:", error);
-    return NextResponse.json({ error: "Failed to fetch referral stats" }, { status: 500 });
+    logger.error(
+      "GET /api/marketing/referrals error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch referral stats" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`marketing-referrals:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-referrals:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -37,7 +51,14 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { eventId, venueId, discountType, discountValue, maxUses, expiresAt } = body;
+    const {
+      eventId,
+      venueId,
+      discountType,
+      discountValue,
+      maxUses,
+      expiresAt,
+    } = body;
 
     const code = await generateReferralCode(session.user.id, {
       eventId,
@@ -50,7 +71,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(code, { status: 201 });
   } catch (error) {
-    console.error("POST /api/marketing/referrals error:", error);
-    return NextResponse.json({ error: "Failed to create referral code" }, { status: 500 });
+    logger.error(
+      "POST /api/marketing/referrals error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create referral code" },
+      { status: 500 },
+    );
   }
 }

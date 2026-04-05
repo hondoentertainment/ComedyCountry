@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, eventReminderHtml } from "@/lib/email";
 import { sendPushToUser } from "@/lib/push";
+import { logger } from "@/lib/logger";
 
 /** 24h window: event.date between now+23.5h and now+24.5h */
 const MS_23_5_H = 23.5 * 60 * 60 * 1000;
@@ -82,7 +83,8 @@ export async function POST(request: Request) {
         .join(", ");
       const eventTitle = event.title || comedianNames || "Comedy Show";
       const showtime = event.showtime || "Check your tickets";
-      const venueInfo = `${event.venue.name} — ${event.venue.city || ""}, ${event.venue.state || ""}`.trim();
+      const venueInfo =
+        `${event.venue.name} — ${event.venue.city || ""}, ${event.venue.state || ""}`.trim();
       const venueTime = `${venueInfo} — ${showtime}`;
 
       // Users: EventAttendance status "going" OR valid Ticket for this event
@@ -143,11 +145,7 @@ export async function POST(request: Request) {
         if (existing) continue;
 
         const timeLabel =
-          kind === "24h"
-            ? "24 hours"
-            : kind === "2h"
-              ? "2 hours"
-              : "1 hour";
+          kind === "24h" ? "24 hours" : kind === "2h" ? "2 hours" : "1 hour";
         const title = `Reminder: ${eventTitle}`;
         const message = `${eventTitle} at ${venueTime} — starting in ${timeLabel}`;
 
@@ -191,11 +189,9 @@ export async function POST(request: Request) {
                 ? "in 2 hours"
                 : "in 1 hour";
           const siteUrl =
-            process.env.NEXTAUTH_URL ??
-            "https://punchline-atlas.vercel.app";
+            process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
           const eventUrl = event.ticketUrl ?? `${siteUrl}/events/${event.id}`;
-          const dateStr =
-            kind === "24h" ? venueInfo : showtime;
+          const dateStr = kind === "24h" ? venueInfo : showtime;
           const whenStr = `in ${timeLabel}`;
 
           try {
@@ -212,14 +208,14 @@ export async function POST(request: Request) {
               event.venue.name,
               dateStr,
               eventUrl,
-              whenStr
+              whenStr,
             );
 
             // Append calendar link for 24h reminders
             const finalHtml = calendarUrl
               ? emailHtml.replace(
                   "</body>",
-                  `<p style="text-align:center;margin-top:16px"><a href="${calendarUrl}" style="color:#d4a843;text-decoration:underline;font-size:14px">Add to Calendar (.ics)</a></p></body>`
+                  `<p style="text-align:center;margin-top:16px"><a href="${calendarUrl}" style="color:#d4a843;text-decoration:underline;font-size:14px">Add to Calendar (.ics)</a></p></body>`,
                 )
               : emailHtml;
 
@@ -256,10 +252,14 @@ export async function POST(request: Request) {
       reminders1h,
     });
   } catch (err) {
-    console.error("Event reminders cron error:", err);
+    logger.error(
+      "Event reminders cron error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to process reminders" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

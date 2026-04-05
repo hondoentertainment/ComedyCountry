@@ -3,11 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function POST(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`email-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `email-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -25,17 +29,23 @@ export async function POST(request: Request, context: Ctx) {
     if (!action || !["send", "schedule"].includes(action)) {
       return NextResponse.json(
         { error: "action must be 'send' or 'schedule'" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const campaign = await prisma.emailCampaign.findUnique({ where: { id } });
     if (!campaign) {
-      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Campaign not found" },
+        { status: 404 },
+      );
     }
 
     if (campaign.status === "sent") {
-      return NextResponse.json({ error: "Campaign already sent" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Campaign already sent" },
+        { status: 400 },
+      );
     }
 
     if (action === "send") {
@@ -53,13 +63,23 @@ export async function POST(request: Request, context: Ctx) {
     });
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("POST /api/email-campaigns/[id] error:", error);
-    return NextResponse.json({ error: "Failed to process campaign" }, { status: 500 });
+    logger.error(
+      "POST /api/email-campaigns/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to process campaign" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`email-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `email-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -74,20 +94,30 @@ export async function DELETE(request: Request, context: Ctx) {
 
     const campaign = await prisma.emailCampaign.findUnique({ where: { id } });
     if (!campaign) {
-      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Campaign not found" },
+        { status: 404 },
+      );
     }
 
     if (campaign.status !== "draft") {
       return NextResponse.json(
         { error: "Only draft campaigns can be deleted" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     await prisma.emailCampaign.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/email-campaigns/[id] error:", error);
-    return NextResponse.json({ error: "Failed to delete campaign" }, { status: 500 });
+    logger.error(
+      "DELETE /api/email-campaigns/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to delete campaign" },
+      { status: 500 },
+    );
   }
 }

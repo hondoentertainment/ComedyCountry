@@ -29,6 +29,7 @@ vi.mock("@/lib/prisma", () => ({
       findFirst: vi.fn(),
       findMany: vi.fn(),
       create: vi.fn(),
+      count: vi.fn(),
     },
     podcastTicketLink: {
       create: vi.fn(),
@@ -60,6 +61,7 @@ const mockPrisma = prisma as unknown as {
     findFirst: ReturnType<typeof vi.fn>;
     findMany: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
+    count: ReturnType<typeof vi.fn>;
   };
   podcastTicketLink: {
     create: ReturnType<typeof vi.fn>;
@@ -181,6 +183,8 @@ describe("podcast-pipeline", () => {
       });
       mockPrisma.podcastEpisode.findMany.mockResolvedValue([]);
       mockPrisma.podcastEpisode.create.mockResolvedValue({ id: "ep1" });
+      mockPrisma.podcastEpisode.findFirst.mockResolvedValue(null);
+      mockPrisma.podcastEpisode.count.mockResolvedValue(0);
       mockPrisma.podcastShow.update.mockResolvedValue({ id: "pod1" });
 
       // Mock global fetch for RSS

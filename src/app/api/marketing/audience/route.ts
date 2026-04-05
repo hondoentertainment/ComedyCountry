@@ -9,9 +9,13 @@ import {
   getAudienceGrowthTrend,
 } from "@/lib/audience-analytics";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketing-audience:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-audience:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -42,10 +46,7 @@ export async function GET(request: Request) {
       case "similar": {
         const limit = Math.min(
           50,
-          Math.max(
-            1,
-            parseInt(searchParams.get("limit") ?? "10", 10),
-          ),
+          Math.max(1, parseInt(searchParams.get("limit") ?? "10", 10)),
         );
         const similar = await findSimilarAudiences(venueId, limit);
         return NextResponse.json({ similar });
@@ -54,10 +55,7 @@ export async function GET(request: Request) {
       case "expansion": {
         const limit = Math.min(
           20,
-          Math.max(
-            1,
-            parseInt(searchParams.get("limit") ?? "5", 10),
-          ),
+          Math.max(1, parseInt(searchParams.get("limit") ?? "5", 10)),
         );
         const markets = await getExpansionMarkets(venueId, limit);
         return NextResponse.json({ markets });
@@ -78,10 +76,7 @@ export async function GET(request: Request) {
       case "growth": {
         const months = Math.min(
           24,
-          Math.max(
-            1,
-            parseInt(searchParams.get("months") ?? "6", 10),
-          ),
+          Math.max(1, parseInt(searchParams.get("months") ?? "6", 10)),
         );
         const trend = await getAudienceGrowthTrend(venueId, months);
         return NextResponse.json({ trend });
@@ -96,7 +91,11 @@ export async function GET(request: Request) {
         );
     }
   } catch (error) {
-    console.error("GET /api/marketing/audience error:", error);
+    logger.error(
+      "GET /api/marketing/audience error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     const message =
       error instanceof Error ? error.message : "Failed to fetch audience data";
     return NextResponse.json({ error: message }, { status: 500 });

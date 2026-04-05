@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { generateWalletPass, getUserPasses } from "@/lib/wallet-passes";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -20,7 +24,11 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ passes });
   } catch (error) {
-    console.error("GET /api/wallet/passes error:", error);
+    logger.error(
+      "GET /api/wallet/passes error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch wallet passes" },
       { status: 500 },
@@ -29,7 +37,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: NextRequest) {
-  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`wallet-passes:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -64,7 +75,11 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.message === "Ticket not found") {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
-    console.error("POST /api/wallet/passes error:", error);
+    logger.error(
+      "POST /api/wallet/passes error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to generate wallet pass" },
       { status: 500 },

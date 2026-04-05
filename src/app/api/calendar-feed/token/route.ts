@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { createCalendarFeedToken } from "../route";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 import { canUseCalendarFeed } from "@/lib/subscription-gates";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/calendar-feed/token
@@ -18,7 +19,12 @@ export async function POST(request: Request) {
   if (!rl.success) {
     return NextResponse.json(
       { error: "Too many requests" },
-      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+        },
+      },
     );
   }
 
@@ -32,19 +38,28 @@ export async function POST(request: Request) {
     if (!allowed) {
       return NextResponse.json(
         { error: "Calendar feed is a Pro feature. Upgrade to unlock." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     const token = createCalendarFeedToken(session.user.id);
     const baseUrl =
       process.env.NEXTAUTH_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://punchlineatlas.com");
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "https://punchlineatlas.com");
     const url = `${baseUrl.replace(/\/$/, "")}/api/calendar-feed?token=${token}`;
 
     return NextResponse.json({ token, url });
   } catch (err) {
-    console.error("Calendar feed token error:", err);
-    return NextResponse.json({ error: "Failed to generate token" }, { status: 500 });
+    logger.error(
+      "Calendar feed token error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to generate token" },
+      { status: 500 },
+    );
   }
 }

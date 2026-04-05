@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { processLocationAlerts } from "@/lib/location-alert-notify";
+import { logger } from "@/lib/logger";
 
 /**
  * Cron: Process location alerts and notify users about new shows in their radius.
@@ -25,10 +26,14 @@ export async function POST(request: Request) {
       ...result,
     });
   } catch (err) {
-    console.error("Location alerts cron error:", err);
+    logger.error(
+      "Location alerts cron error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to process location alerts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

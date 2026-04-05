@@ -545,7 +545,7 @@ describe("creator-intelligence", () => {
       mockPrisma.careerMilestone.findMany.mockResolvedValue([]);
       mockPrisma.revenueAttribution.findMany.mockResolvedValue([]);
       mockPrisma.event.findMany.mockResolvedValue([
-        { id: "e1", capacity: 100 },
+        { id: "e1", ticketTypes: [{ capacity: 100 }] },
       ]);
       mockPrisma.ticket.count.mockResolvedValue(100);
 

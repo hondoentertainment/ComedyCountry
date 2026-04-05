@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getComedyPassportSummary } from "@/lib/comedy-passport";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`comedy-passport:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `comedy-passport:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -21,7 +25,11 @@ export async function GET(request: Request) {
       headers: { "Cache-Control": "private, max-age=300" },
     });
   } catch (error) {
-    console.error("Comedy passport GET error:", error);
+    logger.error(
+      "Comedy passport GET error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch comedy passport" },
       { status: 500 },

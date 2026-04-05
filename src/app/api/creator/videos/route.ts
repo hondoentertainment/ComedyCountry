@@ -4,13 +4,17 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getComedianForUser } from "@/lib/creator";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 // ---------------------------------------------------------------------------
 // GET /api/creator/videos — list videos for a comedian
 // ---------------------------------------------------------------------------
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`creator-videos:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `creator-videos:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -18,11 +22,17 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const comedianId = searchParams.get("comedianId");
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
-  const take = Math.min(Math.max(1, parseInt(searchParams.get("take") ?? "20", 10)), 100);
+  const take = Math.min(
+    Math.max(1, parseInt(searchParams.get("take") ?? "20", 10)),
+    100,
+  );
   const mediaType = searchParams.get("mediaType") ?? undefined; // "video", "embed", etc.
 
   if (!comedianId) {
-    return NextResponse.json({ error: "comedianId is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "comedianId is required" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -86,8 +96,15 @@ export async function GET(request: Request) {
       pages: Math.ceil(total / take),
     });
   } catch (error) {
-    console.error("GET /api/creator/videos error:", error);
-    return NextResponse.json({ error: "Failed to fetch videos" }, { status: 500 });
+    logger.error(
+      "GET /api/creator/videos error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch videos" },
+      { status: 500 },
+    );
   }
 }
 
@@ -96,7 +113,10 @@ export async function GET(request: Request) {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`creator-videos:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `creator-videos:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -149,8 +169,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json(video, { status: 201 });
   } catch (error) {
-    console.error("POST /api/creator/videos error:", error);
-    return NextResponse.json({ error: "Failed to create video" }, { status: 500 });
+    logger.error(
+      "POST /api/creator/videos error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create video" },
+      { status: 500 },
+    );
   }
 }
 
@@ -159,7 +186,10 @@ export async function POST(request: Request) {
 // ---------------------------------------------------------------------------
 
 export async function DELETE(request: Request) {
-  const rl = await checkRateLimit(`creator-videos:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `creator-videos:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -198,7 +228,14 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/creator/videos error:", error);
-    return NextResponse.json({ error: "Failed to delete video" }, { status: 500 });
+    logger.error(
+      "DELETE /api/creator/videos error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to delete video" },
+      { status: 500 },
+    );
   }
 }

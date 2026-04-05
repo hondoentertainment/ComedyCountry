@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -45,7 +46,13 @@ export default function ForYouPage() {
         setComedians(data.comedians || []);
         setEvents(data.events || []);
       })
-      .catch(console.error)
+      .catch((err: unknown) =>
+        logger.error(
+          "ForYou fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        ),
+      )
       .finally(() => setLoading(false));
   }, [status]);
 
@@ -54,7 +61,9 @@ export default function ForYouPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center p-8">
           <h1 className="text-2xl font-bold text-white mb-3">For You</h1>
-          <p className="text-zinc-400 mb-6">Sign in to get personalized comedy recommendations.</p>
+          <p className="text-zinc-400 mb-6">
+            Sign in to get personalized comedy recommendations.
+          </p>
           <Link
             href="/auth/signin?callbackUrl=/for-you"
             className="px-6 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold"
@@ -77,7 +86,10 @@ export default function ForYouPage() {
         {loading ? (
           <div className="space-y-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 rounded-lg bg-brand-surface animate-pulse" />
+              <div
+                key={i}
+                className="h-20 rounded-lg bg-brand-surface animate-pulse"
+              />
             ))}
           </div>
         ) : (
@@ -85,7 +97,9 @@ export default function ForYouPage() {
             {/* Recommended Comedians */}
             {comedians.length > 0 && (
               <section className="mb-12">
-                <h2 className="text-xl font-bold text-white mb-4">Comedians You Might Like</h2>
+                <h2 className="text-xl font-bold text-white mb-4">
+                  Comedians You Might Like
+                </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {comedians.map((c) => (
                     <Link
@@ -129,14 +143,15 @@ export default function ForYouPage() {
                           ))}
                         </div>
                       )}
-                      {c.matchingAttributes && c.matchingAttributes.length > 0 && (
-                        <p className="text-zinc-500 text-[11px] text-center mt-2">
-                          {c.matchingAttributes
-                            .slice(0, 2)
-                            .map((attribute) => attribute.replace(/_/g, " "))
-                            .join(" • ")}
-                        </p>
-                      )}
+                      {c.matchingAttributes &&
+                        c.matchingAttributes.length > 0 && (
+                          <p className="text-zinc-500 text-[11px] text-center mt-2">
+                            {c.matchingAttributes
+                              .slice(0, 2)
+                              .map((attribute) => attribute.replace(/_/g, " "))
+                              .join(" • ")}
+                          </p>
+                        )}
                     </Link>
                   ))}
                 </div>
@@ -146,10 +161,14 @@ export default function ForYouPage() {
             {/* Recommended Events */}
             {events.length > 0 && (
               <section className="mb-12">
-                <h2 className="text-xl font-bold text-white mb-4">Shows We Think You&apos;ll Love</h2>
+                <h2 className="text-xl font-bold text-white mb-4">
+                  Shows We Think You&apos;ll Love
+                </h2>
                 <div className="space-y-2">
                   {events.map((e) => {
-                    const comedianNames = e.comedians.map((c) => c.name).join(", ");
+                    const comedianNames = e.comedians
+                      .map((c) => c.name)
+                      .join(", ");
                     return (
                       <Link
                         key={e.id}
@@ -163,7 +182,9 @@ export default function ForYouPage() {
                           <p className="text-zinc-500 text-sm truncate">
                             {e.venue.name} · {e.venue.city}, {e.venue.state}
                           </p>
-                          <p className="text-zinc-600 text-xs mt-1">{e.reason}</p>
+                          <p className="text-zinc-600 text-xs mt-1">
+                            {e.reason}
+                          </p>
                           {e.tags && e.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
                               {e.tags.slice(0, 3).map((tag) => (
@@ -203,7 +224,8 @@ export default function ForYouPage() {
                   Not enough data for recommendations yet
                 </p>
                 <p className="text-zinc-500 text-sm mb-4 max-w-md mx-auto">
-                  Follow some comedians, attend shows, and leave reviews to unlock personalized picks.
+                  Follow some comedians, attend shows, and leave reviews to
+                  unlock personalized picks.
                 </p>
                 <Link
                   href="/comedians"

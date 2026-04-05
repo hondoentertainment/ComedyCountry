@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 interface VenueOption {
   id: string;
@@ -21,17 +22,27 @@ export default function VenueClaimPage() {
   const [proofUrl, setProofUrl] = useState("");
   const [proofNote, setProofNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [result, setResult] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
 
   // Search venues
   useEffect(() => {
-    if (query.length < 2) { setVenues([]); return; }
+    if (query.length < 2) {
+      setVenues([]);
+      return;
+    }
     const timeout = setTimeout(() => {
       fetch(`/api/search?q=${encodeURIComponent(query)}&type=venues&limit=5`)
         .then((r) => r.json())
         .then((data) => setVenues(data.venues || []))
         .catch((err) => {
-          console.error('VenueClaim search failed:', err);
+          logger.error(
+            "VenueClaim search failed",
+            {},
+            err instanceof Error ? err : undefined,
+          );
         });
     }, 300);
     return () => clearTimeout(timeout);
@@ -55,7 +66,10 @@ export default function VenueClaimPage() {
           message: data.message || "Claim submitted!",
         });
       } else {
-        setResult({ success: false, message: data.error || "Verification failed." });
+        setResult({
+          success: false,
+          message: data.error || "Verification failed.",
+        });
       }
     } catch {
       setResult({ success: false, message: "Network error." });
@@ -95,9 +109,16 @@ export default function VenueClaimPage() {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-2xl px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-brand-gold mb-4">Claim Your Venue</h1>
-        <p className="text-zinc-400 mb-6">Sign in to claim your venue and access the management dashboard.</p>
-        <Link href="/auth/signin?callbackUrl=/venue-dashboard/claim" className="px-6 py-3 rounded-lg bg-brand-gold text-brand-dark font-semibold">
+        <h1 className="text-2xl font-bold text-brand-gold mb-4">
+          Claim Your Venue
+        </h1>
+        <p className="text-zinc-400 mb-6">
+          Sign in to claim your venue and access the management dashboard.
+        </p>
+        <Link
+          href="/auth/signin?callbackUrl=/venue-dashboard/claim"
+          className="px-6 py-3 rounded-lg bg-brand-gold text-brand-dark font-semibold"
+        >
           Sign in
         </Link>
       </div>
@@ -106,16 +127,24 @@ export default function VenueClaimPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-bold text-brand-gold mb-2">Claim Your Venue</h1>
+      <h1 className="text-2xl font-bold text-brand-gold mb-2">
+        Claim Your Venue
+      </h1>
       <p className="text-zinc-400 text-sm mb-6">
-        Verify ownership of your venue to unlock analytics, event management, and promotion tools.
+        Verify ownership of your venue to unlock analytics, event management,
+        and promotion tools.
       </p>
 
       {result && (
-        <div className={`p-4 rounded-lg mb-6 border ${result.success ? "bg-green-900/20 border-green-700 text-green-400" : "bg-red-900/20 border-red-700 text-red-400"}`}>
+        <div
+          className={`p-4 rounded-lg mb-6 border ${result.success ? "bg-green-900/20 border-green-700 text-green-400" : "bg-red-900/20 border-red-700 text-red-400"}`}
+        >
           <p className="text-sm">{result.message}</p>
           {result.success && (
-            <Link href="/venue-dashboard" className="text-brand-gold text-sm mt-2 inline-block hover:underline">
+            <Link
+              href="/venue-dashboard"
+              className="text-brand-gold text-sm mt-2 inline-block hover:underline"
+            >
               Go to Dashboard &rarr;
             </Link>
           )}
@@ -124,11 +153,16 @@ export default function VenueClaimPage() {
 
       {/* Search for venue */}
       <div className="mb-6">
-        <label className="block text-zinc-300 text-sm font-medium mb-2">Find your venue</label>
+        <label className="block text-zinc-300 text-sm font-medium mb-2">
+          Find your venue
+        </label>
         <input
           type="text"
           value={query}
-          onChange={(e) => { setQuery(e.target.value); setSelectedVenue(null); }}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setSelectedVenue(null);
+          }}
           placeholder="Search venues by name..."
           className="w-full px-4 py-2.5 rounded-lg bg-brand-charcoal border border-zinc-700 text-white placeholder-zinc-500 text-sm"
         />
@@ -137,11 +171,17 @@ export default function VenueClaimPage() {
             {venues.map((v) => (
               <button
                 key={v.id}
-                onClick={() => { setSelectedVenue(v); setQuery(v.name); setVenues([]); }}
+                onClick={() => {
+                  setSelectedVenue(v);
+                  setQuery(v.name);
+                  setVenues([]);
+                }}
                 className="w-full text-left px-4 py-2.5 hover:bg-white/5 transition-colors"
               >
                 <p className="text-white text-sm">{v.name}</p>
-                <p className="text-zinc-500 text-xs">{v.city}, {v.state}</p>
+                <p className="text-zinc-500 text-xs">
+                  {v.city}, {v.state}
+                </p>
               </button>
             ))}
           </div>
@@ -152,7 +192,9 @@ export default function VenueClaimPage() {
         <>
           <div className="p-4 rounded-lg bg-brand-surface border border-zinc-800 mb-6">
             <p className="text-white font-medium">{selectedVenue.name}</p>
-            <p className="text-zinc-500 text-sm">{selectedVenue.city}, {selectedVenue.state}</p>
+            <p className="text-zinc-500 text-sm">
+              {selectedVenue.city}, {selectedVenue.state}
+            </p>
           </div>
 
           {/* Mode toggle */}
@@ -185,7 +227,8 @@ export default function VenueClaimPage() {
                   className="w-full px-4 py-2.5 rounded-lg bg-brand-charcoal border border-zinc-700 text-white placeholder-zinc-500 text-sm"
                 />
                 <p className="text-zinc-600 text-xs mt-1">
-                  We&apos;ll verify by matching your email domain or social link to the venue.
+                  We&apos;ll verify by matching your email domain or social link
+                  to the venue.
                 </p>
               </div>
               <button
@@ -199,7 +242,9 @@ export default function VenueClaimPage() {
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-zinc-300 text-sm font-medium mb-2">Proof URL (optional)</label>
+                <label className="block text-zinc-300 text-sm font-medium mb-2">
+                  Proof URL (optional)
+                </label>
                 <input
                   type="url"
                   value={proofUrl}
@@ -209,7 +254,9 @@ export default function VenueClaimPage() {
                 />
               </div>
               <div>
-                <label className="block text-zinc-300 text-sm font-medium mb-2">Additional notes</label>
+                <label className="block text-zinc-300 text-sm font-medium mb-2">
+                  Additional notes
+                </label>
                 <textarea
                   value={proofNote}
                   onChange={(e) => setProofNote(e.target.value)}

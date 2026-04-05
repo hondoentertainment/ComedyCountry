@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getTalentListings, createTalentListing } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketplace-listings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketplace-listings:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -18,16 +22,32 @@ export async function GET(request: Request) {
     const showType = searchParams.get("showType") ?? undefined;
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
 
-    const result = await getTalentListings({ city, state, genre, showType, page });
+    const result = await getTalentListings({
+      city,
+      state,
+      genre,
+      showType,
+      page,
+    });
     return NextResponse.json(result);
   } catch (error) {
-    console.error("GET /api/marketplace/listings error:", error);
-    return NextResponse.json({ error: "Failed to fetch listings" }, { status: 500 });
+    logger.error(
+      "GET /api/marketplace/listings error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch listings" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`marketplace-listings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketplace-listings:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -39,12 +59,20 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { venueId, date, showType, genre, budgetMin, budgetMax, description } = body;
+    const {
+      venueId,
+      date,
+      showType,
+      genre,
+      budgetMin,
+      budgetMax,
+      description,
+    } = body;
 
     if (!venueId || !date || !showType) {
       return NextResponse.json(
         { error: "venueId, date, and showType are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,7 +87,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(listing, { status: 201 });
   } catch (error) {
-    console.error("POST /api/marketplace/listings error:", error);
-    return NextResponse.json({ error: "Failed to create listing" }, { status: 500 });
+    logger.error(
+      "POST /api/marketplace/listings error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create listing" },
+      { status: 500 },
+    );
   }
 }

@@ -4,9 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { createABTest } from "@/lib/marketing";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketing-ab-tests:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-ab-tests:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -32,13 +36,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ tests });
   } catch (error) {
-    console.error("GET /api/marketing/ab-tests error:", error);
-    return NextResponse.json({ error: "Failed to fetch A/B tests" }, { status: 500 });
+    logger.error(
+      "GET /api/marketing/ab-tests error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch A/B tests" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`marketing-ab-tests:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-ab-tests:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -59,10 +73,24 @@ export async function POST(request: Request) {
       );
     }
 
-    const test = await createABTest({ eventId, venueId, name, type, variantA, variantB });
+    const test = await createABTest({
+      eventId,
+      venueId,
+      name,
+      type,
+      variantA,
+      variantB,
+    });
     return NextResponse.json(test, { status: 201 });
   } catch (error) {
-    console.error("POST /api/marketing/ab-tests error:", error);
-    return NextResponse.json({ error: "Failed to create A/B test" }, { status: 500 });
+    logger.error(
+      "POST /api/marketing/ab-tests error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create A/B test" },
+      { status: 500 },
+    );
   }
 }

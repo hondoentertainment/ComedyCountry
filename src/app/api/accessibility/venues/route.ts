@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchAccessibleVenues } from "@/lib/accessibility";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
-  const rl = await checkRateLimit(`accessibility-venues:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `accessibility-venues:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -31,7 +35,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("GET /api/accessibility/venues error:", error);
+    logger.error(
+      "GET /api/accessibility/venues error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to search accessible venues" },
       { status: 500 },

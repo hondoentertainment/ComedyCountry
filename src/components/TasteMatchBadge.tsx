@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface TasteMatchBadgeProps {
   comedianId: string;
@@ -22,11 +23,17 @@ export function TasteMatchBadge({ comedianId }: TasteMatchBadgeProps) {
         if (data?.matchPct != null && data.matchPct > 0) {
           setMatchPct(data.matchPct);
           setSummary(typeof data.summary === "string" ? data.summary : null);
-          setStretchLabel(typeof data.stretchLabel === "string" ? data.stretchLabel : null);
+          setStretchLabel(
+            typeof data.stretchLabel === "string" ? data.stretchLabel : null,
+          );
         }
       })
       .catch((err) => {
-        console.error('TasteMatchBadge fetch failed:', err);
+        logger.error(
+          "TasteMatchBadge fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        );
       })
       .finally(() => setLoading(false));
   }, [comedianId]);
