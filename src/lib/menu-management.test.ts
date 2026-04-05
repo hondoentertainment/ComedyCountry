@@ -380,7 +380,7 @@ describe("menu-management", () => {
 
       expect(result).toHaveLength(2);
       expect(mockPrisma.menuItem.findMany).toHaveBeenCalledWith({
-        where: { venueId: "v1", categoryId: "mc1", isAvailable: true },
+        where: { venueId: "v1", category: "mc1", isAvailable: true },
         orderBy: { sortOrder: "asc" },
       });
     });
