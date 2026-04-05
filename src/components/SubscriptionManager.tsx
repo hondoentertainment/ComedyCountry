@@ -30,6 +30,8 @@ export function SubscriptionManager({
   periodEnd: string | null;
   cancelAtPeriodEnd: boolean;
 }) {
+  const [cancelMessage, setCancelMessage] = useState<string | null>(null);
+
   if (!currentPlan || status !== "ACTIVE") {
     return (
       <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
@@ -51,10 +53,12 @@ export function SubscriptionManager({
     );
   }
 
-  const [cancelMessage, setCancelMessage] = useState<string | null>(null);
-
   const endDate = periodEnd
-    ? new Date(periodEnd).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    ? new Date(periodEnd).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
     : null;
 
   return (
@@ -64,9 +68,13 @@ export function SubscriptionManager({
           <span className="px-2 py-0.5 rounded bg-brand-gold/20 text-brand-gold text-xs font-bold">
             {PLAN_LABELS[currentPlan] ?? currentPlan}
           </span>
-          <span className="text-zinc-400 text-sm">{PLAN_PRICES[currentPlan] ?? ""}</span>
+          <span className="text-zinc-400 text-sm">
+            {PLAN_PRICES[currentPlan] ?? ""}
+          </span>
         </div>
-        <span className="text-green-400 text-xs font-medium uppercase">Active</span>
+        <span className="text-green-400 text-xs font-medium uppercase">
+          Active
+        </span>
       </div>
 
       {endDate && (
@@ -98,7 +106,9 @@ export function SubscriptionManager({
             className="px-3 py-1.5 rounded-lg text-zinc-500 hover:text-red-400 text-sm font-medium transition-colors"
             onClick={() => {
               // In production: call /api/subscriptions/cancel
-              setCancelMessage("Cancellation would be handled via Stripe in production.");
+              setCancelMessage(
+                "Cancellation would be handled via Stripe in production.",
+              );
               setTimeout(() => setCancelMessage(null), 5000);
             }}
           >
