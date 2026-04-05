@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { requireAdmin } from "@/lib/admin";
 import { listArticles, createArticle } from "@/lib/news";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";

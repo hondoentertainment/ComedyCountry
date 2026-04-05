@@ -6,6 +6,8 @@
  * Gracefully degrades on web by returning safe defaults.
  */
 
+import { logger } from "@/lib/logger";
+
 export type NativePlatform = "ios" | "android" | "web";
 
 /**
@@ -55,7 +57,9 @@ export function supportsPWAInstall(): boolean {
   // On iOS, must use "Add to Home Screen" from Safari share menu
   if (getPlatform() === "ios") return false;
   // Check for the beforeinstallprompt event support
-  return "BeforeInstallPromptEvent" in window || "onbeforeinstallprompt" in window;
+  return (
+    "BeforeInstallPromptEvent" in window || "onbeforeinstallprompt" in window
+  );
 }
 
 /**
@@ -76,7 +80,7 @@ export function isStandalone(): boolean {
 export async function callNativePlugin<T>(
   pluginName: string,
   methodName: string,
-  args?: Record<string, unknown>
+  args?: Record<string, unknown>,
 ): Promise<T | null> {
   if (typeof window === "undefined") return null;
 
@@ -84,7 +88,9 @@ export async function callNativePlugin<T>(
   const cap = win.Capacitor as Record<string, unknown> | undefined;
   if (!cap) return null;
 
-  const plugins = cap.Plugins as Record<string, Record<string, unknown>> | undefined;
+  const plugins = cap.Plugins as
+    | Record<string, Record<string, unknown>>
+    | undefined;
   if (!plugins) return null;
 
   const plugin = plugins[pluginName];
@@ -92,11 +98,13 @@ export async function callNativePlugin<T>(
 
   try {
     const method = plugin[methodName] as (
-      args?: Record<string, unknown>
+      args?: Record<string, unknown>,
     ) => Promise<T>;
     return await method(args);
   } catch (err) {
-    console.warn(`[Native] ${pluginName}.${methodName} failed:`, err);
+    logger.warn(`Native ${pluginName}.${methodName} failed`, {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return null;
   }
 }
@@ -190,7 +198,7 @@ export async function nativeShare(data: {
  * Request haptic feedback on native platforms.
  */
 export async function hapticFeedback(
-  style: "light" | "medium" | "heavy" = "medium"
+  style: "light" | "medium" | "heavy" = "medium",
 ): Promise<void> {
   if (!isNativeApp()) return;
   await callNativePlugin("Haptics", "impact", { style });
@@ -215,15 +223,12 @@ export function getSafeAreaInsets(): {
     top: parseInt(style.getPropertyValue("--safe-area-inset-top") || "0", 10),
     bottom: parseInt(
       style.getPropertyValue("--safe-area-inset-bottom") || "0",
-      10
+      10,
     ),
-    left: parseInt(
-      style.getPropertyValue("--safe-area-inset-left") || "0",
-      10
-    ),
+    left: parseInt(style.getPropertyValue("--safe-area-inset-left") || "0", 10),
     right: parseInt(
       style.getPropertyValue("--safe-area-inset-right") || "0",
-      10
+      10,
     ),
   };
 }
@@ -233,7 +238,7 @@ export function getSafeAreaInsets(): {
  * Returns an unsubscribe function, or null if not in native context.
  */
 export function registerDeepLinkHandler(
-  handler: (url: string) => void
+  handler: (url: string) => void,
 ): (() => void) | null {
   if (!isNativeApp()) return null;
 
@@ -241,7 +246,9 @@ export function registerDeepLinkHandler(
   const cap = win.Capacitor as Record<string, unknown> | undefined;
   if (!cap) return null;
 
-  const plugins = cap.Plugins as Record<string, Record<string, unknown>> | undefined;
+  const plugins = cap.Plugins as
+    | Record<string, Record<string, unknown>>
+    | undefined;
   if (!plugins) return null;
 
   const appPlugin = plugins.App;
@@ -256,7 +263,7 @@ export function registerDeepLinkHandler(
           const url = new URL(data.url);
           handler(url.pathname + url.search + url.hash);
         }
-      }
+      },
     );
 
     return () => {

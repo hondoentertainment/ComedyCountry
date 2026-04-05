@@ -1,5 +1,8 @@
 import { logger } from "@/lib/logger";
 
+import { logger } from "@/lib/logger";
+
+const required = ["DATABASE_URL", "NEXTAUTH_SECRET", "NEXTAUTH_URL"] as const;
 /** Validate required environment variables at startup and provide typed access. */
 
 const requiredKeys = [
@@ -82,13 +85,18 @@ export function assertEnv(): void {
   const { valid, missing, warnings } = validateEnv();
 
   for (const w of warnings) {
-    console.warn(`⚠ ENV: ${w}`);
+    logger.warn(`ENV: ${w}`);
   }
 
   if (!valid) {
     logger.error(
       `Missing required environment variables: ${missing.join(", ")}`,
     );
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        `Missing required environment variables: ${missing.join(", ")}`,
+      );
+    }
     throw new Error(
       `Missing required environment variables: ${missing.join(", ")}. ` +
         "Set them in your .env file or deployment environment.",

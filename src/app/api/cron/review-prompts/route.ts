@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { processReviewPrompts } from "@/lib/review-prompts";
 import { logger } from "@/lib/logger";
 

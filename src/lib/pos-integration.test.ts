@@ -114,13 +114,13 @@ describe("pos-integration", () => {
 
     it("rejects unsupported providers", async () => {
       await expect(
-        registerPOSConnection("v1", "stripe", { apiKey: "key" })
+        registerPOSConnection("v1", "stripe", { apiKey: "key" }),
       ).rejects.toThrow("Unsupported POS provider: stripe");
     });
 
     it("rejects empty API key", async () => {
       await expect(
-        registerPOSConnection("v1", "square", { apiKey: "" })
+        registerPOSConnection("v1", "square", { apiKey: "" }),
       ).rejects.toThrow("API key is required");
     });
   });
@@ -166,9 +166,9 @@ describe("pos-integration", () => {
     it("throws when connection not found", async () => {
       mockPrisma.pOSIntegration.findUnique.mockResolvedValue(null);
 
-      await expect(
-        deactivatePOSConnection("v1", "square")
-      ).rejects.toThrow("POS connection not found");
+      await expect(deactivatePOSConnection("v1", "square")).rejects.toThrow(
+        "POS connection not found",
+      );
     });
   });
 
@@ -227,9 +227,9 @@ describe("pos-integration", () => {
     it("throws when connection not found", async () => {
       mockPrisma.pOSIntegration.findUnique.mockResolvedValue(null);
 
-      await expect(
-        syncTransactions("v1", "square", [])
-      ).rejects.toThrow("POS connection not found");
+      await expect(syncTransactions("v1", "square", [])).rejects.toThrow(
+        "POS connection not found",
+      );
     });
 
     it("throws when connection is inactive", async () => {
@@ -246,7 +246,7 @@ describe("pos-integration", () => {
             status: "completed",
             timestamp: new Date(),
           },
-        ])
+        ]),
       ).rejects.toThrow("POS connection is not active");
     });
 
@@ -264,7 +264,7 @@ describe("pos-integration", () => {
             status: "completed",
             timestamp: new Date(),
           },
-        ])
+        ]),
       ).rejects.toThrow("Transaction amount cannot be negative");
     });
   });
@@ -319,9 +319,9 @@ describe("pos-integration", () => {
     it("throws when connection not found", async () => {
       mockPrisma.pOSIntegration.findUnique.mockResolvedValue(null);
 
-      await expect(
-        getTransactions("v1", "square")
-      ).rejects.toThrow("POS connection not found");
+      await expect(getTransactions("v1", "square")).rejects.toThrow(
+        "POS connection not found",
+      );
     });
   });
 
@@ -371,9 +371,9 @@ describe("pos-integration", () => {
     it("throws when connection not found", async () => {
       mockPrisma.pOSIntegration.findUnique.mockResolvedValue(null);
 
-      await expect(
-        reconcileSales("v1", "square", "e1")
-      ).rejects.toThrow("POS connection not found");
+      await expect(reconcileSales("v1", "square", "e1")).rejects.toThrow(
+        "POS connection not found",
+      );
     });
   });
 
@@ -425,9 +425,9 @@ describe("pos-integration", () => {
     it("throws when connection not found", async () => {
       mockPrisma.pOSIntegration.findUnique.mockResolvedValue(null);
 
-      await expect(
-        syncMenuItemToPOS("v1", "square", "mi1")
-      ).rejects.toThrow("POS connection not found");
+      await expect(syncMenuItemToPOS("v1", "square", "mi1")).rejects.toThrow(
+        "POS connection not found",
+      );
     });
 
     it("throws when connection is inactive", async () => {
@@ -436,9 +436,9 @@ describe("pos-integration", () => {
         isActive: false,
       });
 
-      await expect(
-        syncMenuItemToPOS("v1", "square", "mi1")
-      ).rejects.toThrow("POS connection is not active");
+      await expect(syncMenuItemToPOS("v1", "square", "mi1")).rejects.toThrow(
+        "POS connection is not active",
+      );
     });
 
     it("throws when menu item not found", async () => {
@@ -448,9 +448,9 @@ describe("pos-integration", () => {
       });
       mockPrisma.menuItem.findUnique.mockResolvedValue(null);
 
-      await expect(
-        syncMenuItemToPOS("v1", "square", "mi1")
-      ).rejects.toThrow("Menu item not found");
+      await expect(syncMenuItemToPOS("v1", "square", "mi1")).rejects.toThrow(
+        "Menu item not found",
+      );
     });
 
     it("throws when menu item belongs to different venue", async () => {
@@ -464,9 +464,9 @@ describe("pos-integration", () => {
         name: "Beer",
       });
 
-      await expect(
-        syncMenuItemToPOS("v1", "square", "mi1")
-      ).rejects.toThrow("Menu item does not belong to this venue");
+      await expect(syncMenuItemToPOS("v1", "square", "mi1")).rejects.toThrow(
+        "Menu item does not belong to this venue",
+      );
     });
   });
 
@@ -492,9 +492,9 @@ describe("pos-integration", () => {
     it("throws when connection not found", async () => {
       mockPrisma.pOSIntegration.findUnique.mockResolvedValue(null);
 
-      await expect(
-        getPOSMenuItems("v1", "square")
-      ).rejects.toThrow("POS connection not found");
+      await expect(getPOSMenuItems("v1", "square")).rejects.toThrow(
+        "POS connection not found",
+      );
     });
   });
 });

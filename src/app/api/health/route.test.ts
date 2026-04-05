@@ -33,7 +33,7 @@ describe("GET /api/health", () => {
     expect(res.headers.get("content-type")).toContain("application/json");
   });
 
-  it("returns exactly two keys", async () => {
+  it("returns exactly three keys", async () => {
     const res = await GET();
     const data = await res.json();
     expect(Object.keys(data)).toEqual(["status", "timestamp", "database"]);

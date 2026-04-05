@@ -72,6 +72,16 @@ export function logInfo(
   message: string,
   extra?: Record<string, unknown>,
 ) {
+  console.info(
+    JSON.stringify({
+      level: "info",
+      message,
+      requestId: getRequestId(request),
+      method: request.method,
+      path: new URL(request.url).pathname,
+      ...extra,
+    }),
+  );
   logger.info(message, {
     requestId: getRequestId(request),
     method: request.method,

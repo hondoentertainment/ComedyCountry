@@ -211,6 +211,7 @@ describe("logError", () => {
     logError(request, "String error", "just a string");
 
     const logged = JSON.parse(spy.mock.calls[0][0] as string);
+    expect(logged.context.error.message).toBe("just a string");
     expect(logged.context.errorDetail.message).toBe("just a string");
 
     spy.mockRestore();

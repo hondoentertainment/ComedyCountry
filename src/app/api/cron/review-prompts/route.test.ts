@@ -19,7 +19,7 @@ describe("POST /api/cron/review-prompts", () => {
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
           headers: { "x-api-key": "wrong-key" },
-        })
+        }),
       );
       expect(res.status).toBe(401);
       const data = await res.json();
@@ -33,19 +33,23 @@ describe("POST /api/cron/review-prompts", () => {
     }
   });
 
+  it("allows request when correct API key is provided", async () => {
   it("returns 401 when CRON_API_KEY is not set", async () => {
     const original = process.env.CRON_API_KEY;
-    delete process.env.CRON_API_KEY;
+    process.env.CRON_API_KEY = "test-cron-key";
 
     try {
       const res = await POST(
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
-        })
+          headers: { "x-api-key": "test-cron-key" },
+        }),
       );
       expect(res.status).toBe(401);
     } finally {
-      if (original !== undefined) {
+      if (original === undefined) {
+        delete process.env.CRON_API_KEY;
+      } else {
         process.env.CRON_API_KEY = original;
       }
     }
@@ -65,6 +69,7 @@ describe("POST /api/cron/review-prompts", () => {
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
           headers: { "x-api-key": "test-cron-key" },
+        }),
         })
       );
 
@@ -90,13 +95,14 @@ describe("POST /api/cron/review-prompts", () => {
 
     try {
       vi.mocked(processReviewPrompts).mockRejectedValue(
-        new Error("DB connection failed")
+        new Error("DB connection failed"),
       );
 
       const res = await POST(
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
           headers: { "x-api-key": "test-cron-key" },
+        }),
         })
       );
 

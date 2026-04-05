@@ -29,6 +29,7 @@ export default function AdminReportsPage() {
       .then((data) => setReports(data.reports || []))
       .catch((err: unknown) =>
         logger.error(
+          "Admin reports fetch failed",
           "AdminReports fetch failed",
           {},
           err instanceof Error ? err : undefined,

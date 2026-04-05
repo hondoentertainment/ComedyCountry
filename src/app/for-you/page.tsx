@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { logger } from "@/lib/logger";
 
 interface RecommendedComedian {
   id: string;
@@ -48,6 +49,7 @@ export default function ForYouPage() {
       })
       .catch((err: unknown) =>
         logger.error(
+          "For-you recommendations fetch failed",
           "ForYou fetch failed",
           {},
           err instanceof Error ? err : undefined,

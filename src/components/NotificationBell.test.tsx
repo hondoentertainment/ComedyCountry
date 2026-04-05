@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { NotificationBell } from "./NotificationBell";
 
 vi.mock("next/link", () => ({
@@ -46,6 +47,12 @@ describe("NotificationBell", () => {
     } as Response);
 
     render(<NotificationBell />);
+    expect(
+      screen.getByRole("button", { name: "Notifications" }),
+    ).toBeInTheDocument();
+  });
+
+  it("links to /feed", async () => {
     expect(screen.getByRole("button", { name: "Notifications" })).toBeInTheDocument();
   });
 
@@ -53,12 +60,36 @@ describe("NotificationBell", () => {
     mockUseSession.mockReturnValue({
       data: { user: { id: "u1", name: "Test" } },
     });
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ count: 0 }),
-    } as Response);
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ count: 1 }),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            notifications: [
+              {
+                id: "n1",
+                type: "new_event",
+                title: "Test",
+                message: "msg",
+                read: false,
+                createdAt: new Date().toISOString(),
+              },
+            ],
+            unreadCount: 1,
+          }),
+      } as Response);
 
     render(<NotificationBell />);
+    const button = screen.getByRole("button");
+    await userEvent.click(button);
+    const link = await screen.findByRole("link", {
+      name: "View all notifications",
+    });
+    expect(link).toHaveAttribute("href", "/feed");
     const button = screen.getByRole("button", { name: "Notifications" });
     expect(button).toBeInTheDocument();
   });
@@ -142,6 +173,7 @@ describe("NotificationBell", () => {
 
     await waitFor(() => {
       expect(
+        screen.getByRole("button", { name: "3 unread notifications" }),
         screen.getByRole("button", { name: "3 unread notifications" })
       ).toBeInTheDocument();
     });

@@ -472,6 +472,7 @@ describe("wallet-integration", () => {
     });
 
     it("returns zero when no passes exist for the event", async () => {
+      mockPrisma.ticket.findMany.mockResolvedValue([]);
       mockPrisma.ticket.findMany.mockResolvedValue([{ id: "ticket1" }]);
       mockPrisma.walletPass.findMany.mockResolvedValue([]);
 
@@ -487,6 +488,8 @@ describe("wallet-integration", () => {
   describe("batchGeneratePassesForEvent", () => {
     it("generates passes for all tickets", async () => {
       const tickets = [
+        { id: "t1", userId: "u1", eventId: "e1", createdAt: new Date() },
+        { id: "t2", userId: "u2", eventId: "e1", createdAt: new Date() },
         {
           id: "t1",
           userId: "u1",
@@ -510,6 +513,9 @@ describe("wallet-integration", () => {
         venue: mockVenue,
       });
       mockPrisma.walletPass.findFirst.mockResolvedValue(null);
+      mockPrisma.user.findUnique
+        .mockResolvedValueOnce({ name: "Alice" })
+        .mockResolvedValueOnce({ name: "Bob" });
       mockPrisma.user.findUnique.mockResolvedValue({ name: "Alice" });
       mockPrisma.walletPass.create.mockImplementation(
         async ({ data }: any) => ({
@@ -527,6 +533,7 @@ describe("wallet-integration", () => {
 
     it("skips tickets that already have passes", async () => {
       const tickets = [
+        { id: "t1", userId: "u1", eventId: "e1", createdAt: new Date() },
         {
           id: "t1",
           userId: "u1",

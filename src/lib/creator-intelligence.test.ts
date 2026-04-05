@@ -88,7 +88,12 @@ describe("creator-intelligence", () => {
 
   describe("attributeRevenue", () => {
     it("creates a revenue attribution record", async () => {
-      const record = { id: "ra1", comedianId: "c1", sourceType: "CLIP", amount: 100 };
+      const record = {
+        id: "ra1",
+        comedianId: "c1",
+        sourceType: "CLIP",
+        amount: 100,
+      };
       mockPrisma.revenueAttribution.create.mockResolvedValue(record);
 
       const result = await attributeRevenue("c1", {
@@ -240,7 +245,12 @@ describe("creator-intelligence", () => {
     });
 
     it("updates existing audience record", async () => {
-      const existing = { id: "au1", followerCount: 40000, engagementRate: 3.0, email: null };
+      const existing = {
+        id: "au1",
+        followerCount: 40000,
+        engagementRate: 3.0,
+        email: null,
+      };
       mockPrisma.audienceUnification.findFirst.mockResolvedValue(existing);
       const updated = { ...existing, followerCount: 50000 };
       mockPrisma.audienceUnification.update.mockResolvedValue(updated);
@@ -278,9 +288,24 @@ describe("creator-intelligence", () => {
   describe("getUnifiedAudience", () => {
     it("returns aggregated audience across platforms", async () => {
       mockPrisma.audienceUnification.findMany.mockResolvedValue([
-        { platform: "TIKTOK", followerCount: 50000, engagementRate: 3.5, lastSyncedAt: new Date() },
-        { platform: "INSTAGRAM", followerCount: 30000, engagementRate: 2.0, lastSyncedAt: new Date() },
-        { platform: "YOUTUBE", followerCount: 20000, engagementRate: 4.0, lastSyncedAt: new Date() },
+        {
+          platform: "TIKTOK",
+          followerCount: 50000,
+          engagementRate: 3.5,
+          lastSyncedAt: new Date(),
+        },
+        {
+          platform: "INSTAGRAM",
+          followerCount: 30000,
+          engagementRate: 2.0,
+          lastSyncedAt: new Date(),
+        },
+        {
+          platform: "YOUTUBE",
+          followerCount: 20000,
+          engagementRate: 4.0,
+          lastSyncedAt: new Date(),
+        },
       ]);
 
       const result = await getUnifiedAudience("c1");
@@ -475,8 +500,16 @@ describe("creator-intelligence", () => {
   describe("getCareerTimeline", () => {
     it("returns milestones in chronological order", async () => {
       const milestones = [
-        { id: "cm1", milestone: "First gig", achievedAt: new Date("2024-01-01") },
-        { id: "cm2", milestone: "1K followers", achievedAt: new Date("2025-06-01") },
+        {
+          id: "cm1",
+          milestone: "First gig",
+          achievedAt: new Date("2024-01-01"),
+        },
+        {
+          id: "cm2",
+          milestone: "1K followers",
+          achievedAt: new Date("2025-06-01"),
+        },
       ];
       mockPrisma.careerMilestone.findMany.mockResolvedValue(milestones);
 
@@ -551,7 +584,9 @@ describe("creator-intelligence", () => {
 
       const result = await checkMilestones("c1");
 
-      expect(result.some((m) => m.milestone === "First sold-out show")).toBe(true);
+      expect(result.some((m) => m.milestone === "First sold-out show")).toBe(
+        true,
+      );
     });
 
     it("returns empty for new comedian with no data", async () => {
@@ -592,7 +627,9 @@ describe("creator-intelligence", () => {
         subscriptionRevenue: 50,
         totalRevenue: 1150,
       });
-      expect((result as { taxEstimate: number }).taxEstimate).toBeCloseTo(287.5);
+      expect((result as { taxEstimate: number }).taxEstimate).toBeCloseTo(
+        287.5,
+      );
     });
 
     it("handles quarter period format", async () => {

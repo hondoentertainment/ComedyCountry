@@ -15,6 +15,8 @@ vi.mock("bcryptjs", () => ({
 }));
 
 vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 5 }),
+  getRateLimitKey: vi.fn().mockReturnValue("test-key"),
   checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 4 }),
   getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
 }));

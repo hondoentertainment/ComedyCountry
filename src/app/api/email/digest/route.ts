@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, digestEmailHtml } from "@/lib/email";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
@@ -87,6 +88,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ sent, total: users.length });
   } catch (err) {
+    logger.error(
+      "Digest send failed",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     logger.error("[DIGEST]", {}, err instanceof Error ? err : undefined);
     return NextResponse.json(
       { error: "Failed to send digests" },

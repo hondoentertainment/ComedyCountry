@@ -43,7 +43,7 @@ export function PushNotificationToggle() {
         // Subscribe
         const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
         if (!vapidKey) {
-          console.warn("VAPID public key not configured");
+          logger.warn("VAPID public key not configured");
           setLoading(false);
           return;
         }

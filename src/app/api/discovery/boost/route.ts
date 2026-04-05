@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { applyDiscoveryBoost, getActiveBoosts } from "@/lib/discovery-engine";

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { processLocationAlerts } from "@/lib/location-alert-notify";
 import { logger } from "@/lib/logger";
 

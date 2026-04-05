@@ -101,15 +101,13 @@ describe("computeAudienceProfile", () => {
       { id: "evt-2" },
     ]);
 
-    const birthDate1 = new Date("1990-05-15");
-    const birthDate2 = new Date("1985-10-20");
-
     mockPrisma.ticket.findMany.mockResolvedValue([
       {
         userId: "user-1",
         purchasePrice: 25,
         event: {
           id: "evt-1",
+          comedians: [{ comedian: { id: "com-1", name: "Alice" } }],
           comedians: [
             { comedian: { id: "com-1", name: "Alice" } },
           ],
@@ -120,6 +118,7 @@ describe("computeAudienceProfile", () => {
         purchasePrice: 30,
         event: {
           id: "evt-2",
+          comedians: [{ comedian: { id: "com-2", name: "Bob" } }],
           comedians: [
             { comedian: { id: "com-2", name: "Bob" } },
           ],
@@ -130,6 +129,7 @@ describe("computeAudienceProfile", () => {
         purchasePrice: 20,
         event: {
           id: "evt-1",
+          comedians: [{ comedian: { id: "com-1", name: "Alice" } }],
           comedians: [
             { comedian: { id: "com-1", name: "Alice" } },
           ],
@@ -145,6 +145,7 @@ describe("computeAudienceProfile", () => {
     expect(profile.topComedians.length).toBeGreaterThan(0);
     expect(profile.topComedians[0].name).toBe("Alice"); // 2 tickets
     expect(profile.genreDistribution).toHaveProperty("Alice");
+    // Source doesn't populate locationDistribution (no user relation)
     expect(profile.locationDistribution).toEqual({});
     expect(profile.avgAge).toBeNull();
     // user-1 visits 2x => monthly, user-2 visits 1x => occasional
@@ -157,13 +158,10 @@ describe("computeAudienceProfile", () => {
     mockPrisma.ticket.findMany.mockResolvedValue([
       {
         userId: null,
-        price: 10,
-        user: null,
+        purchasePrice: 10,
         event: {
           id: "evt-1",
-          comedianId: null,
-          comedian: null,
-          tags: [],
+          comedians: [],
         },
       },
     ]);
@@ -185,16 +183,42 @@ describe("findSimilarAudiences", () => {
 
   it("computes similarity scores for other venues", async () => {
     // Source venue has events
-    mockPrisma.event.findMany.mockImplementation(({ where }: { where: { venueId: string } }) => {
-      if (where.venueId === "venue-1") return [{ id: "evt-1" }];
-      if (where.venueId === "venue-2") return [{ id: "evt-2" }];
-      return [];
-    });
+    mockPrisma.event.findMany.mockImplementation(
+      ({ where }: { where: { venueId: string } }) => {
+        if (where.venueId === "venue-1") return [{ id: "evt-1" }];
+        if (where.venueId === "venue-2") return [{ id: "evt-2" }];
+        return [];
+      },
+    );
 
     mockPrisma.venue.findMany.mockResolvedValue([
       { id: "venue-2", name: "Laugh Factory" },
     ]);
 
+    mockPrisma.ticket.findMany.mockImplementation(
+      ({ where }: { where: { eventId: { in: string[] } } }) => {
+        const eventIds = where.eventId.in;
+        if (eventIds.includes("evt-1")) {
+          return [
+            {
+              userId: "user-1",
+              purchasePrice: 25,
+              event: {
+                id: "evt-1",
+                comedians: [{ comedian: { id: "com-1", name: "standup" } }],
+              },
+            },
+          ];
+        }
+        if (eventIds.includes("evt-2")) {
+          return [
+            {
+              userId: "user-2",
+              purchasePrice: 20,
+              event: {
+                id: "evt-2",
+                comedians: [{ comedian: { id: "com-2", name: "standup" } }],
+              },
     mockPrisma.ticket.findMany.mockImplementation(({ where }: { where: { eventId: { in: string[] } } }) => {
       const eventIds = where.eventId.in;
       if (eventIds.includes("evt-1")) {
@@ -222,11 +246,11 @@ describe("findSimilarAudiences", () => {
                 { comedian: { id: "com-1", name: "Alice" } },
               ],
             },
-          },
-        ];
-      }
-      return [];
-    });
+          ];
+        }
+        return [];
+      },
+    );
 
     const results = await findSimilarAudiences("venue-1");
 
@@ -242,30 +266,34 @@ describe("findSimilarAudiences", () => {
 
 describe("getAudienceOverlap", () => {
   it("computes overlap between two venues", async () => {
-    mockPrisma.event.findMany.mockImplementation(({ where }: { where: { venueId: string } }) => {
-      if (where.venueId === "venue-a") return [{ id: "evt-a1" }];
-      if (where.venueId === "venue-b") return [{ id: "evt-b1" }];
-      return [];
-    });
+    mockPrisma.event.findMany.mockImplementation(
+      ({ where }: { where: { venueId: string } }) => {
+        if (where.venueId === "venue-a") return [{ id: "evt-a1" }];
+        if (where.venueId === "venue-b") return [{ id: "evt-b1" }];
+        return [];
+      },
+    );
 
-    mockPrisma.ticket.findMany.mockImplementation(({ where }: { where: { eventId: { in: string[] } } }) => {
-      const eventIds = where.eventId.in;
-      if (eventIds.includes("evt-a1")) {
-        return [
-          { userId: "user-1" },
-          { userId: "user-2" },
-          { userId: "user-3" },
-        ];
-      }
-      if (eventIds.includes("evt-b1")) {
-        return [
-          { userId: "user-2" },
-          { userId: "user-3" },
-          { userId: "user-4" },
-        ];
-      }
-      return [];
-    });
+    mockPrisma.ticket.findMany.mockImplementation(
+      ({ where }: { where: { eventId: { in: string[] } } }) => {
+        const eventIds = where.eventId.in;
+        if (eventIds.includes("evt-a1")) {
+          return [
+            { userId: "user-1" },
+            { userId: "user-2" },
+            { userId: "user-3" },
+          ];
+        }
+        if (eventIds.includes("evt-b1")) {
+          return [
+            { userId: "user-2" },
+            { userId: "user-3" },
+            { userId: "user-4" },
+          ];
+        }
+        return [];
+      },
+    );
 
     const result = await getAudienceOverlap("venue-a", "venue-b");
 
@@ -277,18 +305,22 @@ describe("getAudienceOverlap", () => {
   });
 
   it("returns zero overlap when no shared users", async () => {
-    mockPrisma.event.findMany.mockImplementation(({ where }: { where: { venueId: string } }) => {
-      if (where.venueId === "venue-a") return [{ id: "evt-a1" }];
-      if (where.venueId === "venue-b") return [{ id: "evt-b1" }];
-      return [];
-    });
+    mockPrisma.event.findMany.mockImplementation(
+      ({ where }: { where: { venueId: string } }) => {
+        if (where.venueId === "venue-a") return [{ id: "evt-a1" }];
+        if (where.venueId === "venue-b") return [{ id: "evt-b1" }];
+        return [];
+      },
+    );
 
-    mockPrisma.ticket.findMany.mockImplementation(({ where }: { where: { eventId: { in: string[] } } }) => {
-      const eventIds = where.eventId.in;
-      if (eventIds.includes("evt-a1")) return [{ userId: "user-1" }];
-      if (eventIds.includes("evt-b1")) return [{ userId: "user-2" }];
-      return [];
-    });
+    mockPrisma.ticket.findMany.mockImplementation(
+      ({ where }: { where: { eventId: { in: string[] } } }) => {
+        const eventIds = where.eventId.in;
+        if (eventIds.includes("evt-a1")) return [{ userId: "user-1" }];
+        if (eventIds.includes("evt-b1")) return [{ userId: "user-2" }];
+        return [];
+      },
+    );
 
     const result = await getAudienceOverlap("venue-a", "venue-b");
     expect(result.overlapCount).toBe(0);
@@ -343,6 +375,44 @@ describe("getExpansionMarkets", () => {
 
   it("identifies potential expansion markets", async () => {
     // Source venue profile
+    mockPrisma.event.findMany.mockImplementation(
+      ({ where }: { where: { venueId?: string } }) => {
+        if (where?.venueId === "venue-1") return [{ id: "evt-1" }];
+        if (where?.venueId === "venue-2") return [{ id: "evt-2" }];
+        return [];
+      },
+    );
+
+    mockPrisma.ticket.findMany.mockImplementation(
+      ({ where }: { where: { eventId: { in: string[] } } }) => {
+        const eventIds = where.eventId.in;
+        if (eventIds.includes("evt-1")) {
+          return [
+            {
+              userId: "user-1",
+              price: 25,
+              user: { id: "user-1", location: "NYC", birthDate: null },
+              event: {
+                id: "evt-1",
+                comedianId: "com-1",
+                comedian: { id: "com-1", name: "Alice" },
+                tags: ["standup"],
+              },
+            },
+          ];
+        }
+        if (eventIds.includes("evt-2")) {
+          return [
+            {
+              userId: "user-2",
+              price: 20,
+              user: { id: "user-2", location: "Chicago", birthDate: null },
+              event: {
+                id: "evt-2",
+                comedianId: "com-2",
+                comedian: { id: "com-2", name: "Bob" },
+                tags: ["standup"],
+              },
     mockPrisma.event.findMany.mockImplementation(({ where }: { where: { venueId?: string } }) => {
       if (where?.venueId === "venue-1") return [{ id: "evt-1" }];
       if (where?.venueId === "venue-2") return [{ id: "evt-2" }];
@@ -376,11 +446,11 @@ describe("getExpansionMarkets", () => {
                 { comedian: { id: "com-2", name: "Bob" } },
               ],
             },
-          },
-        ];
-      }
-      return [];
-    });
+          ];
+        }
+        return [];
+      },
+    );
 
     mockPrisma.venue.findMany.mockResolvedValue([
       { id: "venue-2", name: "Chicago Club", city: "Chicago", state: "IL" },

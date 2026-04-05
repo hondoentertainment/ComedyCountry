@@ -190,7 +190,8 @@ describe("podcast-pipeline", () => {
       // Mock global fetch for RSS
       const mockFetch = vi.fn().mockResolvedValue({
         ok: true,
-        text: () => Promise.resolve("<rss><channel><title>Test</title></channel></rss>"),
+        text: () =>
+          Promise.resolve("<rss><channel><title>Test</title></channel></rss>"),
       });
       vi.stubGlobal("fetch", mockFetch);
 
@@ -259,7 +260,12 @@ describe("podcast-pipeline", () => {
 
   describe("createPodcastTicketLink", () => {
     it("creates a trackable link between episode and event", async () => {
-      const link = { id: "link1", episodeId: "ep1", eventId: "ev1", clipId: null };
+      const link = {
+        id: "link1",
+        episodeId: "ep1",
+        eventId: "ev1",
+        clipId: null,
+      };
       mockPrisma.podcastTicketLink.create.mockResolvedValue(link);
 
       const result = await createPodcastTicketLink("ep1", "ev1");
@@ -271,7 +277,12 @@ describe("podcast-pipeline", () => {
     });
 
     it("creates link with optional clipId", async () => {
-      const link = { id: "link2", episodeId: "ep1", eventId: "ev1", clipId: "clip1" };
+      const link = {
+        id: "link2",
+        episodeId: "ep1",
+        eventId: "ev1",
+        clipId: "clip1",
+      };
       mockPrisma.podcastTicketLink.create.mockResolvedValue(link);
 
       const result = await createPodcastTicketLink("ep1", "ev1", "clip1");
@@ -340,7 +351,10 @@ describe("podcast-pipeline", () => {
   describe("getPodcastConversionStats", () => {
     it("computes aggregate conversion stats", async () => {
       mockPrisma.podcastShow.findMany.mockResolvedValue([{ id: "pod1" }]);
-      mockPrisma.podcastEpisode.findMany.mockResolvedValue([{ id: "ep1" }, { id: "ep2" }]);
+      mockPrisma.podcastEpisode.findMany.mockResolvedValue([
+        { id: "ep1" },
+        { id: "ep2" },
+      ]);
       mockPrisma.podcastTicketLink.findMany.mockResolvedValue([
         { clicks: 100, purchases: 10, revenue: 250 },
         { clicks: 200, purchases: 30, revenue: 750 },

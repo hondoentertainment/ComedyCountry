@@ -7,6 +7,8 @@ import { logger } from "@/lib/logger";
  * configured the emails are logged to stdout (useful in dev / preview).
  */
 
+import { logger } from "@/lib/logger";
+
 export interface EmailPayload {
   to: string;
   subject: string;
@@ -77,6 +79,7 @@ export async function sendEmail(payload: EmailPayload): Promise<boolean> {
     return await sendRaw(payload);
   } catch (err) {
     logger.error(
+      "Failed to send email",
       "[EMAIL] Failed to send",
       {},
       err instanceof Error ? err : undefined,
