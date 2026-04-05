@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -49,6 +50,7 @@ export default function ForYouPage() {
       .catch((err: unknown) =>
         logger.error(
           "For-you recommendations fetch failed",
+          "ForYou fetch failed",
           {},
           err instanceof Error ? err : undefined,
         ),

@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getVenueCRMData, updateCRMRecord } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const rl = await checkRateLimit(`venue-crm:${getRateLimitKey(request)}`, {

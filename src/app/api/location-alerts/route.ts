@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 import { canUseLocationAlerts } from "@/lib/subscription-gates";
+import { logger } from "@/lib/logger";
 
 /**
  * GET - List user's location alerts.

@@ -9,6 +9,7 @@ import {
   getCacheStats,
 } from "@/lib/offline-cache";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const rl = await checkRateLimit(`offline-cache:${getRateLimitKey(request)}`, {

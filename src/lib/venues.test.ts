@@ -63,6 +63,8 @@ describe("venues", () => {
         name: "Comedy Club",
         state: "CA",
         upcomingEventCount: 0,
+        avgRating: null,
+        reviewCount: 0,
       });
       expect(result.total).toBe(1);
       expect(mockPrisma.venue.findMany).toHaveBeenCalledWith(

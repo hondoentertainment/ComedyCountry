@@ -74,6 +74,7 @@ describe("search", () => {
           ]),
         }),
       }),
+      })
     );
     expect(vi.mocked(prisma.comedian.findMany)).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -81,6 +82,7 @@ describe("search", () => {
           OR: expect.anything(),
         }),
       }),
+      })
     );
     expect(prisma.event.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -89,12 +91,15 @@ describe("search", () => {
           OR: expect.anything(),
         }),
       }),
+      })
     );
   });
 
   it("respects take parameter", async () => {
     await search("test", 10);
     // The unified search uses a fetch limit that's derived from the take param
+    // unifiedSearch uses an adjusted take (Math.ceil(limit/3) + 5) multiplied by 3
+    // so we just verify that venue.findMany was called
     expect(vi.mocked(prisma.venue.findMany)).toHaveBeenCalled();
   });
 });

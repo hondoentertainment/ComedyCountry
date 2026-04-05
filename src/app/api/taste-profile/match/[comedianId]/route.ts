@@ -8,6 +8,7 @@ import {
   getTasteProfile,
 } from "@/lib/taste-profile";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET - Get taste match percentage for a comedian.

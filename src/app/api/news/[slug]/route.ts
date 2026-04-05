@@ -3,6 +3,7 @@ import { logger } from "@/lib/logger";
 import { requireAdmin } from "@/lib/admin";
 import { getArticle, updateArticle, deleteArticle } from "@/lib/news";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 

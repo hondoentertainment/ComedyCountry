@@ -34,22 +34,18 @@ describe("POST /api/cron/review-prompts", () => {
   });
 
   it("allows request when correct API key is provided", async () => {
+  it("returns 401 when CRON_API_KEY is not set", async () => {
     const original = process.env.CRON_API_KEY;
     process.env.CRON_API_KEY = "test-cron-key";
 
     try {
-      vi.mocked(processReviewPrompts).mockResolvedValue({
-        eventsProcessed: 0,
-        promptsSent: 0,
-      });
-
       const res = await POST(
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
           headers: { "x-api-key": "test-cron-key" },
         }),
       );
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(401);
     } finally {
       if (original === undefined) {
         delete process.env.CRON_API_KEY;
@@ -74,6 +70,7 @@ describe("POST /api/cron/review-prompts", () => {
           method: "POST",
           headers: { "x-api-key": "test-cron-key" },
         }),
+        })
       );
 
       const data = await res.json();
@@ -106,6 +103,7 @@ describe("POST /api/cron/review-prompts", () => {
           method: "POST",
           headers: { "x-api-key": "test-cron-key" },
         }),
+        })
       );
 
       expect(res.status).toBe(500);

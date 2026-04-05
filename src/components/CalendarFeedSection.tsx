@@ -44,6 +44,7 @@ export function CalendarFeedSection() {
       setUrl("error");
       logger.error(
         "CalendarFeedSection generate failed",
+        "Unexpected error",
         {},
         err instanceof Error ? err : undefined,
       );

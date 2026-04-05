@@ -9,6 +9,7 @@ import {
   getAccessibilityFeatureCoverage,
 } from "@/lib/accessibility-discovery";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/accessible-shows

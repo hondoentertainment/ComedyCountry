@@ -108,6 +108,9 @@ describe("computeAudienceProfile", () => {
         event: {
           id: "evt-1",
           comedians: [{ comedian: { id: "com-1", name: "Alice" } }],
+          comedians: [
+            { comedian: { id: "com-1", name: "Alice" } },
+          ],
         },
       },
       {
@@ -116,6 +119,9 @@ describe("computeAudienceProfile", () => {
         event: {
           id: "evt-2",
           comedians: [{ comedian: { id: "com-2", name: "Bob" } }],
+          comedians: [
+            { comedian: { id: "com-2", name: "Bob" } },
+          ],
         },
       },
       {
@@ -124,6 +130,9 @@ describe("computeAudienceProfile", () => {
         event: {
           id: "evt-1",
           comedians: [{ comedian: { id: "com-1", name: "Alice" } }],
+          comedians: [
+            { comedian: { id: "com-1", name: "Alice" } },
+          ],
         },
       },
     ]);
@@ -137,6 +146,7 @@ describe("computeAudienceProfile", () => {
     expect(profile.topComedians[0].name).toBe("Alice"); // 2 tickets
     expect(profile.genreDistribution).toHaveProperty("Alice");
     // Source doesn't populate locationDistribution (no user relation)
+    expect(profile.locationDistribution).toEqual({});
     expect(profile.avgAge).toBeNull();
     // user-1 visits 2x => monthly, user-2 visits 1x => occasional
     expect(profile.visitFrequency.monthly).toBe(1);
@@ -209,6 +219,32 @@ describe("findSimilarAudiences", () => {
                 id: "evt-2",
                 comedians: [{ comedian: { id: "com-2", name: "standup" } }],
               },
+    mockPrisma.ticket.findMany.mockImplementation(({ where }: { where: { eventId: { in: string[] } } }) => {
+      const eventIds = where.eventId.in;
+      if (eventIds.includes("evt-1")) {
+        return [
+          {
+            userId: "user-1",
+            purchasePrice: 25,
+            event: {
+              id: "evt-1",
+              comedians: [
+                { comedian: { id: "com-1", name: "Alice" } },
+              ],
+            },
+          },
+        ];
+      }
+      if (eventIds.includes("evt-2")) {
+        return [
+          {
+            userId: "user-2",
+            purchasePrice: 20,
+            event: {
+              id: "evt-2",
+              comedians: [
+                { comedian: { id: "com-1", name: "Alice" } },
+              ],
             },
           ];
         }
@@ -222,7 +258,7 @@ describe("findSimilarAudiences", () => {
     expect(results[0].venueId).toBe("venue-2");
     expect(results[0].venueName).toBe("Laugh Factory");
     expect(results[0].similarityScore).toBeGreaterThan(0);
-    expect(results[0].sharedGenres).toContain("standup");
+    expect(results[0].sharedGenres).toContain("Alice");
   });
 });
 
@@ -377,6 +413,38 @@ describe("getExpansionMarkets", () => {
                 comedian: { id: "com-2", name: "Bob" },
                 tags: ["standup"],
               },
+    mockPrisma.event.findMany.mockImplementation(({ where }: { where: { venueId?: string } }) => {
+      if (where?.venueId === "venue-1") return [{ id: "evt-1" }];
+      if (where?.venueId === "venue-2") return [{ id: "evt-2" }];
+      return [];
+    });
+
+    mockPrisma.ticket.findMany.mockImplementation(({ where }: { where: { eventId: { in: string[] } } }) => {
+      const eventIds = where.eventId.in;
+      if (eventIds.includes("evt-1")) {
+        return [
+          {
+            userId: "user-1",
+            purchasePrice: 25,
+            event: {
+              id: "evt-1",
+              comedians: [
+                { comedian: { id: "com-1", name: "Alice" } },
+              ],
+            },
+          },
+        ];
+      }
+      if (eventIds.includes("evt-2")) {
+        return [
+          {
+            userId: "user-2",
+            purchasePrice: 20,
+            event: {
+              id: "evt-2",
+              comedians: [
+                { comedian: { id: "com-2", name: "Bob" } },
+              ],
             },
           ];
         }

@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 /**
  * Email notification utility.
  *
@@ -79,6 +80,7 @@ export async function sendEmail(payload: EmailPayload): Promise<boolean> {
   } catch (err) {
     logger.error(
       "Failed to send email",
+      "[EMAIL] Failed to send",
       {},
       err instanceof Error ? err : undefined,
     );

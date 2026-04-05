@@ -13,6 +13,7 @@ import {
   removeStrike,
 } from "@/lib/content-moderation";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 // ---------------------------------------------------------------------------
 // GET /api/moderation — get moderation queue or user strikes

@@ -3,6 +3,7 @@ import { logger } from "@/lib/logger";
 import { requireAdmin } from "@/lib/admin";
 import { listArticles, createArticle } from "@/lib/news";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const rl = await checkRateLimit(`news:${getRateLimitKey(request)}`, {

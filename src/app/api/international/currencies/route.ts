@@ -8,6 +8,7 @@ import {
   SUPPORTED_CURRENCIES,
 } from "@/lib/currency";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/international/currencies

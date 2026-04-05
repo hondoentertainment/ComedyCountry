@@ -183,6 +183,7 @@ describe("podcast-pipeline", () => {
       });
       mockPrisma.podcastEpisode.findMany.mockResolvedValue([]);
       mockPrisma.podcastEpisode.create.mockResolvedValue({ id: "ep1" });
+      mockPrisma.podcastEpisode.findFirst.mockResolvedValue(null);
       mockPrisma.podcastEpisode.count.mockResolvedValue(0);
       mockPrisma.podcastShow.update.mockResolvedValue({ id: "pod1" });
 

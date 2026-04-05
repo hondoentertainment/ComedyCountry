@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { sendPushToUser, pushToComedianFollowers } from "./push";
+
+const mockSendNotification = vi.fn();
+const mockSetVapidDetails = vi.fn();
+
+vi.mock("web-push", () => ({
+  setVapidDetails: mockSetVapidDetails,
+  sendNotification: mockSendNotification,
+}));
 
 vi.mock("web-push", () => {
   throw new Error("not available");
@@ -18,6 +25,7 @@ vi.mock("./prisma", () => ({
   },
 }));
 
+import { sendPushToUser, pushToComedianFollowers } from "./push";
 import { prisma } from "./prisma";
 
 const mockPrisma = prisma as unknown as {
@@ -31,9 +39,6 @@ const mockPrisma = prisma as unknown as {
   };
 };
 
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
-
 const payload = { title: "Test", body: "Test body" };
 
 describe("sendPushToUser", () => {
@@ -41,6 +46,7 @@ describe("sendPushToUser", () => {
     vi.clearAllMocks();
     vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "test-public-key");
     vi.stubEnv("VAPID_PRIVATE_KEY", "test-private-key");
+    mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 0 });
   });
 
   it("returns 0 when VAPID keys are not configured", async () => {
@@ -76,12 +82,12 @@ describe("sendPushToUser", () => {
         auth: "auth2",
       },
     ]);
-    mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    mockSendNotification.mockResolvedValue({});
 
     const result = await sendPushToUser("user-1", payload);
 
     expect(result).toBe(2);
-    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockSendNotification).toHaveBeenCalledTimes(2);
   });
 
   it("deletes expired subscriptions (410 Gone)", async () => {
@@ -95,6 +101,7 @@ describe("sendPushToUser", () => {
     ]);
     mockFetch.mockResolvedValue({ ok: false, status: 410 });
     mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 1 });
+    mockSendNotification.mockRejectedValue({ statusCode: 410 });
 
     const result = await sendPushToUser("user-1", payload);
 
@@ -115,6 +122,7 @@ describe("sendPushToUser", () => {
     ]);
     mockFetch.mockResolvedValue({ ok: false, status: 404 });
     mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 1 });
+    mockSendNotification.mockRejectedValue({ statusCode: 404 });
 
     const result = await sendPushToUser("user-1", payload);
 
@@ -133,7 +141,7 @@ describe("sendPushToUser", () => {
         auth: "auth1",
       },
     ]);
-    mockFetch.mockResolvedValue({ ok: false, status: 201 });
+    mockSendNotification.mockResolvedValue({});
 
     const result = await sendPushToUser("user-1", payload);
 
@@ -156,6 +164,7 @@ describe("pushToComedianFollowers", () => {
     vi.clearAllMocks();
     vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "test-public-key");
     vi.stubEnv("VAPID_PRIVATE_KEY", "test-private-key");
+    mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 0 });
   });
 
   it("sends push to all followers", async () => {
@@ -182,6 +191,7 @@ describe("pushToComedianFollowers", () => {
       ]);
     mockFetch.mockResolvedValue({ ok: true, status: 200 });
     mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 0 });
+    mockSendNotification.mockResolvedValue({});
 
     const result = await pushToComedianFollowers("comedian-1", payload);
 

@@ -112,6 +112,7 @@ describe("Nav", () => {
         name: "Search venues, comedians, and events",
       }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Search venues, comedians, and events" })).toBeInTheDocument();
   });
 
   it("Profile link has aria-current='page' when pathname is /profile", () => {

@@ -1,10 +1,19 @@
-/** Validate required environment variables at startup */
+import { logger } from "@/lib/logger";
 
 import { logger } from "@/lib/logger";
 
 const required = ["DATABASE_URL", "NEXTAUTH_SECRET", "NEXTAUTH_URL"] as const;
+/** Validate required environment variables at startup and provide typed access. */
 
-const optional = [
+const requiredKeys = [
+  "DATABASE_URL",
+  "NEXTAUTH_SECRET",
+  "NEXTAUTH_URL",
+] as const;
+
+type RequiredKey = (typeof requiredKeys)[number];
+
+const optionalKeys = [
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
   "STRIPE_SECRET_KEY",
@@ -21,7 +30,14 @@ const optional = [
   "VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
   "LOG_LEVEL",
+  "CRON_SECRET",
+  "SENTRY_DSN",
 ] as const;
+
+type OptionalKey = (typeof optionalKeys)[number];
+
+type EnvVars = Record<RequiredKey, string> &
+  Record<OptionalKey, string | undefined>;
 
 export function validateEnv(): {
   valid: boolean;
@@ -31,7 +47,7 @@ export function validateEnv(): {
   const missing: string[] = [];
   const warnings: string[] = [];
 
-  for (const key of required) {
+  for (const key of requiredKeys) {
     if (!process.env[key]) {
       missing.push(key);
     }
@@ -81,5 +97,35 @@ export function assertEnv(): void {
         `Missing required environment variables: ${missing.join(", ")}`,
       );
     }
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}. ` +
+        "Set them in your .env file or deployment environment.",
+    );
   }
 }
+
+/**
+ * Build a typed env object. Required keys are guaranteed to be strings;
+ * optional keys may be undefined.
+ */
+function buildEnv(): EnvVars {
+  // In non-test environments, validate immediately on import
+  if (process.env.NODE_ENV !== "test") {
+    assertEnv();
+  }
+
+  const env = {} as Record<string, string | undefined>;
+
+  for (const key of requiredKeys) {
+    env[key] = process.env[key];
+  }
+  for (const key of optionalKeys) {
+    env[key] = process.env[key];
+  }
+
+  return env as EnvVars;
+}
+
+/** Typed, validated environment variables. Importing this module in non-test
+ *  environments will throw immediately if any required variable is missing. */
+export const env: EnvVars = buildEnv();

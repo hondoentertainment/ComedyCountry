@@ -10,6 +10,7 @@ import {
   syncToProvider,
 } from "@/lib/calendar-sync";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/calendar-sync

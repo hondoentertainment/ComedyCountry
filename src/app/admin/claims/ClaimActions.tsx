@@ -6,9 +6,11 @@ import { useState } from "react";
 export function ClaimActions({ claimId }: { claimId: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleAction(action: "approve" | "reject") {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/admin/claims", {
         method: "PATCH",
@@ -19,17 +21,20 @@ export function ClaimActions({ claimId }: { claimId: string }) {
         router.refresh();
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to update claim");
+        setError(data.error || "Failed to update claim");
       }
     } catch {
-      alert("Network error");
+      setError("Network error");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="flex gap-2 shrink-0">
+    <div className="flex gap-2 shrink-0 items-center">
+      {error && (
+        <span className="text-xs text-red-400" role="alert">{error}</span>
+      )}
       <button
         type="button"
         onClick={() => handleAction("approve")}

@@ -82,6 +82,12 @@ export function logInfo(
       ...extra,
     }),
   );
+  logger.info(message, {
+    requestId: getRequestId(request),
+    method: request.method,
+    path: new URL(request.url).pathname,
+    ...extra,
+  });
 }
 
 export function logError(
@@ -106,7 +112,7 @@ export function logError(
       requestId: getRequestId(request),
       method: request.method,
       path: new URL(request.url).pathname,
-      error: normalizedError,
+      errorDetail: normalizedError,
       ...extra,
     },
     error instanceof Error ? error : undefined,

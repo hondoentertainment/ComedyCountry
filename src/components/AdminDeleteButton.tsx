@@ -6,26 +6,32 @@ import { useState } from "react";
 export function AdminDeleteButton({ endpoint, itemName }: { endpoint: string; itemName: string }) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleDelete() {
     if (!confirm(`Delete "${itemName}"? This action cannot be undone.`)) return;
     setDeleting(true);
+    setError(null);
     try {
       const res = await fetch(endpoint, { method: "DELETE" });
       if (res.ok) {
         router.refresh();
       } else {
-        alert("Failed to delete");
+        setError("Failed to delete");
       }
     } catch {
-      alert("Failed to delete");
+      setError("Failed to delete");
     } finally {
       setDeleting(false);
     }
   }
 
   return (
-    <button
+    <div className="inline-flex items-center gap-2">
+      {error && (
+        <span className="text-xs text-red-400" role="alert">{error}</span>
+      )}
+      <button
       type="button"
       onClick={handleDelete}
       disabled={deleting}
@@ -33,5 +39,6 @@ export function AdminDeleteButton({ endpoint, itemName }: { endpoint: string; it
     >
       {deleting ? "..." : "Delete"}
     </button>
+    </div>
   );
 }

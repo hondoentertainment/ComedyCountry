@@ -15,6 +15,7 @@ import {
   computeConfidence,
 } from "@/lib/comedy-genome";
 import { getTasteProfile, computeTasteProfile } from "@/lib/taste-profile";
+import { logger } from "@/lib/logger";
 
 /**
  * GET - Personalized recommendations based on user's taste profile.

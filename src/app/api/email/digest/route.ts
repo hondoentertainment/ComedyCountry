@@ -3,6 +3,7 @@ import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, digestEmailHtml } from "@/lib/email";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/email/digest
@@ -92,6 +93,7 @@ export async function POST(request: Request) {
       {},
       err instanceof Error ? err : undefined,
     );
+    logger.error("[DIGEST]", {}, err instanceof Error ? err : undefined);
     return NextResponse.json(
       { error: "Failed to send digests" },
       { status: 500 },

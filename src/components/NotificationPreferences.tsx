@@ -116,6 +116,7 @@ export function NotificationPreferences() {
     } catch (err) {
       logger.error(
         "Push permission request failed",
+        "[Push] Permission request failed",
         {},
         err instanceof Error ? err : undefined,
       );

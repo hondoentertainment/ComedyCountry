@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { createCalendarFeedToken } from "../route";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 import { canUseCalendarFeed } from "@/lib/subscription-gates";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/calendar-feed/token
