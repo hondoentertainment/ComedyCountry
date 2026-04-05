@@ -84,7 +84,7 @@ describe("Nav", () => {
 
   it("has Search link on mobile", () => {
     render(<Nav />);
-    expect(screen.getByRole("link", { name: "Search" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Search venues, comedians, and events" })).toBeInTheDocument();
   });
 
   it("Profile link has aria-current='page' when pathname is /profile", () => {

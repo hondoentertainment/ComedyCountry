@@ -52,8 +52,9 @@ describe("Pagination", () => {
         searchParams={{}}
       />
     );
-    const prevSpan = screen.getByText("Previous").closest("span");
-    expect(prevSpan).toHaveAttribute("aria-disabled");
+    const prevButton = screen.getByText("Previous").closest("button");
+    expect(prevButton).toBeDisabled();
+    expect(prevButton).toHaveAttribute("aria-disabled", "true");
   });
 
   it("disables Next on last page", () => {
@@ -65,8 +66,9 @@ describe("Pagination", () => {
         searchParams={{}}
       />
     );
-    const nextSpan = screen.getByText("Next").closest("span");
-    expect(nextSpan).toHaveAttribute("aria-disabled");
+    const nextButton = screen.getByText("Next").closest("button");
+    expect(nextButton).toBeDisabled();
+    expect(nextButton).toHaveAttribute("aria-disabled", "true");
   });
 
   it("builds correct URLs with search params", () => {

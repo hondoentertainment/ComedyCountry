@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { EventRatingForm } from "./EventRatingForm";
 
+vi.mock("./Toast", () => ({
+  useToast: () => ({ toast: vi.fn() }),
+}));
+
 describe("EventRatingForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,8 +84,11 @@ describe("EventRatingForm", () => {
     expect(fetchMock).toHaveBeenCalledWith("/api/events/event-123/reviews", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rating: 5, comment: "Amazing!" }),
+      body: expect.stringContaining('"rating":5'),
     });
+    const callBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(callBody.rating).toBe(5);
+    expect(callBody.comment).toBe("Amazing!");
     expect(onSuccess).toHaveBeenCalled();
     expect(screen.getByRole("button", { name: /Saved/i })).toBeInTheDocument();
   });
