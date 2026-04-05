@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /** Validate required environment variables at startup and provide typed access. */
 
 const requiredKeys = [
@@ -31,9 +33,14 @@ const optionalKeys = [
 
 type OptionalKey = (typeof optionalKeys)[number];
 
-type EnvVars = Record<RequiredKey, string> & Record<OptionalKey, string | undefined>;
+type EnvVars = Record<RequiredKey, string> &
+  Record<OptionalKey, string | undefined>;
 
-export function validateEnv(): { valid: boolean; missing: string[]; warnings: string[] } {
+export function validateEnv(): {
+  valid: boolean;
+  missing: string[];
+  warnings: string[];
+} {
   const missing: string[] = [];
   const warnings: string[] = [];
 
@@ -45,12 +52,16 @@ export function validateEnv(): { valid: boolean; missing: string[]; warnings: st
 
   // Warn if NEXTAUTH_SECRET is the default placeholder
   if (process.env.NEXTAUTH_SECRET === "change-me-in-production") {
-    warnings.push("NEXTAUTH_SECRET is set to the default placeholder — change this in production");
+    warnings.push(
+      "NEXTAUTH_SECRET is set to the default placeholder — change this in production",
+    );
   }
 
   // Warn about missing optional vars that enable key features
   if (!process.env.STRIPE_SECRET_KEY) {
-    warnings.push("STRIPE_SECRET_KEY not set — payment processing will be disabled");
+    warnings.push(
+      "STRIPE_SECRET_KEY not set — payment processing will be disabled",
+    );
   }
 
   if (!process.env.SMTP_HOST) {
@@ -75,9 +86,12 @@ export function assertEnv(): void {
   }
 
   if (!valid) {
+    logger.error(
+      `Missing required environment variables: ${missing.join(", ")}`,
+    );
     throw new Error(
       `Missing required environment variables: ${missing.join(", ")}. ` +
-        "Set them in your .env file or deployment environment."
+        "Set them in your .env file or deployment environment.",
     );
   }
 }

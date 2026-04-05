@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getVenueCRMData, updateCRMRecord } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`venue-crm:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-crm:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -21,19 +25,32 @@ export async function GET(request: Request) {
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
 
     if (!venueId) {
-      return NextResponse.json({ error: "venueId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "venueId is required" },
+        { status: 400 },
+      );
     }
 
     const result = await getVenueCRMData(venueId, page);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("GET /api/venue-crm error:", error);
-    return NextResponse.json({ error: "Failed to fetch CRM data" }, { status: 500 });
+    logger.error(
+      "GET /api/venue-crm error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch CRM data" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`venue-crm:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-crm:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -50,14 +67,21 @@ export async function POST(request: Request) {
     if (!venueId || !userId) {
       return NextResponse.json(
         { error: "venueId and userId are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const record = await updateCRMRecord(venueId, userId, { tags, notes });
     return NextResponse.json(record);
   } catch (error) {
-    console.error("POST /api/venue-crm error:", error);
-    return NextResponse.json({ error: "Failed to update CRM record" }, { status: 500 });
+    logger.error(
+      "POST /api/venue-crm error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to update CRM record" },
+      { status: 500 },
+    );
   }
 }

@@ -10,9 +10,13 @@ import {
   getPOSMenuItems,
 } from "@/lib/pos-integration";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`venue-ops-pos:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-ops-pos:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -26,7 +30,7 @@ export async function GET(request: Request) {
     if (!venueId) {
       return NextResponse.json(
         { error: "venueId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +45,7 @@ export async function GET(request: Request) {
       if (!provider) {
         return NextResponse.json(
           { error: "provider is required for transactions" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -70,7 +74,7 @@ export async function GET(request: Request) {
       if (!provider) {
         return NextResponse.json(
           { error: "provider is required for menu items" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -83,7 +87,7 @@ export async function GET(request: Request) {
       if (!provider) {
         return NextResponse.json(
           { error: "provider is required for reconciliation" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -91,7 +95,7 @@ export async function GET(request: Request) {
       if (!eventId) {
         return NextResponse.json(
           { error: "eventId is required for reconciliation" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -101,22 +105,28 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       { error: `Unknown action: ${action}` },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
-    console.error("GET /api/venue-ops/pos error:", error);
+    logger.error(
+      "GET /api/venue-ops/pos error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`venue-ops-pos:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`venue-ops-pos:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -128,7 +138,7 @@ export async function POST(request: Request) {
     if (!venueId) {
       return NextResponse.json(
         { error: "venueId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -137,7 +147,7 @@ export async function POST(request: Request) {
       if (!provider) {
         return NextResponse.json(
           { error: "provider is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -146,7 +156,7 @@ export async function POST(request: Request) {
       if (!apiKey) {
         return NextResponse.json(
           { error: "apiKey is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -165,7 +175,7 @@ export async function POST(request: Request) {
       if (!provider) {
         return NextResponse.json(
           { error: "provider is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -178,7 +188,7 @@ export async function POST(request: Request) {
       if (!provider) {
         return NextResponse.json(
           { error: "provider is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -186,16 +196,26 @@ export async function POST(request: Request) {
       if (!transactions || !Array.isArray(transactions)) {
         return NextResponse.json(
           { error: "transactions array is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       // Parse timestamp strings to Dates
       const parsed = transactions.map(
-        (tx: { externalId: string; amount: number; status: string; timestamp: string; currency?: string; itemName?: string; quantity?: number; paymentMethod?: string; metadata?: Record<string, unknown> }) => ({
+        (tx: {
+          externalId: string;
+          amount: number;
+          status: string;
+          timestamp: string;
+          currency?: string;
+          itemName?: string;
+          quantity?: number;
+          paymentMethod?: string;
+          metadata?: Record<string, unknown>;
+        }) => ({
           ...tx,
           timestamp: new Date(tx.timestamp),
-        })
+        }),
       );
 
       const result = await syncTransactions(venueId, provider, parsed);
@@ -207,7 +227,7 @@ export async function POST(request: Request) {
       if (!provider) {
         return NextResponse.json(
           { error: "provider is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -215,7 +235,7 @@ export async function POST(request: Request) {
       if (!menuItemId) {
         return NextResponse.json(
           { error: "menuItemId is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -225,16 +245,19 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { error: `Unknown action: ${action}` },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
-    console.error("POST /api/venue-ops/pos error:", error);
+    logger.error(
+      "POST /api/venue-ops/pos error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createSMSCampaign, getSMSCampaigns } from "@/lib/marketing";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`marketing-sms-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-sms-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -20,19 +24,32 @@ export async function GET(request: Request) {
     const venueId = searchParams.get("venueId");
 
     if (!venueId) {
-      return NextResponse.json({ error: "venueId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "venueId is required" },
+        { status: 400 },
+      );
     }
 
     const campaigns = await getSMSCampaigns(venueId);
     return NextResponse.json({ campaigns });
   } catch (error) {
-    console.error("GET /api/marketing/sms-campaigns error:", error);
-    return NextResponse.json({ error: "Failed to fetch campaigns" }, { status: 500 });
+    logger.error(
+      "GET /api/marketing/sms-campaigns error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch campaigns" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`marketing-sms-campaigns:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `marketing-sms-campaigns:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -53,10 +70,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const campaign = await createSMSCampaign(venueId, { name, message, segmentId });
+    const campaign = await createSMSCampaign(venueId, {
+      name,
+      message,
+      segmentId,
+    });
     return NextResponse.json(campaign, { status: 201 });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : "Failed to create campaign";
+    const msg =
+      error instanceof Error ? error.message : "Failed to create campaign";
     const status = msg.includes("160 characters") ? 400 : 500;
     return NextResponse.json({ error: msg }, { status });
   }

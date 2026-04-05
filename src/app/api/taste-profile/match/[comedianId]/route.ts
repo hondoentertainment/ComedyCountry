@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getTasteMatchScore, computeTasteProfile, getTasteProfile } from "@/lib/taste-profile";
+import {
+  getTasteMatchScore,
+  computeTasteProfile,
+  getTasteProfile,
+} from "@/lib/taste-profile";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET - Get taste match percentage for a comedian.
  */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ comedianId: string }> }
+  { params }: { params: Promise<{ comedianId: string }> },
 ) {
-  const rl = await checkRateLimit(`taste-profile-match:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `taste-profile-match:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -24,7 +32,10 @@ export async function GET(
 
     const { comedianId } = await params;
     if (!comedianId) {
-      return NextResponse.json({ error: "Missing comedian ID" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing comedian ID" },
+        { status: 400 },
+      );
     }
 
     // Ensure profile exists
@@ -39,10 +50,14 @@ export async function GET(
       headers: { "Cache-Control": "private, max-age=600" },
     });
   } catch (err) {
-    console.error("Taste match error:", err);
+    logger.error(
+      "Taste match error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to compute taste match" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

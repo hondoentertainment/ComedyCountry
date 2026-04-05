@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { processReviewPrompts } from "@/lib/review-prompts";
+import { logger } from "@/lib/logger";
 
 /**
  * Cron endpoint: Send review prompts to users who attended events
@@ -26,10 +27,14 @@ export async function POST(request: Request) {
       promptsSent: result.promptsSent,
     });
   } catch (err) {
-    console.error("Review prompts cron error:", err);
+    logger.error(
+      "Review prompts cron error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to process review prompts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

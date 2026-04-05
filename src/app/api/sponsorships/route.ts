@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`sponsorships:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`sponsorships:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -31,13 +35,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ sponsorships });
   } catch (error) {
-    console.error("GET /api/sponsorships error:", error);
-    return NextResponse.json({ error: "Failed to fetch sponsorships" }, { status: 500 });
+    logger.error(
+      "GET /api/sponsorships error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch sponsorships" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`sponsorships:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`sponsorships:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -49,12 +63,20 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { brandName, contactEmail, eventId, comedianId, venueId, package: pkg, amount } = body;
+    const {
+      brandName,
+      contactEmail,
+      eventId,
+      comedianId,
+      venueId,
+      package: pkg,
+      amount,
+    } = body;
 
     if (!brandName || !contactEmail || !pkg || !amount) {
       return NextResponse.json(
         { error: "brandName, contactEmail, package, and amount are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +94,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(sponsorship, { status: 201 });
   } catch (error) {
-    console.error("POST /api/sponsorships error:", error);
-    return NextResponse.json({ error: "Failed to create sponsorship" }, { status: 500 });
+    logger.error(
+      "POST /api/sponsorships error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to create sponsorship" },
+      { status: 500 },
+    );
   }
 }

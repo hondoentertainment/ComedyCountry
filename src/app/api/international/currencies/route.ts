@@ -7,6 +7,7 @@ import {
   SUPPORTED_CURRENCIES,
 } from "@/lib/currency";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/international/currencies
@@ -18,7 +19,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * - amount: amount to convert (for convert/table, default: 1)
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`international-currencies:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `international-currencies:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -104,7 +108,11 @@ export async function GET(request: Request) {
       }
 
       const table = await getConversionTable(from, amount);
-      return NextResponse.json({ baseCurrency: from, amount, conversions: table });
+      return NextResponse.json({
+        baseCurrency: from,
+        amount,
+        conversions: table,
+      });
     }
 
     return NextResponse.json(
@@ -112,9 +120,18 @@ export async function GET(request: Request) {
       { status: 400 },
     );
   } catch (error) {
-    console.error("GET /api/international/currencies error:", error);
+    logger.error(
+      "GET /api/international/currencies error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to process currency request" },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to process currency request",
+      },
       { status: 500 },
     );
   }

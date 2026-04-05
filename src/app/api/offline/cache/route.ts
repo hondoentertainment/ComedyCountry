@@ -8,9 +8,13 @@ import {
   getCacheStats,
 } from "@/lib/offline-cache";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
-  const rl = await checkRateLimit(`offline-cache:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`offline-cache:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -33,7 +37,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ items });
   } catch (error) {
-    console.error("GET /api/offline/cache error:", error);
+    logger.error(
+      "GET /api/offline/cache error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch cached content" },
       { status: 500 },
@@ -42,7 +50,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const rl = await checkRateLimit(`offline-cache:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`offline-cache:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -88,7 +99,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
     }
-    console.error("POST /api/offline/cache error:", error);
+    logger.error(
+      "POST /api/offline/cache error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to cache content" },
       { status: 500 },
@@ -97,7 +112,10 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: Request) {
-  const rl = await checkRateLimit(`offline-cache:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`offline-cache:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -112,7 +130,11 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("DELETE /api/offline/cache error:", error);
+    logger.error(
+      "DELETE /api/offline/cache error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to purge cache" },
       { status: 500 },

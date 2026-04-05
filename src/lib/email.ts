@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 /**
  * Email notification utility.
  *
@@ -19,14 +20,24 @@ export interface EmailPayload {
 
 async function sendRaw(payload: EmailPayload): Promise<boolean> {
   const apiKey = process.env.EMAIL_API_KEY;
-  const from = process.env.EMAIL_FROM || "Punchline Atlas <noreply@punchlineatlas.com>";
+  const from =
+    process.env.EMAIL_FROM || "Punchline Atlas <noreply@punchlineatlas.com>";
 
   // Resend
   if (apiKey && process.env.EMAIL_PROVIDER === "resend") {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to: payload.to, subject: payload.subject, html: payload.html, text: payload.text }),
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: payload.to,
+        subject: payload.subject,
+        html: payload.html,
+        text: payload.text,
+      }),
     });
     return res.ok;
   }
@@ -35,7 +46,10 @@ async function sendRaw(payload: EmailPayload): Promise<boolean> {
   if (apiKey && process.env.EMAIL_PROVIDER === "sendgrid") {
     const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: payload.to }] }],
         from: { email: from },
@@ -62,7 +76,11 @@ export async function sendEmail(payload: EmailPayload): Promise<boolean> {
   try {
     return await sendRaw(payload);
   } catch (err) {
-    console.error("[EMAIL] Failed to send:", err);
+    logger.error(
+      "[EMAIL] Failed to send",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return false;
   }
 }

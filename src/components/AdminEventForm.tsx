@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SHOW_TYPE_LABELS } from "@/lib/constants";
+import { logger } from "@/lib/logger";
 
 type EventData = {
   id: string;
@@ -28,49 +29,69 @@ export function AdminEventForm({ event }: { event?: EventData }) {
   const [venues, setVenues] = useState<VenueOption[]>([]);
   const [allComedians, setAllComedians] = useState<ComedianOption[]>([]);
   const [selectedComedians, setSelectedComedians] = useState<string[]>(
-    event?.comedians.map(ec => ec.comedian.id) ?? []
+    event?.comedians.map((ec) => ec.comedian.id) ?? [],
   );
   const [comedianSearch, setComedianSearch] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/venues?page=1")
-      .then(r => r.json())
-      .then(d => setVenues(d.venues ?? []))
+      .then((r) => r.json())
+      .then((d) => setVenues(d.venues ?? []))
       .catch((err) => {
-        console.error('AdminEventForm venues fetch failed:', err);
-        setError('Failed to load venues. Please refresh the page.');
+        logger.error(
+          "AdminEventForm venues fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        );
+        setError("Failed to load venues. Please refresh the page.");
       });
     fetch("/api/admin/comedians?page=1")
-      .then(r => r.json())
-      .then(d => setAllComedians(d.comedians?.map((c: ComedianOption) => ({ id: c.id, name: c.name })) ?? []))
+      .then((r) => r.json())
+      .then((d) =>
+        setAllComedians(
+          d.comedians?.map((c: ComedianOption) => ({
+            id: c.id,
+            name: c.name,
+          })) ?? [],
+        ),
+      )
       .catch((err) => {
-        console.error('AdminEventForm comedians fetch failed:', err);
-        setError('Failed to load comedians. Please refresh the page.');
+        logger.error(
+          "AdminEventForm comedians fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        );
+        setError("Failed to load comedians. Please refresh the page.");
       });
   }, []);
 
   function addComedian(id: string) {
     if (!selectedComedians.includes(id)) {
-      setSelectedComedians(prev => [...prev, id]);
+      setSelectedComedians((prev) => [...prev, id]);
     }
     setComedianSearch("");
   }
 
   function removeComedian(id: string) {
-    setSelectedComedians(prev => prev.filter(c => c !== id));
+    setSelectedComedians((prev) => prev.filter((c) => c !== id));
   }
 
-  const filteredComedians = comedianSearch.length >= 2
-    ? allComedians.filter(c =>
-        c.name.toLowerCase().includes(comedianSearch.toLowerCase()) &&
-        !selectedComedians.includes(c.id)
-      ).slice(0, 10)
-    : [];
+  const filteredComedians =
+    comedianSearch.length >= 2
+      ? allComedians
+          .filter(
+            (c) =>
+              c.name.toLowerCase().includes(comedianSearch.toLowerCase()) &&
+              !selectedComedians.includes(c.id),
+          )
+          .slice(0, 10)
+      : [];
 
   function validate(form: HTMLFormElement): boolean {
     const errors: Record<string, string> = {};
     const data = new FormData(form);
-    if (!data.get("venueId")?.toString().trim()) errors.venueId = "Venue is required";
+    if (!data.get("venueId")?.toString().trim())
+      errors.venueId = "Venue is required";
     if (!data.get("date")?.toString().trim()) errors.date = "Date is required";
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
@@ -123,7 +144,9 @@ export function AdminEventForm({ event }: { event?: EventData }) {
     }
   }
 
-  const dateVal = event?.date ? new Date(event.date).toISOString().split("T")[0] : "";
+  const dateVal = event?.date
+    ? new Date(event.date).toISOString().split("T")[0]
+    : "";
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
@@ -135,7 +158,10 @@ export function AdminEventForm({ event }: { event?: EventData }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="sm:col-span-2">
-          <label htmlFor="title" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Title (optional)
           </label>
           <input
@@ -148,7 +174,10 @@ export function AdminEventForm({ event }: { event?: EventData }) {
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="venueId" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="venueId"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Venue *
           </label>
           <select
@@ -158,21 +187,34 @@ export function AdminEventForm({ event }: { event?: EventData }) {
             defaultValue={event?.venueId ?? ""}
             aria-invalid={!!fieldErrors.venueId}
             aria-describedby={fieldErrors.venueId ? "venueId-error" : undefined}
-            onChange={() => setFieldErrors(prev => ({ ...prev, venueId: "" }))}
+            onChange={() =>
+              setFieldErrors((prev) => ({ ...prev, venueId: "" }))
+            }
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           >
             <option value="">Select venue...</option>
-            {venues.map(v => (
+            {venues.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name} ({v.city}, {v.state})
               </option>
             ))}
           </select>
-          {fieldErrors.venueId && <p id="venueId-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.venueId}</p>}
+          {fieldErrors.venueId && (
+            <p
+              id="venueId-error"
+              className="text-red-400 text-xs mt-1"
+              role="alert"
+            >
+              {fieldErrors.venueId}
+            </p>
+          )}
         </div>
 
         <div>
-          <label htmlFor="date" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Date *
           </label>
           <input
@@ -183,14 +225,25 @@ export function AdminEventForm({ event }: { event?: EventData }) {
             defaultValue={dateVal}
             aria-invalid={!!fieldErrors.date}
             aria-describedby={fieldErrors.date ? "date-error" : undefined}
-            onChange={() => setFieldErrors(prev => ({ ...prev, date: "" }))}
+            onChange={() => setFieldErrors((prev) => ({ ...prev, date: "" }))}
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           />
-          {fieldErrors.date && <p id="date-error" className="text-red-400 text-xs mt-1" role="alert">{fieldErrors.date}</p>}
+          {fieldErrors.date && (
+            <p
+              id="date-error"
+              className="text-red-400 text-xs mt-1"
+              role="alert"
+            >
+              {fieldErrors.date}
+            </p>
+          )}
         </div>
 
         <div>
-          <label htmlFor="showtime" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="showtime"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Showtime
           </label>
           <input
@@ -203,7 +256,10 @@ export function AdminEventForm({ event }: { event?: EventData }) {
         </div>
 
         <div>
-          <label htmlFor="showType" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="showType"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Show Type
           </label>
           <select
@@ -213,13 +269,18 @@ export function AdminEventForm({ event }: { event?: EventData }) {
             className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
           >
             {Object.entries(SHOW_TYPE_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label htmlFor="ticketUrl" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="ticketUrl"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Ticket URL
           </label>
           <input
@@ -233,7 +294,10 @@ export function AdminEventForm({ event }: { event?: EventData }) {
         </div>
 
         <div>
-          <label htmlFor="priceMin" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="priceMin"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Price Min ($)
           </label>
           <input
@@ -247,7 +311,10 @@ export function AdminEventForm({ event }: { event?: EventData }) {
         </div>
 
         <div>
-          <label htmlFor="priceMax" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="priceMax"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             Price Max ($)
           </label>
           <input
@@ -265,19 +332,37 @@ export function AdminEventForm({ event }: { event?: EventData }) {
         <p className="text-sm font-medium text-zinc-300 mb-2">Comedians</p>
         <div className="space-y-2">
           {selectedComedians.map((id, i) => {
-            const comedian = allComedians.find(c => c.id === id) ||
-              event?.comedians.find(ec => ec.comedian.id === id)?.comedian;
+            const comedian =
+              allComedians.find((c) => c.id === id) ||
+              event?.comedians.find((ec) => ec.comedian.id === id)?.comedian;
             return (
-              <div key={id} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700">
-                <span className="text-xs text-zinc-500 w-16">{i === 0 ? "Headline" : "Feature"}</span>
-                <span className="text-white text-sm flex-1">{comedian?.name ?? id}</span>
+              <div
+                key={id}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700"
+              >
+                <span className="text-xs text-zinc-500 w-16">
+                  {i === 0 ? "Headline" : "Feature"}
+                </span>
+                <span className="text-white text-sm flex-1">
+                  {comedian?.name ?? id}
+                </span>
                 <button
                   type="button"
                   onClick={() => removeComedian(id)}
                   className="text-zinc-500 hover:text-red-400 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -287,13 +372,13 @@ export function AdminEventForm({ event }: { event?: EventData }) {
             <input
               type="text"
               value={comedianSearch}
-              onChange={e => setComedianSearch(e.target.value)}
+              onChange={(e) => setComedianSearch(e.target.value)}
               placeholder="Search to add comedian..."
               className="w-full px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/50"
             />
             {filteredComedians.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 rounded-lg overflow-hidden z-10 max-h-48 overflow-y-auto">
-                {filteredComedians.map(c => (
+                {filteredComedians.map((c) => (
                   <button
                     key={c.id}
                     type="button"

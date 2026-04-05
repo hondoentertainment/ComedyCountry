@@ -3,11 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function PUT(request: Request, context: Ctx) {
-  const rl = await checkRateLimit(`sponsorships:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`sponsorships:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -23,14 +27,23 @@ export async function PUT(request: Request, context: Ctx) {
     const { status, startDate, endDate } = body;
 
     if (!status) {
-      return NextResponse.json({ error: "status is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "status is required" },
+        { status: 400 },
+      );
     }
 
-    const validStatuses = ["inquiry", "negotiating", "confirmed", "active", "completed"];
+    const validStatuses = [
+      "inquiry",
+      "negotiating",
+      "confirmed",
+      "active",
+      "completed",
+    ];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { error: `status must be one of: ${validStatuses.join(", ")}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +58,14 @@ export async function PUT(request: Request, context: Ctx) {
 
     return NextResponse.json(sponsorship);
   } catch (error) {
-    console.error("PUT /api/sponsorships/[id] error:", error);
-    return NextResponse.json({ error: "Failed to update sponsorship" }, { status: 500 });
+    logger.error(
+      "PUT /api/sponsorships/[id] error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to update sponsorship" },
+      { status: 500 },
+    );
   }
 }

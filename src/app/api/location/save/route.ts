@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isValidCoordinates } from "@/lib/geo";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/location/save
@@ -12,7 +13,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * Users can save multiple locations with different radii.
  */
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -29,20 +33,21 @@ export async function POST(request: Request) {
     if (typeof latitude !== "number" || typeof longitude !== "number") {
       return NextResponse.json(
         { error: "latitude and longitude are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!isValidCoordinates(latitude, longitude)) {
       return NextResponse.json(
         { error: "Invalid coordinates" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const radius = typeof radiusMi === "number" && radiusMi > 0 && radiusMi <= 500
-      ? radiusMi
-      : 50;
+    const radius =
+      typeof radiusMi === "number" && radiusMi > 0 && radiusMi <= 500
+        ? radiusMi
+        : 50;
 
     // Check existing alerts count (limit per user)
     const existingCount = await prisma.locationAlert.count({
@@ -52,7 +57,7 @@ export async function POST(request: Request) {
     if (existingCount >= 10) {
       return NextResponse.json(
         { error: "Maximum 10 location alerts allowed" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,10 +73,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(alert, { status: 201 });
   } catch (err) {
-    console.error("POST /api/location/save error:", err);
+    logger.error(
+      "POST /api/location/save error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to save location" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -82,7 +91,10 @@ export async function POST(request: Request) {
  * Get all saved location alerts for the current user.
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -100,10 +112,14 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ alerts });
   } catch (err) {
-    console.error("GET /api/location/save error:", err);
+    logger.error(
+      "GET /api/location/save error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch locations" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -114,7 +130,10 @@ export async function GET(request: Request) {
  * Update a location alert (toggle active, change radius).
  */
 export async function PATCH(request: Request) {
-  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -131,7 +150,7 @@ export async function PATCH(request: Request) {
     if (!alertId || typeof alertId !== "string") {
       return NextResponse.json(
         { error: "alertId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -143,7 +162,7 @@ export async function PATCH(request: Request) {
     if (!existing) {
       return NextResponse.json(
         { error: "Location alert not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -160,10 +179,14 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json(updated);
   } catch (err) {
-    console.error("PATCH /api/location/save error:", err);
+    logger.error(
+      "PATCH /api/location/save error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to update location" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -174,7 +197,10 @@ export async function PATCH(request: Request) {
  * Delete a saved location alert.
  */
 export async function DELETE(request: Request) {
-  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`location-save:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -191,7 +217,7 @@ export async function DELETE(request: Request) {
     if (!alertId || typeof alertId !== "string") {
       return NextResponse.json(
         { error: "alertId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -203,7 +229,7 @@ export async function DELETE(request: Request) {
     if (!existing) {
       return NextResponse.json(
         { error: "Location alert not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -211,10 +237,14 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("DELETE /api/location/save error:", err);
+    logger.error(
+      "DELETE /api/location/save error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to delete location" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 export type ClipPlayerProps = {
   id: string;
@@ -76,7 +77,11 @@ export function ClipPlayer({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "view" }),
       }).catch((err) => {
-        console.error('ClipPlayer view tracking failed:', err);
+        logger.error(
+          "ClipPlayer view tracking failed",
+          {},
+          err instanceof Error ? err : undefined,
+        );
       });
     }, 3000);
     return () => clearTimeout(timer);
@@ -255,13 +260,39 @@ export function ClipPlayer({
         aria-label={muted ? "Unmute" : "Mute"}
       >
         {muted ? (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+            />
           </svg>
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+            />
           </svg>
         )}
       </button>
@@ -290,7 +321,9 @@ export function ClipPlayer({
         >
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-              liked ? "bg-red-500/20 text-red-500" : "bg-white/10 text-white hover:bg-white/20"
+              liked
+                ? "bg-red-500/20 text-red-500"
+                : "bg-white/10 text-white hover:bg-white/20"
             }`}
           >
             <svg
@@ -308,7 +341,9 @@ export function ClipPlayer({
               />
             </svg>
           </div>
-          <span className="text-xs font-medium text-white">{formatCount(likes)}</span>
+          <span className="text-xs font-medium text-white">
+            {formatCount(likes)}
+          </span>
         </button>
 
         {/* Comment */}
@@ -332,7 +367,9 @@ export function ClipPlayer({
               />
             </svg>
           </div>
-          <span className="text-xs font-medium text-white">{formatCount(commentCount)}</span>
+          <span className="text-xs font-medium text-white">
+            {formatCount(commentCount)}
+          </span>
         </Link>
 
         {/* Share */}
@@ -358,7 +395,9 @@ export function ClipPlayer({
               />
             </svg>
           </div>
-          <span className="text-xs font-medium text-white">{formatCount(shares)}</span>
+          <span className="text-xs font-medium text-white">
+            {formatCount(shares)}
+          </span>
         </button>
 
         {/* Save */}
@@ -371,7 +410,9 @@ export function ClipPlayer({
         >
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-              saved ? "bg-brand-gold/20 text-brand-gold" : "bg-white/10 text-white hover:bg-white/20"
+              saved
+                ? "bg-brand-gold/20 text-brand-gold"
+                : "bg-white/10 text-white hover:bg-white/20"
             }`}
           >
             <svg

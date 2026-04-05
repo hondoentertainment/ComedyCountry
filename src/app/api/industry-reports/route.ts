@@ -4,9 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateIndustryMetrics } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`industry-reports:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `industry-reports:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -32,13 +36,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ reports });
   } catch (error) {
-    console.error("GET /api/industry-reports error:", error);
-    return NextResponse.json({ error: "Failed to fetch reports" }, { status: 500 });
+    logger.error(
+      "GET /api/industry-reports error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch reports" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`industry-reports:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `industry-reports:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -55,7 +69,7 @@ export async function POST(request: Request) {
     if (!city || !state || !quarter || !year) {
       return NextResponse.json(
         { error: "city, state, quarter, and year are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -80,7 +94,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(report, { status: 201 });
   } catch (error) {
-    console.error("POST /api/industry-reports error:", error);
-    return NextResponse.json({ error: "Failed to generate report" }, { status: 500 });
+    logger.error(
+      "POST /api/industry-reports error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to generate report" },
+      { status: 500 },
+    );
   }
 }

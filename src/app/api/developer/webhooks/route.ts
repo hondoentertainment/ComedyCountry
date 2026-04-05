@@ -4,9 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { registerWebhook, listWebhooks, WEBHOOK_EVENTS } from "@/lib/webhooks";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`developer-webhooks:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `developer-webhooks:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -37,16 +41,23 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ webhooks });
   } catch (error) {
-    console.error("GET /api/developer/webhooks error:", error);
+    logger.error(
+      "GET /api/developer/webhooks error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch webhooks" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`developer-webhooks:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `developer-webhooks:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -70,13 +81,13 @@ export async function POST(request: Request) {
       if (!["http:", "https:"].includes(parsed.protocol)) {
         return NextResponse.json(
           { error: "url must use http or https protocol" },
-          { status: 400 }
+          { status: 400 },
         );
       }
     } catch {
       return NextResponse.json(
         { error: "url must be a valid URL" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -84,16 +95,18 @@ export async function POST(request: Request) {
     if (!events || !Array.isArray(events) || events.length === 0) {
       return NextResponse.json(
         { error: "events must be a non-empty array" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const validEvents = WEBHOOK_EVENTS as readonly string[];
-    const invalidEvents = events.filter((e: string) => !validEvents.includes(e));
+    const invalidEvents = events.filter(
+      (e: string) => !validEvents.includes(e),
+    );
     if (invalidEvents.length > 0) {
       return NextResponse.json(
         { error: `Invalid events: ${invalidEvents.join(", ")}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -101,7 +114,7 @@ export async function POST(request: Request) {
     if (!apiKeyId) {
       return NextResponse.json(
         { error: "apiKeyId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,20 +123,21 @@ export async function POST(request: Request) {
     });
 
     if (!apiKey) {
-      return NextResponse.json(
-        { error: "API key not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "API key not found" }, { status: 404 });
     }
 
     const webhook = await registerWebhook(apiKeyId, url, events);
 
     return NextResponse.json(webhook, { status: 201 });
   } catch (error) {
-    console.error("POST /api/developer/webhooks error:", error);
+    logger.error(
+      "POST /api/developer/webhooks error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to create webhook" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

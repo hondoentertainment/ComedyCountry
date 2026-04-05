@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPushToUser } from "@/lib/push";
 import { sendEmail } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 /**
  * Cron endpoint: Notify waitlisted users when an event's ticket URL is updated
@@ -48,7 +49,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ notified: 0 });
     }
 
-    const comedianNames = event.comedians.map((ec) => ec.comedian.name).join(", ");
+    const comedianNames = event.comedians
+      .map((ec) => ec.comedian.name)
+      .join(", ");
     const eventTitle = event.title || comedianNames || "Comedy Show";
     let notified = 0;
 
@@ -108,7 +111,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ notified, total: waitlistEntries.length });
   } catch (err) {
-    console.error("Waitlist notify error:", err);
-    return NextResponse.json({ error: "Failed to process notifications" }, { status: 500 });
+    logger.error(
+      "Waitlist notify error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
+    return NextResponse.json(
+      { error: "Failed to process notifications" },
+      { status: 500 },
+    );
   }
 }

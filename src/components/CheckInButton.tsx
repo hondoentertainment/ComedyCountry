@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { logger } from "@/lib/logger";
 
 type Props = {
   venueId: string;
@@ -20,7 +21,11 @@ export function CheckInButton({ venueId }: Props) {
         setCount(data.count);
       }
     } catch (err) {
-      console.error('CheckIn count fetch failed:', err);
+      logger.error(
+        "CheckIn count fetch failed",
+        {},
+        err instanceof Error ? err : undefined,
+      );
     }
   }, [venueId]);
 
@@ -52,9 +57,7 @@ export function CheckInButton({ venueId }: Props) {
       setCheckedIn(true);
       setCount((prev) => (prev !== null ? prev + 1 : 1));
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Something went wrong",
-      );
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -72,11 +75,7 @@ export function CheckInButton({ venueId }: Props) {
             : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white"
         } ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
       >
-        {loading
-          ? "..."
-          : checkedIn
-            ? "Checked In"
-            : "Check In"}
+        {loading ? "..." : checkedIn ? "Checked In" : "Check In"}
       </button>
       {count !== null && (
         <span className="text-sm text-zinc-500">

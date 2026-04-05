@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET - Get list of friends attending an event.
@@ -10,9 +11,12 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ eventId: string }> }
+  { params }: { params: Promise<{ eventId: string }> },
 ) {
-  const rl = await checkRateLimit(`friends-going:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(`friends-going:${getRateLimitKey(request)}`, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -75,7 +79,7 @@ export async function GET(
       new Set([
         ...rsvps.map((r) => r.userId),
         ...ticketHolders.map((t) => t.userId),
-      ])
+      ]),
     );
 
     if (goingIds.length === 0) {
@@ -98,10 +102,14 @@ export async function GET(
       count: friends.length,
     });
   } catch (err) {
-    console.error("Friends going error:", err);
+    logger.error(
+      "Friends going error",
+      {},
+      err instanceof Error ? err : undefined,
+    );
     return NextResponse.json(
       { error: "Failed to fetch friends going" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

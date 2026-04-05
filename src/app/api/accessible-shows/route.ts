@@ -8,6 +8,7 @@ import {
   getAccessibilityFeatureCoverage,
 } from "@/lib/accessibility-discovery";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/accessible-shows
@@ -29,7 +30,10 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
  * - skip: offset for pagination
  */
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`accessible-shows:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
+  const rl = await checkRateLimit(
+    `accessible-shows:${getRateLimitKey(request)}`,
+    { limit: 60, windowSeconds: 60 },
+  );
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
@@ -54,7 +58,12 @@ export async function GET(request: Request) {
 
     // Venue rankings view
     if (view === "venues") {
-      const result = await rankVenuesByAccessibility({ city, state, take, skip });
+      const result = await rankVenuesByAccessibility({
+        city,
+        state,
+        take,
+        skip,
+      });
       return NextResponse.json(result);
     }
 
@@ -66,17 +75,38 @@ export async function GET(request: Request) {
 
     // Specific feature-type shortcuts
     if (type === "asl") {
-      const result = await findASLShows({ city, state, dateFrom, dateTo, take, skip });
+      const result = await findASLShows({
+        city,
+        state,
+        dateFrom,
+        dateTo,
+        take,
+        skip,
+      });
       return NextResponse.json(result);
     }
 
     if (type === "captioned") {
-      const result = await findCaptionedShows({ city, state, dateFrom, dateTo, take, skip });
+      const result = await findCaptionedShows({
+        city,
+        state,
+        dateFrom,
+        dateTo,
+        take,
+        skip,
+      });
       return NextResponse.json(result);
     }
 
     if (type === "sensory") {
-      const result = await findSensoryFriendlyEvents({ city, state, dateFrom, dateTo, take, skip });
+      const result = await findSensoryFriendlyEvents({
+        city,
+        state,
+        dateFrom,
+        dateTo,
+        take,
+        skip,
+      });
       return NextResponse.json(result);
     }
 
@@ -84,9 +114,12 @@ export async function GET(request: Request) {
     const result = await discoverAccessibleShows({
       aslInterpreted: searchParams.get("asl") === "true" || undefined,
       captioned: searchParams.get("captioned") === "true" || undefined,
-      sensoryFriendly: searchParams.get("sensoryFriendly") === "true" || undefined,
-      audioDescribed: searchParams.get("audioDescribed") === "true" || undefined,
-      wheelchairAccessible: searchParams.get("wheelchair") === "true" || undefined,
+      sensoryFriendly:
+        searchParams.get("sensoryFriendly") === "true" || undefined,
+      audioDescribed:
+        searchParams.get("audioDescribed") === "true" || undefined,
+      wheelchairAccessible:
+        searchParams.get("wheelchair") === "true" || undefined,
       hearingLoop: searchParams.get("hearingLoop") === "true" || undefined,
       largePrint: searchParams.get("largePrint") === "true" || undefined,
       serviceAnimal: searchParams.get("serviceAnimal") === "true" || undefined,
@@ -101,9 +134,18 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("GET /api/accessible-shows error:", error);
+    logger.error(
+      "GET /api/accessible-shows error",
+      {},
+      error instanceof Error ? error : undefined,
+    );
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch accessible shows" },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch accessible shows",
+      },
       { status: 500 },
     );
   }

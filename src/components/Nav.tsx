@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { NotificationBell } from "./NotificationBell";
+import { logger } from "@/lib/logger";
 
 const navItems = [
   { href: "/", label: "Discover" },
@@ -58,7 +59,11 @@ export function Nav() {
       .then((r) => r.json())
       .then((data) => setTonightCount((data.events ?? []).length))
       .catch((err) => {
-        console.error('Nav tonight count fetch failed:', err);
+        logger.error(
+          "Nav tonight count fetch failed",
+          {},
+          err instanceof Error ? err : undefined,
+        );
       });
   }, []);
 
@@ -117,17 +122,24 @@ export function Nav() {
                     href={href}
                     aria-current={isActive(href, pathname) ? "page" : undefined}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark ${
-                      href === "/happening-tonight" && tonightCount != null && tonightCount > 0
+                      href === "/happening-tonight" &&
+                      tonightCount != null &&
+                      tonightCount > 0
                         ? "text-brand-gold hover:text-brand-gold/90 hover:bg-brand-gold/10"
                         : "text-zinc-400 hover:text-white hover:bg-white/5"
                     }`}
                   >
                     {label}
-                    {href === "/happening-tonight" && tonightCount != null && tonightCount > 0 && (
-                      <span className="px-1.5 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold" aria-label={`${tonightCount} shows tonight`}>
-                        {tonightCount}
-                      </span>
-                    )}
+                    {href === "/happening-tonight" &&
+                      tonightCount != null &&
+                      tonightCount > 0 && (
+                        <span
+                          className="px-1.5 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold"
+                          aria-label={`${tonightCount} shows tonight`}
+                        >
+                          {tonightCount}
+                        </span>
+                      )}
                   </Link>
                 </li>
               ))}
@@ -188,12 +200,12 @@ export function Nav() {
                   </button>
                 </>
               ) : (
-<Link
-                href="/auth/signin"
-                className="block px-4 py-2 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark"
-              >
-                Sign in
-              </Link>
+                <Link
+                  href="/auth/signin"
+                  className="block px-4 py-2 rounded-lg bg-brand-gold text-brand-dark hover:bg-brand-gold/90 text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-dark"
+                >
+                  Sign in
+                </Link>
               )}
             </div>
           </div>
@@ -248,17 +260,21 @@ export function Nav() {
                     aria-current={isActive(href, pathname) ? "page" : undefined}
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark ${
-                      href === "/happening-tonight" && tonightCount != null && tonightCount > 0
+                      href === "/happening-tonight" &&
+                      tonightCount != null &&
+                      tonightCount > 0
                         ? "text-brand-gold hover:text-brand-gold/90 hover:bg-brand-gold/10"
                         : "text-zinc-300 hover:text-white hover:bg-white/5"
                     }`}
                   >
                     {label}
-                    {href === "/happening-tonight" && tonightCount != null && tonightCount > 0 && (
-                      <span className="px-2 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold">
-                        {tonightCount}
-                      </span>
-                    )}
+                    {href === "/happening-tonight" &&
+                      tonightCount != null &&
+                      tonightCount > 0 && (
+                        <span className="px-2 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-semibold">
+                          {tonightCount}
+                        </span>
+                      )}
                   </Link>
                 </li>
               ))}
@@ -276,7 +292,9 @@ export function Nav() {
                     )}
                     <Link
                       href="/profile"
-                      aria-current={pathname === "/profile" ? "page" : undefined}
+                      aria-current={
+                        pathname === "/profile" ? "page" : undefined
+                      }
                       onClick={() => setMobileOpen(false)}
                       className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                     >
@@ -284,7 +302,9 @@ export function Nav() {
                     </Link>
                     <Link
                       href="/settings"
-                      aria-current={pathname === "/settings" ? "page" : undefined}
+                      aria-current={
+                        pathname === "/settings" ? "page" : undefined
+                      }
                       onClick={() => setMobileOpen(false)}
                       className="block px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
                     >
