@@ -12,7 +12,7 @@ import {
 
 function createRequest(
   url = "http://localhost/api/test",
-  headers: Record<string, string> = {}
+  headers: Record<string, string> = {},
 ): Request {
   return new Request(url, {
     method: "GET",
@@ -160,8 +160,8 @@ describe("jsonError", () => {
 });
 
 describe("logInfo", () => {
-  it("logs structured JSON to console.info", () => {
-    const spy = vi.spyOn(console, "info").mockImplementation(() => {});
+  it("logs structured JSON to console.log via logger.info", () => {
+    const spy = vi.spyOn(console, "log").mockImplementation(() => {});
     const request = createRequest("http://localhost/api/test", {
       "x-request-id": "log-1",
     });
@@ -173,9 +173,9 @@ describe("logInfo", () => {
     expect(logged.level).toBe("info");
     expect(logged.message).toBe("Test message");
     expect(logged.requestId).toBe("log-1");
-    expect(logged.method).toBe("GET");
-    expect(logged.path).toBe("/api/test");
-    expect(logged.extra).toBe("data");
+    expect(logged.context.method).toBe("GET");
+    expect(logged.context.path).toBe("/api/test");
+    expect(logged.context.extra).toBe("data");
 
     spy.mockRestore();
   });
@@ -197,7 +197,7 @@ describe("logError", () => {
     expect(logged.requestId).toBe("log-err");
     expect(logged.error.name).toBe("Error");
     expect(logged.error.message).toBe("boom");
-    expect(logged.userId).toBe("u1");
+    expect(logged.context.userId).toBe("u1");
 
     spy.mockRestore();
   });
@@ -211,7 +211,7 @@ describe("logError", () => {
     logError(request, "String error", "just a string");
 
     const logged = JSON.parse(spy.mock.calls[0][0] as string);
-    expect(logged.error.message).toBe("just a string");
+    expect(logged.context.errorDetail.message).toBe("just a string");
 
     spy.mockRestore();
   });

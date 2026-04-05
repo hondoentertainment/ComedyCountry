@@ -1,4 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    $queryRaw: vi.fn().mockResolvedValue([{ "?column?": 1 }]),
+  },
+}));
+
 import { GET } from "./route";
 
 describe("GET /api/health", () => {
@@ -29,6 +36,6 @@ describe("GET /api/health", () => {
   it("returns exactly two keys", async () => {
     const res = await GET();
     const data = await res.json();
-    expect(Object.keys(data)).toEqual(["status", "timestamp"]);
+    expect(Object.keys(data)).toEqual(["status", "timestamp", "database"]);
   });
 });

@@ -14,6 +14,11 @@ vi.mock("bcryptjs", () => ({
   hash: vi.fn().mockResolvedValue("hashed-password"),
 }));
 
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 4 }),
+  getRateLimitKey: vi.fn().mockReturnValue("127.0.0.1"),
+}));
+
 import { prisma } from "@/lib/prisma";
 import { resetRateLimitStore } from "@/lib/api";
 
@@ -38,13 +43,14 @@ describe("POST /api/auth/register", () => {
     resetRateLimitStore();
     vi.clearAllMocks();
     mockPrisma.user.findUnique.mockResolvedValue(null);
-    mockPrisma.user.create.mockImplementation((args: { data: { username: string } }) =>
-      Promise.resolve({
-        id: "user-1",
-        username: args.data.username,
-        name: args.data.username,
-        passwordHash: "hashed-password",
-      })
+    mockPrisma.user.create.mockImplementation(
+      (args: { data: { username: string } }) =>
+        Promise.resolve({
+          id: "user-1",
+          username: args.data.username,
+          name: args.data.username,
+          passwordHash: "hashed-password",
+        }),
     );
   });
 
@@ -88,7 +94,7 @@ describe("POST /api/auth/register", () => {
     expect(res.status).toBe(400);
     const data = await res.json();
     expect(data.error).toBe(
-      "Username can only contain letters, numbers, periods, underscores, and hyphens"
+      "Username can only contain letters, numbers, periods, underscores, and hyphens",
     );
   });
 
