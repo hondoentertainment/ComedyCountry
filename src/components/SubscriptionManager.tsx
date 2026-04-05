@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 const PLAN_LABELS: Record<string, string> = {
@@ -50,6 +51,8 @@ export function SubscriptionManager({
     );
   }
 
+  const [cancelMessage, setCancelMessage] = useState<string | null>(null);
+
   const endDate = periodEnd
     ? new Date(periodEnd).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
     : null;
@@ -76,6 +79,12 @@ export function SubscriptionManager({
         </p>
       )}
 
+      {cancelMessage && (
+        <p className="text-sm text-amber-400 mt-3" role="status">
+          {cancelMessage}
+        </p>
+      )}
+
       <div className="flex gap-3 mt-4">
         <Link
           href="/pricing"
@@ -89,7 +98,8 @@ export function SubscriptionManager({
             className="px-3 py-1.5 rounded-lg text-zinc-500 hover:text-red-400 text-sm font-medium transition-colors"
             onClick={() => {
               // In production: call /api/subscriptions/cancel
-              alert("Cancellation would be handled via Stripe in production.");
+              setCancelMessage("Cancellation would be handled via Stripe in production.");
+              setTimeout(() => setCancelMessage(null), 5000);
             }}
           >
             Cancel subscription

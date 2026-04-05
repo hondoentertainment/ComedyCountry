@@ -26,9 +26,9 @@ type VenueMapProps = {
 
 const mapContainerStyle = {
   width: "100%",
-  height: "min(500px, 70vh)",
+  height: "calc(100dvh - 16rem)",
   minHeight: "280px",
-  maxHeight: "calc(100dvh - 200px)",
+  maxHeight: "600px",
 };
 
 const defaultCenter = { lat: 39.8283, lng: -98.5795 }; // USA center
