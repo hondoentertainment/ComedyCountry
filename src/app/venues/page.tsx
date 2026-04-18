@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { listVenues, getVenueStates } from "@/lib/venues";
@@ -57,13 +58,15 @@ export default async function VenuesPage({ searchParams }: PageProps) {
           </div>
         </div>
 
-        <VenueFilterBar
-          states={states}
-          defaultState={state}
-          defaultCity={city}
-          defaultType={type}
-          defaultSearch={search}
-        />
+        <Suspense>
+          <VenueFilterBar
+            states={states}
+            defaultState={state}
+            defaultCity={city}
+            defaultType={type}
+            defaultSearch={search}
+          />
+        </Suspense>
 
         {/* Yelp photo-forward card grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

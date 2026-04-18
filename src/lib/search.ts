@@ -92,3 +92,55 @@ export async function search(q: string, take = 5): Promise<SearchResult> {
     events,
   };
 }
+
+export type AutocompleteType = "venue" | "comedian";
+
+export type AutocompleteVenue = {
+  id: string;
+  name: string;
+  city: string;
+  state: string;
+};
+
+export type AutocompleteComedian = {
+  id: string;
+  name: string;
+  slug: string;
+  headshotUrl: string | null;
+};
+
+export async function autocomplete(
+  q: string,
+  type: AutocompleteType,
+  take = 6,
+): Promise<AutocompleteVenue[] | AutocompleteComedian[]> {
+  const term = q.trim().toLowerCase();
+  if (!term || term.length < 2) return [];
+
+  if (type === "venue") {
+    return prisma.venue.findMany({
+      where: {
+        OR: [
+          { name: { contains: term, mode: "insensitive" } },
+          { city: { contains: term, mode: "insensitive" } },
+          { state: { contains: term, mode: "insensitive" } },
+        ],
+      },
+      take,
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, city: true, state: true },
+    });
+  }
+
+  return prisma.comedian.findMany({
+    where: {
+      OR: [
+        { name: { contains: term, mode: "insensitive" } },
+        { slug: { contains: term, mode: "insensitive" } },
+      ],
+    },
+    take,
+    orderBy: { name: "asc" },
+    select: { id: true, name: true, slug: true, headshotUrl: true },
+  });
+}

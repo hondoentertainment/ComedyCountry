@@ -1,28 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import Link from "next/link";
+import { useCallback, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-
-type VenueResult = { id: string; name: string; city: string; state: string };
-type ComedianResult = {
-  id: string;
-  name: string;
-  slug: string;
-  headshotUrl: string | null;
-};
-
-type SearchResults = {
-  venues: VenueResult[];
-  comedians: ComedianResult[];
-  events: Array<unknown>;
-};
+import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchDropdown } from "@/hooks/useSearchDropdown";
+import type { AutocompleteVenue, AutocompleteComedian } from "@/lib/search";
 
 type Props = {
-  /** Which entity type to show suggestions for */
   type: "venue" | "comedian";
-  /** Form field name attribute */
   name: string;
   placeholder?: string;
   defaultValue?: string;
@@ -37,130 +22,94 @@ export function SearchAutocomplete({
   className = "",
 }: Props) {
   const router = useRouter();
-  const [query, setQuery] = useState(defaultValue);
-  const [results, setResults] = useState<SearchResults | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
 
-  // Fetch suggestions with debounce
-  useEffect(() => {
-    if (query.trim().length < 2) {
-      setResults(null);
-      setOpen(false);
-      return;
-    }
-    const ctrl = new AbortController();
-    const t = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `/api/search?q=${encodeURIComponent(query)}&take=6`,
-          { signal: ctrl.signal }
-        );
-        const data: SearchResults = await res.json();
-        setResults(data);
-        setOpen(true);
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") setResults(null);
-      } finally {
-        setLoading(false);
-      }
-    }, 200);
-    return () => {
-      clearTimeout(t);
-      ctrl.abort();
-    };
-  }, [query]);
+  const initialQuery = searchParams.get(name) ?? defaultValue;
 
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, []);
+  const fetchUrl = useCallback(
+    (q: string) =>
+      `/api/autocomplete?type=${type}&q=${encodeURIComponent(q)}&take=6`,
+    [type],
+  );
 
-  // Build options list based on entity type
+  const {
+    query,
+    setQuery,
+    data,
+    loading,
+    open,
+    setOpen,
+    activeIndex,
+    setActiveIndex,
+    containerRef,
+    inputRef,
+    handleKeyDown: baseHandleKeyDown,
+  } = useSearchDropdown<AutocompleteVenue[] | AutocompleteComedian[]>({
+    fetchUrl,
+    initialQuery,
+  });
+
   const items = useMemo(() => {
-    if (!results) return [];
+    if (!data || !Array.isArray(data) || data.length === 0) return [];
     if (type === "venue") {
-      return results.venues.map((v) => ({
+      return (data as AutocompleteVenue[]).map((v) => ({
         id: v.id,
-        href: `/venues/${v.id}`,
         label: v.name,
         sublabel: `${v.city}, ${v.state}`,
+        headshotUrl: null as string | null,
       }));
     }
-    return results.comedians.map((c) => ({
+    return (data as AutocompleteComedian[]).map((c) => ({
       id: c.id,
-      href: `/comedians/${c.slug}`,
       label: c.name,
       sublabel: null as string | null,
       headshotUrl: c.headshotUrl,
     }));
-  }, [results, type]);
+  }, [data, type]);
 
   const hasItems = items.length > 0;
-  const isEmpty = results && !hasItems && query.trim().length >= 2 && !loading;
+  const isEmpty =
+    data && Array.isArray(data) && data.length === 0 && query.trim().length >= 2 && !loading;
 
-  // Reset active index when items change
   useEffect(() => {
     setActiveIndex((i) => (i >= items.length ? -1 : i));
-  }, [items.length]);
+  }, [items.length, setActiveIndex]);
 
-  // Scroll active option into view
-  useEffect(() => {
-    if (activeIndex >= 0 && open) {
-      document
-        .getElementById(`autocomplete-option-${type}-${activeIndex}`)
-        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    }
-  }, [activeIndex, open, type]);
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (
-        !open &&
-        hasItems &&
-        (e.key === "ArrowDown" || e.key === "ArrowUp")
-      ) {
-        e.preventDefault();
-        setOpen(true);
-        setActiveIndex(e.key === "ArrowDown" ? 0 : items.length - 1);
-        return;
+  const submitFilter = useCallback(
+    (value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
       }
-      if (!open || !hasItems) {
-        if (e.key === "Escape") setOpen(false);
-        return;
-      }
-      if (e.key === "Escape") {
-        setOpen(false);
-        setActiveIndex(-1);
-        inputRef.current?.focus();
-      } else if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setActiveIndex((i) => (i < items.length - 1 ? i + 1 : 0));
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setActiveIndex((i) => (i <= 0 ? items.length - 1 : i - 1));
-      } else if (e.key === "Enter" && activeIndex >= 0 && items[activeIndex]) {
-        e.preventDefault();
-        router.push(items[activeIndex].href);
-        setOpen(false);
-        setActiveIndex(-1);
-      }
-      // If Enter is pressed without an active selection, the form submits normally
+      params.delete("page");
+      const basePath = type === "venue" ? "/venues" : "/comedians";
+      router.push(`${basePath}?${params.toString()}`);
     },
-    [open, hasItems, activeIndex, items, router]
+    [searchParams, name, type, router],
+  );
+
+  const onSelect = useCallback(
+    (index: number) => {
+      if (items[index]) {
+        setQuery(items[index].label);
+        submitFilter(items[index].label);
+      }
+    },
+    [items, setQuery, submitFilter],
+  );
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => baseHandleKeyDown(e, items.length, onSelect),
+    [baseHandleKeyDown, items.length, onSelect],
+  );
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(e.target.value);
+    },
+    [setQuery],
   );
 
   const listboxId = `autocomplete-listbox-${type}`;
@@ -176,9 +125,9 @@ export function SearchAutocomplete({
         name={name}
         type="search"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onFocus={() => results && hasItems && setOpen(true)}
-        onKeyDown={handleKeyDown}
+        onChange={handleChange}
+        onFocus={() => data && hasItems && setOpen(true)}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         role="combobox"
         aria-expanded={!!(open && (loading || hasItems || isEmpty))}
@@ -187,7 +136,7 @@ export function SearchAutocomplete({
         aria-controls={listboxId}
         aria-activedescendant={
           activeIndex >= 0 && activeIndex < items.length
-            ? `autocomplete-option-${type}-${activeIndex}`
+            ? `search-dropdown-option-${activeIndex}`
             : undefined
         }
         autoComplete="off"
@@ -210,22 +159,22 @@ export function SearchAutocomplete({
                 const isActive = i === activeIndex;
                 return (
                   <li key={item.id}>
-                    <Link
-                      id={`autocomplete-option-${type}-${i}`}
-                      href={item.href}
-                      onClick={() => setOpen(false)}
+                    <button
+                      id={`search-dropdown-option-${i}`}
+                      type="button"
+                      onClick={() => {
+                        setOpen(false);
+                        setQuery(item.label);
+                        submitFilter(item.label);
+                      }}
                       onMouseEnter={() => setActiveIndex(i)}
-                      className={`flex items-center gap-3 px-4 py-2 hover:bg-zinc-800 ${isActive ? "bg-zinc-800" : ""}`}
+                      className={`flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-zinc-800 ${isActive ? "bg-zinc-800" : ""}`}
                       role="option"
                       aria-selected={isActive}
                     >
-                      {type === "comedian" &&
-                        "headshotUrl" in item &&
-                        (item as { headshotUrl: string | null }).headshotUrl ? (
+                      {type === "comedian" && item.headshotUrl ? (
                         <Image
-                          src={
-                            (item as { headshotUrl: string }).headshotUrl
-                          }
+                          src={item.headshotUrl}
                           alt={item.label}
                           width={28}
                           height={28}
@@ -246,7 +195,7 @@ export function SearchAutocomplete({
                           </span>
                         )}
                       </div>
-                    </Link>
+                    </button>
                   </li>
                 );
               })}

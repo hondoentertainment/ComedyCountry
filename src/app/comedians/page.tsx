@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { listComedians, listDistinctGenres } from "@/lib/comedians";
@@ -64,12 +65,14 @@ export default async function ComediansPage({ searchParams }: PageProps) {
           </div>
         </div>
 
-        <ComedianFilterBar
-          genres={genres}
-          defaultStatus={status}
-          defaultGenre={genre}
-          defaultSearch={search}
-        />
+        <Suspense>
+          <ComedianFilterBar
+            genres={genres}
+            defaultStatus={status}
+            defaultGenre={genre}
+            defaultSearch={search}
+          />
+        </Suspense>
 
         {/* Spotify-style card grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

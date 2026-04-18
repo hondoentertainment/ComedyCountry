@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSearchDropdown } from "@/hooks/useSearchDropdown";
 
 type SearchResults = {
   venues: Array<{ id: string; name: string; city: string; state: string }>;
@@ -24,60 +25,29 @@ type SearchResults = {
 
 type Option = { href: string };
 
+const fetchUrl = (q: string) => `/api/search?q=${encodeURIComponent(q)}&take=5`;
+
 export function SearchBar() {
   const router = useRouter();
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResults | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (query.length < 2) {
-      setResults(null);
-      return;
-    }
-    const ctrl = new AbortController();
-    const t = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `/api/search?q=${encodeURIComponent(query)}&take=5`,
-          { signal: ctrl.signal }
-        );
-        const data = await res.json();
-        setResults(data);
-        setOpen(true);
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") setResults(null);
-      } finally {
-        setLoading(false);
-      }
-    }, 200);
-    return () => {
-      clearTimeout(t);
-      ctrl.abort();
-    };
-  }, [query]);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, []);
+  const {
+    query,
+    setQuery,
+    data: results,
+    loading,
+    open,
+    setOpen,
+    activeIndex,
+    setActiveIndex,
+    containerRef,
+    inputRef,
+    handleKeyDown: baseHandleKeyDown,
+  } = useSearchDropdown<SearchResults>({ fetchUrl });
 
   const hasResults =
     results &&
     (results.venues.length > 0 || results.comedians.length > 0 || results.events.length > 0);
   const isEmpty = results && !hasResults && query.length >= 2 && !loading;
 
-  // Flat list of options for arrow-key navigation (comedians, venues, events, "view all")
   const options: Option[] = useMemo(
     () =>
       hasResults
@@ -88,55 +58,20 @@ export function SearchBar() {
             { href: `/search?q=${encodeURIComponent(query)}` },
           ]
         : [],
-    [hasResults, results, query]
+    [hasResults, results, query],
   );
   const optionCount = options.length;
 
-  // Reset active index when options change
-  useEffect(() => {
-    setActiveIndex((i) => (i >= optionCount ? -1 : i));
-  }, [optionCount]);
-
-  // Scroll active option into view for keyboard users
-  useEffect(() => {
-    if (activeIndex >= 0 && open) {
-      document.getElementById(`search-option-${activeIndex}`)?.scrollIntoView({
-        block: "nearest",
-        behavior: "smooth",
-      });
-    }
-  }, [activeIndex, open]);
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!open && optionCount > 0 && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
-        e.preventDefault();
-        setOpen(true);
-        setActiveIndex(e.key === "ArrowDown" ? 0 : optionCount - 1);
-        return;
-      }
-      if (!open || optionCount === 0) {
-        if (e.key === "Escape") setOpen(false);
-        return;
-      }
-      if (e.key === "Escape") {
-        setOpen(false);
-        setActiveIndex(-1);
-        inputRef.current?.focus();
-      } else if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setActiveIndex((i) => (i < optionCount - 1 ? i + 1 : 0));
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setActiveIndex((i) => (i <= 0 ? optionCount - 1 : i - 1));
-      } else if (e.key === "Enter" && activeIndex >= 0 && options[activeIndex]) {
-        e.preventDefault();
-        router.push(options[activeIndex].href);
-        setOpen(false);
-        setActiveIndex(-1);
-      }
+  const onSelect = useCallback(
+    (index: number) => {
+      if (options[index]) router.push(options[index].href);
     },
-    [open, optionCount, activeIndex, options, router]
+    [options, router],
+  );
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => baseHandleKeyDown(e, optionCount, onSelect),
+    [baseHandleKeyDown, optionCount, onSelect],
   );
 
   return (
@@ -151,7 +86,7 @@ export function SearchBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results && setOpen(true)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={onKeyDown}
         placeholder="Search…"
         role="combobox"
         aria-expanded={!!(open && (loading || hasResults || isEmpty))}
@@ -160,7 +95,7 @@ export function SearchBar() {
         aria-controls="search-results"
         aria-activedescendant={
           activeIndex >= 0 && activeIndex < optionCount
-            ? `search-option-${activeIndex}`
+            ? `search-dropdown-option-${activeIndex}`
             : undefined
         }
         className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:border-transparent"
@@ -190,7 +125,7 @@ export function SearchBar() {
                       return (
                         <li key={c.id}>
                           <Link
-                            id={`search-option-${idx}`}
+                            id={`search-dropdown-option-${idx}`}
                             href={`/comedians/${c.slug}`}
                             onClick={() => setOpen(false)}
                             onMouseEnter={() => setActiveIndex(idx)}
@@ -231,7 +166,7 @@ export function SearchBar() {
                       return (
                         <li key={v.id}>
                           <Link
-                            id={`search-option-${idx}`}
+                            id={`search-dropdown-option-${idx}`}
                             href={`/venues/${v.id}`}
                             onClick={() => setOpen(false)}
                             onMouseEnter={() => setActiveIndex(idx)}
@@ -260,7 +195,7 @@ export function SearchBar() {
                       return (
                         <li key={e.id}>
                           <Link
-                            id={`search-option-${idx}`}
+                            id={`search-dropdown-option-${idx}`}
                             href={`/events/${e.id}`}
                             onClick={() => setOpen(false)}
                             onMouseEnter={() => setActiveIndex(idx)}
@@ -282,7 +217,7 @@ export function SearchBar() {
                 </div>
               )}
               <Link
-                id={`search-option-${optionCount - 1}`}
+                id={`search-dropdown-option-${optionCount - 1}`}
                 href={`/search?q=${encodeURIComponent(query)}`}
                 onClick={() => setOpen(false)}
                 onMouseEnter={() => setActiveIndex(optionCount - 1)}

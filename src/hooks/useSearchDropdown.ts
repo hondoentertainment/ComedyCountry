@@ -1,0 +1,133 @@
+"use client";
+
+import { useState, useEffect, useRef, useCallback } from "react";
+
+export interface UseSearchDropdownOptions {
+  fetchUrl: (query: string) => string;
+  debounceMs?: number;
+  minChars?: number;
+  initialQuery?: string;
+}
+
+export interface UseSearchDropdownReturn<T> {
+  query: string;
+  setQuery: (q: string) => void;
+  data: T | null;
+  loading: boolean;
+  open: boolean;
+  setOpen: (o: boolean) => void;
+  activeIndex: number;
+  setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  handleKeyDown: (
+    e: React.KeyboardEvent,
+    optionCount: number,
+    onSelect: (index: number) => void,
+  ) => void;
+}
+
+export function useSearchDropdown<T>({
+  fetchUrl,
+  debounceMs = 200,
+  minChars = 2,
+  initialQuery = "",
+}: UseSearchDropdownOptions): UseSearchDropdownReturn<T> {
+  const [query, setQuery] = useState(initialQuery);
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (query.trim().length < minChars) {
+      setData(null);
+      setOpen(false);
+      return;
+    }
+    const ctrl = new AbortController();
+    const t = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(fetchUrl(query), { signal: ctrl.signal });
+        const json = await res.json();
+        setData(json);
+        setOpen(true);
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") setData(null);
+      } finally {
+        setLoading(false);
+      }
+    }, debounceMs);
+    return () => {
+      clearTimeout(t);
+      ctrl.abort();
+    };
+  }, [query, fetchUrl, debounceMs, minChars]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, []);
+
+  useEffect(() => {
+    if (activeIndex >= 0 && open) {
+      document
+        .getElementById(`search-dropdown-option-${activeIndex}`)
+        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [activeIndex, open]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent, optionCount: number, onSelect: (index: number) => void) => {
+      if (!open && optionCount > 0 && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+        e.preventDefault();
+        setOpen(true);
+        setActiveIndex(e.key === "ArrowDown" ? 0 : optionCount - 1);
+        return;
+      }
+      if (!open || optionCount === 0) {
+        if (e.key === "Escape") setOpen(false);
+        return;
+      }
+      if (e.key === "Escape") {
+        setOpen(false);
+        setActiveIndex(-1);
+        inputRef.current?.focus();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex((i) => (i < optionCount - 1 ? i + 1 : 0));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex((i) => (i <= 0 ? optionCount - 1 : i - 1));
+      } else if (e.key === "Enter" && activeIndex >= 0) {
+        e.preventDefault();
+        onSelect(activeIndex);
+        setOpen(false);
+        setActiveIndex(-1);
+      }
+    },
+    [open, activeIndex],
+  );
+
+  return {
+    query,
+    setQuery,
+    data,
+    loading,
+    open,
+    setOpen,
+    activeIndex,
+    setActiveIndex,
+    containerRef,
+    inputRef,
+    handleKeyDown,
+  };
+}
