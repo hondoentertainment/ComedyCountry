@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
-export interface UseSearchDropdownOptions {
-  fetchUrl: (query: string) => string;
+export interface UseSearchDropdownOptions<T> {
+  fetchFn: (query: string, signal: AbortSignal) => Promise<T>;
   debounceMs?: number;
   minChars?: number;
   initialQuery?: string;
+  fetchOnFocus?: boolean;
 }
 
 export interface UseSearchDropdownReturn<T> {
@@ -25,35 +26,39 @@ export interface UseSearchDropdownReturn<T> {
     optionCount: number,
     onSelect: (index: number) => void,
   ) => void;
+  handleFocus: () => void;
 }
 
 export function useSearchDropdown<T>({
-  fetchUrl,
+  fetchFn,
   debounceMs = 200,
   minChars = 2,
   initialQuery = "",
-}: UseSearchDropdownOptions): UseSearchDropdownReturn<T> {
+  fetchOnFocus = false,
+}: UseSearchDropdownOptions<T>): UseSearchDropdownReturn<T> {
   const [query, setQuery] = useState(initialQuery);
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const hasFetchedPopular = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (query.trim().length < minChars) {
-      setData(null);
-      setOpen(false);
+      if (query.trim().length > 0) {
+        setData(null);
+        setOpen(false);
+      }
       return;
     }
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(fetchUrl(query), { signal: ctrl.signal });
-        const json = await res.json();
-        setData(json);
+        const result = await fetchFn(query, ctrl.signal);
+        setData(result);
         setOpen(true);
       } catch (e) {
         if ((e as Error).name !== "AbortError") setData(null);
@@ -65,7 +70,7 @@ export function useSearchDropdown<T>({
       clearTimeout(t);
       ctrl.abort();
     };
-  }, [query, fetchUrl, debounceMs, minChars]);
+  }, [query, fetchFn, debounceMs, minChars]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -84,6 +89,24 @@ export function useSearchDropdown<T>({
         ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
   }, [activeIndex, open]);
+
+  const handleFocus = useCallback(() => {
+    if (data) {
+      setOpen(true);
+      return;
+    }
+    if (!fetchOnFocus || hasFetchedPopular.current || query.trim().length >= minChars) return;
+    hasFetchedPopular.current = true;
+    const ctrl = new AbortController();
+    setLoading(true);
+    fetchFn("", ctrl.signal)
+      .then((result) => {
+        setData(result);
+        setOpen(true);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [data, fetchOnFocus, fetchFn, query, minChars]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent, optionCount: number, onSelect: (index: number) => void) => {
@@ -129,5 +152,6 @@ export function useSearchDropdown<T>({
     containerRef,
     inputRef,
     handleKeyDown,
+    handleFocus,
   };
 }

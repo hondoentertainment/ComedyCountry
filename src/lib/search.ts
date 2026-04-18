@@ -93,7 +93,7 @@ export async function search(q: string, take = 5): Promise<SearchResult> {
   };
 }
 
-export type AutocompleteType = "venue" | "comedian";
+export type AutocompleteType = "venue" | "comedian" | "event";
 
 export type AutocompleteVenue = {
   id: string;
@@ -109,15 +109,34 @@ export type AutocompleteComedian = {
   headshotUrl: string | null;
 };
 
+export type AutocompleteEvent = {
+  id: string;
+  title: string | null;
+  date: Date;
+  venue: { name: string; city: string; state: string };
+  comedians: Array<{ comedian: { name: string } }>;
+};
+
+export type AutocompleteResult =
+  | AutocompleteVenue[]
+  | AutocompleteComedian[]
+  | AutocompleteEvent[];
+
 export async function autocomplete(
   q: string,
   type: AutocompleteType,
   take = 6,
-): Promise<AutocompleteVenue[] | AutocompleteComedian[]> {
+): Promise<AutocompleteResult> {
   const term = q.trim().toLowerCase();
-  if (!term || term.length < 2) return [];
 
   if (type === "venue") {
+    if (!term || term.length < 2) {
+      return prisma.venue.findMany({
+        take,
+        orderBy: { followers: { _count: "desc" } },
+        select: { id: true, name: true, city: true, state: true },
+      });
+    }
     return prisma.venue.findMany({
       where: {
         OR: [
@@ -132,6 +151,49 @@ export async function autocomplete(
     });
   }
 
+  if (type === "event") {
+    if (!term || term.length < 2) {
+      return prisma.event.findMany({
+        where: { date: { gte: new Date() } },
+        take,
+        orderBy: { attendees: { _count: "desc" } },
+        select: {
+          id: true,
+          title: true,
+          date: true,
+          venue: { select: { name: true, city: true, state: true } },
+          comedians: { select: { comedian: { select: { name: true } } } },
+        },
+      });
+    }
+    return prisma.event.findMany({
+      where: {
+        date: { gte: new Date() },
+        OR: [
+          { title: { contains: term, mode: "insensitive" } },
+          { comedians: { some: { comedian: { name: { contains: term, mode: "insensitive" } } } } },
+          { venue: { name: { contains: term, mode: "insensitive" } } },
+        ],
+      },
+      take,
+      orderBy: { date: "asc" },
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        venue: { select: { name: true, city: true, state: true } },
+        comedians: { select: { comedian: { select: { name: true } } } },
+      },
+    });
+  }
+
+  if (!term || term.length < 2) {
+    return prisma.comedian.findMany({
+      take,
+      orderBy: { followers: { _count: "desc" } },
+      select: { id: true, name: true, slug: true, headshotUrl: true },
+    });
+  }
   return prisma.comedian.findMany({
     where: {
       OR: [

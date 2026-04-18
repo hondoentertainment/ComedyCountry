@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 import { TOURING_STATUS_LABELS } from "@/lib/constants";
 
@@ -16,9 +18,26 @@ export function ComedianFilterBar({
   defaultGenre,
   defaultSearch,
 }: Props) {
+  const router = useRouter();
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const fd = new FormData(e.currentTarget);
+      const params = new URLSearchParams();
+      for (const [key, value] of fd.entries()) {
+        if (typeof value === "string" && value.trim()) {
+          params.set(key, value.trim());
+        }
+      }
+      router.push(`/comedians?${params.toString()}`, { scroll: false });
+    },
+    [router],
+  );
+
   return (
     <form
-      method="get"
+      onSubmit={handleSubmit}
       className="flex flex-wrap gap-3 mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80"
     >
       <SearchAutocomplete

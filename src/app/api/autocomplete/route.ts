@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { autocomplete, type AutocompleteType } from "@/lib/search";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
-const VALID_TYPES = new Set<AutocompleteType>(["venue", "comedian"]);
+const VALID_TYPES = new Set<AutocompleteType>(["venue", "comedian", "event"]);
 
 export async function GET(request: NextRequest) {
   const rl = checkRateLimit(getRateLimitKey(request), { limit: 60, windowSeconds: 60 });
@@ -18,7 +18,10 @@ export async function GET(request: NextRequest) {
   );
 
   if (!type || !VALID_TYPES.has(type)) {
-    return NextResponse.json({ error: "type must be 'venue' or 'comedian'" }, { status: 400 });
+    return NextResponse.json(
+      { error: "type must be 'venue', 'comedian', or 'event'" },
+      { status: 400 },
+    );
   }
 
   try {

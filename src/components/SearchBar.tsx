@@ -5,27 +5,30 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSearchDropdown } from "@/hooks/useSearchDropdown";
+import { HighlightMatch } from "./HighlightMatch";
+import type {
+  AutocompleteComedian,
+  AutocompleteVenue,
+  AutocompleteEvent,
+} from "@/lib/search";
 
-type SearchResults = {
-  venues: Array<{ id: string; name: string; city: string; state: string }>;
-  comedians: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    headshotUrl: string | null;
-  }>;
-  events: Array<{
-    id: string;
-    title: string | null;
-    date: string;
-    venue: { name: string; city: string; state: string };
-    comedians: Array<{ comedian: { name: string } }>;
-  }>;
+type CombinedResults = {
+  comedians: AutocompleteComedian[];
+  venues: AutocompleteVenue[];
+  events: AutocompleteEvent[];
 };
 
 type Option = { href: string };
 
-const fetchUrl = (q: string) => `/api/search?q=${encodeURIComponent(q)}&take=5`;
+async function fetchCombined(q: string, signal: AbortSignal): Promise<CombinedResults> {
+  const qs = q ? `&q=${encodeURIComponent(q)}` : "";
+  const [comedians, venues, events] = await Promise.all([
+    fetch(`/api/autocomplete?type=comedian${qs}&take=4`, { signal }).then((r) => r.json()),
+    fetch(`/api/autocomplete?type=venue${qs}&take=4`, { signal }).then((r) => r.json()),
+    fetch(`/api/autocomplete?type=event${qs}&take=3`, { signal }).then((r) => r.json()),
+  ]);
+  return { comedians, venues, events };
+}
 
 export function SearchBar() {
   const router = useRouter();
@@ -41,12 +44,18 @@ export function SearchBar() {
     containerRef,
     inputRef,
     handleKeyDown: baseHandleKeyDown,
-  } = useSearchDropdown<SearchResults>({ fetchUrl });
+    handleFocus,
+  } = useSearchDropdown<CombinedResults>({
+    fetchFn: fetchCombined,
+    fetchOnFocus: true,
+  });
 
   const hasResults =
     results &&
     (results.venues.length > 0 || results.comedians.length > 0 || results.events.length > 0);
   const isEmpty = results && !hasResults && query.length >= 2 && !loading;
+
+  const isPopular = hasResults && query.trim().length < 2;
 
   const options: Option[] = useMemo(
     () =>
@@ -55,7 +64,9 @@ export function SearchBar() {
             ...results!.comedians.map((c) => ({ href: `/comedians/${c.slug}` })),
             ...results!.venues.map((v) => ({ href: `/venues/${v.id}` })),
             ...results!.events.map((e) => ({ href: `/events/${e.id}` })),
-            { href: `/search?q=${encodeURIComponent(query)}` },
+            ...(query.trim().length >= 2
+              ? [{ href: `/search?q=${encodeURIComponent(query)}` }]
+              : []),
           ]
         : [],
     [hasResults, results, query],
@@ -85,7 +96,7 @@ export function SearchBar() {
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        onFocus={() => results && setOpen(true)}
+        onFocus={handleFocus}
         onKeyDown={onKeyDown}
         placeholder="Search…"
         role="combobox"
@@ -106,13 +117,18 @@ export function SearchBar() {
           role="listbox"
           className="absolute top-full left-0 right-0 mt-1 py-2 rounded-lg bg-brand-surface border border-zinc-700 shadow-xl z-50 max-h-[80vh] overflow-y-auto"
         >
-          {loading && (
+          {loading && !hasResults && (
             <div className="px-4 py-6 text-center text-zinc-500 text-sm">
               Searching…
             </div>
           )}
           {!loading && hasResults && (
             <div className="space-y-4">
+              {isPopular && (
+                <div className="px-4 py-1 text-xs font-medium text-zinc-600">
+                  Popular
+                </div>
+              )}
               {results!.comedians.length > 0 && (
                 <div>
                   <div className="px-4 py-1 text-xs font-medium text-zinc-500 uppercase">
@@ -146,7 +162,9 @@ export function SearchBar() {
                                 {c.name.charAt(0)}
                               </div>
                             )}
-                            <span className="text-white font-medium">{c.name}</span>
+                            <span className="text-white font-medium">
+                              <HighlightMatch text={c.name} query={query} />
+                            </span>
                           </Link>
                         </li>
                       );
@@ -174,7 +192,10 @@ export function SearchBar() {
                             role="option"
                             aria-selected={isActive}
                           >
-                            {v.name} — {v.city}, {v.state}
+                            <HighlightMatch text={v.name} query={query} /> —{" "}
+                            <span className="text-zinc-400 font-normal">
+                              {v.city}, {v.state}
+                            </span>
                           </Link>
                         </li>
                       );
@@ -192,6 +213,8 @@ export function SearchBar() {
                       const idx =
                         results!.comedians.length + results!.venues.length + i;
                       const isActive = idx === activeIndex;
+                      const label =
+                        e.title ?? e.comedians.map((ec) => ec.comedian.name).join(", ");
                       return (
                         <li key={e.id}>
                           <Link
@@ -204,7 +227,7 @@ export function SearchBar() {
                             aria-selected={isActive}
                           >
                             <span className="text-white font-medium">
-                              {e.title ?? e.comedians.map((ec) => ec.comedian.name).join(", ")}
+                              <HighlightMatch text={label} query={query} />
                             </span>
                             <span className="text-zinc-500 text-sm block">
                               {e.venue.name} — {new Date(e.date).toLocaleDateString()}
@@ -216,17 +239,19 @@ export function SearchBar() {
                   </ul>
                 </div>
               )}
-              <Link
-                id={`search-dropdown-option-${optionCount - 1}`}
-                href={`/search?q=${encodeURIComponent(query)}`}
-                onClick={() => setOpen(false)}
-                onMouseEnter={() => setActiveIndex(optionCount - 1)}
-                className={`block px-4 py-2 text-brand-gold hover:bg-zinc-800 text-sm font-medium ${optionCount - 1 === activeIndex ? "bg-zinc-800" : ""}`}
-                role="option"
-                aria-selected={optionCount - 1 === activeIndex}
-              >
-                View all results →
-              </Link>
+              {query.trim().length >= 2 && (
+                <Link
+                  id={`search-dropdown-option-${optionCount - 1}`}
+                  href={`/search?q=${encodeURIComponent(query)}`}
+                  onClick={() => setOpen(false)}
+                  onMouseEnter={() => setActiveIndex(optionCount - 1)}
+                  className={`block px-4 py-2 text-brand-gold hover:bg-zinc-800 text-sm font-medium ${optionCount - 1 === activeIndex ? "bg-zinc-800" : ""}`}
+                  role="option"
+                  aria-selected={optionCount - 1 === activeIndex}
+                >
+                  View all results →
+                </Link>
+              )}
             </div>
           )}
           {!loading && isEmpty && (

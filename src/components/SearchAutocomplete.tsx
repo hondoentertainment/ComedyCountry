@@ -4,6 +4,7 @@ import { useCallback, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSearchDropdown } from "@/hooks/useSearchDropdown";
+import { HighlightMatch } from "./HighlightMatch";
 import type { AutocompleteVenue, AutocompleteComedian } from "@/lib/search";
 
 type Props = {
@@ -26,9 +27,12 @@ export function SearchAutocomplete({
 
   const initialQuery = searchParams.get(name) ?? defaultValue;
 
-  const fetchUrl = useCallback(
-    (q: string) =>
-      `/api/autocomplete?type=${type}&q=${encodeURIComponent(q)}&take=6`,
+  const fetchFn = useCallback(
+    async (q: string, signal: AbortSignal) => {
+      const qs = q ? `&q=${encodeURIComponent(q)}` : "";
+      const res = await fetch(`/api/autocomplete?type=${type}${qs}&take=6`, { signal });
+      return res.json() as Promise<AutocompleteVenue[] | AutocompleteComedian[]>;
+    },
     [type],
   );
 
@@ -44,10 +48,14 @@ export function SearchAutocomplete({
     containerRef,
     inputRef,
     handleKeyDown: baseHandleKeyDown,
+    handleFocus,
   } = useSearchDropdown<AutocompleteVenue[] | AutocompleteComedian[]>({
-    fetchUrl,
+    fetchFn,
     initialQuery,
+    fetchOnFocus: true,
   });
+
+  const isPopular = query.trim().length < 2;
 
   const items = useMemo(() => {
     if (!data || !Array.isArray(data) || data.length === 0) return [];
@@ -85,7 +93,7 @@ export function SearchAutocomplete({
       }
       params.delete("page");
       const basePath = type === "venue" ? "/venues" : "/comedians";
-      router.push(`${basePath}?${params.toString()}`);
+      router.push(`${basePath}?${params.toString()}`, { scroll: false });
     },
     [searchParams, name, type, router],
   );
@@ -126,7 +134,7 @@ export function SearchAutocomplete({
         type="search"
         value={query}
         onChange={handleChange}
-        onFocus={() => data && hasItems && setOpen(true)}
+        onFocus={handleFocus}
         onKeyDown={onKeyDown}
         placeholder={placeholder}
         role="combobox"
@@ -154,52 +162,59 @@ export function SearchAutocomplete({
             </div>
           )}
           {hasItems && (
-            <ul>
-              {items.map((item, i) => {
-                const isActive = i === activeIndex;
-                return (
-                  <li key={item.id}>
-                    <button
-                      id={`search-dropdown-option-${i}`}
-                      type="button"
-                      onClick={() => {
-                        setOpen(false);
-                        setQuery(item.label);
-                        submitFilter(item.label);
-                      }}
-                      onMouseEnter={() => setActiveIndex(i)}
-                      className={`flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-zinc-800 ${isActive ? "bg-zinc-800" : ""}`}
-                      role="option"
-                      aria-selected={isActive}
-                    >
-                      {type === "comedian" && item.headshotUrl ? (
-                        <Image
-                          src={item.headshotUrl}
-                          alt={item.label}
-                          width={28}
-                          height={28}
-                          className="w-7 h-7 rounded-full object-cover shrink-0"
-                        />
-                      ) : type === "comedian" ? (
-                        <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center text-xs text-zinc-400 shrink-0">
-                          {item.label.charAt(0)}
-                        </div>
-                      ) : null}
-                      <div className="min-w-0">
-                        <span className="text-white text-sm font-medium block truncate">
-                          {item.label}
-                        </span>
-                        {item.sublabel && (
-                          <span className="text-zinc-500 text-xs block truncate">
-                            {item.sublabel}
+            <>
+              {isPopular && (
+                <div className="px-4 py-1 text-xs font-medium text-zinc-600">
+                  Popular {type === "venue" ? "venues" : "comedians"}
+                </div>
+              )}
+              <ul>
+                {items.map((item, i) => {
+                  const isActive = i === activeIndex;
+                  return (
+                    <li key={item.id}>
+                      <button
+                        id={`search-dropdown-option-${i}`}
+                        type="button"
+                        onClick={() => {
+                          setOpen(false);
+                          setQuery(item.label);
+                          submitFilter(item.label);
+                        }}
+                        onMouseEnter={() => setActiveIndex(i)}
+                        className={`flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-zinc-800 ${isActive ? "bg-zinc-800" : ""}`}
+                        role="option"
+                        aria-selected={isActive}
+                      >
+                        {type === "comedian" && item.headshotUrl ? (
+                          <Image
+                            src={item.headshotUrl}
+                            alt={item.label}
+                            width={28}
+                            height={28}
+                            className="w-7 h-7 rounded-full object-cover shrink-0"
+                          />
+                        ) : type === "comedian" ? (
+                          <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center text-xs text-zinc-400 shrink-0">
+                            {item.label.charAt(0)}
+                          </div>
+                        ) : null}
+                        <div className="min-w-0">
+                          <span className="text-white text-sm font-medium block truncate">
+                            <HighlightMatch text={item.label} query={query} />
                           </span>
-                        )}
-                      </div>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                          {item.sublabel && (
+                            <span className="text-zinc-500 text-xs block truncate">
+                              {item.sublabel}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
           )}
           {!loading && isEmpty && (
             <div className="px-4 py-3 text-center text-zinc-500 text-sm">
