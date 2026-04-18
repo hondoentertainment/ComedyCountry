@@ -42,6 +42,7 @@ export function useSearchDropdown<T>({
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const hasFetchedPopular = useRef(false);
+  const cacheRef = useRef<Map<string, T>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,11 +54,24 @@ export function useSearchDropdown<T>({
       }
       return;
     }
+    const cacheKey = query.trim().toLowerCase();
+    const cached = cacheRef.current.get(cacheKey);
+    if (cached !== undefined) {
+      setData(cached);
+      setOpen(true);
+      return;
+    }
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       setLoading(true);
       try {
         const result = await fetchFn(query, ctrl.signal);
+        const cache = cacheRef.current;
+        if (cache.size >= 50) {
+          const oldest = cache.keys().next().value!;
+          cache.delete(oldest);
+        }
+        cache.set(cacheKey, result);
         setData(result);
         setOpen(true);
       } catch (e) {
@@ -96,11 +110,24 @@ export function useSearchDropdown<T>({
       return;
     }
     if (!fetchOnFocus || hasFetchedPopular.current || query.trim().length >= minChars) return;
+    const cacheKey = "";
+    const cached = cacheRef.current.get(cacheKey);
+    if (cached !== undefined) {
+      setData(cached);
+      setOpen(true);
+      return;
+    }
     hasFetchedPopular.current = true;
     const ctrl = new AbortController();
     setLoading(true);
     fetchFn("", ctrl.signal)
       .then((result) => {
+        const cache = cacheRef.current;
+        if (cache.size >= 50) {
+          const oldest = cache.keys().next().value!;
+          cache.delete(oldest);
+        }
+        cache.set(cacheKey, result);
         setData(result);
         setOpen(true);
       })

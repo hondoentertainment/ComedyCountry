@@ -4,6 +4,7 @@ import { useCallback, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSearchDropdown } from "@/hooks/useSearchDropdown";
+import { useRecentSearches } from "@/hooks/useRecentSearches";
 import { HighlightMatch } from "./HighlightMatch";
 import type { AutocompleteVenue, AutocompleteComedian } from "@/lib/search";
 
@@ -55,6 +56,9 @@ export function SearchAutocomplete({
     fetchOnFocus: true,
   });
 
+  const { recentSearches, addRecentSearch, clearRecentSearches } =
+    useRecentSearches(type);
+
   const isPopular = query.trim().length < 2;
 
   const items = useMemo(() => {
@@ -103,9 +107,10 @@ export function SearchAutocomplete({
       if (items[index]) {
         setQuery(items[index].label);
         submitFilter(items[index].label);
+        addRecentSearch(items[index].label);
       }
     },
-    [items, setQuery, submitFilter],
+    [items, setQuery, submitFilter, addRecentSearch],
   );
 
   const onKeyDown = useCallback(
@@ -150,7 +155,7 @@ export function SearchAutocomplete({
         autoComplete="off"
         className={className}
       />
-      {open && (loading || hasItems || isEmpty) && (
+      {open && (loading || hasItems || isEmpty || (isPopular && recentSearches.length > 0)) && (
         <div
           id={listboxId}
           role="listbox"
@@ -159,6 +164,52 @@ export function SearchAutocomplete({
           {loading && !hasItems && (
             <div className="px-4 py-3 text-center text-zinc-500 text-sm">
               Searching…
+            </div>
+          )}
+          {isPopular && recentSearches.length > 0 && (
+            <div>
+              <div className="px-4 py-1 flex items-center justify-between">
+                <span className="text-xs font-medium text-zinc-600">Recent</span>
+                <button
+                  type="button"
+                  onClick={() => clearRecentSearches()}
+                  className="text-xs text-zinc-600 hover:text-zinc-400"
+                >
+                  Clear
+                </button>
+              </div>
+              <ul>
+                {recentSearches.map((term) => (
+                  <li key={term}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false);
+                        setQuery(term);
+                        submitFilter(term);
+                      }}
+                      className="flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-zinc-800"
+                    >
+                      <svg
+                        className="w-4 h-4 text-zinc-500 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span className="text-white text-sm font-medium truncate">
+                        {term}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
           {hasItems && (
@@ -180,6 +231,7 @@ export function SearchAutocomplete({
                           setOpen(false);
                           setQuery(item.label);
                           submitFilter(item.label);
+                          addRecentSearch(item.label);
                         }}
                         onMouseEnter={() => setActiveIndex(i)}
                         className={`flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-zinc-800 ${isActive ? "bg-zinc-800" : ""}`}

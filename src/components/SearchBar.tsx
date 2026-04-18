@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -84,6 +84,18 @@ export function SearchBar() {
     (e: React.KeyboardEvent) => baseHandleKeyDown(e, optionCount, onSelect),
     [baseHandleKeyDown, optionCount, onSelect],
   );
+
+  useEffect(() => {
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }
+    }
+    document.addEventListener("keydown", handleGlobalKeyDown);
+    return () => document.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [inputRef]);
 
   return (
     <div ref={containerRef} className="relative flex-1 max-w-md">
