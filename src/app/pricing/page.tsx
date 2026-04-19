@@ -120,6 +120,9 @@ export default function PricingPage() {
         <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
           From casual fans to touring comedians and major venues. Choose the plan that fits your comedy journey.
         </p>
+        <p className="text-zinc-500 text-sm max-w-2xl mx-auto mt-3">
+          Self-serve subscriptions are live in beta today. Billing portal and deeper team management tools are still rolling out.
+        </p>
       </div>
 
       {/* Fan & Comedian Plans */}

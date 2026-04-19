@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { HomeSections } from "./HomeSections";
+import { HomeHeroActions } from "@/components/HomeHeroActions";
 
 export const dynamic = "force-dynamic";
 
@@ -50,47 +51,18 @@ export default function HomePage() {
       <div className="bg-gradient-to-b from-brand-charcoal/80 to-transparent">
         <div className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2">
-            Find comedy. <span className="text-brand-gold">Anywhere.</span>
+            Find the right comedy night. <span className="text-brand-gold">Fast.</span>
           </h1>
           <p className="text-zinc-400 text-lg mb-8 max-w-xl">
-            Discover venues, track comedian tours, and see what&apos;s worth your night out.
+            Start local, see what is worth leaving the house for, and keep up with the comedians and venues you actually care about.
           </p>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href="/search"
-              className="px-4 py-2.5 rounded-full bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
-            >
-              Search comedians, venues, and events
+          <HomeHeroActions />
+          <div className="mt-6 flex flex-wrap gap-3 text-sm text-zinc-500">
+            <Link href="/feed" className="hover:text-zinc-300 transition-colors">
+              Follow updates from your favorites
             </Link>
-            <Link
-              href="/schedule"
-              className="px-4 py-2.5 rounded-full bg-brand-surface border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-brand-surface-elevated font-medium transition-colors"
-            >
-              Browse schedule
-            </Link>
-            <Link
-              href="/comedians"
-              className="px-4 py-2.5 rounded-full bg-brand-surface border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-brand-surface-elevated font-medium transition-colors"
-            >
-              Comedians
-            </Link>
-            <Link
-              href="/venues"
-              className="px-4 py-2.5 rounded-full bg-brand-surface border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-brand-surface-elevated font-medium transition-colors"
-            >
-              Venues
-            </Link>
-            <Link
-              href="/map"
-              className="px-4 py-2.5 rounded-full bg-brand-surface border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-brand-surface-elevated font-medium transition-colors"
-            >
-              Map
-            </Link>
-            <Link
-              href="/happening-tonight"
-              className="px-4 py-2.5 rounded-full bg-brand-surface border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-brand-surface-elevated font-medium transition-colors"
-            >
-              Happening tonight
+            <Link href="/settings" className="hover:text-zinc-300 transition-colors">
+              Set reminders and location alerts
             </Link>
           </div>
         </div>

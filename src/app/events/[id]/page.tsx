@@ -249,6 +249,51 @@ export default async function EventPage({ params }: PageProps) {
           </section>
         )}
 
+        <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
+          <h2 className="text-lg font-semibold text-white mb-2">Plan your night</h2>
+          <p className="text-zinc-400 text-sm">
+            Know the room, line up nearby options, and make sure you get a reminder before the show starts.
+          </p>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Link
+              href={`/venues/${event.venue.id}`}
+              className="rounded-lg border border-zinc-800 bg-brand-charcoal/50 p-3 hover:border-zinc-700 transition-colors"
+            >
+              <p className="text-sm font-medium text-white">Venue details</p>
+              <p className="text-xs text-zinc-500 mt-1">
+                {event.venue.name} · {event.venue.city}, {event.venue.state}
+              </p>
+            </Link>
+            <Link
+              href={`/schedule?city=${encodeURIComponent(event.venue.city)}&state=${encodeURIComponent(event.venue.state)}`}
+              className="rounded-lg border border-zinc-800 bg-brand-charcoal/50 p-3 hover:border-zinc-700 transition-colors"
+            >
+              <p className="text-sm font-medium text-white">More shows in this city</p>
+              <p className="text-xs text-zinc-500 mt-1">
+                Browse the rest of the {event.venue.city} schedule.
+              </p>
+            </Link>
+            <Link
+              href={`/map?city=${encodeURIComponent(event.venue.city)}&state=${encodeURIComponent(event.venue.state)}`}
+              className="rounded-lg border border-zinc-800 bg-brand-charcoal/50 p-3 hover:border-zinc-700 transition-colors"
+            >
+              <p className="text-sm font-medium text-white">Explore nearby venues</p>
+              <p className="text-xs text-zinc-500 mt-1">
+                See clubs and theaters around {event.venue.city}.
+              </p>
+            </Link>
+            <Link
+              href="/settings"
+              className="rounded-lg border border-zinc-800 bg-brand-charcoal/50 p-3 hover:border-zinc-700 transition-colors"
+            >
+              <p className="text-sm font-medium text-white">Turn on reminders</p>
+              <p className="text-xs text-zinc-500 mt-1">
+                Manage 24-hour and 1-hour show reminders in settings.
+              </p>
+            </Link>
+          </div>
+        </section>
+
         {reputation && (
           <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
             <h2 className="text-lg font-semibold text-white mb-2">Verified crowd take</h2>

@@ -18,13 +18,20 @@ type TonightEvent = {
 
 type Props = {
   initialEvents: TonightEvent[];
+  startNearby?: boolean;
 };
 
-export function HappeningTonightContent({ initialEvents }: Props) {
+export function HappeningTonightContent({ initialEvents, startNearby = false }: Props) {
   const [events, setEvents] = useState<TonightEvent[]>(initialEvents);
   const [loading, setLoading] = useState(false);
-  const [useLocation, setUseLocation] = useState(false);
+  const [useLocation, setUseLocation] = useState(startNearby);
   const [locationError, setLocationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (startNearby) {
+      setUseLocation(true);
+    }
+  }, [startNearby]);
 
   useEffect(() => {
     if (!useLocation) return;

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
+import { useToast } from "./Toast";
 
 const PLAN_LABELS: Record<string, string> = {
   FAN_PRO: "Fan Pro",
@@ -30,7 +31,8 @@ export function SubscriptionManager({
   periodEnd: string | null;
   cancelAtPeriodEnd: boolean;
 }) {
-  const [cancelMessage, setCancelMessage] = useState<string | null>(null);
+  const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
 
   if (!currentPlan || status !== "ACTIVE") {
     return (
@@ -61,6 +63,26 @@ export function SubscriptionManager({
       })
     : null;
 
+  async function scheduleCancellation() {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/subscriptions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cancelAtPeriodEnd: true }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed");
+      }
+      toast("Cancellation scheduled for the end of your billing period.");
+      window.location.reload();
+    } catch {
+      toast("Could not update your subscription right now.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
       <div className="flex items-center justify-between mb-3">
@@ -87,12 +109,6 @@ export function SubscriptionManager({
         </p>
       )}
 
-      {cancelMessage && (
-        <p className="text-sm text-amber-400 mt-3" role="status">
-          {cancelMessage}
-        </p>
-      )}
-
       <div className="flex gap-3 mt-4">
         <Link
           href="/pricing"
@@ -103,19 +119,17 @@ export function SubscriptionManager({
         {!cancelAtPeriodEnd && (
           <button
             type="button"
-            className="px-3 py-1.5 rounded-lg text-zinc-500 hover:text-red-400 text-sm font-medium transition-colors"
-            onClick={() => {
-              // In production: call /api/subscriptions/cancel
-              setCancelMessage(
-                "Cancellation would be handled via Stripe in production.",
-              );
-              setTimeout(() => setCancelMessage(null), 5000);
-            }}
+            className="px-3 py-1.5 rounded-lg text-zinc-500 hover:text-red-400 text-sm font-medium transition-colors disabled:opacity-60"
+            onClick={scheduleCancellation}
+            disabled={saving}
           >
-            Cancel subscription
+            {saving ? "Updating..." : "Cancel subscription"}
           </button>
         )}
       </div>
+      <p className="mt-3 text-xs text-zinc-500">
+        Plan changes happen in-app right now while the full billing portal rolls out.
+      </p>
     </div>
   );
 }

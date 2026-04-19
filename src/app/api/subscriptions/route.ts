@@ -85,6 +85,47 @@ export async function POST(request: Request) {
   }
 }
 
+// PATCH - Update an existing subscription state
+export async function PATCH(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  let body: { cancelAtPeriodEnd?: boolean };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  if (typeof body.cancelAtPeriodEnd !== "boolean") {
+    return NextResponse.json(
+      { error: "cancelAtPeriodEnd must be a boolean" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const subscription = await prisma.subscription.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    if (!subscription) {
+      return NextResponse.json({ error: "Subscription not found" }, { status: 404 });
+    }
+
+    const updated = await prisma.subscription.update({
+      where: { userId: session.user.id },
+      data: { cancelAtPeriodEnd: body.cancelAtPeriodEnd },
+    });
+
+    return NextResponse.json({ subscription: updated });
+  } catch {
+    return NextResponse.json({ error: "Failed to update subscription" }, { status: 500 });
+  }
+}
+
 function getFreeFeatures() {
   return {
     adFree: false,

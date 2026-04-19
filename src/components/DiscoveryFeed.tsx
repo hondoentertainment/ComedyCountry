@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 
 type BuzzLevel = "LOW" | "MEDIUM" | "HIGH" | "VIRAL";
@@ -44,6 +45,36 @@ const BUZZ_COLORS: Record<BuzzLevel, string> = {
   HIGH: "text-orange-500",
   VIRAL: "text-red-500",
 };
+
+function getEntityHref(entityType: string, entityId: string, title: string) {
+  switch (entityType.toUpperCase()) {
+    case "EVENT":
+      return `/events/${entityId}`;
+    case "COMEDIAN":
+      return `/search?q=${encodeURIComponent(title)}`;
+    case "VENUE":
+      return `/venues/${entityId}`;
+    case "CLIP":
+      return "/clips/feed";
+    default:
+      return null;
+  }
+}
+
+function getEntityCta(entityType: string) {
+  switch (entityType.toUpperCase()) {
+    case "EVENT":
+      return "Open show";
+    case "COMEDIAN":
+      return "View comedian";
+    case "VENUE":
+      return "View venue";
+    case "CLIP":
+      return "Watch clips";
+    default:
+      return "View";
+  }
+}
 
 export function DiscoveryFeed() {
   const [activeTab, setActiveTab] = useState<FeedTab>("for-you");
@@ -131,89 +162,99 @@ export function DiscoveryFeed() {
         </div>
       ) : (
         <div className="space-y-4">
-          {items.map((item) => (
-            <div
-              key={item.entityId}
-              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {item.title}
-                  </h3>
-                  {item.subtitle && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                      {item.subtitle}
-                    </p>
-                  )}
+          {items.map((item) => {
+            const href = getEntityHref(item.entityType, item.entityId, item.title);
+
+            return (
+              <div
+                key={item.entityId}
+                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {item.title}
+                    </h3>
+                    {item.subtitle && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                        {item.subtitle}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="ml-3 flex items-center gap-1.5">
+                    <span className="text-xs font-medium text-gray-400">
+                      {Math.round(item.score)}% match
+                    </span>
+                  </div>
                 </div>
 
-                {/* Score Badge */}
-                <div className="ml-3 flex items-center gap-1.5">
-                  <span className="text-xs font-medium text-gray-400">
-                    {Math.round(item.score)}% match
+                {item.socialProof && (
+                  <div className="flex items-center gap-3 mt-3">
+                    {item.socialProof.friendsAttending > 0 && (
+                      <span className="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                        </svg>
+                        {item.socialProof.friendsAttending} friend{item.socialProof.friendsAttending !== 1 ? "s" : ""} going
+                      </span>
+                    )}
+
+                    {item.socialProof.totalAttending > 0 && (
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {item.socialProof.totalAttending} attending
+                      </span>
+                    )}
+
+                    {item.socialProof.buzzLevel !== "LOW" && (
+                      <span className={`inline-flex items-center gap-1 text-sm font-medium ${BUZZ_COLORS[item.socialProof.buzzLevel]}`}>
+                        <BuzzFlames level={item.socialProof.buzzLevel} />
+                        {BUZZ_FLAMES[item.socialProof.buzzLevel]}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {item.boostApplied && (
+                  <span className="inline-flex items-center mt-2 text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    Featured
                   </span>
-                </div>
+                )}
+
+                {item.insight && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedInsight(
+                          expandedInsight === item.entityId ? null : item.entityId,
+                        )
+                      }
+                      className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                    >
+                      {expandedInsight === item.entityId ? "Hide" : "Why this?"}
+                    </button>
+                    {expandedInsight === item.entityId && (
+                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-750 rounded-lg p-2">
+                        {item.insight}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {href && (
+                  <div className="mt-4 flex items-center justify-between text-sm">
+                    <span className="text-gray-500 dark:text-gray-400">
+                      {item.entityType.toLowerCase()}
+                    </span>
+                    <Link href={href} className="font-medium text-brand-gold hover:underline">
+                      {getEntityCta(item.entityType)} →
+                    </Link>
+                  </div>
+                )}
               </div>
-
-              {/* Social Proof Badge */}
-              {item.socialProof && (
-                <div className="flex items-center gap-3 mt-3">
-                  {item.socialProof.friendsAttending > 0 && (
-                    <span className="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 font-medium">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                      </svg>
-                      {item.socialProof.friendsAttending} friend{item.socialProof.friendsAttending !== 1 ? "s" : ""} going
-                    </span>
-                  )}
-
-                  {item.socialProof.totalAttending > 0 && (
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {item.socialProof.totalAttending} attending
-                    </span>
-                  )}
-
-                  {/* Buzz Level Indicator */}
-                  {item.socialProof.buzzLevel !== "LOW" && (
-                    <span className={`inline-flex items-center gap-1 text-sm font-medium ${BUZZ_COLORS[item.socialProof.buzzLevel]}`}>
-                      <BuzzFlames level={item.socialProof.buzzLevel} />
-                      {BUZZ_FLAMES[item.socialProof.buzzLevel]}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Boost Indicator */}
-              {item.boostApplied && (
-                <span className="inline-flex items-center mt-2 text-xs text-amber-600 dark:text-amber-400 font-medium">
-                  Featured
-                </span>
-              )}
-
-              {/* Discovery Insight / Why This */}
-              {item.insight && (
-                <div className="mt-3">
-                  <button
-                    onClick={() =>
-                      setExpandedInsight(
-                        expandedInsight === item.entityId ? null : item.entityId,
-                      )
-                    }
-                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                  >
-                    {expandedInsight === item.entityId ? "Hide" : "Why this?"}
-                  </button>
-                  {expandedInsight === item.entityId && (
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-750 rounded-lg p-2">
-                      {item.insight}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

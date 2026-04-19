@@ -8,7 +8,12 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function HappeningTonightPage() {
+export default async function HappeningTonightPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ nearby?: string }>;
+}) {
+  const params = await searchParams;
   let events: Awaited<ReturnType<typeof getHappeningTonight>> = [];
 
   try {
@@ -33,7 +38,10 @@ export default async function HappeningTonightPage() {
           Live comedy shows today and tonight. Filter by location to see what&apos;s near you.
         </p>
 
-        <HappeningTonightContent initialEvents={serialized} />
+        <HappeningTonightContent
+          initialEvents={serialized}
+          startNearby={params.nearby === "1"}
+        />
       </div>
     </div>
   );

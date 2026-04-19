@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-import { GET, POST } from "./route";
+import { GET, POST, PATCH } from "./route";
 
 vi.mock("next-auth", () => ({
   getServerSession: vi.fn(),
@@ -15,6 +15,7 @@ vi.mock("@/lib/prisma", () => ({
     subscription: {
       findUnique: vi.fn(),
       upsert: vi.fn(),
+      update: vi.fn(),
     },
   },
 }));
@@ -100,5 +101,58 @@ describe("POST /api/subscriptions", () => {
     expect(res.status).toBe(200);
     expect(data.features.analytics).toBe(true);
     expect(data.features.verifiedBadge).toBe(true);
+  });
+});
+
+describe("PATCH /api/subscriptions", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("returns 401 when not authenticated", async () => {
+    vi.mocked(getServerSession).mockResolvedValue(null);
+    const req = new NextRequest("http://localhost/api/subscriptions", {
+      method: "PATCH",
+      body: JSON.stringify({ cancelAtPeriodEnd: true }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const res = await PATCH(req);
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 404 when there is no subscription", async () => {
+    vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } } as never);
+    vi.mocked(prisma.subscription.findUnique).mockResolvedValue(null);
+    const req = new NextRequest("http://localhost/api/subscriptions", {
+      method: "PATCH",
+      body: JSON.stringify({ cancelAtPeriodEnd: true }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const res = await PATCH(req);
+    expect(res.status).toBe(404);
+  });
+
+  it("updates cancelAtPeriodEnd for an active subscription", async () => {
+    vi.mocked(getServerSession).mockResolvedValue({ user: { id: "u1" } } as never);
+    vi.mocked(prisma.subscription.findUnique).mockResolvedValue({
+      id: "sub1",
+      userId: "u1",
+      plan: "FAN_PRO",
+      status: "ACTIVE",
+    } as never);
+    vi.mocked(prisma.subscription.update).mockResolvedValue({
+      id: "sub1",
+      cancelAtPeriodEnd: true,
+    } as never);
+
+    const req = new NextRequest("http://localhost/api/subscriptions", {
+      method: "PATCH",
+      body: JSON.stringify({ cancelAtPeriodEnd: true }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const res = await PATCH(req);
+    expect(res.status).toBe(200);
+    expect(prisma.subscription.update).toHaveBeenCalledWith({
+      where: { userId: "u1" },
+      data: { cancelAtPeriodEnd: true },
+    });
   });
 });

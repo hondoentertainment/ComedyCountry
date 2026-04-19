@@ -92,6 +92,20 @@ export default async function SchedulePage({ searchParams }: PageProps) {
               {total} show{total !== 1 ? "s" : ""} from {formatShortDate(fromDate)} for the next 30 days
             </p>
           </div>
+          <div className="flex flex-wrap gap-2 text-sm">
+            <Link
+              href="/happening-tonight?nearby=1"
+              className="px-3 py-1.5 rounded-full bg-brand-gold/10 text-brand-gold border border-brand-gold/30 hover:bg-brand-gold/15 transition-colors"
+            >
+              Find shows near me tonight
+            </Link>
+            <Link
+              href="/settings"
+              className="px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-600 transition-colors"
+            >
+              Set location alerts
+            </Link>
+          </div>
         </div>
 
         {/* Yelp-style filter bar */}

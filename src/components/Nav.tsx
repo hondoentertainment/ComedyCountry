@@ -11,18 +11,21 @@ import { logger } from "@/lib/logger";
 
 const navItems = [
   { href: "/", label: "Discover" },
-  { href: "/venues", label: "Venues" },
-  { href: "/comedians", label: "Comedians" },
+  { href: "/happening-tonight", label: "Near Me" },
   { href: "/schedule", label: "Schedule" },
-  { href: "/happening-tonight", label: "Tonight" },
-  { href: "/trending", label: "Trending" },
-  { href: "/specials", label: "Specials" },
+  { href: "/comedians", label: "Comedians" },
+  { href: "/venues", label: "Venues" },
   { href: "/lists", label: "Lists" },
-  { href: "/news", label: "News" },
 ];
 
 const moreItems = [
   { href: "/map", label: "Map" },
+  { href: "/feed", label: "Feed" },
+  { href: "/discover", label: "Discovery Feed" },
+  { href: "/for-you", label: "For You" },
+  { href: "/trending", label: "Trending" },
+  { href: "/news", label: "News" },
+  { href: "/specials", label: "Specials" },
   { href: "/following", label: "Following" },
   { href: "/tickets", label: "My Tickets" },
   { href: "/taste-profile", label: "Taste Profile" },
@@ -38,7 +41,6 @@ const moreItems = [
   { href: "/podcasts", label: "Podcasts" },
   { href: "/compare", label: "Compare" },
   { href: "/wrapped", label: "Wrapped" },
-  { href: "/for-you", label: "For You" },
   { href: "/pricing", label: "Pricing" },
 ];
 
@@ -96,7 +98,8 @@ export function Nav() {
           <Link
             href="/search"
             className="md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] -m-2 rounded-lg text-zinc-400 hover:text-brand-gold hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:ring-offset-2 focus:ring-offset-brand-dark"
-            aria-label="Search venues, comedians, and events"
+            aria-label="Search"
+            title="Search venues, comedians, and events"
           >
             <svg
               className="w-6 h-6"

@@ -85,10 +85,10 @@ export default async function MyTicketsPage() {
             <div className="rounded-card bg-brand-surface border border-zinc-800/80 p-6 text-center">
               <p className="text-zinc-400">No upcoming tickets.</p>
               <Link
-                href="/events"
+                href="/schedule"
                 className="inline-block mt-3 text-brand-gold hover:underline text-sm"
               >
-                Browse events
+                Browse schedule
               </Link>
             </div>
           ) : (
