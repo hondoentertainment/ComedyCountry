@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { HomeSections } from "./HomeSections";
 import { HomeHeroActions } from "@/components/HomeHeroActions";
+import { HomeMarketSpotlight } from "@/components/HomeMarketSpotlight";
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +67,10 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+        <HomeMarketSpotlight />
       </div>
 
       <Suspense fallback={<HomeSectionsFallback />}>

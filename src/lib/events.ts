@@ -61,7 +61,13 @@ export async function getEventById(id: string, options?: { includeTicketTypes?: 
     include: {
       venue: true,
       comedians: {
-        include: { comedian: true },
+        include: {
+          comedian: {
+            include: {
+              genres: true,
+            },
+          },
+        },
       },
       ...(options?.includeTicketTypes && {
         ticketTypes: { select: { capacity: true, sold: true } },

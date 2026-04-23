@@ -1,3 +1,7 @@
+# Product Direction Update
+
+The next product wave is the trusted comedy graph: freshness infrastructure, fair + accessible discovery, best-room recommendations, route builder / booking intelligence, and narrow ticketing pilots. See [FEATURE-ROADMAP.md](./FEATURE-ROADMAP.md) and [NEXT-IMPLEMENTATION-WAVE.md](./NEXT-IMPLEMENTATION-WAVE.md) for the current sequencing.
+
 # Product Requirements Document (PRD)
 
 ## Punchline Atlas

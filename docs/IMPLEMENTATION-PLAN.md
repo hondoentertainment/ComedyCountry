@@ -1,3 +1,9 @@
+# Roadmap Sequencing Update
+
+The implementation plan below is historical. The next implementation wave should follow [FEATURE-ROADMAP.md](./FEATURE-ROADMAP.md) and [NEXT-IMPLEMENTATION-WAVE.md](./NEXT-IMPLEMENTATION-WAVE.md): Freshness Infrastructure, Fair + Accessible Discovery, Best Room For This Comic Tonight, Route Builder / Booking Intelligence, then Narrow Ticketing Pilots.
+
+Work that does not improve freshness, trust, room fit, booking/routing, fair discovery, accessible discovery, target-city depth, or a constrained ticketing pilot should be deferred.
+
 # Implementation Plan
 
 ## Punchline Atlas

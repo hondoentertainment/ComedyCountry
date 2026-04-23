@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { logger } from "@/lib/logger";
+import { DiscoveryPageNav } from "@/components/DiscoveryPageNav";
 
 interface RecommendedComedian {
   id: string;
@@ -80,10 +81,10 @@ export default function ForYouPage() {
   return (
     <div className="min-h-screen">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <h1 className="text-3xl font-bold text-brand-gold mb-2">For You</h1>
-        <p className="text-zinc-400 mb-8">
-          Personalized picks based on your follows, reviews, and taste.
-        </p>
+        <DiscoveryPageNav
+          title="For You"
+          description="Sharper recommendations based on your follows, reviews, and the comedy styles you keep coming back to."
+        />
 
         {loading ? (
           <div className="space-y-4">

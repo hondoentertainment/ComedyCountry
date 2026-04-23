@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { FeedContent } from "@/components/FeedContent";
+import { DiscoveryPageNav } from "@/components/DiscoveryPageNav";
 
 export const metadata = {
   title: "Feed | Punchline Atlas",
@@ -17,10 +18,10 @@ export default async function FeedPage() {
   return (
     <div className="min-h-screen">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <h1 className="text-3xl font-bold text-brand-gold mb-2">Feed</h1>
-        <p className="text-zinc-400 mb-8">
-          Notifications and updates from comedians and venues you follow.
-        </p>
+        <DiscoveryPageNav
+          title="Feed"
+          description="The inbox for your comedy graph: new shows, updates, and fresh reasons to come back."
+        />
         <FeedContent />
       </div>
     </div>

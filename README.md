@@ -1,6 +1,15 @@
 # Punchline Atlas
 
-The nationwide comedy intelligence platform — discover venues, track comedian tours, and never miss a show.
+The trusted comedy graph for fans, independent clubs, bookers, and working comedians.
+
+Punchline Atlas helps people trust what is happening in comedy right now through fresh lineups, venue intel, scene intel, accessibility metadata, fair pricing, and creator-to-ticket attribution.
+
+## Product Focus
+
+- **Core story:** The trusted comedy graph, not a generic all-in-one live events app
+- **Initial ICP:** Independent clubs, bookers, and working comedians in NYC, LA, Chicago, Austin, and Philly
+- **Operating principle:** Prioritize data freshness over surface area
+- **Flagship features:** Best room for this comic tonight, route builder / booking intelligence, and fair + accessible show discovery
 
 ## Documentation
 
@@ -10,6 +19,9 @@ The nationwide comedy intelligence platform — discover venues, track comedian 
 | [Implementation Plan](docs/IMPLEMENTATION-PLAN.md) | Phases, tasks, timeline |
 | [Technical Architecture](docs/TECHNICAL-ARCHITECTURE.md) | System design, tech stack |
 | [Use Cases](docs/USE-CASES.md) | Top use cases with flows |
+| [Feature Roadmap](docs/FEATURE-ROADMAP.md) | Sequenced trusted-graph roadmap |
+| [Trusted Comedy Graph Strategy](docs/TRUSTED-COMEDY-GRAPH.md) | Positioning, ICP, flagship features, and sequencing |
+| [Next Implementation Wave](docs/NEXT-IMPLEMENTATION-WAVE.md) | Execution matrix, current hooks, gaps, and first sprint backlog |
 
 ## Tech Stack
 
@@ -58,38 +70,38 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Project Structure
 
-```
+```text
 src/
-├── app/              # Next.js App Router pages
-│   ├── venues/       # Venue repository
-│   ├── comedians/    # Comedian profiles
-│   └── schedule/     # National calendar
-├── components/       # React components
-└── lib/              # Utilities, Prisma client
+|-- app/              # Next.js App Router pages
+|   |-- venues/       # Venue repository
+|   |-- comedians/    # Comedian profiles
+|   `-- schedule/     # National calendar
+|-- components/       # React components
+`-- lib/              # Utilities, Prisma client
 prisma/
-├── schema.prisma     # Database schema
-└── seed.ts           # Seed data
+|-- schema.prisma     # Database schema
+`-- seed.ts           # Seed data
 ```
 
 ## Database Schema
 
-- **Venue** — Name, location, capacity, type, photos, social links
-- **Comedian** — Name, bio, genres, touring status, specials
-- **Event** — Venue + comedian(s), date, showtime, ticket link
-- **YouTubeChannel** — Linked to comedian, subscriber count, videos
-- **User / Follow** — Phase 3: follow comedians and venues
+- **Venue** - Name, location, capacity, type, photos, social links
+- **Comedian** - Name, bio, genres, touring status, specials
+- **Event** - Venue + comedian(s), date, showtime, ticket link
+- **YouTubeChannel** - Linked to comedian, subscriber count, videos
+- **User / Follow** - Phase 3: follow comedians and venues
 
 ## Scripts
 
-| Command       | Description                    |
+| Command | Description |
 |---------------|--------------------------------|
-| `npm run dev` | Start development server       |
-| `npm run build` | Build for production         |
-| `npm run db:push` | Push schema to database (local prototyping only)   |
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run db:push` | Push schema to database (local prototyping only) |
 | `npm run db:migrate:deploy` | Apply committed migrations |
 | `npm run db:studio` | Open Prisma Studio (GUI) |
-| `npm run db:seed` | Run seed script           |
-| `npm run db:sync-youtube` | Sync YouTube channel stats (requires YOUTUBE_API_KEY) |
+| `npm run db:seed` | Run seed script |
+| `npm run db:sync-youtube` | Sync YouTube channel stats (requires `YOUTUBE_API_KEY`) |
 | `npm run db:import -- <file>` | Bulk import venues and events from JSON file |
 | `npm run db:prod:setup` | Push schema + seed (for production init) |
 
@@ -99,9 +111,9 @@ prisma/
 
 Use one of:
 
-- **[Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)** (Storage tab → Create Database)
-- **[Neon](https://neon.tech)** – free tier, copy the connection string
-- **[Supabase](https://supabase.com)** – free tier, use the Postgres URL from Project Settings
+- **[Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)** (Storage tab -> Create Database)
+- **[Neon](https://neon.tech)** - free tier, copy the connection string
+- **[Supabase](https://supabase.com)** - free tier, use the Postgres URL from Project Settings
 
 ### 2. Initialize the database (one-time)
 
@@ -116,8 +128,8 @@ Then run `npm run db:seed` only when you explicitly want to seed that environmen
 ### 3. Connect to Vercel
 
 1. Push your code to GitHub (init git if needed: `git init && git add . && git commit -m "Initial commit"`)
-2. Go to [vercel.com](https://vercel.com) → **Add New** → **Project** → Import your repo
-3. Add **Environment Variables** (Project → Settings → Environment Variables):
+2. Go to [vercel.com](https://vercel.com) -> **Add New** -> **Project** -> Import your repo
+3. Add **Environment Variables** (Project -> Settings -> Environment Variables):
 
 | Variable | Required | Notes |
 |----------|----------|-------|

@@ -2,6 +2,12 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
+import {
+  buildPreferredLocationHref,
+  formatPreferredLocation,
+  readPreferredLocation,
+  type PreferredLocation,
+} from "@/lib/preferred-location";
 
 type BuzzLevel = "LOW" | "MEDIUM" | "HIGH" | "VIRAL";
 
@@ -81,6 +87,11 @@ export function DiscoveryFeed() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedInsight, setExpandedInsight] = useState<string | null>(null);
+  const [preferredLocation, setPreferredLocation] = useState<PreferredLocation | null>(null);
+
+  useEffect(() => {
+    setPreferredLocation(readPreferredLocation());
+  }, []);
 
   const fetchFeed = useCallback(async (tab: FeedTab) => {
     setLoading(true);
@@ -124,16 +135,22 @@ export function DiscoveryFeed() {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      {/* Tab Bar */}
-      <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg mb-6 overflow-x-auto">
+      <div className="mb-4 rounded-2xl border border-zinc-800 bg-brand-surface/80 p-4">
+        <p className="text-sm font-medium text-white">One recommendation system, four lenses</p>
+        <p className="mt-1 text-sm text-zinc-500">
+          Switch between your direct matches, tonight&apos;s best bets, what is rising nearby, and the shows your comedy graph is pulling toward.
+        </p>
+      </div>
+
+      <div className="mb-6 flex gap-1 overflow-x-auto rounded-xl bg-brand-surface p-1">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => handleTabChange(tab.key)}
-            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
+            className={`flex-1 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.key
-                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                ? "bg-brand-gold/15 text-brand-gold"
+                : "text-zinc-400 hover:text-white"
             }`}
           >
             {tab.label}
@@ -147,18 +164,34 @@ export function DiscoveryFeed() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="animate-pulse bg-gray-100 dark:bg-gray-800 rounded-xl h-32"
+              className="h-32 animate-pulse rounded-xl bg-brand-surface"
             />
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          <p className="text-lg font-medium">Nothing here yet</p>
-          <p className="text-sm mt-1">
+        <div className="rounded-2xl border border-zinc-800 border-dashed bg-brand-surface px-6 py-12 text-center">
+          <p className="text-lg font-medium text-white">Nothing here yet</p>
+          <p className="mt-1 text-sm text-zinc-500">
             {activeTab === "friends"
               ? "Follow some comedy fans to see where they're going!"
               : "Check back soon for personalized recommendations."}
           </p>
+          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm">
+            <Link href="/for-you" className="text-brand-gold hover:underline">
+              Open direct recommendations
+            </Link>
+            <Link href="/settings" className="text-zinc-400 hover:text-zinc-200">
+              Tune alerts
+            </Link>
+            {preferredLocation && (
+              <Link
+                href={buildPreferredLocationHref("/schedule", preferredLocation)}
+                className="text-zinc-400 hover:text-zinc-200"
+              >
+                Browse {formatPreferredLocation(preferredLocation)}
+              </Link>
+            )}
+          </div>
         </div>
       ) : (
         <div className="space-y-4">
@@ -168,22 +201,22 @@ export function DiscoveryFeed() {
             return (
               <div
                 key={item.entityId}
-                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"
+                className="rounded-xl border border-zinc-800 bg-brand-surface p-4 transition-colors hover:border-zinc-700"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                    <h3 className="font-semibold text-white">
                       {item.title}
                     </h3>
                     {item.subtitle && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                      <p className="mt-0.5 text-sm text-zinc-400">
                         {item.subtitle}
                       </p>
                     )}
                   </div>
 
                   <div className="ml-3 flex items-center gap-1.5">
-                    <span className="text-xs font-medium text-gray-400">
+                    <span className="text-xs font-medium text-zinc-500">
                       {Math.round(item.score)}% match
                     </span>
                   </div>
@@ -192,7 +225,7 @@ export function DiscoveryFeed() {
                 {item.socialProof && (
                   <div className="flex items-center gap-3 mt-3">
                     {item.socialProof.friendsAttending > 0 && (
-                      <span className="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                      <span className="inline-flex items-center gap-1 text-sm font-medium text-brand-gold">
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                         </svg>
@@ -201,7 +234,7 @@ export function DiscoveryFeed() {
                     )}
 
                     {item.socialProof.totalAttending > 0 && (
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="text-sm text-zinc-500">
                         {item.socialProof.totalAttending} attending
                       </span>
                     )}
@@ -216,7 +249,7 @@ export function DiscoveryFeed() {
                 )}
 
                 {item.boostApplied && (
-                  <span className="inline-flex items-center mt-2 text-xs text-amber-600 dark:text-amber-400 font-medium">
+                  <span className="mt-2 inline-flex items-center text-xs font-medium text-brand-gold">
                     Featured
                   </span>
                 )}
@@ -230,12 +263,12 @@ export function DiscoveryFeed() {
                           expandedInsight === item.entityId ? null : item.entityId,
                         )
                       }
-                      className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                      className="text-xs text-zinc-500 transition-colors hover:text-zinc-300"
                     >
                       {expandedInsight === item.entityId ? "Hide" : "Why this?"}
                     </button>
                     {expandedInsight === item.entityId && (
-                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-750 rounded-lg p-2">
+                      <p className="mt-1 rounded-lg bg-brand-charcoal/60 p-2 text-sm text-zinc-300">
                         {item.insight}
                       </p>
                     )}
@@ -244,7 +277,7 @@ export function DiscoveryFeed() {
 
                 {href && (
                   <div className="mt-4 flex items-center justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="text-zinc-500">
                       {item.entityType.toLowerCase()}
                     </span>
                     <Link href={href} className="font-medium text-brand-gold hover:underline">

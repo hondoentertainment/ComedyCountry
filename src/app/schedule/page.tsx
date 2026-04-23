@@ -8,6 +8,7 @@ import { formatEventPrice } from "@/lib/format";
 import { Pagination } from "@/components/Pagination";
 import { FriendsGoingBadge } from "@/components/FriendsGoingBadge";
 import { ClearScheduleFiltersLink } from "./ClearScheduleFiltersLink";
+import { ScheduleLocationActions } from "./ScheduleLocationActions";
 
 export const metadata = {
   title: "Schedule | Punchline Atlas",
@@ -107,6 +108,8 @@ export default async function SchedulePage({ searchParams }: PageProps) {
             </Link>
           </div>
         </div>
+
+        <ScheduleLocationActions currentCity={city} currentState={state} />
 
         {/* Yelp-style filter bar */}
         <form

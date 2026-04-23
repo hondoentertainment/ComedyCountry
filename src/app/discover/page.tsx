@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { DiscoveryFeed } from "@/components/DiscoveryFeed";
+import { DiscoveryPageNav } from "@/components/DiscoveryPageNav";
 
 export default function DiscoverPage() {
   const { status } = useSession();
@@ -29,11 +30,10 @@ export default function DiscoverPage() {
   return (
     <div className="min-h-screen">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <h1 className="text-3xl font-bold text-brand-gold mb-2">Discover</h1>
-        <p className="text-zinc-400 mb-8">
-          Your personalized comedy discovery feed powered by your taste, friends,
-          and what&apos;s trending.
-        </p>
+        <DiscoveryPageNav
+          title="Discover"
+          description="A best-first feed that mixes your taste profile, social proof, and what is catching fire nearby."
+        />
 
         {status === "loading" ? (
           <div className="space-y-4">

@@ -84,6 +84,21 @@ export function FeedContent() {
 
   return (
     <div>
+      <div className="mb-6 rounded-2xl border border-zinc-800 bg-brand-surface/80 p-4">
+        <p className="text-sm font-medium text-white">Your return loop</p>
+        <p className="mt-1 text-sm text-zinc-500">
+          This feed is where followed comedians, rooms, waitlist wins, and reminder-worthy updates come back to find you.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-3 text-sm">
+          <Link href="/following" className="text-brand-gold hover:underline">
+            Review who you follow
+          </Link>
+          <Link href="/settings" className="text-zinc-400 hover:text-zinc-200">
+            Tune digests and reminders
+          </Link>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <div className="flex gap-2">
           <button
@@ -132,12 +147,20 @@ export function FeedContent() {
           <p className="text-zinc-500 text-sm mb-4 max-w-md mx-auto">
             When new events are added for comedians or venues you follow, you&apos;ll see them here.
           </p>
-          <Link
-            href="/comedians"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
-          >
-            Browse comedians
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/comedians"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
+            >
+              Browse comedians
+            </Link>
+            <Link
+              href="/settings"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-zinc-700 text-zinc-300 font-medium hover:border-zinc-600 hover:text-white transition-colors"
+            >
+              Turn on digests
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-2">

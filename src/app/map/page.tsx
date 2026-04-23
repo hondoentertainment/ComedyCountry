@@ -3,6 +3,7 @@ import {
   listVenuesWithCoordinates,
   getVenueStatesWithCoordinates,
 } from "@/lib/venues";
+import { MapLocationActions } from "./MapLocationActions";
 
 const MapPageContent = nextDynamic(
   () =>
@@ -58,6 +59,7 @@ export default async function MapPage({ searchParams }: PageProps) {
         <p className="text-zinc-400 mb-8">
           Browse comedy venues across the country. Click a marker for details.
         </p>
+        <MapLocationActions currentCity={city} currentState={state} />
         <MapPageContent
           venues={venuesForMap}
           states={states.map((s) => s.state)}

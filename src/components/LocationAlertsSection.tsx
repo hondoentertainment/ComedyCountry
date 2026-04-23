@@ -205,8 +205,16 @@ export function LocationAlertsSection() {
     <div className="p-4 rounded-lg bg-brand-charcoal/50 border border-zinc-800">
       <h3 className="text-lg font-semibold text-white mb-1">Location alerts</h3>
       <p className="text-zinc-400 text-sm mb-4">
-        Get notified when new shows are added within your radius for comedians you follow.
+        Get notified when new shows are added within your radius for comedians you follow. This works best when paired with a saved home market and a weekly digest.
       </p>
+      <div className="mb-4 flex flex-wrap gap-3 text-sm">
+        <Link href="/settings" className="text-brand-gold hover:underline">
+          Save home market
+        </Link>
+        <Link href="/feed" className="text-zinc-400 hover:text-zinc-200 transition-colors">
+          Review follow updates
+        </Link>
+      </div>
 
       {atLimit && (
         <p className="text-sm text-brand-gold mb-4 flex items-center gap-2">

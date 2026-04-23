@@ -140,6 +140,64 @@ export async function HomeSections() {
         </div>
       )}
 
+      {session?.user && (
+        <section className="mb-14">
+          <div className="rounded-2xl border border-zinc-800 bg-brand-surface/80 p-6">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-[0.18em] text-zinc-500">
+                  Your comedy loop
+                </p>
+                <h2 className="mt-2 text-2xl font-bold text-white">Keep the app working for you between visits</h2>
+                <p className="mt-2 max-w-2xl text-sm text-zinc-400">
+                  Use recommendations to decide, feed to keep up, and alerts to make sure the right shows come back to find you.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 text-sm">
+                <Link href="/for-you" className="text-brand-gold hover:underline">
+                  Open direct recommendations
+                </Link>
+                <Link href="/feed" className="text-zinc-400 hover:text-zinc-200 transition-colors">
+                  Review follow updates
+                </Link>
+                <Link href="/settings" className="text-zinc-400 hover:text-zinc-200 transition-colors">
+                  Tune digests and reminders
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <Link
+                href="/for-you"
+                className="rounded-xl border border-zinc-800 bg-brand-charcoal/40 p-4 hover:border-zinc-700 transition-colors"
+              >
+                <p className="text-sm font-medium text-white">For You</p>
+                <p className="mt-1 text-2xl font-bold text-brand-gold">{forYouEvents.length}</p>
+                <p className="mt-1 text-xs text-zinc-500">Shows already lined up from your follows and taste profile.</p>
+              </Link>
+              <Link
+                href="/feed"
+                className="rounded-xl border border-zinc-800 bg-brand-charcoal/40 p-4 hover:border-zinc-700 transition-colors"
+              >
+                <p className="text-sm font-medium text-white">Feed</p>
+                <p className="mt-1 text-2xl font-bold text-brand-gold">{tonightEvents.length}</p>
+                <p className="mt-1 text-xs text-zinc-500">Live reasons to come back, with tonight&apos;s momentum ready to check.</p>
+              </Link>
+              <Link
+                href="/taste-profile"
+                className="rounded-xl border border-zinc-800 bg-brand-charcoal/40 p-4 hover:border-zinc-700 transition-colors"
+              >
+                <p className="text-sm font-medium text-white">Comedy DNA</p>
+                <p className="mt-1 text-sm font-semibold text-zinc-200">
+                  {tasteProfile?.topAttributes?.slice(0, 2).map((attribute) => attribute.replace(/_/g, " ")).join(" • ") || "Build your taste profile"}
+                </p>
+                <p className="mt-2 text-xs text-zinc-500">Explainable recommendation signals, not just generic popularity.</p>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Happening Tonight — prominent */}
       {tonightEvents.length > 0 && (
         <section className="mb-14">
@@ -220,8 +278,16 @@ export async function HomeSections() {
         <section className="mb-14">
           <h2 className="text-2xl font-bold text-white mb-6">Made for you</h2>
           <p className="text-zinc-400 text-sm mb-6 max-w-md">
-            Shows from comedians and venues you follow.
+            Shows from comedians and venues you follow, plus the recommendation signals that keep getting sharper as you use the app.
           </p>
+          <div className="mb-4 flex flex-wrap gap-3 text-sm">
+            <Link href="/feed" className="text-brand-gold hover:underline">
+              See follow updates
+            </Link>
+            <Link href="/settings" className="text-zinc-400 hover:text-zinc-200 transition-colors">
+              Turn on weekly digests
+            </Link>
+          </div>
           {tasteProfile?.topAttributes?.length ? (
             <div className="mb-6 p-4 rounded-card bg-brand-surface border border-zinc-800">
               <p className="text-white font-medium mb-1">Your comedy DNA</p>

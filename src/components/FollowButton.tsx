@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useToast } from "./Toast";
 
 type FollowButtonProps = {
@@ -47,7 +48,11 @@ export function FollowButton({
 
       const data = (await res.json()) as { following: boolean };
       setFollowing(data.following);
-      toast(data.following ? `Following ${type}!` : `Unfollowed ${type}.`);
+      toast(
+        data.following
+          ? `Following ${type}. New shows can now flow into your feed.`
+          : `Unfollowed ${type}.`,
+      );
     } catch (err) {
       setFollowing(previousFollowing);
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -75,6 +80,18 @@ export function FollowButton({
       {error && (
         <span className="text-xs text-red-400" role="alert">
           {error}
+        </span>
+      )}
+      {following && !error && (
+        <span className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+          <span>You&apos;ll see new-show updates in your feed.</span>
+          <Link href="/feed" className="text-brand-gold hover:underline">
+            Open feed
+          </Link>
+          <span className="text-zinc-700">·</span>
+          <Link href="/settings" className="text-zinc-400 hover:text-zinc-200">
+            Tune alerts
+          </Link>
         </span>
       )}
     </span>

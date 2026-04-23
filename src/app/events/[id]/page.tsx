@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { getEventById } from "@/lib/events";
 import { getUserReview, getEventRatingStats } from "@/lib/event-reviews";
 import { formatEventPrice } from "@/lib/format";
-import { SHOW_TYPE_LABELS } from "@/lib/constants";
+import { SHOW_TYPE_LABELS, VENUE_TYPE_LABELS } from "@/lib/constants";
 import { EventReviewsSection } from "@/components/EventReviewsSection";
 import { EventShareButtons } from "@/components/EventShareButtons";
 import { EventStructuredData } from "@/components/StructuredData";
@@ -15,10 +15,17 @@ import { FriendsGoingBadge } from "@/components/FriendsGoingBadge";
 import { CalendarExport } from "@/components/CalendarExport";
 import { TicketButton } from "@/components/TicketButton";
 import WaitlistButton from "@/components/WaitlistButton";
+import { EventActionDock } from "@/components/EventActionDock";
 import { getEventReputationSummary } from "@/lib/live-reputation";
 import { getComedyPassportSummary } from "@/lib/comedy-passport";
 import { getEventRecommendationInsight } from "@/lib/recommendations";
 import { getSimilarEvents } from "@/lib/similar-events";
+import {
+  getCatalogSignals,
+  getEventUrgency,
+  getEventVibeTags,
+  getLineupBreakdown,
+} from "@/lib/event-insights";
 
 export const dynamic = "force-dynamic";
 
@@ -98,6 +105,55 @@ export default async function EventPage({ params }: PageProps) {
   const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
   const img = event.comedians[0]?.comedian?.headshotUrl;
   const siteUrl = process.env.NEXTAUTH_URL ?? "https://punchline-atlas.vercel.app";
+  const lineup = getLineupBreakdown(event.comedians);
+  const urgency = getEventUrgency({
+    date: event.date,
+    showtime: event.showtime,
+    showType: event.showType,
+    venue: {
+      name: event.venue.name,
+      city: event.venue.city,
+      state: event.venue.state,
+      type: event.venue.type,
+      capacity: event.venue.capacity,
+    },
+    comedians: event.comedians,
+    totalCapacity,
+    totalSold,
+    reviewCount: stats.count,
+  });
+  const vibeTags = getEventVibeTags({
+    date: event.date,
+    showtime: event.showtime,
+    showType: event.showType,
+    venue: {
+      name: event.venue.name,
+      city: event.venue.city,
+      state: event.venue.state,
+      type: event.venue.type,
+      capacity: event.venue.capacity,
+    },
+    comedians: event.comedians,
+  });
+  const catalogSignals = getCatalogSignals({
+    date: event.date,
+    showtime: event.showtime,
+    showType: event.showType,
+    venue: {
+      name: event.venue.name,
+      city: event.venue.city,
+      state: event.venue.state,
+      type: event.venue.type,
+      capacity: event.venue.capacity,
+    },
+    comedians: event.comedians,
+  });
+  const priceLabel = formatEventPrice(event.priceMin, event.priceMax) ?? "Price not listed yet";
+  const roomLabel = VENUE_TYPE_LABELS[event.venue.type] ?? event.venue.type;
+  const lineupLabel =
+    lineup.headline.length > 0
+      ? lineup.headline.join(", ")
+      : lineup.all.slice(0, 2).join(", ");
 
   return (
     <div className="min-h-screen">
@@ -139,7 +195,7 @@ export default async function EventPage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-3xl px-4 py-8 pb-28 sm:px-6 sm:pb-8">
         <Link
           href="/schedule"
           className="inline-flex items-center text-sm text-zinc-400 hover:text-brand-gold transition-colors mb-6"
@@ -147,7 +203,7 @@ export default async function EventPage({ params }: PageProps) {
           ← Back to Events
         </Link>
 
-        <div className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
+        <div id="event-actions" className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
           <p className="text-zinc-400">
             {formatDate(event.date)}
             {event.showtime && ` • ${event.showtime}`}
@@ -158,6 +214,17 @@ export default async function EventPage({ params }: PageProps) {
           <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded bg-zinc-700/80 text-zinc-300">
             {SHOW_TYPE_LABELS[event.showType] ?? event.showType}
           </span>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="rounded-full bg-brand-gold/10 px-2.5 py-1 text-xs text-brand-gold">
+              {urgency.label}
+            </span>
+            <span className="rounded-full bg-zinc-800 px-2.5 py-1 text-xs text-zinc-300">
+              {priceLabel}
+            </span>
+            <span className="rounded-full bg-zinc-800 px-2.5 py-1 text-xs text-zinc-300">
+              {roomLabel}
+            </span>
+          </div>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <EventShareButtons
               title={title}
@@ -182,9 +249,12 @@ export default async function EventPage({ params }: PageProps) {
               <Link
                 key={ec.id}
                 href={`/comedians/${ec.comedian.slug}`}
-                className="text-sm text-zinc-400 hover:text-brand-gold font-medium"
+                className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-brand-charcoal/50 px-3 py-1 text-sm text-zinc-300 hover:border-zinc-700 hover:text-brand-gold font-medium transition-colors"
               >
                 {ec.comedian.name}
+                <span className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+                  {ec.role ?? "headline"}
+                </span>
               </Link>
             ))}
             <span className="flex-1" />
@@ -225,6 +295,74 @@ export default async function EventPage({ params }: PageProps) {
           </div>
         </div>
 
+        <section className="mb-8 rounded-card border border-zinc-800/80 bg-brand-surface p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Should you go?</h2>
+              <p className="mt-1 text-sm text-zinc-400">
+                The fast read on lineup strength, room feel, and whether this is the kind of show worth moving on now.
+              </p>
+            </div>
+            {stats.count > 0 && (
+              <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-300">
+                {stats.avgRating?.toFixed(1)} from {stats.count} review{stats.count !== 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-zinc-800 bg-brand-charcoal/50 p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">Lineup</p>
+              <p className="mt-2 text-sm font-medium text-white">{lineupLabel || "Lineup still filling in"}</p>
+              <p className="mt-1 text-xs text-zinc-500">
+                {lineup.feature.length > 0
+                  ? `${lineup.feature.length} support slot${lineup.feature.length > 1 ? "s" : ""} underneath the headline set.`
+                  : "Single-bill focus, which usually means a cleaner yes-or-no decision."}
+              </p>
+            </div>
+            <div className="rounded-xl border border-zinc-800 bg-brand-charcoal/50 p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">Room</p>
+              <p className="mt-2 text-sm font-medium text-white">
+                {roomLabel} in {event.venue.city}
+              </p>
+              <p className="mt-1 text-xs text-zinc-500">
+                {event.venue.capacity
+                  ? `${event.venue.capacity.toLocaleString()} capacity gives you a read on how intimate or broad the room will feel.`
+                  : `A ${roomLabel.toLowerCase()} setup, which helps set expectations on crowd energy and pacing.`}
+              </p>
+            </div>
+            <div className="rounded-xl border border-zinc-800 bg-brand-charcoal/50 p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">Vibe</p>
+              <p className="mt-2 text-sm font-medium text-white">
+                {vibeTags.slice(0, 2).join(" • ") || "Comedy night"}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {vibeTags.slice(0, 4).map((tag) => (
+                  <span key={tag} className="rounded-full bg-zinc-800 px-2.5 py-1 text-[11px] text-zinc-400">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-xl border border-zinc-800 bg-brand-charcoal/50 p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">Decision</p>
+              <p className="mt-2 text-sm font-medium text-white">{urgency.label}</p>
+              <p className="mt-1 text-xs text-zinc-500">{urgency.detail}</p>
+              <p className="mt-3 text-xs text-zinc-500">
+                {event.ticketUrl
+                  ? "Ticket link is live, so this is ready to convert if the fit feels right."
+                  : "No ticket link yet, so this is a better save-and-track than instant checkout."}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {catalogSignals.map((signal) => (
+              <span key={signal} className="rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1 text-xs text-zinc-300">
+                {signal}
+              </span>
+            ))}
+          </div>
+        </section>
+
         {recommendation && (
           <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
             <h2 className="text-lg font-semibold text-white mb-2">Why this show fits you</h2>
@@ -249,7 +387,7 @@ export default async function EventPage({ params }: PageProps) {
           </section>
         )}
 
-        <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
+        <section id="event-plan" className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">
           <h2 className="text-lg font-semibold text-white mb-2">Plan your night</h2>
           <p className="text-zinc-400 text-sm">
             Know the room, line up nearby options, and make sure you get a reminder before the show starts.
@@ -398,21 +536,24 @@ export default async function EventPage({ params }: PageProps) {
           </section>
         )}
 
-        <EventReviewsSection
-          eventId={id}
-          initialReview={
-            userReview
-              ? {
-                  id: userReview.id,
-                  rating: userReview.rating,
-                  comment: userReview.comment,
-                }
-              : null
-          }
-          initialStats={stats}
-          isSignedIn={!!session?.user}
-        />
+        <div id="event-reviews">
+          <EventReviewsSection
+            eventId={id}
+            initialReview={
+              userReview
+                ? {
+                    id: userReview.id,
+                    rating: userReview.rating,
+                    comment: userReview.comment,
+                  }
+                : null
+            }
+            initialStats={stats}
+            isSignedIn={!!session?.user}
+          />
+        </div>
       </div>
+      <EventActionDock eventId={id} ticketUrl={event.ticketUrl} isSoldOut={isSoldOut} />
     </div>
   );
 }
