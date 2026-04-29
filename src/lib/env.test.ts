@@ -1,81 +1,57 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { assertEnv, validateEnv } from "@/lib/env";
 
-describe("env validation", () => {
-  const originalEnv = { ...process.env };
+describe("validateEnv", () => {
+  it("accepts the minimum required production env", () => {
+    const result = validateEnv({
+      DATABASE_URL: "postgresql://user:password@localhost:5432/punchline_atlas",
+      NEXTAUTH_SECRET: "12345678901234567890123456789012",
+      NEXTAUTH_URL: "https://punchlineatlas.com",
+      NODE_ENV: "production",
+    });
 
-  beforeEach(() => {
-    // Reset module cache so buildEnv() re-runs on each import
-    process.env = { ...originalEnv };
+    expect(result.valid).toBe(true);
+    expect(result.missing).toEqual([]);
+    expect(result.errors).toEqual([]);
   });
 
-  afterEach(() => {
-    process.env = originalEnv;
-  });
-
-  it("validateEnv reports missing required vars", async () => {
-    delete process.env.DATABASE_URL;
-    delete process.env.NEXTAUTH_SECRET;
-    delete process.env.NEXTAUTH_URL;
-
-    // validateEnv is a pure function that doesn't throw
-    const { validateEnv } = await import("@/lib/env");
-    const result = validateEnv();
+  it("reports missing and invalid required env values", () => {
+    const result = validateEnv({
+      DATABASE_URL: "",
+      NEXTAUTH_SECRET: "",
+      NEXTAUTH_URL: "not-a-url",
+    });
 
     expect(result.valid).toBe(false);
-    expect(result.missing).toContain("DATABASE_URL");
-    expect(result.missing).toContain("NEXTAUTH_SECRET");
-    expect(result.missing).toContain("NEXTAUTH_URL");
+    expect(result.missing).toEqual(["DATABASE_URL", "NEXTAUTH_SECRET"]);
+    expect(result.errors).toContain("NEXTAUTH_URL: NEXTAUTH_URL must be a valid URL");
   });
 
-  it("validateEnv passes when all required vars are present", async () => {
-    process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test";
-    process.env.NEXTAUTH_SECRET = "test-secret";
-    process.env.NEXTAUTH_URL = "http://localhost:3000";
+  it("warns about risky production configuration", () => {
+    const result = validateEnv({
+      DATABASE_URL: "postgresql://user:password@localhost:5432/punchline_atlas",
+      NEXTAUTH_SECRET: "change-me-in-production",
+      NEXTAUTH_URL: "http://punchlineatlas.com",
+      NODE_ENV: "production",
+      GOOGLE_CLIENT_ID: "client-id-only",
+    });
 
-    const { validateEnv } = await import("@/lib/env");
-    const result = validateEnv();
-
-    expect(result.valid).toBe(true);
-    expect(result.missing).toHaveLength(0);
-  });
-
-  it("assertEnv throws a clear message listing missing vars when not in test mode", async () => {
-    delete process.env.DATABASE_URL;
-    delete process.env.NEXTAUTH_SECRET;
-    process.env.NEXTAUTH_URL = "http://localhost:3000";
-    (process.env as Record<string, string | undefined>).NODE_ENV = "development";
-
-    const { assertEnv } = await import("@/lib/env");
-
-    expect(() => assertEnv()).toThrowError(
-      /Missing required environment variables: DATABASE_URL, NEXTAUTH_SECRET/
+    expect(result.warnings).toContain(
+      "NEXTAUTH_SECRET looks like a placeholder and should be replaced before production"
     );
+    expect(result.warnings).toContain("NEXTAUTH_URL should use https in production");
+    expect(result.warnings).toContain("Google OAuth is only partially configured");
   });
+});
 
-  it("assertEnv does not throw in test environment", async () => {
-    delete process.env.DATABASE_URL;
-    delete process.env.NEXTAUTH_SECRET;
-    delete process.env.NEXTAUTH_URL;
-    (process.env as Record<string, string | undefined>).NODE_ENV = "test";
-
-    const { assertEnv } = await import("@/lib/env");
-
-    expect(() => assertEnv()).not.toThrow();
-  });
-
-  it("validateEnv warns about placeholder NEXTAUTH_SECRET", async () => {
-    process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test";
-    process.env.NEXTAUTH_SECRET = "change-me-in-production";
-    process.env.NEXTAUTH_URL = "http://localhost:3000";
-
-    const { validateEnv } = await import("@/lib/env");
-    const result = validateEnv();
-
-    expect(result.valid).toBe(true);
-    expect(result.warnings).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining("NEXTAUTH_SECRET is set to the default placeholder"),
-      ])
-    );
+describe("assertEnv", () => {
+  it("throws in production when required env is missing", () => {
+    expect(() =>
+      assertEnv({
+        NODE_ENV: "production",
+        DATABASE_URL: "",
+        NEXTAUTH_SECRET: "",
+        NEXTAUTH_URL: "",
+      })
+    ).toThrow(/Environment validation failed/);
   });
 });

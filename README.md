@@ -22,6 +22,7 @@ Punchline Atlas helps people trust what is happening in comedy right now through
 | [Feature Roadmap](docs/FEATURE-ROADMAP.md) | Sequenced trusted-graph roadmap |
 | [Trusted Comedy Graph Strategy](docs/TRUSTED-COMEDY-GRAPH.md) | Positioning, ICP, flagship features, and sequencing |
 | [Next Implementation Wave](docs/NEXT-IMPLEMENTATION-WAVE.md) | Execution matrix, current hooks, gaps, and first sprint backlog |
+| [Production Operations Runbook](docs/PRODUCTION-OPERATIONS-RUNBOOK.md) | Backup, import, seed, and five-city readiness workflows |
 
 ## Tech Stack
 
@@ -101,8 +102,10 @@ prisma/
 | `npm run db:migrate:deploy` | Apply committed migrations |
 | `npm run db:studio` | Open Prisma Studio (GUI) |
 | `npm run db:seed` | Run seed script |
+| `npm run db:seed-target-cities` | Seed the five priority cities with trusted-graph venue/event data |
 | `npm run db:sync-youtube` | Sync YouTube channel stats (requires `YOUTUBE_API_KEY`) |
 | `npm run db:import -- <file>` | Bulk import venues and events from JSON file |
+| `npm run ops:readiness` | Print target-city coverage, import history, and ops gaps |
 | `npm run db:prod:setup` | Push schema + seed (for production init) |
 
 ## Deployment (Vercel)

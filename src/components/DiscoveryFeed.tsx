@@ -8,6 +8,7 @@ import {
   readPreferredLocation,
   type PreferredLocation,
 } from "@/lib/preferred-location";
+import { TrustBadges } from "@/components/TrustBadges";
 
 type BuzzLevel = "LOW" | "MEDIUM" | "HIGH" | "VIRAL";
 
@@ -27,6 +28,19 @@ type FeedItem = {
   socialProof?: SocialProof;
   insight?: string;
   boostApplied?: boolean;
+  trustBadges?: Array<{ key: string; label: string; tone: "emerald" | "blue" | "amber" | "slate" }>;
+  freshness?: {
+    score: number;
+    status: "fresh" | "aging" | "stale";
+    sourceConfidence: number;
+    lastVerifiedAt: string | null;
+    reasons: string[];
+  };
+  roomFit?: {
+    score: number;
+    label: string;
+    explanation: string;
+  };
 };
 
 type FeedTab = "for-you" | "tonight" | "trending" | "friends";
@@ -248,10 +262,39 @@ export function DiscoveryFeed() {
                   </div>
                 )}
 
+                {(item.trustBadges?.length || item.freshness) && (
+                  <div className="mt-3">
+                    <TrustBadges
+                      badges={item.trustBadges ?? []}
+                      freshness={
+                        item.freshness
+                          ? {
+                              ...item.freshness,
+                              lastVerifiedAt: item.freshness.lastVerifiedAt
+                                ? new Date(item.freshness.lastVerifiedAt)
+                                : null,
+                            }
+                          : undefined
+                      }
+                      limit={3}
+                    />
+                  </div>
+                )}
+
                 {item.boostApplied && (
                   <span className="mt-2 inline-flex items-center text-xs font-medium text-brand-gold">
                     Featured
                   </span>
+                )}
+
+                {item.roomFit && (
+                  <div className="mt-3 rounded-lg bg-brand-charcoal/60 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-medium text-white">{item.roomFit.label}</p>
+                      <span className="text-xs text-brand-gold">{Math.round(item.roomFit.score)}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-zinc-400">{item.roomFit.explanation}</p>
+                  </div>
                 )}
 
                 {item.insight && (

@@ -44,12 +44,21 @@ export async function POST(request: Request) {
   }
 
   let payload: ImportPayload;
+  let dryRun = false;
+  let strictTargetCities = false;
+  let source = "api";
   try {
     const body = await request.json();
     payload = {
       venues: body.venues ?? [],
       events: body.events ?? [],
     };
+    dryRun = body.dryRun === true;
+    strictTargetCities = body.strictTargetCities === true;
+    source =
+      typeof body.source === "string" && body.source.trim().length > 0
+        ? body.source.trim()
+        : request.headers.get("x-import-source")?.trim() || "api";
   } catch {
     return jsonError(request, 400, "Invalid JSON body");
   }
@@ -65,8 +74,15 @@ export async function POST(request: Request) {
     logInfo(request, "Starting bulk import", {
       venues: venueCount,
       events: eventCount,
+      dryRun,
+      strictTargetCities,
+      source,
     });
-    const result = await runBulkImport(payload);
+    const result = await runBulkImport(payload, {
+      dryRun,
+      strictTargetCities,
+      source,
+    });
     return jsonResponse(request, result);
   } catch (err) {
     logError(request, "Bulk import failed", err);

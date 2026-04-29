@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -10,17 +9,9 @@ import { prisma } from "@/lib/prisma";
  * PATCH - Approve/reject a venue claim
  */
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { role: true },
-  });
-  if (user?.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireAdmin();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const { searchParams } = new URL(request.url);
@@ -64,17 +55,9 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { role: true },
-  });
-  if (user?.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireAdmin();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const { claimId, status } = await request.json();
@@ -87,7 +70,7 @@ export async function PATCH(request: Request) {
       where: { id: claimId },
       data: {
         status,
-        reviewedBy: session.user.id,
+        reviewedBy: auth.session.user.id,
         reviewedAt: new Date(),
       },
     });

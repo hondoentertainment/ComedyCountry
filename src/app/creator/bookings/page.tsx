@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { RouteBuilderPanel } from "@/components/RouteBuilderPanel";
 
 interface BookingRequest {
   id: string;
@@ -70,6 +71,10 @@ export default function CreatorBookingsPage() {
         &larr; Creator Hub
       </Link>
       <h1 className="text-2xl font-bold text-brand-gold mb-6">Booking Requests</h1>
+
+      <div className="mb-6">
+        <RouteBuilderPanel />
+      </div>
 
       <div className="flex gap-2 mb-6 flex-wrap">
         {["", "PENDING", "ACCEPTED", "DECLINED", "NEGOTIATING", "CONFIRMED"].map((s) => (

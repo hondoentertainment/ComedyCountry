@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 export async function GET(request: Request) {
   const auth = await requireAdmin();
   if (!auth.authorized) {
-    return NextResponse.json({ error: auth.reason }, { status: 401 });
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const { searchParams } = new URL(request.url);
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const auth = await requireAdmin();
   if (!auth.authorized) {
-    return NextResponse.json({ error: auth.reason }, { status: 401 });
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const body = await request.json();

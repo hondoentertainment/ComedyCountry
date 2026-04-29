@@ -1,21 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
 export async function PATCH(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  // Check admin role
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { role: true },
-  });
-  if (user?.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireAdmin();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const body = await request.json();
@@ -42,7 +32,7 @@ export async function PATCH(request: Request) {
       where: { id: claimId },
       data: {
         status: action === "approve" ? "APPROVED" : "REJECTED",
-        reviewedBy: session.user.id,
+        reviewedBy: auth.session.user.id,
         reviewedAt: new Date(),
       },
     });

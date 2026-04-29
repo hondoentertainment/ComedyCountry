@@ -50,10 +50,7 @@ export async function PUT(request: Request, context: RouteContext) {
   try {
     const admin = await requireAdmin();
     if (!admin.authorized) {
-      return NextResponse.json(
-        { error: admin.reason },
-        { status: admin.reason === "Not authenticated" ? 401 : 403 },
-      );
+      return NextResponse.json({ error: admin.reason }, { status: admin.status });
     }
 
     const { slug } = await context.params;
@@ -91,10 +88,7 @@ export async function DELETE(request: Request, context: RouteContext) {
   try {
     const admin = await requireAdmin();
     if (!admin.authorized) {
-      return NextResponse.json(
-        { error: admin.reason },
-        { status: admin.reason === "Not authenticated" ? 401 : 403 },
-      );
+      return NextResponse.json({ error: admin.reason }, { status: admin.status });
     }
 
     const { slug } = await context.params;

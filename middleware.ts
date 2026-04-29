@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import {
+  applyRequestContextHeaders,
+  getRequestContext,
+  setRequestContextHeaders,
+} from "@/lib/request-context";
 
 export function middleware(request: NextRequest) {
-  const requestHeaders = new Headers(request.headers);
-  const requestId = requestHeaders.get("x-request-id") ?? crypto.randomUUID();
-  requestHeaders.set("x-request-id", requestId);
+  const requestContext = getRequestContext(request);
+  const requestHeaders = setRequestContextHeaders(new Headers(request.headers), requestContext);
 
   const response = NextResponse.next({
     request: {
@@ -12,8 +16,7 @@ export function middleware(request: NextRequest) {
     },
   });
 
-  response.headers.set("x-request-id", requestId);
-  return response;
+  return applyRequestContextHeaders(response, requestContext);
 }
 
 export const config = {

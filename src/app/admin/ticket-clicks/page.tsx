@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
@@ -12,14 +11,8 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function TicketClicksPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/auth/signin");
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { role: true },
-  });
-  if (user?.role !== "admin") redirect("/");
+  const auth = await requireAdmin();
+  if (!auth.authorized) redirect(auth.status === 401 ? "/auth/signin" : "/");
 
   const now = new Date();
   const sevenDaysAgo = new Date(now);
@@ -49,7 +42,7 @@ export default async function TicketClicksPage() {
   const last7dMap = new Map(last7d.map((t) => [t.eventId, t._count.id]));
   const last30dMap = new Map(last30d.map((t) => [t.eventId, t._count.id]));
 
-  const eventIds = [...new Set(totals.map((t) => t.eventId))];
+  const eventIds = Array.from(new Set(totals.map((t) => t.eventId)));
   if (eventIds.length === 0) {
     return (
       <div className="space-y-6">

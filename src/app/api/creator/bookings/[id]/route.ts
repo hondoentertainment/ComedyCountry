@@ -1,32 +1,20 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireCreator } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { getComedianForUser, respondToBooking } from "@/lib/creator";
-import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { respondToBooking } from "@/lib/creator";
 
 export async function POST(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const rl = await checkRateLimit(`creator-bookings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
-  if (!rl.success) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
-  }
-
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const comedian = await getComedianForUser(session.user.id);
-  if (!comedian) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireCreator();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   try {
     const existing = await prisma.bookingRequest.findUnique({ where: { id: params.id } });
-    if (!existing || existing.comedianId !== comedian.id) {
+    if (!existing || existing.comedianId !== auth.comedian.id) {
       return NextResponse.json({ error: "Not found or not yours" }, { status: 404 });
     }
 

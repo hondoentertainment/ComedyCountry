@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const auth = await requireAdmin();
   if (!auth.authorized) {
-    return NextResponse.json({ error: auth.reason }, { status: 401 });
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const { id } = await params;
@@ -30,7 +30,7 @@ export async function PATCH(
 ) {
   const auth = await requireAdmin();
   if (!auth.authorized) {
-    return NextResponse.json({ error: auth.reason }, { status: 401 });
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const { id } = await params;
@@ -61,7 +61,7 @@ export async function DELETE(
 ) {
   const auth = await requireAdmin();
   if (!auth.authorized) {
-    return NextResponse.json({ error: auth.reason }, { status: 401 });
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const { id } = await params;

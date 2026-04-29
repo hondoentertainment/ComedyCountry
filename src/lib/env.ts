@@ -1,131 +1,143 @@
-import { logger } from "@/lib/logger";
+import { z } from "zod";
 
-import { logger } from "@/lib/logger";
+const requiredEnvSchema = z.object({
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  NEXTAUTH_SECRET: z.string().min(1, "NEXTAUTH_SECRET is required"),
+  NEXTAUTH_URL: z.string().url("NEXTAUTH_URL must be a valid URL"),
+});
 
-const required = ["DATABASE_URL", "NEXTAUTH_SECRET", "NEXTAUTH_URL"] as const;
-/** Validate required environment variables at startup and provide typed access. */
+type EnvSource = NodeJS.ProcessEnv;
 
-const requiredKeys = [
-  "DATABASE_URL",
-  "NEXTAUTH_SECRET",
-  "NEXTAUTH_URL",
-] as const;
-
-type RequiredKey = (typeof requiredKeys)[number];
-
-const optionalKeys = [
-  "GOOGLE_CLIENT_ID",
-  "GOOGLE_CLIENT_SECRET",
-  "STRIPE_SECRET_KEY",
-  "STRIPE_PUBLISHABLE_KEY",
-  "STRIPE_WEBHOOK_SECRET",
-  "SMTP_HOST",
-  "SMTP_PORT",
-  "SMTP_USER",
-  "SMTP_PASSWORD",
-  "EMAIL_FROM",
-  "YOUTUBE_API_KEY",
-  "GOOGLE_MAPS_API_KEY",
-  "NEXT_PUBLIC_GOOGLE_MAPS_KEY",
-  "VAPID_PUBLIC_KEY",
-  "VAPID_PRIVATE_KEY",
-  "LOG_LEVEL",
-  "CRON_SECRET",
-  "SENTRY_DSN",
-] as const;
-
-type OptionalKey = (typeof optionalKeys)[number];
-
-type EnvVars = Record<RequiredKey, string> &
-  Record<OptionalKey, string | undefined>;
-
-export function validateEnv(): {
+export type EnvValidationResult = {
   valid: boolean;
   missing: string[];
+  errors: string[];
   warnings: string[];
-} {
-  const missing: string[] = [];
+};
+
+function hasValue(value: string | undefined) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isLikelyPlaceholder(value: string | undefined) {
+  if (!hasValue(value)) {
+    return false;
+  }
+
+  const normalized = value!.trim().toLowerCase();
+  return (
+    normalized.includes("change-me") ||
+    normalized.includes("your-") ||
+    normalized.includes("placeholder") ||
+    normalized === "secret" ||
+    normalized === "changeme"
+  );
+}
+
+function addPairWarning(
+  env: EnvSource,
+  warnings: string[],
+  left: keyof EnvSource,
+  right: keyof EnvSource,
+  label: string
+) {
+  const leftPresent = hasValue(env[left]);
+  const rightPresent = hasValue(env[right]);
+
+  if (leftPresent !== rightPresent) {
+    warnings.push(`${label} is only partially configured`);
+  }
+}
+
+export function validateEnv(env: EnvSource = process.env): EnvValidationResult {
+  const missing = Object.keys(requiredEnvSchema.shape).filter((key) => !hasValue(env[key]));
+  const errors: string[] = [];
   const warnings: string[] = [];
 
-  for (const key of requiredKeys) {
-    if (!process.env[key]) {
-      missing.push(key);
+  const requiredParse = requiredEnvSchema.safeParse({
+    DATABASE_URL: env.DATABASE_URL,
+    NEXTAUTH_SECRET: env.NEXTAUTH_SECRET,
+    NEXTAUTH_URL: env.NEXTAUTH_URL,
+  });
+
+  if (!requiredParse.success) {
+    const fieldErrors = requiredParse.error.flatten().fieldErrors;
+
+    for (const [field, messages] of Object.entries(fieldErrors)) {
+      if (missing.includes(field)) {
+        continue;
+      }
+
+      for (const message of messages ?? []) {
+        errors.push(`${field}: ${message}`);
+      }
     }
   }
 
-  // Warn if NEXTAUTH_SECRET is the default placeholder
-  if (process.env.NEXTAUTH_SECRET === "change-me-in-production") {
-    warnings.push(
-      "NEXTAUTH_SECRET is set to the default placeholder — change this in production",
-    );
+  if (isLikelyPlaceholder(env.NEXTAUTH_SECRET)) {
+    warnings.push("NEXTAUTH_SECRET looks like a placeholder and should be replaced before production");
+  } else if (hasValue(env.NEXTAUTH_SECRET) && env.NEXTAUTH_SECRET!.trim().length < 32) {
+    warnings.push("NEXTAUTH_SECRET is shorter than 32 characters");
   }
 
-  // Warn about missing optional vars that enable key features
-  if (!process.env.STRIPE_SECRET_KEY) {
-    warnings.push(
-      "STRIPE_SECRET_KEY not set — payment processing will be disabled",
-    );
+  if (
+    env.NODE_ENV === "production" &&
+    hasValue(env.NEXTAUTH_URL) &&
+    !env.NEXTAUTH_URL!.startsWith("https://")
+  ) {
+    warnings.push("NEXTAUTH_URL should use https in production");
   }
 
-  if (!process.env.SMTP_HOST) {
-    warnings.push("SMTP_HOST not set — email sending will be disabled");
+  if (!hasValue(env.SENTRY_DSN) && !hasValue(env.NEXT_PUBLIC_SENTRY_DSN)) {
+    warnings.push("Sentry DSN is not configured");
   }
+
+  if (!hasValue(env.CRON_SECRET) && !hasValue(env.CRON_API_KEY)) {
+    warnings.push("Cron protection secret is not configured");
+  }
+
+  addPairWarning(env, warnings, "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "Google OAuth");
+  addPairWarning(env, warnings, "KV_REST_API_URL", "KV_REST_API_TOKEN", "Vercel KV");
+  addPairWarning(
+    env,
+    warnings,
+    "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
+    "VAPID_PRIVATE_KEY",
+    "Web Push VAPID"
+  );
+  addPairWarning(env, warnings, "SENTRY_ORG", "SENTRY_PROJECT", "Sentry release");
+  addPairWarning(env, warnings, "SENTRY_PROJECT", "SENTRY_AUTH_TOKEN", "Sentry build upload");
 
   return {
-    valid: missing.length === 0,
+    valid: missing.length === 0 && errors.length === 0,
     missing,
+    errors,
     warnings,
   };
 }
 
-/** Call at server startup to halt if required vars are missing */
-export function assertEnv(): void {
-  if (process.env.NODE_ENV === "test") return;
+export function assertEnv(env: EnvSource = process.env): void {
+  if (env.NODE_ENV === "test") {
+    return;
+  }
 
-  const { valid, missing, warnings } = validateEnv();
+  const { valid, missing, errors, warnings } = validateEnv(env);
 
-  for (const w of warnings) {
-    logger.warn(`ENV: ${w}`);
+  for (const warning of warnings) {
+    console.warn(`[env] ${warning}`);
   }
 
   if (!valid) {
-    logger.error(
-      `Missing required environment variables: ${missing.join(", ")}`,
-    );
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        `Missing required environment variables: ${missing.join(", ")}`,
-      );
+    const parts = [
+      missing.length > 0 ? `missing: ${missing.join(", ")}` : null,
+      errors.length > 0 ? `errors: ${errors.join("; ")}` : null,
+    ].filter(Boolean);
+
+    const message = `Environment validation failed (${parts.join(" | ")})`;
+    console.error(`[env] ${message}`);
+
+    if (env.NODE_ENV === "production") {
+      throw new Error(message);
     }
-    throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}. ` +
-        "Set them in your .env file or deployment environment.",
-    );
   }
 }
-
-/**
- * Build a typed env object. Required keys are guaranteed to be strings;
- * optional keys may be undefined.
- */
-function buildEnv(): EnvVars {
-  // In non-test environments, validate immediately on import
-  if (process.env.NODE_ENV !== "test") {
-    assertEnv();
-  }
-
-  const env = {} as Record<string, string | undefined>;
-
-  for (const key of requiredKeys) {
-    env[key] = process.env[key];
-  }
-  for (const key of optionalKeys) {
-    env[key] = process.env[key];
-  }
-
-  return env as EnvVars;
-}
-
-/** Typed, validated environment variables. Importing this module in non-test
- *  environments will throw immediately if any required variable is missing. */
-export const env: EnvVars = buildEnv();

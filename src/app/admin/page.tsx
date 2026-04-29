@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getFreshnessDashboardData } from "@/lib/freshness";
 
 export default async function AdminDashboard() {
   let stats = { venues: 0, comedians: 0, events: 0, users: 0, reviews: 0, pendingClaims: 0, subscriptions: 0, ticketClicks: 0 };
+  let freshnessSummary = { staleCount: 0, averageCoverage: 0 };
 
   try {
     const [venues, comedians, events, users, reviews, pendingClaims, subscriptions, ticketClicks] = await Promise.all([
@@ -18,6 +20,16 @@ export default async function AdminDashboard() {
     stats = { venues, comedians, events, users, reviews, pendingClaims, subscriptions, ticketClicks };
   } catch {
     // DB not configured
+  }
+
+  try {
+    const freshness = await getFreshnessDashboardData();
+    freshnessSummary = {
+      staleCount: freshness.summary.staleCount,
+      averageCoverage: freshness.summary.averageCoverage,
+    };
+  } catch {
+    // ignore freshness failures on dashboard load
   }
 
   const cards = [
@@ -91,6 +103,28 @@ export default async function AdminDashboard() {
       {/* Business & Revenue */}
       <h2 className="text-lg font-semibold text-white mb-3">Business & Revenue</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link
+          href="/admin/freshness"
+          className="p-6 rounded-card bg-brand-surface border border-zinc-800/80 hover:border-brand-gold/30 transition-colors group"
+        >
+          <h2 className="text-lg font-semibold text-white group-hover:text-brand-gold transition-colors">
+            Freshness Dashboard
+          </h2>
+          <p className="text-zinc-400 text-sm mt-1">
+            {freshnessSummary.staleCount} stale items queued · {Math.round(freshnessSummary.averageCoverage)} average city coverage
+          </p>
+        </Link>
+        <Link
+          href="/admin/operations"
+          className="p-6 rounded-card bg-brand-surface border border-zinc-800/80 hover:border-cyan-500/30 transition-colors group"
+        >
+          <h2 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors">
+            Operations Readiness
+          </h2>
+          <p className="text-zinc-400 text-sm mt-1">
+            Monitor import guardrails, target-city coverage, and venue or event gaps that block launch quality.
+          </p>
+        </Link>
         <Link
           href="/admin/claims"
           className="p-6 rounded-card bg-brand-surface border border-zinc-800/80 hover:border-orange-500/30 transition-colors group"

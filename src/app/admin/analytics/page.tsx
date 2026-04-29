@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
@@ -11,14 +10,8 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminAnalyticsPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/auth/signin");
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { role: true },
-  });
-  if (user?.role !== "admin") redirect("/");
+  const auth = await requireAdmin();
+  if (!auth.authorized) redirect(auth.status === 401 ? "/auth/signin" : "/");
 
   const now = new Date();
   const thirtyDaysAgo = new Date(now);

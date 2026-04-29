@@ -8,6 +8,8 @@ type ListEventsParams = {
   comedianId?: string;
   city?: string;
   state?: string;
+  accessible?: boolean;
+  fair?: boolean;
   take?: number;
   skip?: number;
 };
@@ -20,6 +22,8 @@ export async function listEvents(params: ListEventsParams = {}) {
     comedianId,
     city,
     state,
+    accessible,
+    fair,
     take = 50,
     skip = 0,
   } = params;
@@ -34,6 +38,8 @@ export async function listEvents(params: ListEventsParams = {}) {
         ...(state && { state: { equals: state, mode: "insensitive" as const } }),
       },
     }),
+    ...(accessible && { accessibilityTags: { some: {} } }),
+    ...(fair && { fairPricePolicy: { isNot: null } }),
   };
 
   const [events, total] = await Promise.all([
@@ -44,6 +50,8 @@ export async function listEvents(params: ListEventsParams = {}) {
       orderBy: { date: "asc" },
       include: {
         venue: true,
+        accessibilityTags: true,
+        fairPricePolicy: true,
         comedians: {
           include: { comedian: true },
         },
@@ -59,7 +67,14 @@ export async function getEventById(id: string, options?: { includeTicketTypes?: 
   return prisma.event.findUnique({
     where: { id },
     include: {
-      venue: true,
+      venue: {
+        include: {
+          accessibilityTags: true,
+          socialLinks: true,
+        },
+      },
+      accessibilityTags: true,
+      fairPricePolicy: true,
       comedians: {
         include: {
           comedian: {

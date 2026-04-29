@@ -1,41 +1,30 @@
-import { describe, it, expect, vi } from "vitest";
-
-vi.mock("@/lib/prisma", () => ({
-  prisma: {
-    $queryRaw: vi.fn().mockResolvedValue([{ "?column?": 1 }]),
-  },
-}));
-
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "./route";
 
 describe("GET /api/health", () => {
-  it("returns 200 with status ok", async () => {
-    const res = await GET();
-    expect(res.status).toBe(200);
-    const data = await res.json();
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-29T12:00:00.000Z"));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("returns an ok status payload", async () => {
+    const response = await GET(new Request("http://localhost/api/health"));
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
     expect(data.status).toBe("ok");
+    expect(data.service).toBe("punchline-atlas");
+    expect(data.environment).toBe("test");
+    expect(data.timestamp).toBe("2026-04-29T12:00:00.000Z");
   });
 
-  it("returns a valid ISO timestamp", async () => {
-    const before = new Date().toISOString();
-    const res = await GET();
-    const after = new Date().toISOString();
-    const data = await res.json();
+  it("returns JSON for uptime monitoring", async () => {
+    const response = await GET(new Request("http://localhost/api/health"));
 
-    expect(data.timestamp).toBeDefined();
-    const ts = new Date(data.timestamp);
-    expect(ts.getTime()).toBeGreaterThanOrEqual(new Date(before).getTime());
-    expect(ts.getTime()).toBeLessThanOrEqual(new Date(after).getTime());
-  });
-
-  it("returns JSON content type", async () => {
-    const res = await GET();
-    expect(res.headers.get("content-type")).toContain("application/json");
-  });
-
-  it("returns exactly three keys", async () => {
-    const res = await GET();
-    const data = await res.json();
-    expect(Object.keys(data)).toEqual(["status", "timestamp", "database"]);
+    expect(response.headers.get("content-type")).toContain("application/json");
   });
 });

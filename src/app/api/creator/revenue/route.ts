@@ -1,27 +1,15 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { getComedianForUser, getRevenueStats } from "@/lib/creator";
-import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { requireCreator } from "@/lib/admin";
+import { getRevenueStats } from "@/lib/creator";
 
-export async function GET(request: Request) {
-  const rl = await checkRateLimit(`creator-revenue:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
-  if (!rl.success) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
-  }
-
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const comedian = await getComedianForUser(session.user.id);
-  if (!comedian) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+export async function GET() {
+  const auth = await requireCreator();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   try {
-    const stats = await getRevenueStats(comedian.id);
+    const stats = await getRevenueStats(auth.comedian.id);
     return NextResponse.json(stats);
   } catch {
     return NextResponse.json({ error: "Failed to fetch revenue stats" }, { status: 500 });

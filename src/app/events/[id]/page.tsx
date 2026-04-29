@@ -20,12 +20,17 @@ import { getEventReputationSummary } from "@/lib/live-reputation";
 import { getComedyPassportSummary } from "@/lib/comedy-passport";
 import { getEventRecommendationInsight } from "@/lib/recommendations";
 import { getSimilarEvents } from "@/lib/similar-events";
+import { computeSceneIntelligence } from "@/lib/scene-intelligence";
+import { buildEventTrustSummary, buildVenueTrustSummary } from "@/lib/trust";
+import { scoreRoomFit } from "@/lib/room-fit";
 import {
   getCatalogSignals,
   getEventUrgency,
   getEventVibeTags,
   getLineupBreakdown,
 } from "@/lib/event-insights";
+import { TrustBadges } from "@/components/TrustBadges";
+import { VenueTrustPanel } from "@/components/VenueTrustPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +98,12 @@ export default async function EventPage({ params }: PageProps) {
       ? getEventRecommendationInsight(session.user.id, id).catch(() => null)
       : Promise.resolve(null),
   ]);
+  const scene = await computeSceneIntelligence(event.venue.city, event.venue.state).catch(() => null);
+  const trustSummary = buildEventTrustSummary(event);
+  const venueTrustSummary = buildVenueTrustSummary({
+    ...event.venue,
+    upcomingEvents: [{ fairPricePolicy: event.fairPricePolicy }],
+  });
 
   const formatDate = (d: Date) =>
     new Date(d).toLocaleDateString("en-US", {
@@ -154,6 +165,15 @@ export default async function EventPage({ params }: PageProps) {
     lineup.headline.length > 0
       ? lineup.headline.join(", ")
       : lineup.all.slice(0, 2).join(", ");
+  const roomFit = scoreRoomFit({
+    showType: event.showType,
+    venue: event.venue,
+    comedians: event.comedians,
+    trust: trustSummary,
+    scene,
+    priceMin: Number(event.priceMin ?? 0) || null,
+    priceMax: Number(event.priceMax ?? 0) || null,
+  });
 
   return (
     <div className="min-h-screen">
@@ -224,6 +244,9 @@ export default async function EventPage({ params }: PageProps) {
             <span className="rounded-full bg-zinc-800 px-2.5 py-1 text-xs text-zinc-300">
               {roomLabel}
             </span>
+          </div>
+          <div className="mt-4">
+            <TrustBadges badges={trustSummary.badges} freshness={trustSummary.freshness} limit={4} />
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <EventShareButtons
@@ -361,7 +384,23 @@ export default async function EventPage({ params }: PageProps) {
               </span>
             ))}
           </div>
+          <div className="mt-4 rounded-xl border border-zinc-800 bg-brand-charcoal/50 p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">Room fit</p>
+                <p className="mt-2 text-lg font-semibold text-white">{roomFit.label}</p>
+                <p className="mt-1 text-sm text-zinc-400">{roomFit.explanation}</p>
+              </div>
+              <span className="rounded-full bg-brand-gold/10 px-3 py-1 text-sm text-brand-gold">
+                {Math.round(roomFit.score)}
+              </span>
+            </div>
+          </div>
         </section>
+
+        <div className="mb-8">
+          <VenueTrustPanel summary={venueTrustSummary} venueName={event.venue.name} />
+        </div>
 
         {recommendation && (
           <section className="mb-8 p-4 rounded-card bg-brand-surface border border-zinc-800/80">

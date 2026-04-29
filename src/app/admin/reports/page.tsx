@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { logger } from "@/lib/logger";
 
@@ -65,7 +66,13 @@ export default function AdminReportsPage() {
             Review reported content and take action.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Link
+            href="/admin/operations"
+            className="px-3 py-1 rounded border border-zinc-800 bg-brand-surface text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:text-white"
+          >
+            Operations dashboard
+          </Link>
           {["pending", "reviewed", "resolved", "dismissed", "all"].map((f) => (
             <button
               key={f}

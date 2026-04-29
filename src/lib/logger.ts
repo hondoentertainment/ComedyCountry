@@ -16,8 +16,21 @@ const LOG_LEVELS: Record<LogLevel, number> = {
   error: 3,
 };
 
-const currentLevel: LogLevel =
-  (process.env.LOG_LEVEL as LogLevel) ?? (process.env.NODE_ENV === "production" ? "info" : "debug");
+function resolveLogLevel(): LogLevel {
+  const configured = process.env.LOG_LEVEL;
+  if (
+    configured === "debug" ||
+    configured === "info" ||
+    configured === "warn" ||
+    configured === "error"
+  ) {
+    return configured;
+  }
+
+  return process.env.NODE_ENV === "production" ? "info" : "debug";
+}
+
+const currentLevel: LogLevel = resolveLogLevel();
 
 function shouldLog(level: LogLevel): boolean {
   return LOG_LEVELS[level] >= LOG_LEVELS[currentLevel];
@@ -53,6 +66,9 @@ function log(level: LogLevel, message: string, context?: Record<string, unknown>
       break;
     case "warn":
       console.warn(output);
+      break;
+    case "info":
+      console.info(output);
       break;
     default:
       console.log(output);

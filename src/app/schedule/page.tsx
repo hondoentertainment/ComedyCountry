@@ -5,8 +5,10 @@ import { getEventRatingStatsBatch } from "@/lib/event-reviews";
 import { getVenueStates } from "@/lib/venues";
 import { SHOW_TYPE_LABELS, PAGE_SIZE } from "@/lib/constants";
 import { formatEventPrice } from "@/lib/format";
+import { buildEventTrustSummary } from "@/lib/trust";
 import { Pagination } from "@/components/Pagination";
 import { FriendsGoingBadge } from "@/components/FriendsGoingBadge";
+import { TrustBadges } from "@/components/TrustBadges";
 import { ClearScheduleFiltersLink } from "./ClearScheduleFiltersLink";
 import { ScheduleLocationActions } from "./ScheduleLocationActions";
 
@@ -16,7 +18,14 @@ export const metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ from?: string; city?: string; state?: string; page?: string }>;
+  searchParams: Promise<{
+    from?: string;
+    city?: string;
+    state?: string;
+    page?: string;
+    accessible?: string;
+    fair?: string;
+  }>;
 };
 
 export const revalidate = 60;
@@ -32,9 +41,11 @@ function StarRating({ rating, count }: { rating: number | null; count: number })
 
 export default async function SchedulePage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const { from, city, state, page } = params;
+  const { from, city, state, page, accessible, fair } = params;
   const currentPage = Math.max(1, parseInt(page ?? "1", 10) || 1);
   const skip = (currentPage - 1) * PAGE_SIZE;
+  const accessibleOnly = accessible === "1";
+  const fairOnly = fair === "1";
 
   const fromDate = from ? new Date(from) : new Date();
   const toDate = new Date(fromDate);
@@ -53,6 +64,8 @@ export default async function SchedulePage({ searchParams }: PageProps) {
         to: toDate,
         city: city || undefined,
         state: state || undefined,
+        accessible: accessibleOnly,
+        fair: fairOnly,
         take: PAGE_SIZE,
         skip,
       }),
@@ -151,6 +164,26 @@ export default async function SchedulePage({ searchParams }: PageProps) {
               ))}
             </select>
           </div>
+          <label className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900/80 px-4 py-2.5 text-sm text-zinc-300">
+            <input
+              name="accessible"
+              type="checkbox"
+              value="1"
+              defaultChecked={accessibleOnly}
+              className="rounded border-zinc-600 bg-zinc-950 text-brand-gold focus:ring-brand-gold/50"
+            />
+            Accessible only
+          </label>
+          <label className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900/80 px-4 py-2.5 text-sm text-zinc-300">
+            <input
+              name="fair"
+              type="checkbox"
+              value="1"
+              defaultChecked={fairOnly}
+              className="rounded border-zinc-600 bg-zinc-950 text-brand-gold focus:ring-brand-gold/50"
+            />
+            Fair-ticketed only
+          </label>
           <button
             type="submit"
             className="px-5 py-2.5 rounded-lg bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold/90 transition-colors"
@@ -165,6 +198,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
             const stats = ratingStats.get(event.id);
             const title = event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ");
             const img = event.comedians[0]?.comedian?.headshotUrl;
+            const trust = buildEventTrustSummary(event);
             return (
               <Link
                 key={event.id}
@@ -239,6 +273,9 @@ export default async function SchedulePage({ searchParams }: PageProps) {
                       </Link>
                     ))}
                   </div>
+                  <div className="mt-3">
+                    <TrustBadges badges={trust.badges} freshness={trust.freshness} limit={3} />
+                  </div>
                 </div>
               </Link>
             );
@@ -259,7 +296,13 @@ export default async function SchedulePage({ searchParams }: PageProps) {
           total={total}
           currentPage={currentPage}
           basePath="/schedule"
-          searchParams={{ from: from ?? fromDate.toISOString().slice(0, 10), city, state }}
+          searchParams={{
+            from: from ?? fromDate.toISOString().slice(0, 10),
+            city,
+            state,
+            accessible: accessibleOnly ? "1" : undefined,
+            fair: fairOnly ? "1" : undefined,
+          }}
         />
       </div>
     </div>

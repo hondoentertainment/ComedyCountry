@@ -13,7 +13,7 @@ export default async function AdminLayout({
 }) {
   const result = await requireAdmin();
   if (!result.authorized) {
-    redirect("/auth/signin");
+    redirect(result.status === 401 ? "/auth/signin" : "/");
   }
 
   return (

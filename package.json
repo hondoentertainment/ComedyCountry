@@ -18,6 +18,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:sync-youtube": "tsx scripts/sync-youtube.ts",
     "db:import": "tsx scripts/bulk-import.ts",
+    "db:seed-target-cities": "tsx scripts/seed-target-cities.ts",
+    "ops:readiness": "tsx scripts/ops-readiness.ts",
     "scrape:jester": "tsx scripts/scrape-jester-comedians.ts",
     "db:import-jester": "tsx scripts/import-jester-comedians.ts",
     "db:seed-all": "tsx scripts/seed-comprehensive.ts",
@@ -34,9 +36,10 @@
     "test:api": "vitest run src/app/api/",
     "test:components": "vitest run src/components/",
     "test:harness": "vitest run src/test/",
+    "test:smoke": "vitest run src/app/api/health/route.test.ts",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "prepare": "husky"
+    "test:e2e:smoke": "playwright test e2e/smoke.spec.ts --project=chromium",
+    "test:e2e:ui": "playwright test --ui"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -52,12 +55,10 @@
     "next-auth": "^4.24.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "web-push": "^3.6.7",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
-    "@next/bundle-analyzer": "^14.2.35",
     "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -78,26 +79,6 @@
     "tailwindcss": "^3.4.0",
     "tsx": "^4.7.0",
     "typescript": "^5",
-    "husky": "^9.0.0",
-    "lint-staged": "^15.0.0",
-    "prettier": "^3.0.0",
     "vitest": "^4.0.18"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  },
-  "overrides": {
-    "serialize-javascript": "^7.0.5",
-    "brace-expansion": "^2.0.1"
   }
 }

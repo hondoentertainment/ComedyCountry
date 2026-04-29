@@ -59,10 +59,7 @@ export async function POST(request: Request) {
   try {
     const admin = await requireAdmin();
     if (!admin.authorized) {
-      return NextResponse.json(
-        { error: admin.reason },
-        { status: admin.reason === "Not authenticated" ? 401 : 403 },
-      );
+      return NextResponse.json({ error: admin.reason }, { status: admin.status });
     }
 
     const body = await request.json();

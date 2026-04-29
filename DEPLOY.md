@@ -61,9 +61,22 @@ Set `CRON_SECRET` in Vercel (Project → Settings → Environment Variables). It
 - `/api/cron/location-alerts` (daily at 9:00 UTC)
 - `/api/cron/event-reminders` (every 15 minutes)
 
-## 6. Uptime checks
+## 6. Runtime checks
 
-Use `GET /api/health` for uptime monitoring and health checks.
+Use these endpoints for production monitoring:
+
+- `GET /api/health` - basic runtime metadata with request and correlation IDs
+- `GET /api/health/live` - liveness probe, returns `204` when the app process can serve traffic
+- `GET /api/health/ready` - readiness probe, returns `200` only when required env is valid and the database check passes; returns `503` otherwise
+
+All health endpoints return `x-request-id` and `x-correlation-id` headers so you can correlate uptime checks with logs and Sentry events.
+
+## 7. Runtime safety checklist
+
+- Set `NEXTAUTH_URL` to an `https://` URL in production.
+- Use a long random `NEXTAUTH_SECRET` instead of a placeholder value.
+- Configure `SENTRY_DSN` or `NEXT_PUBLIC_SENTRY_DSN` before launch so production exceptions are captured.
+- Set `LOG_LEVEL=info` or stricter in production unless you are actively debugging.
 
 ---
 

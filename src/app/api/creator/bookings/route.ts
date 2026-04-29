@@ -1,31 +1,19 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireCreator } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { getComedianForUser, getBookingRequests } from "@/lib/creator";
-import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
+import { getBookingRequests } from "@/lib/creator";
 
 export async function GET(request: Request) {
-  const rl = await checkRateLimit(`creator-bookings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
-  if (!rl.success) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
-  }
-
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const comedian = await getComedianForUser(session.user.id);
-  if (!comedian) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireCreator();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status") ?? undefined;
 
   try {
-    const requests = await getBookingRequests(comedian.id, status);
+    const requests = await getBookingRequests(auth.comedian.id, status);
     return NextResponse.json(requests);
   } catch {
     return NextResponse.json({ error: "Failed to fetch bookings" }, { status: 500 });
@@ -33,14 +21,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const rl = await checkRateLimit(`creator-bookings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
-  if (!rl.success) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
-  }
-
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const auth = await requireCreator();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
   }
 
   try {
@@ -68,7 +51,7 @@ export async function POST(request: Request) {
       data: {
         venueId,
         comedianId,
-        requesterId: session.user.id,
+        requesterId: auth.session.user.id,
         date: new Date(date),
         showType: showType ?? null,
         budget: budget ?? null,

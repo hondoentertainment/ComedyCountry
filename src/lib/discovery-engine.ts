@@ -6,7 +6,10 @@ import {
   getTopKeys,
   normalizeAttributeScores,
 } from "./comedy-genome";
-import { getEventRatingStatsBatch } from "./event-reviews";
+import { computeSceneIntelligence } from "./scene-intelligence";
+import { scoreRoomFit } from "./room-fit";
+import { buildEventTrustSummary, type TrustBadge } from "./trust";
+import type { FreshnessSnapshot } from "./freshness";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -60,6 +63,13 @@ export interface FeedItem {
   };
   insight?: string;
   boostApplied?: boolean;
+  trustBadges?: TrustBadge[];
+  freshness?: FreshnessSnapshot;
+  roomFit?: {
+    score: number;
+    label: string;
+    explanation: string;
+  };
 }
 
 export interface DiscoveryProfile {
@@ -106,12 +116,11 @@ const SIGNAL_WEIGHTS: Record<SignalType, number> = {
 /* -------------------------------------------------------------------------- */
 
 const SCORE_WEIGHTS = {
-  tasteMatch: 32,
-  socialProof: 22,
-  trending: 13,
+  tasteMatch: 35,
+  socialProof: 25,
+  trending: 15,
   proximity: 10,
-  genreMatch: 8,
-  rating: 10,
+  genreMatch: 10,
   boost: 5,
 };
 
@@ -195,7 +204,10 @@ export async function computeDiscoveryProfile(
       for (const ec of event.comedians) {
         const comedianGenres = ec.comedian.genres.map((g) => g.genre);
         for (const g of ec.comedian.genres) {
-          genreWeights.set(g.genre, (genreWeights.get(g.genre) ?? 0) + weight);
+          genreWeights.set(
+            g.genre,
+            (genreWeights.get(g.genre) ?? 0) + weight,
+          );
         }
         addWeightedAttributes(rawAttributeWeights, comedianGenres, weight);
       }
@@ -238,22 +250,19 @@ export async function computeDiscoveryProfile(
     .slice(0, 3)
     .map(([day]) => day);
   const attributeWeights = normalizeAttributeScores(rawAttributeWeights);
-  const explanationCache = getTopKeys(attributeWeights, 3).map(
-    getAttributeLabel,
-  );
+  const explanationCache = getTopKeys(attributeWeights, 3).map(getAttributeLabel);
 
   // Compute average spend from purchase signals
   const purchaseSignals = signals.filter((s) => s.signalType === "PURCHASE");
-  const averageSpend =
-    purchaseSignals.length > 0
-      ? purchaseSignals.reduce((sum, s) => sum + s.weight, 0) /
-        purchaseSignals.length
-      : 0;
+  const averageSpend = purchaseSignals.length > 0
+    ? purchaseSignals.reduce((sum, s) => sum + s.weight, 0) / purchaseSignals.length
+    : 0;
 
   // Discovery openness: ratio of unique entities to total signals
   const uniqueEntities = new Set(signals.map((s) => s.entityId)).size;
-  const discoveryOpenness =
-    signals.length > 0 ? Math.min(uniqueEntities / signals.length, 1.0) : 0.5;
+  const discoveryOpenness = signals.length > 0
+    ? Math.min(uniqueEntities / signals.length, 1.0)
+    : 0.5;
 
   const profile: DiscoveryProfile = {
     userId,
@@ -315,8 +324,7 @@ export async function getDiscoveryProfile(
     preferredGenres: profile.preferredGenres as string[],
     preferredVenues: profile.preferredVenues as string[],
     preferredDays: profile.preferredDays as string[],
-    attributeWeights:
-      (profile.attributeWeights as Record<string, number> | null) ?? {},
+    attributeWeights: (profile.attributeWeights as Record<string, number> | null) ?? {},
     explanationCache: (profile.explanationCache as string[] | null) ?? [],
     profileVersion: profile.profileVersion ?? "v1",
     averageSpend: profile.averageSpend,
@@ -334,12 +342,15 @@ export async function generateForYouFeed(
   limit = 20,
 ): Promise<FeedItem[]> {
   const profile = await getDiscoveryProfile(userId);
+  const getScene = createSceneLoader();
 
   // Fetch upcoming events
   const events = await prisma.event.findMany({
     where: { date: { gte: new Date() } },
     include: {
       venue: true,
+      accessibilityTags: true,
+      fairPricePolicy: true,
       comedians: {
         include: { comedian: { include: { genres: true } } },
       },
@@ -350,15 +361,20 @@ export async function generateForYouFeed(
 
   const feedItems: FeedItem[] = [];
 
-  // Batch-fetch rating stats for all events
-  const ratingStatsMap =
-    events.length > 0
-      ? await getEventRatingStatsBatch(events.map((e) => e.id))
-      : new Map<string, { count: number; avgRating: number | null }>();
-
   for (const event of events) {
     const socialProof = await getSocialProof("EVENT", event.id, userId);
     const boosts = await getBoostsForEntity("EVENT", event.id);
+    const trust = buildEventTrustSummary(event);
+    const scene = await getScene(event.venue.city, event.venue.state);
+    const roomFit = scoreRoomFit({
+      showType: event.showType,
+      venue: event.venue,
+      comedians: event.comedians,
+      trust,
+      scene,
+      priceMin: Number(event.priceMin ?? 0) || null,
+      priceMax: Number(event.priceMax ?? 0) || null,
+    });
 
     const eventGenres = event.comedians.flatMap((ec) =>
       ec.comedian.genres.map((g) => g.genre),
@@ -368,20 +384,26 @@ export async function generateForYouFeed(
       entityType: "EVENT",
       entityId: event.id,
       score: 0,
-      title: event.title ?? "",
-      subtitle: event.venue?.name,
+      title: (event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ")) || "Comedy show",
+      subtitle: `${event.venue.name} · ${event.venue.city}, ${event.venue.state}`,
       socialProof: socialProof ?? undefined,
       boostApplied: boosts.length > 0,
+      trustBadges: trust.badges,
+      freshness: trust.freshness,
+      roomFit: {
+        score: roomFit.score,
+        label: roomFit.label,
+        explanation: roomFit.explanation,
+      },
+      insight: roomFit.reasons[0],
     };
 
-    const ratingInfo = ratingStatsMap.get(event.id) ?? null;
     item.score = scoreFeedItem(
       item,
       profile ?? createDefaultProfile(userId),
       socialProof,
       eventGenres,
       boosts,
-      ratingInfo,
     );
 
     feedItems.push(item);
@@ -402,18 +424,11 @@ export async function generateHappeningTonightFeed(
   limit = 20,
 ): Promise<FeedItem[]> {
   const profile = await getDiscoveryProfile(userId);
+  const getScene = createSceneLoader();
 
   const today = new Date();
-  const startOfDay = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  );
-  const endOfDay = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() + 1,
-  );
+  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
 
   const events = await prisma.event.findMany({
     where: {
@@ -421,6 +436,8 @@ export async function generateHappeningTonightFeed(
     },
     include: {
       venue: true,
+      accessibilityTags: true,
+      fairPricePolicy: true,
       comedians: {
         include: { comedian: { include: { genres: true } } },
       },
@@ -431,13 +448,19 @@ export async function generateHappeningTonightFeed(
 
   const feedItems: FeedItem[] = [];
 
-  const ratingStatsMap =
-    events.length > 0
-      ? await getEventRatingStatsBatch(events.map((e) => e.id))
-      : new Map<string, { count: number; avgRating: number | null }>();
-
   for (const event of events) {
     const socialProof = await getSocialProof("EVENT", event.id, userId);
+    const trust = buildEventTrustSummary(event);
+    const scene = await getScene(event.venue.city, event.venue.state);
+    const roomFit = scoreRoomFit({
+      showType: event.showType,
+      venue: event.venue,
+      comedians: event.comedians,
+      trust,
+      scene,
+      priceMin: Number(event.priceMin ?? 0) || null,
+      priceMax: Number(event.priceMax ?? 0) || null,
+    });
     const eventGenres = event.comedians.flatMap((ec) =>
       ec.comedian.genres.map((g) => g.genre),
     );
@@ -446,19 +469,25 @@ export async function generateHappeningTonightFeed(
       entityType: "EVENT",
       entityId: event.id,
       score: 0,
-      title: event.title ?? "",
-      subtitle: event.venue?.name,
+      title: (event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ")) || "Comedy show",
+      subtitle: `${event.venue.name} · ${event.venue.city}, ${event.venue.state}`,
       socialProof: socialProof ?? undefined,
+      trustBadges: trust.badges,
+      freshness: trust.freshness,
+      roomFit: {
+        score: roomFit.score,
+        label: roomFit.label,
+        explanation: roomFit.explanation,
+      },
+      insight: roomFit.reasons[0],
     };
 
-    const ratingInfo = ratingStatsMap.get(event.id) ?? null;
     item.score = scoreFeedItem(
       item,
       profile ?? createDefaultProfile(userId),
       socialProof,
       eventGenres,
       [],
-      ratingInfo,
     );
 
     feedItems.push(item);
@@ -478,6 +507,7 @@ export async function generateTrendingNearYouFeed(
   limit = 20,
 ): Promise<FeedItem[]> {
   const profile = await getDiscoveryProfile(userId);
+  const getScene = createSceneLoader();
 
   // Get events with high social proof / trending scores
   const socialProofs = await prisma.socialProof.findMany({
@@ -498,6 +528,8 @@ export async function generateTrendingNearYouFeed(
     },
     include: {
       venue: true,
+      accessibilityTags: true,
+      fairPricePolicy: true,
       comedians: {
         include: { comedian: { include: { genres: true } } },
       },
@@ -506,14 +538,20 @@ export async function generateTrendingNearYouFeed(
 
   const feedItems: FeedItem[] = [];
 
-  const ratingStatsMap =
-    events.length > 0
-      ? await getEventRatingStatsBatch(events.map((e) => e.id))
-      : new Map<string, { count: number; avgRating: number | null }>();
-
   for (const event of events) {
     const sp = socialProofs.find((s) => s.entityId === event.id);
     if (!sp) continue;
+    const trust = buildEventTrustSummary(event);
+    const scene = await getScene(event.venue.city, event.venue.state);
+    const roomFit = scoreRoomFit({
+      showType: event.showType,
+      venue: event.venue,
+      comedians: event.comedians,
+      trust,
+      scene,
+      priceMin: Number(event.priceMin ?? 0) || null,
+      priceMax: Number(event.priceMax ?? 0) || null,
+    });
 
     // Compute distance for proximity scoring
     let proximityScore = 0;
@@ -546,20 +584,26 @@ export async function generateTrendingNearYouFeed(
       entityType: "EVENT",
       entityId: event.id,
       score: 0,
-      title: event.title ?? "",
-      subtitle: event.venue?.name,
+      title: (event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ")) || "Comedy show",
+      subtitle: `${event.venue.name} · ${event.venue.city}, ${event.venue.state}`,
       socialProof: socialProofData,
+      trustBadges: trust.badges,
+      freshness: trust.freshness,
+      roomFit: {
+        score: roomFit.score,
+        label: roomFit.label,
+        explanation: roomFit.explanation,
+      },
+      insight: roomFit.reasons[0],
     };
 
     // Weighted score with proximity factor
-    const ratingInfo = ratingStatsMap.get(event.id) ?? null;
     const baseScore = scoreFeedItem(
       item,
       profile ?? createDefaultProfile(userId),
       socialProofData,
       eventGenres,
       [],
-      ratingInfo,
     );
 
     item.score = baseScore * 0.7 + proximityScore * 100 * 0.3;
@@ -579,6 +623,7 @@ export async function generateFriendsAttendingFeed(
   userId: string,
   limit = 20,
 ): Promise<FeedItem[]> {
+  const getScene = createSceneLoader();
   // Get user's friends (people they follow)
   const following = await prisma.userFollow.findMany({
     where: { followerId: userId },
@@ -601,6 +646,8 @@ export async function generateFriendsAttendingFeed(
       event: {
         include: {
           venue: true,
+          accessibilityTags: true,
+          fairPricePolicy: true,
           comedians: {
             include: { comedian: { include: { genres: true } } },
           },
@@ -611,7 +658,7 @@ export async function generateFriendsAttendingFeed(
 
   // Group by event and count friends
   const eventFriendCount = new Map<string, number>();
-  const eventMap = new Map<string, (typeof friendAttendances)[0]["event"]>();
+  const eventMap = new Map<string, typeof friendAttendances[0]["event"]>();
 
   for (const attendance of friendAttendances) {
     const eventId = attendance.event.id;
@@ -621,15 +668,26 @@ export async function generateFriendsAttendingFeed(
 
   const feedItems: FeedItem[] = [];
 
-  for (const [eventId, friendCount] of Array.from(eventFriendCount.entries())) {
+  for (const [eventId, friendCount] of eventFriendCount) {
     const event = eventMap.get(eventId)!;
+    const trust = buildEventTrustSummary(event);
+    const scene = await getScene(event.venue.city, event.venue.state);
+    const roomFit = scoreRoomFit({
+      showType: event.showType,
+      venue: event.venue,
+      comedians: event.comedians,
+      trust,
+      scene,
+      priceMin: Number(event.priceMin ?? 0) || null,
+      priceMax: Number(event.priceMax ?? 0) || null,
+    });
 
     const item: FeedItem = {
       entityType: "EVENT",
       entityId: eventId,
       score: friendCount * 10,
-      title: event.title ?? "",
-      subtitle: event.venue?.name,
+      title: (event.title ?? event.comedians.map((ec) => ec.comedian.name).join(", ")) || "Comedy show",
+      subtitle: `${event.venue.name} · ${event.venue.city}, ${event.venue.state}`,
       socialProof: {
         friendsAttending: friendCount,
         totalAttending: 0,
@@ -637,6 +695,13 @@ export async function generateFriendsAttendingFeed(
         buzzLevel: "LOW",
       },
       insight: `${friendCount} friend${friendCount > 1 ? "s" : ""} going`,
+      trustBadges: trust.badges,
+      freshness: trust.freshness,
+      roomFit: {
+        score: roomFit.score,
+        label: roomFit.label,
+        explanation: roomFit.explanation,
+      },
     };
 
     feedItems.push(item);
@@ -689,10 +754,7 @@ export async function computeSocialProof(
     friendsAttending: 0,
     totalAttending,
     trendingScore,
-    trustScore: Math.min(
-      100,
-      Math.round((totalAttending * 0.6 + trendingScore * 0.4) * 10) / 10,
-    ),
+    trustScore: Math.min(100, Math.round((totalAttending * 0.6 + trendingScore * 0.4) * 10) / 10),
     buzzLevel,
   };
 
@@ -821,7 +883,6 @@ export function scoreFeedItem(
   socialProof: SocialProofData | null,
   eventGenres: string[],
   boosts: { boostMultiplier: number }[],
-  ratingInfo?: { avgRating: number | null; count: number } | null,
 ): number {
   let score = 0;
 
@@ -850,10 +911,7 @@ export function scoreFeedItem(
 
   // Social proof
   if (socialProof) {
-    const friendBoost = Math.min(
-      socialProof.friendsAttending * 5,
-      SCORE_WEIGHTS.socialProof,
-    );
+    const friendBoost = Math.min(socialProof.friendsAttending * 5, SCORE_WEIGHTS.socialProof);
     const attendingBoost = Math.min(
       socialProof.totalAttending * 0.1,
       SCORE_WEIGHTS.socialProof * 0.5,
@@ -862,19 +920,11 @@ export function scoreFeedItem(
     score += friendBoost + attendingBoost + trustBoost;
 
     // Trending
-    const trendingNorm = Math.min(socialProof.trendingScore / 100, 1);
+    const trendingNorm = Math.min(
+      socialProof.trendingScore / 100,
+      1,
+    );
     score += trendingNorm * SCORE_WEIGHTS.trending;
-  }
-
-  // Rating quality signal
-  if (ratingInfo?.avgRating != null && ratingInfo.count > 0) {
-    // Normalize: 1-5 scale to 0-1, with confidence dampening for low review counts
-    const ratingNorm = (ratingInfo.avgRating - 1) / 4; // 0-1
-    const confidence = Math.min(ratingInfo.count / 5, 1); // full weight at 5+ reviews
-    score += ratingNorm * confidence * SCORE_WEIGHTS.rating;
-  } else {
-    // Neutral baseline for unrated events so they still appear
-    score += SCORE_WEIGHTS.rating * 0.2;
   }
 
   // Apply boosts
@@ -891,10 +941,7 @@ export function scoreFeedItem(
 /*  Compute Buzz Level                                                        */
 /* -------------------------------------------------------------------------- */
 
-export function computeBuzzLevel(
-  signals24h: number,
-  signals7d: number,
-): BuzzLevel {
+export function computeBuzzLevel(signals24h: number, signals7d: number): BuzzLevel {
   const velocity = signals24h * 3 + signals7d;
 
   if (velocity >= BUZZ_THRESHOLDS.VIRAL) return "VIRAL";
@@ -935,7 +982,10 @@ export async function getDiscoveryInsights(
   );
   const comedianCounts = new Map<string, number>();
   for (const s of comedianSignals) {
-    comedianCounts.set(s.entityId, (comedianCounts.get(s.entityId) ?? 0) + 1);
+    comedianCounts.set(
+      s.entityId,
+      (comedianCounts.get(s.entityId) ?? 0) + 1,
+    );
   }
 
   const topComedianIds = [...comedianCounts.entries()]
@@ -944,13 +994,12 @@ export async function getDiscoveryInsights(
     .map(([id]) => id);
 
   // Fetch comedian names
-  const topComedians =
-    topComedianIds.length > 0
-      ? await prisma.comedian.findMany({
-          where: { id: { in: topComedianIds } },
-          select: { id: true, name: true },
-        })
-      : [];
+  const topComedians = topComedianIds.length > 0
+    ? await prisma.comedian.findMany({
+        where: { id: { in: topComedianIds } },
+        select: { id: true, name: true },
+      })
+    : [];
 
   // Build insights for upcoming events
   const upcomingEvents = await prisma.event.findMany({
@@ -963,11 +1012,7 @@ export async function getDiscoveryInsights(
     take: 20,
   });
 
-  const insights: {
-    entityId: string;
-    entityType: EntityType;
-    reason: string;
-  }[] = [];
+  const insights: { entityId: string; entityType: EntityType; reason: string }[] = [];
 
   for (const event of upcomingEvents) {
     const eventGenres = event.comedians.flatMap((ec) =>
@@ -1028,6 +1073,20 @@ function createDefaultProfile(userId: string): DiscoveryProfile {
     averageSpend: 0,
     discoveryOpenness: 0.5,
     lastComputedAt: new Date(),
+  };
+}
+
+function createSceneLoader() {
+  const cache = new Map<string, Promise<Awaited<ReturnType<typeof computeSceneIntelligence>> | null>>();
+
+  return async (city: string, state: string) => {
+    const key = `${city.toLowerCase()}-${state.toLowerCase()}`;
+
+    if (!cache.has(key)) {
+      cache.set(key, computeSceneIntelligence(city, state).catch(() => null));
+    }
+
+    return cache.get(key)!;
   };
 }
 
