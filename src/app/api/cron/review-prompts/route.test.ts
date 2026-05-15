@@ -33,7 +33,6 @@ describe("POST /api/cron/review-prompts", () => {
     }
   });
 
-  it("allows request when correct API key is provided", async () => {
   it("returns 401 when CRON_API_KEY is not set", async () => {
     const original = process.env.CRON_API_KEY;
     process.env.CRON_API_KEY = "test-cron-key";
@@ -69,7 +68,6 @@ describe("POST /api/cron/review-prompts", () => {
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
           headers: { "x-api-key": "test-cron-key" },
-        }),
         })
       );
 
@@ -102,7 +100,6 @@ describe("POST /api/cron/review-prompts", () => {
         new Request("http://localhost/api/cron/review-prompts", {
           method: "POST",
           headers: { "x-api-key": "test-cron-key" },
-        }),
         })
       );
 

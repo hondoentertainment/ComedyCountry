@@ -73,7 +73,6 @@ describe("search", () => {
             expect.objectContaining({ state: expect.anything() }),
           ]),
         }),
-      }),
       })
     );
     expect(vi.mocked(prisma.comedian.findMany)).toHaveBeenCalledWith(
@@ -81,7 +80,6 @@ describe("search", () => {
         where: expect.objectContaining({
           OR: expect.anything(),
         }),
-      }),
       })
     );
     expect(prisma.event.findMany).toHaveBeenCalledWith(
@@ -90,7 +88,6 @@ describe("search", () => {
           date: expect.anything(),
           OR: expect.anything(),
         }),
-      }),
       })
     );
   });

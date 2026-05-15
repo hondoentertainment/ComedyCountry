@@ -107,7 +107,6 @@ describe("computeAudienceProfile", () => {
         purchasePrice: 25,
         event: {
           id: "evt-1",
-          comedians: [{ comedian: { id: "com-1", name: "Alice" } }],
           comedians: [
             { comedian: { id: "com-1", name: "Alice" } },
           ],
@@ -118,7 +117,6 @@ describe("computeAudienceProfile", () => {
         purchasePrice: 30,
         event: {
           id: "evt-2",
-          comedians: [{ comedian: { id: "com-2", name: "Bob" } }],
           comedians: [
             { comedian: { id: "com-2", name: "Bob" } },
           ],
@@ -129,7 +127,6 @@ describe("computeAudienceProfile", () => {
         purchasePrice: 20,
         event: {
           id: "evt-1",
-          comedians: [{ comedian: { id: "com-1", name: "Alice" } }],
           comedians: [
             { comedian: { id: "com-1", name: "Alice" } },
           ],
@@ -205,7 +202,9 @@ describe("findSimilarAudiences", () => {
               purchasePrice: 25,
               event: {
                 id: "evt-1",
-                comedians: [{ comedian: { id: "com-1", name: "standup" } }],
+                comedians: [
+                  { comedian: { id: "com-1", name: "Alice" } },
+                ],
               },
             },
           ];
@@ -217,34 +216,10 @@ describe("findSimilarAudiences", () => {
               purchasePrice: 20,
               event: {
                 id: "evt-2",
-                comedians: [{ comedian: { id: "com-2", name: "standup" } }],
+                comedians: [
+                  { comedian: { id: "com-1", name: "Alice" } },
+                ],
               },
-    mockPrisma.ticket.findMany.mockImplementation(({ where }: { where: { eventId: { in: string[] } } }) => {
-      const eventIds = where.eventId.in;
-      if (eventIds.includes("evt-1")) {
-        return [
-          {
-            userId: "user-1",
-            purchasePrice: 25,
-            event: {
-              id: "evt-1",
-              comedians: [
-                { comedian: { id: "com-1", name: "Alice" } },
-              ],
-            },
-          },
-        ];
-      }
-      if (eventIds.includes("evt-2")) {
-        return [
-          {
-            userId: "user-2",
-            purchasePrice: 20,
-            event: {
-              id: "evt-2",
-              comedians: [
-                { comedian: { id: "com-1", name: "Alice" } },
-              ],
             },
           ];
         }
@@ -390,13 +365,12 @@ describe("getExpansionMarkets", () => {
           return [
             {
               userId: "user-1",
-              price: 25,
-              user: { id: "user-1", location: "NYC", birthDate: null },
+              purchasePrice: 25,
               event: {
                 id: "evt-1",
-                comedianId: "com-1",
-                comedian: { id: "com-1", name: "Alice" },
-                tags: ["standup"],
+                comedians: [
+                  { comedian: { id: "com-1", name: "Alice" } },
+                ],
               },
             },
           ];
@@ -405,46 +379,13 @@ describe("getExpansionMarkets", () => {
           return [
             {
               userId: "user-2",
-              price: 20,
-              user: { id: "user-2", location: "Chicago", birthDate: null },
+              purchasePrice: 20,
               event: {
                 id: "evt-2",
-                comedianId: "com-2",
-                comedian: { id: "com-2", name: "Bob" },
-                tags: ["standup"],
+                comedians: [
+                  { comedian: { id: "com-2", name: "Bob" } },
+                ],
               },
-    mockPrisma.event.findMany.mockImplementation(({ where }: { where: { venueId?: string } }) => {
-      if (where?.venueId === "venue-1") return [{ id: "evt-1" }];
-      if (where?.venueId === "venue-2") return [{ id: "evt-2" }];
-      return [];
-    });
-
-    mockPrisma.ticket.findMany.mockImplementation(({ where }: { where: { eventId: { in: string[] } } }) => {
-      const eventIds = where.eventId.in;
-      if (eventIds.includes("evt-1")) {
-        return [
-          {
-            userId: "user-1",
-            purchasePrice: 25,
-            event: {
-              id: "evt-1",
-              comedians: [
-                { comedian: { id: "com-1", name: "Alice" } },
-              ],
-            },
-          },
-        ];
-      }
-      if (eventIds.includes("evt-2")) {
-        return [
-          {
-            userId: "user-2",
-            purchasePrice: 20,
-            event: {
-              id: "evt-2",
-              comedians: [
-                { comedian: { id: "com-2", name: "Bob" } },
-              ],
             },
           ];
         }
