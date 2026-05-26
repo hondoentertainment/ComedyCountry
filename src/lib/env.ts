@@ -26,6 +26,12 @@ function normalizeUrl(value: string) {
 export function applyEnvDefaults(env: EnvSource = process.env): EnvSource {
   const normalizedEnv = { ...env };
 
+  for (const [key, value] of Object.entries(normalizedEnv)) {
+    if (typeof value === "string") {
+      normalizedEnv[key] = value.trim();
+    }
+  }
+
   if (!hasValue(normalizedEnv.DIRECT_DATABASE_URL) && hasValue(normalizedEnv.DATABASE_URL)) {
     normalizedEnv.DIRECT_DATABASE_URL = normalizedEnv.DATABASE_URL;
   }
