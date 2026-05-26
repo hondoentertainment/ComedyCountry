@@ -49,7 +49,6 @@ export default function ForYouPage() {
       })
       .catch((err: unknown) =>
         logger.error(
-          "For-you recommendations fetch failed",
           "ForYou fetch failed",
           {},
           err instanceof Error ? err : undefined,

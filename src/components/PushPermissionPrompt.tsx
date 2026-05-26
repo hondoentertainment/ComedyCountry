@@ -86,7 +86,6 @@ export function PushPermissionPrompt() {
     } catch (err) {
       logger.error(
         "Push subscription failed",
-        "[Push] Subscription failed",
         {},
         err instanceof Error ? err : undefined,
       );
