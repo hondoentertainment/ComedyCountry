@@ -34,6 +34,7 @@ type FeedItem = {
     status: "fresh" | "aging" | "stale";
     sourceConfidence: number;
     lastVerifiedAt: string | null;
+    updatedWithinDays: number | null;
     reasons: string[];
   };
   roomFit?: {
@@ -273,6 +274,7 @@ export function DiscoveryFeed() {
                               lastVerifiedAt: item.freshness.lastVerifiedAt
                                 ? new Date(item.freshness.lastVerifiedAt)
                                 : null,
+                              updatedWithinDays: item.freshness.updatedWithinDays ?? null,
                             }
                           : undefined
                       }

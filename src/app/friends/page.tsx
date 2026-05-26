@@ -54,19 +54,19 @@ export default async function FriendsPage() {
   const accepted = [
     ...outgoing
       .filter((c) => c.status === "accepted")
-      .map((c) => ({ connectionId: c.id, user: userMap.get(c.friendId) })),
+      .map((c) => ({ connectionId: c.id, user: userMap.get(c.friendId) ?? null })),
     ...incoming
       .filter((c) => c.status === "accepted")
-      .map((c) => ({ connectionId: c.id, user: userMap.get(c.userId) })),
+      .map((c) => ({ connectionId: c.id, user: userMap.get(c.userId) ?? null })),
   ];
 
   const pendingReceived = incoming
     .filter((c) => c.status === "pending")
-    .map((c) => ({ connectionId: c.id, user: userMap.get(c.userId) }));
+    .map((c) => ({ connectionId: c.id, user: userMap.get(c.userId) ?? null }));
 
   const pendingSent = outgoing
     .filter((c) => c.status === "pending")
-    .map((c) => ({ connectionId: c.id, user: userMap.get(c.friendId) }));
+    .map((c) => ({ connectionId: c.id, user: userMap.get(c.friendId) ?? null }));
 
   return (
     <div className="min-h-screen">
