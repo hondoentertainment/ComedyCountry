@@ -3,7 +3,6 @@ import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { sendPushToUser } from "@/lib/push";
 import { sendEmail } from "@/lib/email";
-import { logger } from "@/lib/logger";
 
 /**
  * Cron endpoint: Notify waitlisted users when an event's ticket URL is updated

@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSocialProof, computeSocialProof } from "@/lib/discovery-engine";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * GET - Get social proof for an entity.

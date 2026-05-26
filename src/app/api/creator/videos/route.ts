@@ -5,7 +5,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getComedianForUser } from "@/lib/creator";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 // ---------------------------------------------------------------------------
 // GET /api/creator/videos — list videos for a comedian

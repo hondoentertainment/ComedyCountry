@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { addAccessibilityTag, getAccessibilityTags } from "@/lib/accessibility";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const rl = await checkRateLimit(

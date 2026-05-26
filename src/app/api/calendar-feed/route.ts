@@ -3,7 +3,6 @@ import { logger } from "@/lib/logger";
 import { createHmac, timingSafeEqual } from "crypto";
 import { generateUserCalendarFeed } from "@/lib/calendar-sync";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 const TOKEN_SEPARATOR = ":";
 const DEFAULT_EXPIRY_MS = 365 * 24 * 60 * 60 * 1000; // 1 year

@@ -5,7 +5,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isValidCoordinates } from "@/lib/geo";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * POST /api/location/save

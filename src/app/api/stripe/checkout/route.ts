@@ -9,7 +9,6 @@ import {
   isStripeConfigured,
 } from "@/lib/stripe";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * POST - Create a Stripe Checkout Session for subscription.

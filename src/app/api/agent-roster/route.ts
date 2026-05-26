@@ -5,7 +5,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAgentRoster } from "@/lib/marketplace";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const rl = await checkRateLimit(`agent-roster:${getRateLimitKey(request)}`, {

@@ -7,7 +7,6 @@ import {
   canUseCalendarFeed,
 } from "@/lib/subscription-gates";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * GET /api/subscription/limits

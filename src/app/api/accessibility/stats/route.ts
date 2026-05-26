@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { getAccessibilityStats } from "@/lib/accessibility";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const rl = await checkRateLimit(

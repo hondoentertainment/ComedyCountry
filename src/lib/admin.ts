@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+import type { Session } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getComedianForUser } from "@/lib/creator";
@@ -11,7 +12,7 @@ type UnauthorizedResult = {
 
 type AuthorizedResult = {
   authorized: true;
-  session: NonNullable<Awaited<ReturnType<typeof getServerSession>>>;
+  session: Session;
 };
 
 type CreatorAuthorizedResult = AuthorizedResult & {

@@ -3,7 +3,6 @@ import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, eventReminderHtml } from "@/lib/email";
 import { sendPushToUser } from "@/lib/push";
-import { logger } from "@/lib/logger";
 
 /** 24h window: event.date between now+23.5h and now+24.5h */
 const MS_23_5_H = 23.5 * 60 * 60 * 1000;

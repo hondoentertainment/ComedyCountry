@@ -7,7 +7,6 @@ import {
   getRetargetingPixels,
 } from "@/lib/marketing";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const rl = await checkRateLimit(

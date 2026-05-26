@@ -9,7 +9,6 @@ import {
   getSMSCampaignStats,
 } from "@/lib/marketing";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /* ─── GET - Fetch all campaigns (SMS + email) for a venue ─────────────── */
 

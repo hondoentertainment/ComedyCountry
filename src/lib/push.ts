@@ -77,8 +77,14 @@ async function sendToSubscription(
   });
 
   try {
-    // Try using the web-push package for proper VAPID + encryption
-    const webpush = await import("web-push").catch(() => null);
+    // Load web-push lazily so builds still work when the package is absent.
+    const webpush = (() => {
+      try {
+        return Function("return require('web-push')")();
+      } catch {
+        return null;
+      }
+    })();
 
     if (webpush) {
       const vapidSubject =

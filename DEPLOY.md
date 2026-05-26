@@ -1,8 +1,8 @@
 # Deployment Guide
 
-Punchline Atlas is a Next.js app that needs a **Node.js host** (not static hosting like GitHub Pages). Recommended: **Vercel** + **PostgreSQL** (Neon, Supabase, or Railway).
+Punchline Atlas is a Next.js app that needs a Node.js host, not static hosting like GitHub Pages. The recommended stack is Vercel plus PostgreSQL.
 
-## 1. Push your code to GitHub
+## 1. Push code to GitHub
 
 ```bash
 git add -A
@@ -12,72 +12,96 @@ git push origin main
 
 ## 2. Set up a production database
 
-You need a hosted PostgreSQL database:
+Use a hosted PostgreSQL provider such as:
 
-- [Neon](https://neon.tech) (free tier)
-- [Supabase](https://supabase.com) (free tier)
+- [Neon](https://neon.tech)
+- [Supabase](https://supabase.com)
 - [Railway](https://railway.app)
 - [Vercel Postgres](https://vercel.com/storage/postgres)
 
-Get a connection string like:
-```
+You need a connection string like:
+
+```text
 postgresql://user:pass@host:5432/punchline_atlas?sslmode=require
 ```
 
-Migrations run automatically during Vercel builds (`prisma migrate deploy`). For manual deployment, run:
+Migrations run automatically during Vercel builds through `npm run vercel-build`. For a manual deployment, run:
+
 ```bash
-DATABASE_URL="your-prod-url" npx prisma migrate deploy
+DATABASE_URL="your-prod-url" npm run db:migrate:deploy
 DATABASE_URL="your-prod-url" npm run db:seed
 ```
 
-## 3. Deploy to Vercel
+## 3. Configure Vercel
 
-1. Go to [vercel.com](https://vercel.com) and sign in with GitHub.
-2. **Add New Project** → Import `hondoentertainment/ComedyCountry`.
-3. Add **Environment Variables** (Project → Settings → Environment Variables):
+1. Go to [vercel.com](https://vercel.com) and import `hondoentertainment/ComedyCountry`.
+2. Add environment variables in Project Settings.
 
 | Variable | Required | Notes |
-|----------|----------|-------|
-| `DATABASE_URL` | ✅ | Production Postgres URL |
-| `NEXTAUTH_SECRET` | ✅ | Generate with `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | ✅ | Your Vercel URL, e.g. `https://your-app.vercel.app` |
-| `CRON_SECRET` | ✅ | Required for crons. Set in Vercel for `/api/cron/location-alerts` and `/api/cron/event-reminders`. Generate with `openssl rand -base64 32` |
+| --- | --- | --- |
+| `DATABASE_URL` | Yes | Production Postgres URL |
+| `DIRECT_DATABASE_URL` | Recommended | Direct Postgres URL for migrations. If omitted, builds fall back to `DATABASE_URL`. |
+| `NEXTAUTH_SECRET` | Yes | Generate with `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | Yes | Canonical production URL, for example `https://your-app.vercel.app` |
+| `CRON_SECRET` | Yes | Required for cron routes. Generate with `openssl rand -base64 32` |
 | `GOOGLE_CLIENT_ID` | Optional | For Google sign-in |
 | `GOOGLE_CLIENT_SECRET` | Optional | For Google sign-in |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Optional | For map page |
-| `CALENDAR_FEED_SECRET` | Optional | For calendar feed token; falls back to `NEXTAUTH_SECRET` if unset |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Optional | For venue maps |
+| `CALENDAR_FEED_SECRET` | Optional | Falls back to `NEXTAUTH_SECRET` if unset |
+| `SENTRY_DSN` | Optional | Recommended before public launch |
+| `LOG_LEVEL` | Optional | Use `info` in production unless actively debugging |
 
-4. **Deploy**. Vercel builds and deploys on every push to `main`. The build automatically runs `prisma migrate deploy` (via `vercel-build` script) before `next build`.
+3. Deploy. Vercel builds on every push to `main`.
+
+The production build now:
+
+- validates required production env before Prisma runs
+- falls back `DIRECT_DATABASE_URL` to `DATABASE_URL` when needed
+- runs `prisma migrate deploy`
+- runs `next build`
 
 ## 4. After first deploy
 
-1. Update `NEXTAUTH_URL` to your live URL.
-2. In Google Cloud Console (if using Google OAuth), add `https://your-app.vercel.app/api/auth/callback/google` to authorized redirect URIs.
+1. Confirm `NEXTAUTH_URL` matches the live production URL.
+2. If Google OAuth is enabled, add `https://your-app.vercel.app/api/auth/callback/google` to the allowed redirect URIs.
 
 ## 5. Cron jobs
 
-Set `CRON_SECRET` in Vercel (Project → Settings → Environment Variables). It protects:
+Set `CRON_SECRET` in Vercel. It protects:
 
-- `/api/cron/location-alerts` (daily at 9:00 UTC)
-- `/api/cron/event-reminders` (every 15 minutes)
+- `/api/cron/location-alerts`
+- `/api/cron/event-reminders`
 
 ## 6. Runtime checks
 
 Use these endpoints for production monitoring:
 
-- `GET /api/health` - basic runtime metadata with request and correlation IDs
-- `GET /api/health/live` - liveness probe, returns `204` when the app process can serve traffic
-- `GET /api/health/ready` - readiness probe, returns `200` only when required env is valid and the database check passes; returns `503` otherwise
+- `GET /api/health`
+- `GET /api/health/live`
+- `GET /api/health/ready`
 
-All health endpoints return `x-request-id` and `x-correlation-id` headers so you can correlate uptime checks with logs and Sentry events.
+The health endpoints return `x-request-id` and `x-correlation-id` headers so requests can be tied back to logs and error tracking.
 
-## 7. Runtime safety checklist
+## 7. Post-deploy smoke pass
+
+Run a short verification against the live site:
+
+```bash
+npm run deploy:smoke -- https://your-app.vercel.app
+```
+
+This checks:
+
+- `/`
+- `/schedule`
+- `/api/health`
+- `/api/health/ready`
+
+## 8. Runtime safety checklist
 
 - Set `NEXTAUTH_URL` to an `https://` URL in production.
-- Use a long random `NEXTAUTH_SECRET` instead of a placeholder value.
-- Configure `SENTRY_DSN` or `NEXT_PUBLIC_SENTRY_DSN` before launch so production exceptions are captured.
-- Set `LOG_LEVEL=info` or stricter in production unless you are actively debugging.
+- Use a long random `NEXTAUTH_SECRET`, not a placeholder.
+- Configure `SENTRY_DSN` or `NEXT_PUBLIC_SENTRY_DSN` before launch.
+- Set `LOG_LEVEL=info` or stricter in production unless actively debugging.
 
----
-
-**Existing CI**: `.github/workflows/test.yml` runs E2E tests on push/PR. Deployments are handled by Vercel’s GitHub integration.
+Existing CI lives in `.github/workflows/ci.yml`. Deployments are handled by Vercel's GitHub integration or the Vercel CLI.

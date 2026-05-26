@@ -5,7 +5,6 @@ import { authOptions } from "@/lib/auth";
 import { generateWalletPass } from "@/lib/wallet-passes";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * POST /api/wallet/generate

@@ -10,7 +10,6 @@ import {
   generateGooglePassPayload,
 } from "@/lib/wallet-passes";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * PATCH /api/wallet/update

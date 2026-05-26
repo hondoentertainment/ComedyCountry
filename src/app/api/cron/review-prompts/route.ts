@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { processReviewPrompts } from "@/lib/review-prompts";
-import { logger } from "@/lib/logger";
 
 /**
  * Cron endpoint: Send review prompts to users who attended events

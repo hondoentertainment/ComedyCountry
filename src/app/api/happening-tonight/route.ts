@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { getHappeningTonight } from "@/lib/taste-profile";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * GET - Events happening today/tonight.

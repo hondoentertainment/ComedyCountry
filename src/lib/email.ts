@@ -7,7 +7,6 @@ import { logger } from "@/lib/logger";
  * configured the emails are logged to stdout (useful in dev / preview).
  */
 
-import { logger } from "@/lib/logger";
 
 export interface EmailPayload {
   to: string;

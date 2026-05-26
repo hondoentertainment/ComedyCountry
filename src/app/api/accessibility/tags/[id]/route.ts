@@ -7,7 +7,6 @@ import {
   verifyAccessibilityTag,
 } from "@/lib/accessibility";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 export async function DELETE(
   request: NextRequest,

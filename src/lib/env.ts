@@ -19,6 +19,29 @@ function hasValue(value: string | undefined) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function normalizeUrl(value: string) {
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+}
+
+export function applyEnvDefaults(env: EnvSource = process.env): EnvSource {
+  const normalizedEnv = { ...env };
+
+  if (!hasValue(normalizedEnv.DIRECT_DATABASE_URL) && hasValue(normalizedEnv.DATABASE_URL)) {
+    normalizedEnv.DIRECT_DATABASE_URL = normalizedEnv.DATABASE_URL;
+  }
+
+  if (!hasValue(normalizedEnv.NEXTAUTH_URL)) {
+    const vercelUrl =
+      hasValue(env.VERCEL_PROJECT_PRODUCTION_URL) ? env.VERCEL_PROJECT_PRODUCTION_URL : env.VERCEL_URL;
+
+    if (hasValue(vercelUrl)) {
+      normalizedEnv.NEXTAUTH_URL = normalizeUrl(vercelUrl!);
+    }
+  }
+
+  return normalizedEnv;
+}
+
 function isLikelyPlaceholder(value: string | undefined) {
   if (!hasValue(value)) {
     return false;
@@ -50,14 +73,15 @@ function addPairWarning(
 }
 
 export function validateEnv(env: EnvSource = process.env): EnvValidationResult {
-  const missing = Object.keys(requiredEnvSchema.shape).filter((key) => !hasValue(env[key]));
+  const normalizedEnv = applyEnvDefaults(env);
+  const missing = Object.keys(requiredEnvSchema.shape).filter((key) => !hasValue(normalizedEnv[key]));
   const errors: string[] = [];
   const warnings: string[] = [];
 
   const requiredParse = requiredEnvSchema.safeParse({
-    DATABASE_URL: env.DATABASE_URL,
-    NEXTAUTH_SECRET: env.NEXTAUTH_SECRET,
-    NEXTAUTH_URL: env.NEXTAUTH_URL,
+    DATABASE_URL: normalizedEnv.DATABASE_URL,
+    NEXTAUTH_SECRET: normalizedEnv.NEXTAUTH_SECRET,
+    NEXTAUTH_URL: normalizedEnv.NEXTAUTH_URL,
   });
 
   if (!requiredParse.success) {
@@ -74,39 +98,60 @@ export function validateEnv(env: EnvSource = process.env): EnvValidationResult {
     }
   }
 
-  if (isLikelyPlaceholder(env.NEXTAUTH_SECRET)) {
+  if (isLikelyPlaceholder(normalizedEnv.NEXTAUTH_SECRET)) {
     warnings.push("NEXTAUTH_SECRET looks like a placeholder and should be replaced before production");
-  } else if (hasValue(env.NEXTAUTH_SECRET) && env.NEXTAUTH_SECRET!.trim().length < 32) {
+  } else if (
+    hasValue(normalizedEnv.NEXTAUTH_SECRET) &&
+    normalizedEnv.NEXTAUTH_SECRET!.trim().length < 32
+  ) {
     warnings.push("NEXTAUTH_SECRET is shorter than 32 characters");
   }
 
   if (
-    env.NODE_ENV === "production" &&
-    hasValue(env.NEXTAUTH_URL) &&
-    !env.NEXTAUTH_URL!.startsWith("https://")
+    normalizedEnv.NODE_ENV === "production" &&
+    hasValue(normalizedEnv.NEXTAUTH_URL) &&
+    !normalizedEnv.NEXTAUTH_URL!.startsWith("https://")
   ) {
     warnings.push("NEXTAUTH_URL should use https in production");
   }
 
-  if (!hasValue(env.SENTRY_DSN) && !hasValue(env.NEXT_PUBLIC_SENTRY_DSN)) {
+  if (!hasValue(normalizedEnv.SENTRY_DSN) && !hasValue(normalizedEnv.NEXT_PUBLIC_SENTRY_DSN)) {
     warnings.push("Sentry DSN is not configured");
   }
 
-  if (!hasValue(env.CRON_SECRET) && !hasValue(env.CRON_API_KEY)) {
+  if (!hasValue(normalizedEnv.CRON_SECRET) && !hasValue(normalizedEnv.CRON_API_KEY)) {
     warnings.push("Cron protection secret is not configured");
   }
 
-  addPairWarning(env, warnings, "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "Google OAuth");
-  addPairWarning(env, warnings, "KV_REST_API_URL", "KV_REST_API_TOKEN", "Vercel KV");
+  if (!hasValue(env.DIRECT_DATABASE_URL) && hasValue(normalizedEnv.DIRECT_DATABASE_URL)) {
+    warnings.push("DIRECT_DATABASE_URL is not set; falling back to DATABASE_URL for migrations");
+  }
+
+  if (
+    !hasValue(env.NEXTAUTH_URL) &&
+    hasValue(normalizedEnv.NEXTAUTH_URL) &&
+    (hasValue(env.VERCEL_PROJECT_PRODUCTION_URL) || hasValue(env.VERCEL_URL))
+  ) {
+    warnings.push("NEXTAUTH_URL is not set explicitly; falling back to the Vercel deployment URL");
+  }
+
+  addPairWarning(normalizedEnv, warnings, "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "Google OAuth");
+  addPairWarning(normalizedEnv, warnings, "KV_REST_API_URL", "KV_REST_API_TOKEN", "Vercel KV");
   addPairWarning(
-    env,
+    normalizedEnv,
     warnings,
     "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
     "VAPID_PRIVATE_KEY",
     "Web Push VAPID"
   );
-  addPairWarning(env, warnings, "SENTRY_ORG", "SENTRY_PROJECT", "Sentry release");
-  addPairWarning(env, warnings, "SENTRY_PROJECT", "SENTRY_AUTH_TOKEN", "Sentry build upload");
+  addPairWarning(normalizedEnv, warnings, "SENTRY_ORG", "SENTRY_PROJECT", "Sentry release");
+  addPairWarning(
+    normalizedEnv,
+    warnings,
+    "SENTRY_PROJECT",
+    "SENTRY_AUTH_TOKEN",
+    "Sentry build upload"
+  );
 
   return {
     valid: missing.length === 0 && errors.length === 0,

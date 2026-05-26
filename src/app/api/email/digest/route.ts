@@ -3,7 +3,6 @@ import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, digestEmailHtml } from "@/lib/email";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
 
 /**
  * POST /api/email/digest

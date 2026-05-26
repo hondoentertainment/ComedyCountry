@@ -111,11 +111,20 @@ pg_restore --clean --if-exists --no-owner --dbname "$RECOVERY_DATABASE_URL" punc
 ## Recommended Production Env
 
 ```env
+NEXTAUTH_URL="https://your-production-domain.vercel.app"
+NEXTAUTH_SECRET="generate-a-32-plus-character-secret"
+CRON_SECRET="generate-a-separate-32-plus-character-secret"
 BULK_IMPORT_API_KEY="set-this-in-production"
 IMPORT_STRICT_TARGET_CITIES="true"
 IMPORT_MAX_VENUES="150"
 IMPORT_MAX_EVENTS="400"
 ```
+
+For database access:
+
+- `DATABASE_URL` is required.
+- `DIRECT_DATABASE_URL` is recommended for direct migrations.
+- If `DIRECT_DATABASE_URL` is not set, the Vercel build falls back to `DATABASE_URL`.
 
 ## Failure Triage
 
@@ -142,3 +151,11 @@ IMPORT_MAX_EVENTS="400"
 2. Restore the latest clean backup into a recovery database.
 3. Validate counts with `npm run ops:readiness`.
 4. Re-point the application only after basic smoke checks pass.
+
+### Post-deploy smoke pass
+
+Run after each production deploy:
+
+```bash
+npm run deploy:smoke -- https://your-production-domain.vercel.app
+```

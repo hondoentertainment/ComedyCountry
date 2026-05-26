@@ -31,7 +31,6 @@ export default function AdminReportsPage() {
       .catch((err: unknown) =>
         logger.error(
           "Admin reports fetch failed",
-          "AdminReports fetch failed",
           {},
           err instanceof Error ? err : undefined,
         ),
