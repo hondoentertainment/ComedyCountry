@@ -18,6 +18,7 @@ concurrency:
 
 env:
   DATABASE_URL: postgresql://postgres:postgres@localhost:5432/punchline_atlas_test
+  DIRECT_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/punchline_atlas_test
   NEXTAUTH_URL: http://localhost:3000
   NEXTAUTH_SECRET: ci-test-secret-do-not-use-in-production
   GITHUB_ID: ci-placeholder
