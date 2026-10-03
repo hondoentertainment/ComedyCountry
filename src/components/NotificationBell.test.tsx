@@ -52,11 +52,7 @@ describe("NotificationBell", () => {
     ).toBeInTheDocument();
   });
 
-  it("links to /feed", async () => {
-    expect(screen.getByRole("button", { name: "Notifications" })).toBeInTheDocument();
-  });
-
-  it("has button for notification center", () => {
+  it("links to /feed from the notification center", async () => {
     mockUseSession.mockReturnValue({
       data: { user: { id: "u1", name: "Test" } },
     });
@@ -90,8 +86,6 @@ describe("NotificationBell", () => {
       name: "View all notifications",
     });
     expect(link).toHaveAttribute("href", "/feed");
-    const button = screen.getByRole("button", { name: "Notifications" });
-    expect(button).toBeInTheDocument();
   });
 
   it("fetches unread count on mount", async () => {
@@ -173,7 +167,6 @@ describe("NotificationBell", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: "3 unread notifications" }),
         screen.getByRole("button", { name: "3 unread notifications" })
       ).toBeInTheDocument();
     });

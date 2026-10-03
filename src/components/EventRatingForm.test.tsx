@@ -106,7 +106,6 @@ describe("EventRatingForm", () => {
           wouldRecommend: undefined,
         },
       }),
-      body: expect.stringContaining('"rating":5'),
     });
     const callBody = JSON.parse(fetchMock.mock.calls[0][1].body);
     expect(callBody.rating).toBe(5);

@@ -1,16 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const mockSendNotification = vi.fn();
-const mockSetVapidDetails = vi.fn();
-
-vi.mock("web-push", () => ({
-  setVapidDetails: mockSetVapidDetails,
-  sendNotification: mockSendNotification,
+const { mockSendNotification, mockSetVapidDetails } = vi.hoisted(() => ({
+  mockSendNotification: vi.fn(),
+  mockSetVapidDetails: vi.fn(),
 }));
 
-vi.mock("web-push", () => {
-  throw new Error("not available");
-});
+vi.mock("web-push", () => ({
+  default: {
+    setVapidDetails: mockSetVapidDetails,
+    sendNotification: mockSendNotification,
+  },
+}));
+
 
 vi.mock("./prisma", () => ({
   prisma: {
@@ -88,6 +89,14 @@ describe("sendPushToUser", () => {
 
     expect(result).toBe(2);
     expect(mockSendNotification).toHaveBeenCalledTimes(2);
+    expect(mockSetVapidDetails).toHaveBeenCalledWith(
+      expect.any(String), "test-public-key", "test-private-key"
+    );
+    expect(mockSendNotification).toHaveBeenCalledWith(
+      { endpoint: "https://push.example.com/1", keys: { p256dh: "key1", auth: "auth1" } },
+      expect.stringContaining('"title":"Test"'),
+      expect.objectContaining({ TTL: 86400 })
+    );
   });
 
   it("deletes expired subscriptions (410 Gone)", async () => {
@@ -99,7 +108,6 @@ describe("sendPushToUser", () => {
         auth: "auth1",
       },
     ]);
-    mockFetch.mockResolvedValue({ ok: false, status: 410 });
     mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 1 });
     mockSendNotification.mockRejectedValue({ statusCode: 410 });
 
@@ -120,7 +128,6 @@ describe("sendPushToUser", () => {
         auth: "auth1",
       },
     ]);
-    mockFetch.mockResolvedValue({ ok: false, status: 404 });
     mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 1 });
     mockSendNotification.mockRejectedValue({ statusCode: 404 });
 
@@ -148,6 +155,16 @@ describe("sendPushToUser", () => {
     expect(result).toBe(1);
   });
 
+  it.each([429, 500, 503])("preserves subscriptions after a %s response", async (statusCode) => {
+    mockPrisma.pushSubscription.findMany.mockResolvedValue([
+      { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key", auth: "auth" },
+    ]);
+    mockSendNotification.mockRejectedValue({ statusCode });
+
+    expect(await sendPushToUser("user-1", payload)).toBe(0);
+    expect(mockPrisma.pushSubscription.deleteMany).not.toHaveBeenCalled();
+  });
+
   it("returns 0 when prisma query fails", async () => {
     mockPrisma.pushSubscription.findMany.mockRejectedValue(
       new Error("DB error"),
@@ -156,6 +173,15 @@ describe("sendPushToUser", () => {
     const result = await sendPushToUser("user-1", payload);
 
     expect(result).toBe(0);
+  });
+
+  it("preserves subscriptions after a network failure", async () => {
+    mockPrisma.pushSubscription.findMany.mockResolvedValue([
+      { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key", auth: "auth" },
+    ]);
+    mockSendNotification.mockRejectedValue(new Error("Connection timed out"));
+    expect(await sendPushToUser("user-1", payload)).toBe(0);
+    expect(mockPrisma.pushSubscription.deleteMany).not.toHaveBeenCalled();
   });
 });
 
@@ -189,7 +215,6 @@ describe("pushToComedianFollowers", () => {
           auth: "a",
         },
       ]);
-    mockFetch.mockResolvedValue({ ok: true, status: 200 });
     mockPrisma.pushSubscription.deleteMany.mockResolvedValue({ count: 0 });
     mockSendNotification.mockResolvedValue({});
 

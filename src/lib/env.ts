@@ -6,7 +6,7 @@ const requiredEnvSchema = z.object({
   NEXTAUTH_URL: z.string().url("NEXTAUTH_URL must be a valid URL"),
 });
 
-type EnvSource = NodeJS.ProcessEnv;
+type EnvSource = Partial<NodeJS.ProcessEnv>;
 
 export type EnvValidationResult = {
   valid: boolean;
@@ -23,6 +23,8 @@ function normalizeUrl(value: string) {
   return /^https?:\/\//i.test(value) ? value : `https://${value}`;
 }
 
+export function applyEnvDefaults(env?: NodeJS.ProcessEnv): NodeJS.ProcessEnv;
+export function applyEnvDefaults(env: EnvSource): EnvSource;
 export function applyEnvDefaults(env: EnvSource = process.env): EnvSource {
   const normalizedEnv = { ...env };
 

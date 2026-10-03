@@ -2,8 +2,7 @@
  * Web Push notification utilities.
  *
  * Uses the Web Push protocol with VAPID authentication.
- * Supports the web-push npm package when available, falls back to
- * direct fetch-based delivery for environments without it.
+ * Uses web-push for authenticated, encrypted delivery.
  *
  * Requires VAPID keys in environment variables:
  *   NEXT_PUBLIC_VAPID_PUBLIC_KEY  - base64url-encoded public key
@@ -50,17 +49,17 @@ interface PushSubscriptionRecord {
 
 /**
  * Send a push notification to a single subscription endpoint.
- * Uses the web-push package if available, otherwise falls back to raw fetch.
+ * Only permanent expiration responses invalidate a subscription.
  */
 async function sendToSubscription(
   sub: PushSubscriptionRecord,
   payload: PushPayload
-): Promise<boolean> {
+): Promise<"sent" | "expired" | "failed"> {
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
 
   if (!publicKey || !privateKey) {
-    return false;
+    return "failed";
   }
 
   const body = JSON.stringify({
@@ -77,14 +76,7 @@ async function sendToSubscription(
   });
 
   try {
-    // Load web-push lazily so builds still work when the package is absent.
-    const webpush = (() => {
-      try {
-        return Function("return require('web-push')")();
-      } catch {
-        return null;
-      }
-    })();
+    const { default: webpush } = await import("web-push");
 
     if (webpush) {
       const vapidSubject =
@@ -108,29 +100,19 @@ async function sendToSubscription(
         }
       );
 
-      return true;
+      return "sent";
     }
 
-    // Fallback: raw POST (will work for some push services without encryption)
-    const res = await fetch(sub.endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/octet-stream",
-        TTL: "86400",
-      },
-      body,
-    });
-
-    return res.ok || res.status === 201;
+    return "failed";
   } catch (err) {
     // Check if subscription is expired/invalid
     if (err && typeof err === "object" && "statusCode" in err) {
       const statusCode = (err as { statusCode: number }).statusCode;
       if (statusCode === 404 || statusCode === 410) {
-        return false; // Will be cleaned up by caller
+        return "expired";
       }
     }
-    return false;
+    return "failed";
   }
 }
 
@@ -169,11 +151,10 @@ export async function sendPushToUser(
   const expiredIds: string[] = [];
 
   for (const sub of subscriptions) {
-    const success = await sendToSubscription(sub, payload);
-    if (success) {
+    const result = await sendToSubscription(sub, payload);
+    if (result === "sent") {
       sent++;
-    } else {
-      // Track potential expired subscriptions for cleanup
+    } else if (result === "expired") {
       expiredIds.push(sub.id);
     }
   }

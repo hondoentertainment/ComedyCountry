@@ -29,10 +29,8 @@ env:
 
 jobs:
   typecheck:
-    name: Typecheck diagnostics
+    name: Typecheck
     runs-on: ubuntu-latest
-    continue-on-error: true
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
