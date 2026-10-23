@@ -5,7 +5,7 @@ import { respondToBooking } from "@/lib/creator";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const auth = await requireCreator();
   if (!auth.authorized) {
@@ -13,7 +13,8 @@ export async function POST(
   }
 
   try {
-    const existing = await prisma.bookingRequest.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const existing = await prisma.bookingRequest.findUnique({ where: { id } });
     if (!existing || existing.comedianId !== auth.comedian.id) {
       return NextResponse.json({ error: "Not found or not yours" }, { status: 404 });
     }
@@ -28,7 +29,7 @@ export async function POST(
       );
     }
 
-    const updated = await respondToBooking(params.id, status, responseNote);
+    const updated = await respondToBooking(id, status, responseNote);
     return NextResponse.json(updated);
   } catch {
     return NextResponse.json({ error: "Failed to respond to booking" }, { status: 500 });

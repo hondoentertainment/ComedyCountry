@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 import { TOURING_STATUS_LABELS } from "@/lib/constants";
 
@@ -98,12 +99,12 @@ export function ComedianFilterBar({
 
         <div className="flex gap-2">
           {hasActiveFilters && (
-            <a
+            <Link
               href="/comedians"
               className="px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-600 transition-colors"
             >
               Clear all
-            </a>
+            </Link>
           )}
           <button
             type="submit"

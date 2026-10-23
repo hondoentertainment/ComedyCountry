@@ -7,7 +7,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`creator-merch:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -25,14 +25,15 @@ export async function PUT(
   }
 
   try {
-    const existing = await prisma.merchItem.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const existing = await prisma.merchItem.findUnique({ where: { id } });
     if (!existing || existing.comedianId !== comedian.id) {
       return NextResponse.json({ error: "Not found or not yours" }, { status: 404 });
     }
 
     const body = await request.json();
     const updated = await prisma.merchItem.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: body.name ?? existing.name,
         description: body.description !== undefined ? body.description : existing.description,
@@ -52,7 +53,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`creator-merch:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -70,12 +71,13 @@ export async function DELETE(
   }
 
   try {
-    const existing = await prisma.merchItem.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const existing = await prisma.merchItem.findUnique({ where: { id } });
     if (!existing || existing.comedianId !== comedian.id) {
       return NextResponse.json({ error: "Not found or not yours" }, { status: 404 });
     }
 
-    await prisma.merchItem.delete({ where: { id: params.id } });
+    await prisma.merchItem.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to delete merch item" }, { status: 500 });

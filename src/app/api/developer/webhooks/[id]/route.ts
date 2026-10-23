@@ -8,7 +8,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(
     `developer-webhooks:${getRateLimitKey(request)}`,
@@ -24,7 +24,7 @@ export async function GET(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Find the webhook and verify ownership through API key
     const webhook = await prisma.webhookEndpoint.findUnique({
@@ -54,7 +54,7 @@ export async function GET(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(
     `developer-webhooks:${getRateLimitKey(request)}`,
@@ -70,7 +70,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Find the webhook and verify ownership through API key
     const webhook = await prisma.webhookEndpoint.findUnique({

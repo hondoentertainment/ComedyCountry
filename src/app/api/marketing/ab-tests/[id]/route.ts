@@ -10,7 +10,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`marketing-ab-tests:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -23,7 +23,8 @@ export async function GET(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const results = await getABTestResults(params.id);
+    const { id } = await params;
+    const results = await getABTestResults(id);
     return NextResponse.json(results);
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Failed to fetch results";
@@ -34,7 +35,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`marketing-ab-tests:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -57,11 +58,12 @@ export async function PATCH(
       );
     }
 
+    const { id } = await params;
     let result;
     if (event === "impression") {
-      result = await recordABTestImpression(params.id, variant);
+      result = await recordABTestImpression(id, variant);
     } else if (event === "conversion") {
-      result = await recordABTestConversion(params.id, variant);
+      result = await recordABTestConversion(id, variant);
     } else {
       return NextResponse.json(
         { error: "event must be 'impression' or 'conversion'" },

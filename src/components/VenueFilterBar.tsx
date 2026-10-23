@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 import { VENUE_TYPE_LABELS } from "@/lib/constants";
 
@@ -167,12 +168,12 @@ export function VenueFilterBar({
 
         <div className="flex gap-2">
           {hasActiveFilters && (
-            <a
+            <Link
               href="/venues"
               className="px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-600 transition-colors"
             >
               Clear all
-            </a>
+            </Link>
           )}
           <button
             type="submit"

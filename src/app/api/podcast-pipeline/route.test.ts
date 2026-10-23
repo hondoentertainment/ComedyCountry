@@ -242,7 +242,7 @@ describe("podcast-pipeline API routes", () => {
         method: "PATCH",
         body: JSON.stringify({ status: "RECORDING" }),
       });
-      const res = await patchRecording(req, { params: { id: "ses1" } });
+      const res = await patchRecording(req, { params: Promise.resolve({ id: "ses1" }) });
       const data = await res.json();
 
       expect(res.status).toBe(200);
@@ -256,7 +256,7 @@ describe("podcast-pipeline API routes", () => {
         method: "PATCH",
         body: JSON.stringify({ status: "INVALID" }),
       });
-      const res = await patchRecording(req, { params: { id: "ses1" } });
+      const res = await patchRecording(req, { params: Promise.resolve({ id: "ses1" }) });
       expect(res.status).toBe(400);
     });
   });
@@ -295,7 +295,7 @@ describe("podcast-pipeline API routes", () => {
         method: "PATCH",
         body: JSON.stringify({ status: "RECORDING" }),
       });
-      const res = await patchRecording(req, { params: { id: "ses1" } });
+      const res = await patchRecording(req, { params: Promise.resolve({ id: "ses1" }) });
       expect(res.status).toBe(401);
     });
   });

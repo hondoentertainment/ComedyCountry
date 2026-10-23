@@ -10,7 +10,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { conversationId: string } }
+  { params }: { params: Promise<{ conversationId: string }> }
 ) {
   const rl = await checkRateLimit(`messages:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -27,15 +27,16 @@ export async function GET(
   const cursor = searchParams.get("cursor") ?? undefined;
 
   try {
+    const { conversationId } = await params;
     const messages = await getMessages(
-      params.conversationId,
+      conversationId,
       session.user.id,
       limit,
       cursor
     );
 
     // Auto-mark as read when fetched
-    await markConversationRead(params.conversationId, session.user.id);
+    await markConversationRead(conversationId, session.user.id);
 
     return NextResponse.json({ messages });
   } catch (error) {
@@ -46,7 +47,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { conversationId: string } }
+  { params }: { params: Promise<{ conversationId: string }> }
 ) {
   const rl = await checkRateLimit(`messages:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -69,8 +70,9 @@ export async function POST(
       );
     }
 
+    const { conversationId } = await params;
     const message = await sendMessage(
-      params.conversationId,
+      conversationId,
       session.user.id,
       content
     );
@@ -83,7 +85,7 @@ export async function POST(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { conversationId: string } }
+  { params }: { params: Promise<{ conversationId: string }> }
 ) {
   const rl = await checkRateLimit(`messages:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -96,8 +98,9 @@ export async function PATCH(
   }
 
   try {
+    const { conversationId } = await params;
     const result = await markConversationRead(
-      params.conversationId,
+      conversationId,
       session.user.id
     );
     return NextResponse.json(result);

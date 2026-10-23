@@ -74,12 +74,13 @@ function SectionHeading({
 export default async function MarketingDashboardPage({
   searchParams,
 }: {
-  searchParams: { venueId?: string };
+  searchParams: Promise<{ venueId?: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/signin");
 
-  const venueId = searchParams.venueId ?? "";
+  const { venueId: venueIdParam } = await searchParams;
+  const venueId = venueIdParam ?? "";
 
   if (!venueId) {
     return (

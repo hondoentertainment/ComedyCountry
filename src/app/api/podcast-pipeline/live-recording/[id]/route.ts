@@ -6,7 +6,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`podcast-pipeline-live-recording:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -30,7 +30,8 @@ export async function PATCH(
       );
     }
 
-    const updated = await updateRecordingStatus(params.id, status);
+    const { id } = await params;
+    const updated = await updateRecordingStatus(id, status);
     return NextResponse.json(updated);
   } catch {
     return NextResponse.json({ error: "Failed to update recording status" }, { status: 500 });

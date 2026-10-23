@@ -47,10 +47,7 @@
   },
   "overrides": {
     "vite": "7.3.7",
-    "postcss": "$postcss",
-    "@next/eslint-plugin-next": {
-      "glob": "10.5.0"
-    }
+    "postcss": "$postcss"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
@@ -59,7 +56,7 @@
     "@sentry/nextjs": "^10.76.2",
     "@vercel/kv": "^3.0.0",
     "bcryptjs": "^3.0.3",
-    "next": "^14.2.0",
+    "next": "^15.5.28",
     "next-auth": "^4.24.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -81,7 +78,7 @@
     "autoprefixer": "^10",
     "dotenv": "^17.3.1",
     "eslint": "^8",
-    "eslint-config-next": "^14.2.0",
+    "eslint-config-next": "^15.5.28",
     "jsdom": "^28.1.0",
     "playwright": "^1.58.2",
     "postcss": "^8.5.31",
