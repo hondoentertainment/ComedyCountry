@@ -10,7 +10,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const rl = await checkRateLimit(`bookings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -23,7 +23,8 @@ export async function GET(
   }
 
   try {
-    const booking = await getBookingRequest(params.id);
+    const { id } = await params;
+    const booking = await getBookingRequest(id);
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
@@ -36,7 +37,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const rl = await checkRateLimit(`bookings:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -52,8 +53,10 @@ export async function PATCH(
     const body = await request.json();
     const { action, status, responseNote, budget, message } = body;
 
+    const { id } = await params;
+
     if (action === "negotiate") {
-      const updated = await negotiateBooking(params.id, {
+      const updated = await negotiateBooking(id, {
         budget,
         message,
         responseNote,
@@ -68,7 +71,7 @@ export async function PATCH(
       );
     }
 
-    const updated = await respondToBooking(params.id, status, responseNote);
+    const updated = await respondToBooking(id, status, responseNote);
     return NextResponse.json(updated);
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Failed to update booking";

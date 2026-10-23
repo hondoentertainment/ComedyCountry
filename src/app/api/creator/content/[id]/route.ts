@@ -7,7 +7,7 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`creator-content:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -15,8 +15,9 @@ export async function GET(
   }
 
   try {
+    const { id } = await params;
     const item = await prisma.exclusiveContent.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!item) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -49,7 +50,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`creator-content:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -67,14 +68,15 @@ export async function PUT(
   }
 
   try {
-    const existing = await prisma.exclusiveContent.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const existing = await prisma.exclusiveContent.findUnique({ where: { id } });
     if (!existing || existing.comedianId !== comedian.id) {
       return NextResponse.json({ error: "Not found or not yours" }, { status: 404 });
     }
 
     const body = await request.json();
     const updated = await prisma.exclusiveContent.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: body.title ?? existing.title,
         body: body.body !== undefined ? body.body : existing.body,
@@ -93,7 +95,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const rl = await checkRateLimit(`creator-content:${getRateLimitKey(request)}`, { limit: 60, windowSeconds: 60 });
   if (!rl.success) {
@@ -111,12 +113,13 @@ export async function DELETE(
   }
 
   try {
-    const existing = await prisma.exclusiveContent.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const existing = await prisma.exclusiveContent.findUnique({ where: { id } });
     if (!existing || existing.comedianId !== comedian.id) {
       return NextResponse.json({ error: "Not found or not yours" }, { status: 404 });
     }
 
-    await prisma.exclusiveContent.delete({ where: { id: params.id } });
+    await prisma.exclusiveContent.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to delete content" }, { status: 500 });

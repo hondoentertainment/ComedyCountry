@@ -1,24 +1,9 @@
-import nextDynamic from "next/dynamic";
 import {
   listVenuesWithCoordinates,
   getVenueStatesWithCoordinates,
 } from "@/lib/venues";
 import { MapLocationActions } from "./MapLocationActions";
-
-const MapPageContent = nextDynamic(
-  () =>
-    import("@/components/MapPageContent").then((m) => ({
-      default: m.MapPageContent,
-    })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="aspect-video rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-500">
-        Loading map…
-      </div>
-    ),
-  }
-);
+import { MapView } from "./MapView";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +45,7 @@ export default async function MapPage({ searchParams }: PageProps) {
           Browse comedy venues across the country. Click a marker for details.
         </p>
         <MapLocationActions currentCity={city} currentState={state} />
-        <MapPageContent
+        <MapView
           venues={venuesForMap}
           states={states.map((s) => s.state)}
           initialState={state ?? ""}

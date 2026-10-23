@@ -16,7 +16,7 @@ type VenueWithCoords = {
   longitude: number | null;
 };
 
-type MapPageContentProps = {
+export type MapPageContentProps = {
   venues: VenueWithCoords[];
   states: string[];
   initialState: string;

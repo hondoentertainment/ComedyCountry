@@ -23,7 +23,7 @@ import {
   negotiateBooking,
 } from "@/lib/booking";
 
-const makeParams = (id: string) => ({ params: { id } });
+const makeParams = (id: string) => ({ params: Promise.resolve({ id }) });
 
 function createRequest(url: string, options?: RequestInit) {
   return new NextRequest(url, options as any);
