@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="min-h-[50vh] flex items-center justify-center px-4">
@@ -10,9 +12,9 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
           <button onClick={reset} className="px-4 py-2 bg-brand-gold text-brand-dark font-semibold rounded-lg hover:bg-brand-gold/90 transition-colors">
             Try again
           </button>
-          <a href="/tickets" className="px-4 py-2 border border-zinc-700 text-zinc-300 rounded-lg hover:bg-white/5 transition-colors">
+          <Link href="/tickets" className="px-4 py-2 border border-zinc-700 text-zinc-300 rounded-lg hover:bg-white/5 transition-colors">
             Back to tickets
-          </a>
+          </Link>
         </div>
       </div>
     </div>
