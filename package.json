@@ -47,7 +47,8 @@
   },
   "overrides": {
     "vite": "7.3.7",
-    "postcss": "$postcss"
+    "postcss": "$postcss",
+    "workbox-build": "7.4.1"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
